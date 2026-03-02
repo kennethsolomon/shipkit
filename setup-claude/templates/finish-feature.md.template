@@ -1,0 +1,92 @@
+# /finish-feature Command
+
+Checklist for finalizing a feature branch before merging to main.
+
+## Preparation
+
+- [ ] All code changes committed
+- [ ] Branch synced with main: `git pull origin main`
+- [ ] No merge conflicts
+
+## Step 1: Verify Git Branch Status
+
+```bash
+git status
+git log origin/main...HEAD
+```
+
+Confirm:
+- [ ] You're on a feature branch (not `main`)
+- [ ] All working changes are committed
+- [ ] Commit messages follow project conventions
+
+## Step 2: Branch Summary
+
+Review all commits since `main`:
+```bash
+git log --oneline origin/main...HEAD
+```
+
+Summarize the feature in 2–3 sentences:
+- What was added/changed?
+- Why?
+- Any breaking changes or side effects?
+
+## Step 3: Verify CHANGELOG.md
+
+```bash
+git diff origin/main CHANGELOG.md
+```
+
+Confirm:
+- [ ] `CHANGELOG.md` has entry under `[Unreleased]` for this feature
+- [ ] Entry follows [Keep a Changelog](https://keepachangelog.com/) format
+- [ ] Entry is in correct section (Added / Changed / Fixed / Deprecated / Removed / Security)
+
+If missing: Read `.claude/docs/changelog-guide.md` and add entry now.
+
+## Step 4: Architecture Review — [ADAPTIVE: ARCHITECTURE_AREAS]
+
+[ADAPTIVE_ARCHITECTURE_CHECK]
+
+## Step 5: Code Quality Checklist — [ADAPTIVE: STACK_SPECIFIC]
+
+[ADAPTIVE_QUALITY_CHECKS]
+
+## Step 6: Final Verification
+
+```bash
+[BUILD_COMMAND]
+[LINT_COMMAND]
+[TEST_COMMAND_IF_EXISTS]
+```
+
+Confirm:
+- [ ] Build passes with no errors
+- [ ] Lint passes (no violations)
+- [ ] Tests pass (if applicable)
+- [ ] No console errors or warnings
+
+## Step 7: Next Steps
+
+You're ready to create a pull request or merge:
+
+```bash
+git push origin [BRANCH_NAME]
+```
+
+Then:
+1. Open PR on GitHub / GitLab
+2. Request review if needed
+3. Merge once approved
+4. Delete feature branch
+
+---
+
+### Architecture Notes
+
+[ADAPTIVE_ARCHITECTURE_NOTES_FOR_STACK]
+
+---
+<!-- ADAPTIVE CONTENT BELOW — filled per detected stack during setup-claude -->
+<!-- See ~/.agents/skills/setup-claude/references/templates.md for selection logic -->

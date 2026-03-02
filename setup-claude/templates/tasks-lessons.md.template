@@ -1,0 +1,25 @@
+# Project Lessons Learned
+
+Accumulated insights from development. Review at session start to avoid repeating mistakes.
+
+## [Lesson Title]
+
+**Context:** When did this come up?
+
+**What happened:** What went wrong or what pattern did we discover?
+
+**Solution:** How did we fix it?
+
+**Applies to:** Specific file/feature or general principle?
+
+---
+
+## Adding New Lessons
+
+After any user correction or debugging insight:
+1. Add a new section with clear title
+2. Include context, what happened, and solution
+3. Note which files or patterns it applies to
+4. Keep entries concise (3–5 lines each)
+
+Aim for 5–15 entries max; delete obsolete ones.

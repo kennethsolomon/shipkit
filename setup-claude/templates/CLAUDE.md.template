@@ -1,0 +1,94 @@
+# [PROJECT_NAME]
+
+[ONE_SENTENCE_DESCRIPTION]
+
+## Tech Stack
+
+| Tech | Details |
+|------|---------|
+| **Language** | [LANGUAGE] |
+| **Framework** | [FRAMEWORK] |
+| **Database** | [DATABASE] |
+| **UI** | [UI] |
+| **Testing** | [TESTING] |
+| **AI/LLM** | [AI] |
+| **Browser Automation** | [BROWSER_AUTOMATION] |
+
+## Key Directories
+
+[TABLE_OF_KEY_DIRS_DETECTED]
+
+## Build & Run
+
+```bash
+[BUILD_COMMAND]
+[DEV_COMMAND]
+[LINT_COMMAND]
+```
+
+## Database
+
+[ONE_OR_TWO_LINES_ABOUT_SCHEMA_LOCATION_AND_MODE]
+
+[IF_LARAVEL_DETECTED: Migrations stored in `database/migrations/`, models in `app/Models/`. Database configured in `.env` (MySQL/Postgres/SQLite) and `config/database.php`. SQLite database file at `database/database.sqlite`.]
+
+## Schema Migrations
+
+[IF_DRIZZLE_DETECTED: For safe Drizzle ORM schema changes, use the global `/schema-migrate` skill. It analyzes pending schema changes across SQLite, PostgreSQL, MySQL, and Supabase, classifies them by risk, detects breaking changes and data issues, and provides dialect-specific migration guidance. Use it before running `db:push`, `db:migrate`, or `supabase push`.]
+
+[IF_SUPABASE_DETECTED: For Supabase schema changes, use the global `/schema-migrate` skill for analysis, then manage migrations with `supabase migration new`, `supabase push`, and `supabase pull`. The skill detects RLS policy issues, realtime subscription impacts, and safely guides Postgres schema changes. Always test on staging with `supabase push --linked` before promoting to production.]
+
+[IF_LARAVEL_DETECTED: For Laravel schema changes (MySQL/Postgres/SQLite), use the global `/schema-migrate` skill to analyze risks before migrating. Create migrations with `php artisan make:migration [description]`, apply with `php artisan migrate`, and rollback with `php artisan migrate:rollback`. Always test rollbacks locally before deploying. For SQLite, be aware of limited ALTER TABLE support — use `/schema-migrate` to plan complex changes.]
+
+## Workflow Orchestration
+
+### 1. Plan First (Non-Trivial Default)
+- Enter plan mode for any task with 3+ steps or architectural decisions
+- If blocked, STOP and re-plan — don't push through
+- Write specs upfront; verify plan before implementing
+
+### 2. Subagent Strategy (Primary Cost Control)
+- **Spawn for:** file exploration, multi-file research, parallel analysis, reading large dirs
+- **Do inline:** single-file reads, small edits, simple one-shot commands
+- Each subagent has bounded context — isolates expensive reads from main window
+- Return only summaries from subagents, never raw full-file content
+- Prefer one focused task per subagent; avoid general-purpose "explore everything" agents
+
+### 3. Self-Improvement Loop
+- After any user correction: update `tasks/lessons.md` with the pattern
+- Review `tasks/lessons.md` at session start for relevant context
+- Log discoveries and errors to `tasks/lessons.md` immediately when encountered
+
+### 4. Verify Before Done
+- Never mark complete without proving it works
+- Run build + lint; check logs; demonstrate correctness
+
+### 5. Demand Elegance (Non-Trivial Only)
+- Ask "is there a more elegant way?" before presenting complex changes
+- Skip for simple, obvious fixes — don't over-engineer
+
+### 6. Autonomous Bug Fixing
+- Given a bug: fix it directly. No hand-holding needed.
+- Use logs/errors/failing tests as input; resolve root cause.
+
+### 7. Three-Strike Error Protocol
+- Attempt 1: Diagnose + fix root cause
+- Attempt 2: Different approach — never repeat the exact same failing action
+- Attempt 3: Question assumptions; search broadly
+- After 3 failures: Stop and explain the blocker to the user
+
+## Core Principles
+
+- **Simplicity First**: Minimal code impact. Obvious solution wins.
+- **No Laziness**: Find root causes. Senior engineer standards.
+- **Minimal Impact**: Only touch what's necessary. Don't introduce bugs.
+- **No Repeated Failures**: Log every error immediately. Never retry the same failing action — mutate the approach instead.
+
+## New Feature or Bug Fix Workflow
+
+1. Create a git branch: `feature/<desc>`, `fix/<desc>`, or `chore/<desc>`
+2. Work on changes in that branch for the remainder of the session
+3. Maintain `CHANGELOG.md` during development — read `.claude/docs/changelog-guide.md` before adding entries or cutting releases
+4. If making architectural changes, create an entry in `[ARCH_LOG_DIR]` — read `.claude/docs/arch-changelog-guide.md` for details
+5. Track progress in `tasks/todo.md` using `pending → in_progress → complete` statuses → get approval → mark complete
+6. Log errors and discoveries to `tasks/lessons.md` immediately as they occur
