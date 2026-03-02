@@ -50,12 +50,25 @@ Analyze Drizzle ORM schema changes safely before applying them.
 - Provides dialect-specific migration plans (SQLite, PostgreSQL, MySQL, Supabase)
 - Read-only — never auto-executes `db:push`, `db:migrate`, or `supabase push`
 
-**Supported dialects:** SQLite, PostgreSQL, MySQL, Supabase
-
 **Usage:** Inside a Drizzle ORM project, run before any schema push:
 ```
 /schema-migrate
 ```
+
+**Compatibility:**
+
+| Stack | Supported |
+|-------|-----------|
+| Node.js + Drizzle + SQLite | ✅ |
+| Node.js + Drizzle + PostgreSQL | ✅ |
+| Node.js + Drizzle + MySQL | ✅ |
+| Node.js + Drizzle + Supabase | ✅ |
+| Laravel + Eloquent (any DB) | ❌ — uses `php artisan migrate` instead |
+| Prisma (any DB) | ❌ — use `npx prisma migrate dev` instead |
+| Python + SQLAlchemy + Alembic | ❌ — use `alembic upgrade head` instead |
+| Ruby on Rails + ActiveRecord | ❌ — use `rails db:migrate` instead |
+
+> This skill is **Drizzle ORM only**. It reads `drizzle.config.ts` and `drizzle/meta/` — files that don't exist in other ORM setups.
 
 ---
 
