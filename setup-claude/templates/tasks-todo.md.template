@@ -1,15 +1,3 @@
-# TODO — [DATE] — [SHORT_TITLE]
+<!-- Deprecated template path. -->
+<!-- Source of truth: templates/tasks/todo.md.template -->
 
-## Goal
-[1–2 lines describing the end state]
-
-## Plan
-- [ ] [Step 1]
-- [ ] [Step 2]
-
-## Results
-[What was done]
-
-## Errors
-| Error | Attempt | Resolution |
-|-------|---------|------------|

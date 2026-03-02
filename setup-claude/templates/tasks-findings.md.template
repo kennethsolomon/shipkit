@@ -1,17 +1,3 @@
-# Findings — [DATE] — [TOPIC]
+<!-- Deprecated template path. -->
+<!-- Source of truth: templates/tasks/findings.md.template -->
 
-## Requirements
-[What the task needs to accomplish]
-
-## Repo/Stack Detection Notes
-[Key paths and detection results]
-
-## Decisions
-| Decision | Rationale |
-|----------|-----------|
-
-## Resources
-[Key file paths and references]
-
-## Visual/Browser Findings
-[Update immediately — multimodal content doesn't persist in context]
