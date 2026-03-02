@@ -54,6 +54,8 @@ cd /path/to/project
 python3 "$HOME/.agents/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)"
 ```
 
+If your repo already has a custom `CLAUDE.md`, `/setup-claude` will not overwrite it. Instead it writes a generated draft to `CLAUDE.setup-claude.md` that you can copy/paste from.
+
 Preview what would change (no writes):
 
 ```bash

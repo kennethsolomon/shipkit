@@ -110,6 +110,30 @@ class TestApplySetupClaude(unittest.TestCase):
             expected = mod.render_template(tpl, detection)
             self.assertEqual(marker_path.read_text(encoding="utf-8"), expected)
 
+    def test_existing_custom_claude_md_writes_sidecar(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "package.json").write_text(json.dumps({"name": "demo"}), encoding="utf-8")
+            (repo_root / "CLAUDE.md").write_text("# Custom\n", encoding="utf-8")
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                rc = mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=mod.detect(repo_root),
+                )
+            self.assertEqual(rc, 0)
+
+            self.assertEqual((repo_root / "CLAUDE.md").read_text(encoding="utf-8"), "# Custom\n")
+            self.assertTrue((repo_root / "CLAUDE.setup-claude.md").exists())
+            self.assertIn("Notes:", buf.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()

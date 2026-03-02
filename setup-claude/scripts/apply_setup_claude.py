@@ -250,6 +250,7 @@ def apply(
         arch_dir_path.mkdir(parents=True, exist_ok=True)
 
     mapping: List[Tuple[Path, Path, str]] = []
+    notes: List[str] = []
 
     def add(template_rel: str, dest_rel: str, mode: str) -> None:
         mapping.append((skill_root / template_rel, repo_root / dest_rel, mode))
@@ -274,7 +275,22 @@ def apply(
     add("templates/.claude/docs/arch-changelog-guide.md.template", ".claude/docs/arch-changelog-guide.md", "generated")
 
     # root files
-    add("templates/CLAUDE.md.template", "CLAUDE.md", "generated")
+    claude_md_path = repo_root / "CLAUDE.md"
+    sidecar_claude_md_path = repo_root / "CLAUDE.setup-claude.md"
+    use_sidecar_claude_md = False
+    if claude_md_path.exists():
+        try:
+            existing = claude_md_path.read_text(encoding="utf-8")
+            use_sidecar_claude_md = GENERATED_MARKER not in existing
+        except Exception:
+            use_sidecar_claude_md = True
+        if use_sidecar_claude_md:
+            notes.append("Found existing custom CLAUDE.md; writing CLAUDE.setup-claude.md instead.")
+
+    if use_sidecar_claude_md:
+        add("templates/CLAUDE.md.template", "CLAUDE.setup-claude.md", "generated")
+    else:
+        add("templates/CLAUDE.md.template", "CLAUDE.md", "generated")
     add("templates/CHANGELOG.md.template", "CHANGELOG.md", "missing")
 
     created: List[str] = []
@@ -329,6 +345,10 @@ def apply(
         print("setup-claude dry-run complete (no files written)")
     else:
         print("setup-claude apply complete")
+    if notes:
+        print("\nNotes:")
+        for n in notes:
+            print(f"  - {n}")
     if created:
         print("\nCreated:")
         for p in created:
