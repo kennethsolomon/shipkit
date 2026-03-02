@@ -83,6 +83,44 @@ python3 "$HOME/.agents/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd
 
 ---
 
+### `/claude-setup-tools`
+
+Create, diagnose, and optimize `CLAUDE.md` files for any project with auto-detection and smart optimization.
+
+**What it does:**
+- Auto-detects your tech stack (JavaScript, Python, Go, Rust, etc.)
+- Generates an optimized `CLAUDE.md` file in seconds (100-150 lines)
+- Diagnoses issues in existing `CLAUDE.md` files
+- Optimizes files to stay under the 150-line target
+- Includes guides for understanding CLAUDE.md structure and best practices
+- Protects custom files with a marker system (never overwrites without permission)
+
+**Available commands:**
+- `/setup-starter` — Generate CLAUDE.md by auto-detecting your project
+- `/doctor-claude` — Check existing CLAUDE.md for issues and get suggestions
+- `/optimize-claude` — Trim your CLAUDE.md to stay under 150 lines
+- `/explain-claude` — Learn what each CLAUDE.md section means
+- `/implement-claude` — Follow a step-by-step workflow (5 steps, ~6 minutes)
+- `/review-claude` — Quality checklist before committing
+
+**Why use it:**
+- 💨 Saves 15+ minutes per project (auto-generation vs manual writing)
+- 📚 Comprehensive 1,320-line README explains everything to your team
+- 🛡️ Protects your customizations with smart file handling
+- ✅ Self-documenting — your friends don't need to ask you questions
+- 🔄 Idempotent — safe to re-run multiple times
+
+**Supported stacks:** Node.js (React, Next.js, Svelte, etc.), Python (FastAPI, Django, Flask), Go, Rust, and any project (manual customization)
+
+**Usage:** Run in any project:
+```
+/setup-starter
+```
+
+**Example:** For a React + Prisma + Jest project, it auto-detects all technologies and generates a complete, optimized `CLAUDE.md` in under 30 seconds.
+
+---
+
 ### `/schema-migrate`
 
 Analyze schema changes safely before applying them — works across 5 ORMs with auto-detection.
