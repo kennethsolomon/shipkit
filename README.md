@@ -24,9 +24,9 @@ Bootstrap or repair Claude Code infrastructure on any project.
 
 **What it does:**
 - Detects your tech stack (Next.js, Laravel, Python, Go, Ruby, etc.)
-- Creates or optimizes `CLAUDE.md`, `.claude/commands/finish-feature.md`, changelog guides
+- Creates or optimizes `CLAUDE.md`, project commands in `.claude/commands/`, and Claude docs in `.claude/docs/`
 - Adds `tasks/findings.md` + `tasks/progress.md` for persistent context across long sessions
-- Installs `/plan` and `/status` commands for structured task tracking
+- Adds project-level workflow commands: `/brainstorm`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/finish-feature`
 - Fully idempotent — safe to re-run on existing projects
 
 **Supported stacks:** Next.js + Drizzle, Next.js + Prisma, Next.js + Supabase, Laravel + Eloquent, Supabase (any framework), Python + FastAPI, Generic
@@ -35,6 +35,14 @@ Bootstrap or repair Claude Code infrastructure on any project.
 ```
 /setup-claude
 ```
+
+#### Tutorial: Recommended Workflow
+
+1. Run `/setup-claude` (creates scaffolding + commands).
+2. Run `/brainstorm` to clarify the goal/constraints before coding.
+3. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md`.
+4. Run `/execute-plan` to implement in small batches while logging to `tasks/progress.md`.
+5. Run `/finish-feature` to finalize the branch (changelog, architecture log, lint/build/test).
 
 ---
 
@@ -87,9 +95,12 @@ After running `/setup-claude` on your project, you'll have `/finish-feature` ava
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | Project instructions for Claude — tech stack, key dirs, workflow rules |
+| `.claude/commands/brainstorm.md` | `/brainstorm` — force design-first via `brainstorming` skill |
+| `.claude/commands/write-plan.md` | `/write-plan` — write a decision-complete plan into `tasks/todo.md` |
+| `.claude/commands/execute-plan.md` | `/execute-plan` — implement the plan in batches with checkpoints |
 | `.claude/commands/finish-feature.md` | Branch finalization checklist (stack-aware) |
-| `.claude/commands/plan.md` | `/plan` command — create/refresh planning files |
-| `.claude/commands/status.md` | `/status` command — show task progress summary |
+| `.claude/commands/plan.md` | `/plan` — create/refresh planning files |
+| `.claude/commands/status.md` | `/status` — show task progress summary |
 | `.claude/docs/changelog-guide.md` | How to maintain `CHANGELOG.md` |
 | `.claude/docs/arch-changelog-guide.md` | How to log architectural decisions |
 | `tasks/todo.md` | Active task tracker (Goal / Plan / Results / Errors) |
@@ -103,3 +114,4 @@ After running `/setup-claude` on your project, you'll have `/finish-feature` ava
 ## Requirements
 
 - [Claude Code CLI](https://claude.ai/code) installed and configured
+

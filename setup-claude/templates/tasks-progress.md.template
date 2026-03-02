@@ -1,14 +1,3 @@
-# Progress Log
+<!-- Deprecated template path. -->
+<!-- Source of truth: templates/tasks/progress.md.template -->
 
-## Session: [DATE]
-
-### Work Log
-- [timestamp] [action taken]
-
-## Test Results
-| Command | Expected | Actual | Status |
-|---------|----------|--------|--------|
-
-## Error Log
-| Timestamp | Error | Attempt | Resolution |
-|-----------|-------|---------|------------|

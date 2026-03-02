@@ -1,14 +1,3 @@
-# /plan Command
+<!-- Deprecated template path. -->
+<!-- Source of truth: templates/commands/plan.md.template -->
 
-Create or refresh planning files and guide structured task planning.
-
-## What This Does
-1. Ensures `tasks/todo.md`, `tasks/findings.md`, `tasks/progress.md` exist (create from templates if missing)
-2. Opens `tasks/todo.md` and asks for the task goal + plan
-3. Reminds to log findings after every 2 exploration steps and errors immediately when encountered
-
-## Rules While Planning
-- **2-Action Rule**: after 2 view/search/explore operations, write findings to `tasks/findings.md`
-- **3-Strike Protocol**: if an action fails 3 times, stop and explain to the user what was tried
-- **Read Before Decide**: re-read `tasks/todo.md` before major decisions
-- **Log Everything**: errors go in `tasks/todo.md` Errors table immediately

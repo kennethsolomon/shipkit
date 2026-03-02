@@ -1,16 +1,3 @@
-# /status Command
+<!-- Deprecated template path. -->
+<!-- Source of truth: templates/commands/status.md.template -->
 
-Show a compact summary of current planning state.
-
-## Output Format
-Read `tasks/todo.md` and output:
-- Checked vs total items in `## Plan`
-- Whether `## Results` has content
-- Error count from `## Errors` table
-- Whether `tasks/findings.md` and `tasks/progress.md` exist
-
-Example:
-  Plan: 3/5 steps complete
-  Results: filled
-  Errors logged: 2
-  findings.md: ✅  progress.md: ✅
