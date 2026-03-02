@@ -3,3 +3,7 @@ brainstorming/
 find-skills/
 frontend-design/
 web-design-guidelines/
+
+# Python
+__pycache__/
+*.pyc
