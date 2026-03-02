@@ -40,35 +40,37 @@ Bootstrap or repair Claude Code infrastructure on any project.
 
 ### `/schema-migrate`
 
-Analyze Drizzle ORM schema changes safely before applying them.
+Analyze schema changes safely before applying them — works across 5 ORMs with auto-detection.
 
 **What it does:**
-- Scans your schema file, migration journal, and git diff
-- Classifies every change by risk (safe / caution / breaking)
-- Detects breaking changes: column drops, type changes, NOT NULL additions, renamed tables
-- Detects data issues: orphan rows, duplicate defaults, migration snapshot drift
-- Provides dialect-specific migration plans (SQLite, PostgreSQL, MySQL, Supabase)
-- Read-only — never auto-executes `db:push`, `db:migrate`, or `supabase push`
+- Auto-detects your ORM from project files (no configuration needed)
+- Scans schema files, migration history, and git diff
+- Classifies every change by risk (safe / careful / breaking)
+- Detects breaking changes: column drops, type changes, NOT NULL additions, renames
+- Detects data issues: orphan rows, duplicate defaults, NULL violations, migration drift
+- Provides ORM-specific and dialect-specific migration plans
+- Read-only — never auto-executes migrations
 
-**Usage:** Inside a Drizzle ORM project, run before any schema push:
+**Usage:** Inside any supported project, run before any schema push:
 ```
 /schema-migrate
 ```
 
 **Compatibility:**
 
-| Stack | Supported |
-|-------|-----------|
-| Node.js + Drizzle + SQLite | ✅ |
-| Node.js + Drizzle + PostgreSQL | ✅ |
-| Node.js + Drizzle + MySQL | ✅ |
-| Node.js + Drizzle + Supabase | ✅ |
-| Laravel + Eloquent (any DB) | ❌ — uses `php artisan migrate` instead |
-| Prisma (any DB) | ❌ — use `npx prisma migrate dev` instead |
-| Python + SQLAlchemy + Alembic | ❌ — use `alembic upgrade head` instead |
-| Ruby on Rails + ActiveRecord | ❌ — use `rails db:migrate` instead |
-
-> This skill is **Drizzle ORM only**. It reads `drizzle.config.ts` and `drizzle/meta/` — files that don't exist in other ORM setups.
+| Stack | Supported | Auto-Detected By |
+|-------|-----------|-----------------|
+| Node.js + Drizzle + SQLite | ✅ | `drizzle.config.ts` |
+| Node.js + Drizzle + PostgreSQL | ✅ | `drizzle.config.ts` |
+| Node.js + Drizzle + MySQL | ✅ | `drizzle.config.ts` |
+| Node.js + Drizzle + Supabase | ✅ | `drizzle.config.ts` + `supabase/config.toml` |
+| Node.js + Prisma (any DB) | ✅ | `prisma/schema.prisma` |
+| Node.js + Prisma + Supabase | ✅ | `prisma/schema.prisma` + `supabase/config.toml` |
+| Laravel + Eloquent + MySQL | ✅ | `composer.json` → `laravel/framework` |
+| Laravel + Eloquent + PostgreSQL | ✅ | `composer.json` → `laravel/framework` |
+| Laravel + Eloquent + SQLite | ✅ | `composer.json` → `laravel/framework` |
+| Python + SQLAlchemy + Alembic | ✅ | `alembic.ini` |
+| Ruby on Rails + ActiveRecord | ✅ | `Gemfile` → `rails` gem |
 
 ---
 
