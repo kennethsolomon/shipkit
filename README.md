@@ -8,11 +8,12 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ```bash
 git clone git@github.com:kennethsolomon/claude-skills.git ~/.agents/skills
+~/.agents/skills/scripts/link-claude-skills.sh
 ```
 
 > **Already have `~/.agents/skills`?** Clone elsewhere and copy the skill folders you want into `~/.agents/skills/`.
 
-That's it. Claude Code picks up skills automatically from `~/.agents/skills/`.
+This repo includes a helper script that symlinks all skills (folders containing `SKILL.md`) from `~/.agents/skills/` into `~/.claude/skills/`, which is where Claude Code discovers them.
 
 ---
 
