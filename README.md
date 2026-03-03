@@ -4,6 +4,24 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ---
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Skills](#skills)
+  - [`/setup-claude`](#setup-claude) — Bootstrap project infrastructure
+  - [`/claude-setup-tools`](#claude-setup-tools) — Create, diagnose, maintain CLAUDE.md
+  - [`/schema-migrate`](#schema-migrate) — Multi-ORM schema change analysis
+  - [`/commit`](#commit) — Smart conventional commits
+  - [`/write-tests`](#write-tests) — Test generation
+  - [`/debug`](#debug) — Structured debugging
+  - [`/review`](#review) — Self-review + PR creation
+  - [`/finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
+- [Recommended Workflow](#recommended-workflow)
+- [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
+- [Requirements](#requirements)
+
+---
+
 ## Installation
 
 ### Step 1: Clone and link (one-time setup)
