@@ -53,6 +53,5 @@ Checklist for finalizing a feature/bug-fix branch before merging.
       - Follows [LANGUAGE] conventions and style guide (see `CLAUDE.md`)
 
 6. **Next Steps**
-   - Push branch
-   - Open PR
+   - Run `/review` to self-review all changes, flag issues, and create a PR via `gh`
 
