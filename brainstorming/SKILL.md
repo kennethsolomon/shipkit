@@ -27,7 +27,12 @@ You MUST create a task for each of these items and complete them in order:
 2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
 4. **Present design** — in sections scaled to their complexity, get user approval after each section
-5. **Write design doc** — save to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit
+5. **Write findings** — Save the agreed-upon direction to `tasks/findings.md`:
+   - Problem statement
+   - Key decisions made
+   - Chosen approach + rationale
+   - Open questions (if any remain)
+   (Optionally also write a full design doc to docs/plans/YYYY-MM-DD-<topic>-design.md)
 6. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
@@ -83,9 +88,9 @@ digraph brainstorming {
 ## After the Design
 
 **Documentation:**
-- Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
+- Write the findings to `tasks/findings.md` (required — captures problem, decisions, approach, rationale)
+- Optionally: Create a full design doc at `docs/plans/YYYY-MM-DD-<topic>-design.md` for complex projects
+- Commit the findings and any design document to git
 
 **Implementation:**
 - Invoke the writing-plans skill to create a detailed implementation plan

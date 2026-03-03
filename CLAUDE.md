@@ -38,7 +38,7 @@ The complete development workflow from idea to merge:
 
 | Step | Command | What Happens |
 |------|---------|--------------|
-| 1. Explore | `/brainstorm` | Explore the idea, clarify requirements, propose approaches, get design approval |
+| 1. Explore | `/brainstorm` | Reads: findings.md (prior decisions), lessons.md (known patterns). Clarifies requirements, proposes 2-3 approaches with trade-offs, gets design approval. Writes: findings.md |
 | 1a. UI Design | `/frontend-design` | Design the UI (no code yet—mockups, layouts, visual direction only) |
 | 2. Plan | `/write-plan` | Write a decision-complete plan incorporating both brainstorm findings AND frontend design |
 | 3. Implement | `/execute-plan` | Implement the plan in small batches with progress tracking |
