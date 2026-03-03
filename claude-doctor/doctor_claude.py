@@ -6,10 +6,72 @@ import sys
 from pathlib import Path
 
 # Add lib to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent))
+
+# Add setup-optimizer lib to path for shared discovery modules
+sys.path.insert(0, str(Path(__file__).parent.parent / "setup-optimizer" / "lib"))
 
 from lib.detect import detect_project
 from lib.sidecar import get_target_file, add_marker, count_lines, extract_sections
+
+# Import discovery modules from setup-optimizer
+try:
+    from discover import discover_directories, discover_documentation, discover_workflows
+    from enrich import generate_directories_section, generate_documentation_section, generate_workflows_section
+    DISCOVERY_AVAILABLE = True
+except ImportError:
+    DISCOVERY_AVAILABLE = False
+
+
+def _parse_claude_sections(content: str) -> dict:
+    """Parse CLAUDE.md content into sections.
+
+    Returns:
+        Dict mapping section name to section content
+    """
+    sections = {}
+    current_section = None
+    section_content = []
+
+    for line in content.split('\n'):
+        if line.startswith('## '):
+            # New section
+            if current_section:
+                sections[current_section] = '\n'.join(section_content).strip()
+            current_section = line[3:].strip()
+            section_content = []
+        elif line.startswith('<!-- Generated'):
+            # End of content
+            if current_section:
+                sections[current_section] = '\n'.join(section_content).strip()
+            break
+        elif current_section:
+            section_content.append(line)
+
+    return sections
+
+
+def _extract_items_from_section(content: str, bullet_type='bullet') -> list:
+    """Extract bulleted or inline items from section content.
+
+    Returns:
+        List of items
+    """
+    items = []
+    for line in content.split('\n'):
+        line = line.strip()
+        if bullet_type == 'bullet' and line.startswith('-'):
+            item = line[1:].strip()
+            # Extract just the key part (before dash or colon)
+            if ' - ' in item:
+                item = item.split(' - ')[0].strip()
+            if ' - ' in item:
+                item = item.split('`')[1] if '`' in item else item
+            items.append(item)
+        elif bullet_type == 'code' and ('npm run' in line or 'make' in line):
+            items.append(line)
+
+    return items
 
 
 def diagnose_claude_md(file_path: Path = None) -> dict:
@@ -34,9 +96,11 @@ def diagnose_claude_md(file_path: Path = None) -> dict:
     content = file_path.read_text()
     line_count = count_lines(content)
     sections = extract_sections(content)
+    parsed_sections = _parse_claude_sections(content)
 
     issues = []
     suggestions = []
+    discoveries = {}
 
     # Check line count
     if line_count > 150:
@@ -68,6 +132,78 @@ def diagnose_claude_md(file_path: Path = None) -> dict:
     if "Environment" not in sections:
         suggestions.append("Add an 'Environment Variables' section for setup instructions")
 
+    # Discovery-based diagnostics
+    if DISCOVERY_AVAILABLE:
+        try:
+            project_root = file_path.parent
+            config = detect_project(project_root)
+
+            # Discover actual project structure
+            discovered_dirs = discover_directories(project_root)
+            discovered_docs = discover_documentation(project_root)
+            discovered_workflows = discover_workflows(project_root)
+
+            discoveries['directories'] = discovered_dirs
+            discoveries['documentation'] = discovered_docs
+            discoveries['workflows'] = discovered_workflows
+
+            # Compare documented vs discovered directories
+            documented_dirs = set()
+            if "Key Directories" in sections or "Project Structure" in sections:
+                section_name = "Key Directories" if "Key Directories" in sections else "Project Structure"
+                section_content = parsed_sections.get(section_name, "")
+                # Extract directory names from section
+                for line in section_content.split('\n'):
+                    if '/' in line:
+                        # Extract directory name (e.g., "src/" or "src -")
+                        parts = line.split('/')
+                        if len(parts) > 0:
+                            dir_name = parts[0].strip().split()[-1] if parts[0].strip() else ''
+                            if dir_name and dir_name not in ['', '-', '|']:
+                                documented_dirs.add(dir_name)
+
+            # Check for undocumented directories
+            undocumented = set(discovered_dirs.keys()) - documented_dirs
+            if undocumented and len(undocumented) > 0:
+                # Only flag significant directories
+                significant = [d for d in undocumented if d not in ['.github', 'config']]
+                if significant:
+                    issues.append(f"Project has undocumented directories: {', '.join(significant)}")
+                    suggestions.append(f"Add documentation for: {', '.join(significant)}")
+
+            # Check for undocumented documentation
+            if discovered_docs:
+                doc_count = len(discovered_docs)
+                doc_section_exists = "Documentation" in sections or "Resources" in sections
+                if not doc_section_exists and doc_count > 0:
+                    issues.append(f"Found {doc_count} documentation files but no documentation section")
+                    suggestions.append("Add a 'Documentation & Resources' section linking to docs")
+
+            # Check for workflow documentation
+            if discovered_workflows and "Development" in sections:
+                dev_section = parsed_sections.get("Development", "")
+                npm_scripts = discovered_workflows.get('npm', [])
+                if npm_scripts:
+                    # Check if custom scripts are documented
+                    custom_scripts = [s for s in npm_scripts if s not in ['test', 'build']]
+                    undocumented_scripts = [s for s in custom_scripts if s not in dev_section]
+                    if undocumented_scripts:
+                        suggestions.append(f"Document additional npm scripts: {', '.join(undocumented_scripts)}")
+
+            # Stack-specific suggestions
+            if config.framework:
+                framework_lower = config.framework.lower()
+                if 'react' in framework_lower and 'component' not in content.lower():
+                    suggestions.append("Consider adding a 'Components & Architecture' section for React projects")
+                elif 'django' in framework_lower and 'model' not in content.lower():
+                    suggestions.append("Consider adding a 'Models & Database' section for Django projects")
+                elif 'fastapi' in framework_lower and 'endpoint' not in content.lower():
+                    suggestions.append("Consider adding an 'API Endpoints' section for API projects")
+
+        except Exception:
+            # If discovery fails, continue with basic checks
+            pass
+
     # Generate improved version
     improved = _generate_improved_claude(file_path)
 
@@ -79,6 +215,7 @@ def diagnose_claude_md(file_path: Path = None) -> dict:
         "issues": issues,
         "suggestions": suggestions,
         "improved_line_count": count_lines(improved),
+        "discoveries": discoveries,
     }
 
 
@@ -145,6 +282,27 @@ def main():
     print(f"📋 Diagnosis Report for {report['file']}\n")
     print(f"📊 Lines: {report['line_count']}/150")
     print(f"📑 Sections: {', '.join(report['sections'])}\n")
+
+    # Show discovered project structure
+    discoveries = report.get("discoveries", {})
+    if discoveries:
+        print("🔍 Project Structure Detected:")
+        if discoveries.get('directories'):
+            dirs = len(discoveries['directories'])
+            print(f"   📂 {dirs} directories: {', '.join(discoveries['directories'].keys())}")
+        if discoveries.get('documentation'):
+            docs = len(discoveries['documentation'])
+            print(f"   📚 {docs} documentation files")
+        if discoveries.get('workflows'):
+            workflows = discoveries['workflows']
+            workflow_desc = []
+            if 'npm' in workflows:
+                workflow_desc.append(f"npm ({len(workflows['npm'])} scripts)")
+            if 'make' in workflows:
+                workflow_desc.append(f"Makefile ({len(workflows['make'])} targets)")
+            if workflows:
+                print(f"   🔧 Workflows: {', '.join(workflow_desc)}")
+        print()
 
     if report["issues"]:
         print("⚠️  Issues found:")
