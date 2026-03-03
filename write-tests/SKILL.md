@@ -13,6 +13,9 @@ Detect the project's testing framework, read existing test patterns, analyze tar
 
 Bash, Read, Write, Edit, Glob, Grep
 
+**When the detected framework is `@playwright/test`**, also use:
+mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_run_code, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_take_screenshot
+
 ## Steps
 
 You MUST complete these steps in order:
@@ -110,6 +113,38 @@ Generate the complete test file. Follow these principles:
 - Include setup/teardown if needed
 
 Write the file using the Write or Edit tool.
+
+### 6b. Playwright-Specific: Capture Page State for Assertions (conditional)
+
+**Only if the detected framework is `@playwright/test`:**
+
+Before finalizing test assertions, use the Playwright MCP plugin to inspect the live page state. This produces more accurate selectors and assertions than guessing from source code alone.
+
+1. **Navigate to the target URL** (from dev server or test fixture):
+   ```
+   mcp__plugin_playwright_playwright__browser_navigate({ url: "http://localhost:[PORT]/[path]" })
+   ```
+
+2. **Capture accessibility snapshot** — use the ARIA tree to derive role-based selectors (`getByRole`, `getByLabel`, `getByText`) that match Playwright best practices:
+   ```
+   mcp__plugin_playwright_playwright__browser_snapshot()
+   ```
+
+3. **Screenshot** — use as a visual reference to confirm the correct page is loaded:
+   ```
+   mcp__plugin_playwright_playwright__browser_take_screenshot({ type: "png" })
+   ```
+
+4. **Run a quick assertion inline** (optional, for complex interactions):
+   ```
+   mcp__plugin_playwright_playwright__browser_run_code({
+     code: async (page) => { /* assertion or interaction */ }
+   })
+   ```
+
+Use the snapshot output to write assertions. Prefer `getByRole` and `getByLabel` over CSS selectors. Skip this step if no dev server is running — fall back to writing tests from source code inspection only.
+
+---
 
 ### 7. Run Tests
 

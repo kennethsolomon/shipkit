@@ -24,7 +24,7 @@ Do NOT jump to fixing code before you understand the bug. No code changes until 
 
 ## Allowed Tools
 
-Bash, Read, Write, Edit, Glob, Grep
+Bash, Read, Write, Edit, Glob, Grep, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_network_requests, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_snapshot
 
 ## Steps
 
@@ -65,6 +65,10 @@ Correlate the bug timeline with recent changes. Did the bug start after a specif
 
 ### 4. Reproduce the Bug
 
+**Determine the bug surface first:**
+
+#### A. Server / CLI / Non-Browser Bug
+
 Run the specific command, test, or action that triggers the bug. Capture the full output.
 
 ```bash
@@ -72,7 +76,40 @@ Run the specific command, test, or action that triggers the bug. Capture the ful
 [specific command that triggers the bug]
 ```
 
-If you cannot reproduce:
+#### B. Browser / UI Bug
+
+If the bug is visual, involves JavaScript errors, or requires a browser to reproduce, use the Playwright MCP plugin instead of Bash:
+
+1. **Navigate to the page**:
+   ```
+   mcp__plugin_playwright_playwright__browser_navigate({ url: "http://localhost:[PORT]/[path]" })
+   ```
+
+2. **Capture JS errors** (most useful for runtime exceptions):
+   ```
+   mcp__plugin_playwright_playwright__browser_console_messages({ level: "error" })
+   ```
+
+3. **Inspect failed network requests** (useful for API/fetch failures):
+   ```
+   mcp__plugin_playwright_playwright__browser_network_requests({ includeStatic: false })
+   ```
+
+4. **Screenshot the visual state** to document what the bug looks like:
+   ```
+   mcp__plugin_playwright_playwright__browser_take_screenshot({ type: "png" })
+   ```
+
+5. **Capture accessibility snapshot** for structural/DOM-level inspection:
+   ```
+   mcp__plugin_playwright_playwright__browser_snapshot()
+   ```
+
+Use the console errors and network failures as primary evidence in Step 6 (Hypotheses).
+
+---
+
+If you cannot reproduce (either path):
 - Check environment differences
 - Check for race conditions or timing issues
 - Ask the user for exact reproduction steps
