@@ -22,8 +22,35 @@ Checklist for finalizing a feature/bug-fix branch before merging.
    - If architecture changed, ensure an entry exists in the architectural change log directory referenced by `CLAUDE.md`.
    - Follow `.claude/docs/arch-changelog-guide.md`
 
-5. **Verification**
-   - Run lint/build/test commands for this repo (see `CLAUDE.md`)
+5. **Verification** (with Test Checklist for Reviewers)
+
+   Tests should have been created during `/execute-plan`. Verify:
+
+   a) **Automated Tests**
+      - Execute: `[TEST_COMMAND]`
+      - Verify all tests pass with no failures
+      - Check test coverage (target: >80% for new code in `[LANGUAGE]` projects)
+      - No skipped tests (`test.skip`, `it.skip`, `@skip`, etc.)
+      - Run other CI checks: lint (`npm run lint` or equivalent), build (`npm run build` or equivalent)
+
+   b) **Manual Testing - [FRAMEWORK] / [TESTING]**
+      - For frontend ([FRAMEWORK]): Render the component/page in browser, verify state updates work correctly, test all user interactions (clicks, form inputs, navigation), verify conditional rendering, check edge cases and error states
+      - For backend/API ([FRAMEWORK]): Test HTTP status codes and responses, verify request/response bodies match spec, test error cases and input validation, check database transactions/state, verify authentication/authorization if applicable
+      - For CLI/desktop ([FRAMEWORK]): Test command-line arguments and flags, verify output format and readability, test error messages and help text, check file I/O operations
+      - Using [TESTING] framework: Verify test structure matches project conventions, assertions are clear and specific, setup/teardown is properly handled
+
+   c) **Regression Testing**
+      - Test related existing functionality to ensure no breakage
+      - For [FRAMEWORK] projects: check related components/endpoints/commands work correctly
+      - Verify no new console errors, warnings, or debug statements
+      - Confirm existing tests still pass
+
+   d) **Code Quality Checks**
+      - No hardcoded test data, credentials, or environment-specific values in production code
+      - Proper error handling and validation
+      - No debugging code (`console.log`, `debugger`, `pdb`, `print` statements, etc.)
+      - Comments explain *why*, not *what*
+      - Follows [LANGUAGE] conventions and style guide (see `CLAUDE.md`)
 
 6. **Next Steps**
    - Push branch
