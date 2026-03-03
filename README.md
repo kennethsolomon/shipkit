@@ -12,6 +12,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/claude-setup-tools`](#claude-setup-tools) — Create, diagnose, maintain CLAUDE.md
   - [`/schema-migrate`](#schema-migrate) — Multi-ORM schema change analysis
   - [`/commit`](#commit) — Smart conventional commits
+  - [`/frontend-design`](#frontend-design) — Production-grade UI generation with browser verification
   - [`/write-tests`](#write-tests) — Test generation
   - [`/debug`](#debug) — Structured debugging
   - [`/review`](#review) — Self-review + PR creation
@@ -243,6 +244,26 @@ vim CLAUDE.md
 
 ---
 
+### `/frontend-design`
+
+Create distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics — with built-in browser verification via the Playwright MCP plugin.
+
+**What it does:**
+- Commits to a bold aesthetic direction before writing a single line of code (brutalist, maximalist, refined minimal, retro-futuristic, etc.)
+- Generates production-grade HTML/CSS/JS, React, or Vue code with distinctive typography, color, motion, and spatial composition
+- Avoids clichéd choices (Inter/Roboto, purple gradients, cookie-cutter layouts)
+- **Browser Verification** (when a dev server is running): after generating code, automatically navigates to the URL, takes a screenshot, tests responsive breakpoints (375px / 768px / 1440px), and checks the console for JS errors — presenting visual confirmation inline
+
+**Usage:**
+```
+/frontend-design build a landing page for a design agency
+/frontend-design create a dark dashboard with data visualizations
+```
+
+> Requires the `playwright@claude-plugins-official` plugin for browser verification. Without it, code generation still works — only the screenshot step is skipped.
+
+---
+
 ### `/schema-migrate`
 
 Analyze schema changes safely before applying them — works across 5 ORMs with auto-detection.
@@ -304,10 +325,11 @@ Smart conventional commits with auto-classification and approval workflow.
 Generate comprehensive test files matching your project's framework and conventions.
 
 **What it does:**
-- Auto-detects testing framework (Vitest, Jest, pytest, Go testing, Rust, Mocha, PHPUnit)
+- Auto-detects testing framework (Vitest, Jest, pytest, Go testing, Rust, Mocha, PHPUnit, **Playwright**)
 - Reads 1-2 existing test files to learn your project's patterns and style
 - Analyzes target code for test cases: happy path, edge cases, error handling, branches
 - Writes test file following project conventions (co-located, `tests/` dir, or `__tests__/`)
+- **Playwright projects**: uses `browser_snapshot` to capture the live ARIA tree for role-based selector generation (`getByRole`, `getByLabel`) before writing assertions
 - Runs the tests and fixes failures (up to 3 attempts)
 - Falls back to built-in templates if no existing tests found
 
@@ -326,6 +348,8 @@ Structured bug investigation with hypothesis tracking and documentation.
 **What it does:**
 - Follows a disciplined process: reproduce → isolate → hypothesize → verify → fix
 - Hard gate: no code changes until a hypothesis is confirmed
+- **Browser/UI bugs**: uses Playwright MCP to navigate to the page, capture JS console errors, inspect failed network requests, and screenshot the visual state — all as primary evidence for hypotheses
+- **Server/CLI bugs**: reproduces via Bash as before
 - Forms 2-3 ranked hypotheses, tests each systematically
 - Checks recent git changes and existing project knowledge
 - Proposes minimal fix and waits for approval
@@ -432,3 +456,4 @@ The complete development workflow from idea to merge:
 - [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/review` PR creation
 - Python 3 — required for `/setup-claude` deterministic bootstrap script
 - Git — required for `/commit`, `/review`, `/debug`, and `/finish-feature`
+- `playwright@claude-plugins-official` plugin — required for browser verification in `/frontend-design`, browser reproduction in `/debug`, and live-page assertion capture in `/write-tests` (Playwright projects only). Enable in Claude Code settings under Plugins.
