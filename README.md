@@ -740,7 +740,7 @@ After running `/setup-claude` on your project, you'll have `/finish-feature` ava
 - Git branch validation (feature/fix/chore naming)
 - Branch summary review (changes and commits)
 - CHANGELOG.md entry verification
-- Architectural changes documentation
+- **Intelligent architectural changes detection** (auto-generate arch log drafts)
 
 **Comprehensive Test Verification (for reviewers):**
 - ✅ **Automated Tests**: Execute test suite, verify >80% coverage, no skipped tests
@@ -752,6 +752,45 @@ The test checklist is **framework-aware** — generated with guidance specific t
 - **React + Vitest**: Component rendering, state updates, user interactions
 - **FastAPI + pytest**: HTTP status codes, request/response validation, database state
 - **Express + Jest**: API endpoints, middleware, error handling
+
+#### Smart Architectural Change Detection
+
+When you run `/finish-feature`, Step 4 automatically:
+
+1. **Scans your diff** for architectural changes using the `detect_arch_changes.py` script
+2. **Analyzes patterns** like control flow changes, data flow changes, skill integrations
+3. **Auto-generates** a markdown draft for the architecture log (80% complete)
+4. **Shows you the draft** with TODO sections for you to fill in:
+   - What specifically changed in the architecture?
+   - Before/after explanation
+   - Verification checklist
+
+**Example: Automatic Detection**
+
+```bash
+$ /finish-feature
+...
+Step 4: Check for Architectural Changes
+→ Running auto-detector...
+✓ Detected: Data Flow + Control Flow changes
+✓ Generated draft: .claude/docs/architectural_change_log/2026-03-03-context-threading-enhancement.md
+
+Edit the draft to fill in:
+  [ ] Detailed Changes section
+  [ ] Before & After description
+  [ ] Review verification checklist
+
+Then: git add .claude/docs/architectural_change_log/ && git commit -m "docs: add arch log"
+```
+
+**What Gets Detected:**
+- Skill files modified → Control Flow changes
+- Template changes → Pattern changes
+- findings.md/lessons.md reads/writes → Data Flow changes
+- Documentation updates → Integration/documentation changes
+- New inter-skill connections → System architecture changes
+
+No more manual guessing about whether something is an "architectural change" — the detector analyzes your actual code and tells you.
 
 ---
 
