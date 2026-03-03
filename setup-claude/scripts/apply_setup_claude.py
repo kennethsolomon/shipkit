@@ -319,18 +319,11 @@ def apply(
             else:
                 action, p = _write_file_if_missing(dest_path, rendered)
         elif mode == "generated":
-            if not update_generated:
-                if dry_run:
-                    action = _plan_file_if_missing(dest_path)
-                    p = dest_path
-                else:
-                    action, p = _write_file_if_missing(dest_path, rendered)
+            if dry_run:
+                action = _plan_file_if_generated(dest_path, rendered)
+                p = dest_path
             else:
-                if dry_run:
-                    action = _plan_file_if_generated(dest_path, rendered)
-                    p = dest_path
-                else:
-                    action, p = _write_file_if_generated(dest_path, rendered)
+                action, p = _write_file_if_generated(dest_path, rendered)
         else:
             action, p = ("skipped", dest_path)
 
