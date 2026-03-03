@@ -27,12 +27,20 @@ mistakes here rather than in review.
 
 4. **Check for Architectural Changes**
 
-   Run the auto-detector to see if architectural changes were made:
+   The auto-detector scans for architecture-relevant changes:
+   - Schema/database changes (migrations, models, databases)
+   - API/route structure changes (endpoints, controllers)
+   - Component/module organization changes
+   - Configuration changes affecting architecture
+   - New subsystems or major refactors
+   - Dependency changes
+
+   Run to see what would be detected:
    ```bash
    python3 .claude/../../../setup-claude/scripts/detect_arch_changes.py --dry-run
    ```
 
-   If architectural changes detected (or script suggests creating an entry):
+   If architectural changes detected:
    a) **Auto-generate the draft:**
       ```bash
       python3 .claude/../../../setup-claude/scripts/detect_arch_changes.py
@@ -41,9 +49,12 @@ mistakes here rather than in review.
 
    b) **Review and edit the draft:**
       - Open the generated file
-      - Fill in: "Detailed Changes", "Before & After" sections
-      - Verify the summary and impact are accurate
-      - Check the verification checklist
+      - Fill in [TODO] sections:
+        - Detailed Changes: What specifically changed?
+        - Before & After: Show the comparison
+        - Affected Components: What parts of system are impacted?
+        - Migration/Compatibility: Any breaking changes?
+      - Verify the auto-filled sections (Summary, Type, What Changed, Impact)
 
    c) **Stage and commit the arch log:**
       ```bash

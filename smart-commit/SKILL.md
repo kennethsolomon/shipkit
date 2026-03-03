@@ -24,7 +24,13 @@ Bash, Read
 
 You MUST complete these steps in order:
 
-### 1. Check Branch Safety
+### 1. Read Progress Context (Optional)
+
+If `tasks/progress.md` exists, read the most recent Work Log entry. Use this to
+understand *why* the staged changes were made — include a concise rationale in
+the commit body when the reason isn't obvious from the diff alone.
+
+### 2. Check Branch Safety
 
 ```bash
 git branch --show-current
@@ -36,7 +42,7 @@ If the current branch is `main` or `master`, warn the user:
 
 Wait for confirmation before proceeding. If denied, stop.
 
-### 2. Analyze Working Tree
+### 3. Analyze Working Tree
 
 ```bash
 git status --short
@@ -45,7 +51,7 @@ git diff --staged --stat
 
 Report what's staged vs unstaged.
 
-### 3. Handle Nothing Staged
+### 4. Handle Nothing Staged
 
 If nothing is staged (`git diff --staged` is empty):
 
@@ -55,7 +61,7 @@ If nothing is staged (`git diff --staged` is empty):
 - Stage the selected files with `git add`
 - If the user wants to stage everything, use `git add` with specific file paths (never `git add -A`)
 
-### 4. Read Full Diff
+### 5. Read Full Diff
 
 ```bash
 git diff --staged
@@ -63,7 +69,7 @@ git diff --staged
 
 Read the full diff to understand the nature of the changes.
 
-### 5. Auto-Classify Commit Type
+### 6. Auto-Classify Commit Type
 
 Classify based on what changed:
 
@@ -82,7 +88,7 @@ Classify based on what changed:
 
 If changes span multiple types, use the most significant one (feat > fix > refactor > others).
 
-### 6. Detect Scope
+### 7. Detect Scope
 
 Determine scope from file paths:
 
@@ -90,7 +96,7 @@ Determine scope from file paths:
 - Single file type: use the domain (e.g., `config`, `deps`)
 - Cross-cutting: omit scope
 
-### 7. Generate Commit Message
+### 8. Generate Commit Message
 
 Format: `type(scope): description`
 
@@ -110,7 +116,7 @@ feat(auth): add JWT refresh token rotation
 - Invalidate old tokens on rotation
 ```
 
-### 8. Present for Approval
+### 9. Present for Approval
 
 Show the generated message and ask the user to choose:
 
@@ -119,7 +125,7 @@ Show the generated message and ask the user to choose:
 3. **Split** — help break into multiple smaller commits
 4. **Cancel** — abort
 
-### 9. Execute Commit
+### 10. Execute Commit
 
 Use a heredoc to preserve formatting:
 
@@ -138,7 +144,7 @@ After committing, show the result:
 git log -1 --oneline
 ```
 
-### 10. Continue?
+### 11. Continue?
 
 Check if there are remaining unstaged changes:
 
@@ -148,4 +154,4 @@ git status --short
 
 If changes remain, ask: "There are more changes. Stage and commit another batch?"
 
-If yes, go back to step 3. If no, done.
+If yes, go back to step 4. If no, done.

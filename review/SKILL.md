@@ -25,9 +25,14 @@ You MUST complete these steps in order:
 
 ```
 CLAUDE.md                  — Coding standards, conventions, known patterns
+tasks/lessons.md           — Recurrent bug patterns for this project (if exists)
 ```
 
 Understand what "correct" looks like for this project.
+
+If `tasks/lessons.md` exists, read it in full. Use each active lesson's **Bug** field
+as an additional targeted check during diff analysis in Steps 3–5 — treat each lesson
+as a known failure mode to explicitly scan for.
 
 ### 2. Collect All Changes
 

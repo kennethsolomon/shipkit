@@ -68,11 +68,15 @@ This directory is referenced by `CLAUDE.md` and never cleared (similar to `tasks
 
 **Location:** `setup-claude/scripts/detect_arch_changes.py`
 
-**What it detects:**
-- Skill files modified (SKILL.md changes) → Control Flow
-- Template changes (.template files) → Pattern changes
-- Context file reads/writes → Data Flow
-- Documentation updates → Integration/docs changes
+**What it detects** (works for ANY project):
+- **Schema/Database changes** — migrations, schema.prisma, models/ → Data Flow
+- **API/Route changes** — routes, endpoints, controllers, middleware → Control Flow
+- **Component/Module changes** — src/components/, pages/, lib/ → Pattern
+- **Subsystem changes** — new top-level directories → Subsystem
+- **Configuration changes** — config files that affect architecture → Configuration
+- **Dependency changes** — package.json, requirements.txt → Integration
+- **Context integration** — findings.md, lessons.md reads/writes → Integration
+- **Documentation** — README, docs/ updates → Documentation
 
 **Usage:**
 ```bash
@@ -84,6 +88,23 @@ python3 detect_arch_changes.py
 
 # Debug: show analysis details:
 python3 detect_arch_changes.py --show-analysis
+```
+
+**Example detections:**
+```
+Next.js project:
+  → Changes to src/components/ → Component Architecture Update
+  → Schema changes in prisma/ → Data Model Refactor
+  → API routes in app/api/ → API Structure Enhancement
+
+Django project:
+  → Changes to models.py → Data Model Refactor
+  → Changes to urls.py → API Structure Enhancement
+  → New apps/ → Subsystem Refactor
+
+Python project:
+  → Changes to requirements.txt → Dependency Upgrade
+  → Changes to src/core/ → Component Architecture Update
 ```
 
 ## Benefits of Architectural Logging

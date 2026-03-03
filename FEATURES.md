@@ -186,17 +186,19 @@ Session 4: /review reads lesson → checks diff against bug pattern
 **The Solution:**
 `/finish-feature` step 4 now automatically:
 
-1. **Analyzes git diff** using `detect_arch_changes.py` script
-2. **Detects patterns:**
-   - Control Flow (skill interactions, execution order)
-   - Data Flow (context threading, findings/lessons reads/writes)
-   - Pattern (template changes, new conventions)
-   - Integration (new connections between skills)
-   - Subsystem (major refactors)
+1. **Analyzes git diff** using `detect_arch_changes.py` script (works for ANY project)
+2. **Detects architecture-relevant changes:**
+   - **Schema/Database** (migrations, models, databases) → Data Flow
+   - **API/Routes** (endpoints, controllers, middleware) → Control Flow
+   - **Components/Modules** (src/components, pages, lib) → Pattern
+   - **Subsystems** (new top-level directories, major refactors) → Subsystem
+   - **Configuration** (config files affecting architecture) → Configuration
+   - **Dependencies** (package.json, requirements.txt) → Integration
+   - **Context Integration** (findings.md, lessons.md reads/writes) → Integration
 
 3. **Auto-generates markdown draft** (80% complete):
-   - Auto-populated: Summary, type, files, statistics, impact
-   - TODO sections: Detailed changes, before/after, verification
+   - Auto-populated: Summary, type, files affected, statistics, impact
+   - TODO sections: Detailed changes, before/after, affected components, migration notes
 
 4. **User reviews/edits** the remaining 20%
 5. **User commits** the final arch log
@@ -205,14 +207,24 @@ Session 4: /review reads lesson → checks diff against bug pattern
 - No guessing: script analyzes code, tells you if arch changed
 - 80% already drafted: faster to complete
 - Consistent format: same structure across all projects
+- Works for ANY project: Next.js, Django, FastAPI, Python, Go, etc.
 - Arch logs actually get created: not skipped
 
 **Detection Examples:**
 ```
-Modified SKILL.md → "Control Flow change"
-Added findings.md reads → "Data Flow: context threading"
-Updated .template files → "Pattern change"
-Skill interaction changed → "Integration change"
+Next.js project:
+  Changes to src/components/ → "Component Architecture Update"
+  Schema.prisma changed → "Data Model Refactor"
+  API routes changed → "API Structure Enhancement"
+
+Django project:
+  Models.py modified → "Data Model Refactor"
+  URLs.py changed → "API Structure Enhancement"
+  New apps/ directory → "Subsystem Refactor"
+
+Python project:
+  requirements.txt → "Dependency Upgrade"
+  src/core/ refactored → "Component Architecture Update"
 ```
 
 ---

@@ -50,9 +50,12 @@ Check for existing knowledge:
 CLAUDE.md                  — Project conventions, known issues
 tasks/findings.md          — Previous debugging sessions, known bugs
 tasks/lessons.md           — Patterns that caused issues before
+tasks/progress.md          — Recent work log and error log
 ```
 
 **If `tasks/lessons.md` exists, read it in full.** For each active lesson, apply its prevention rule to your investigation — treat lessons as standing constraints, not just history. For example: if a lesson says "always check env vars before checking application code", do that first.
+
+**If `tasks/progress.md` exists**, scan the Error Log for failures near the bug's reported time — they often share a root cause with the current bug.
 
 Check if this bug (or something similar) has been investigated before.
 

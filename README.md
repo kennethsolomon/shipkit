@@ -173,9 +173,9 @@ PHASE 8: FINALIZE
 │ • Verifies git branch + naming                                          │
 │ • Checks CHANGELOG.md updated                                           │
 │ • AUTO-DETECTS architectural changes:                                   │
-│   → Scans diff for SKILL.md, template, data flow changes                │
-│   → Auto-generates arch log draft (.claude/docs/...)                    │
-│   → User reviews/edits the generated arch log                           │
+│   → Analyzes diff for: schema, API routes, components, subsystems       │
+│   → Auto-generates arch log draft (80% complete)                        │
+│   → User reviews/edits [TODO] sections                                  │
 │   → User commits: git add .claude/docs/... && git commit                │
 │ • Verifies tests pass, coverage >80%                                    │
 │ • Scans diff against lessons.md Bug patterns (final gate)              │
