@@ -22,13 +22,16 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## Table of Contents
 
+- [What's New (March 2026)](#-whats-new-march-2026)
 - [Installation](#installation)
 - [Why This Workflow](#why-this-workflow)
+- [Complete Workflow Flow](#complete-workflow-flow)
 - [Tutorial — Building a Feature End to End](#tutorial--building-a-feature-end-to-end)
 - [New User Quick Start](#new-user-quick-start)
 - [Recommended Workflow](#recommended-workflow)
 - [Workflow Scenarios: When to Use Each Skill](#workflow-scenarios-when-to-use-each-skill)
 - [Skills](#skills)
+- **[→ View Complete Features Guide](./FEATURES.md)** — Context threading, auto-detection, lessons compounding
   - [`/setup-claude`](#setup-claude) — Bootstrap project infrastructure
   - [`/claude-setup-tools`](#claude-setup-tools) — Create, diagnose, maintain CLAUDE.md
   - [`/schema-migrate`](#schema-migrate) — Multi-ORM schema change analysis
