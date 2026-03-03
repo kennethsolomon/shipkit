@@ -26,8 +26,32 @@ mistakes here rather than in review.
    - Follow `.claude/docs/changelog-guide.md`
 
 4. **Check for Architectural Changes**
-   - If architecture changed, ensure an entry exists in the architectural change log directory referenced by `CLAUDE.md`.
-   - Follow `.claude/docs/arch-changelog-guide.md`
+
+   Run the auto-detector to see if architectural changes were made:
+   ```bash
+   python3 .claude/../../../setup-claude/scripts/detect_arch_changes.py --dry-run
+   ```
+
+   If architectural changes detected (or script suggests creating an entry):
+   a) **Auto-generate the draft:**
+      ```bash
+      python3 .claude/../../../setup-claude/scripts/detect_arch_changes.py
+      ```
+      This creates a markdown draft in `.claude/docs/architectural_change_log/`
+
+   b) **Review and edit the draft:**
+      - Open the generated file
+      - Fill in: "Detailed Changes", "Before & After" sections
+      - Verify the summary and impact are accurate
+      - Check the verification checklist
+
+   c) **Stage and commit the arch log:**
+      ```bash
+      git add .claude/docs/architectural_change_log/
+      git commit -m "docs: add architectural changelog entry"
+      ```
+
+   If no architectural changes detected: skip to step 5.
 
 5. **Verification** (with Test Checklist for Reviewers)
 
