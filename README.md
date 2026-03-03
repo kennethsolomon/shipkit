@@ -106,12 +106,20 @@ PHASE 1: DESIGN (No Code)
 │ • Writes: tasks/findings.md (design decision + rationale)               │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /frontend-design                                                         │
+│ • Reads: tasks/findings.md (brainstorm output)                          │
+│ • Reads: tasks/lessons.md (UI/UX constraints)                           │
+│ • Produces: UI mockups, layouts, visual direction (NO CODE)             │
+│ • Writes: findings.md (design artifacts + decisions)                    │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
 PHASE 2: PLAN (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ /write-plan                                                              │
-│ • Reads: tasks/findings.md (design brief)                               │
+│ • Reads: tasks/findings.md (brainstorm + frontend-design outputs)       │
 │ • Reads: tasks/lessons.md (constraint: what not to do)                  │
-│ • Writes: tasks/todo.md (decision-complete checklist)                   │
+│ • Writes: tasks/todo.md (decision-complete checklist for BOTH)          │
 │ • Applies lessons as plan constraints                                   │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
@@ -230,12 +238,26 @@ This is an opinionated workflow. It will feel slower at first. It is faster over
 A concrete walkthrough: *Add user avatar upload to a Next.js app.*
 
 ```
-Step 1 — Design: /brainstorm add user avatar upload
-→ Reads existing tasks/findings.md (none yet); asks clarifying questions;
+Step 1 — Explore: /brainstorm add user avatar upload
+→ Reads existing tasks/findings.md (none yet); asks clarifying questions:
+  "S3 or server storage? Max file size? Instant crop or manual?"
   saves approach decision to tasks/findings.md
 
+Step 1a — Design: /frontend-design
+→ Reads findings.md (brainstorm decision: S3, 10MB, instant crop);
+  Creates UI mockups: upload form, progress indicator, crop interface
+  (no code yet—just design artifacts)
+  Writes design to tasks/findings.md
+
 Step 2 — Plan: /write-plan
-→ Reads findings.md + lessons.md, writes 8 checkbox steps to tasks/todo.md
+→ Reads findings.md (both brainstorm + frontend-design outputs);
+  Reads lessons.md + CLAUDE.md;
+  Writes unified 8-step plan to tasks/todo.md:
+  [ ] S3 bucket configuration + upload endpoint
+  [ ] Frontend upload form component (from design)
+  [ ] Crop preview component (from design)
+  [ ] Tests for endpoint + components
+  [ ] Manual testing on staging
 
 Step 3 — Implement: /execute-plan
 → Reads lessons.md + progress.md error log, runs batch 1 (items 1–3),
@@ -256,7 +278,7 @@ Step 7 — Finalize: /finish-feature
 → Checklist: changelog updated ✓, test coverage >80% ✓, PR approved ✓
 ```
 
-Each step hands context to the next. The lesson loop means a mistake caught in Step 6 becomes a prevention rule that Step 3 applies on the next feature.
+Each step hands context to the next. The design + plan approach ensures frontend and backend are aligned before code starts. The lesson loop means a mistake caught in Step 6 becomes a prevention rule that Step 2 applies on the next feature.
 
 ---
 
@@ -294,7 +316,7 @@ After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` plann
 
 ### Daily Workflow
 
-During normal development, run the 8-step loop for every meaningful change: start with `/brainstorm` to clarify what you're building, use `/write-plan` to create an approved plan before touching code, implement with `/execute-plan` (which logs every action and reads lessons from past mistakes), commit with `/commit` after each logical batch, write tests with `/write-tests`, debug structured with `/debug` if anything breaks, then `/review` to self-review and create a PR, and finally `/finish-feature` to confirm the branch is merge-ready. See the [Tutorial](#tutorial--building-a-feature-end-to-end) above for a concrete example with exact output.
+During normal development, run the full workflow for every meaningful change: start with `/brainstorm` to clarify what you're building, use `/frontend-design` to design the UI (no code yet), use `/write-plan` to create a unified plan incorporating both brainstorm and design, then implement with `/execute-plan` (which logs every action and reads lessons from past mistakes), commit with `/commit` after each logical batch, write tests with `/write-tests`, debug structured with `/debug` if anything breaks, then `/review` to self-review and create a PR, and finally `/finish-feature` to confirm the branch is merge-ready. See the [Tutorial](#tutorial--building-a-feature-end-to-end) above for a concrete example with exact output.
 
 ---
 
@@ -304,9 +326,9 @@ The complete development workflow from idea to merge with **automatic context th
 
 | Step | Command | What Happens | Context |
 |------|---------|---------|---------|
-| 1. Design | `/brainstorm` | Explore idea, clarify requirements, propose approaches, get approval | **Reads:** findings.md (prior decisions), lessons.md (constraints)<br/>**Writes:** findings.md (design decision) |
-| 1a. UI Design | `/brainstorm` → `/frontend-design` | Run brainstorm first to lock in requirements, then hand off to frontend-design — **sequential only** | **Reads:** findings.md (design brief), lessons.md (constraints) |
-| 2. Plan | `/write-plan` | Write decision-complete plan into `tasks/todo.md` | **Reads:** findings.md (requirements), lessons.md (constraints)<br/>Applies lessons as plan constraints |
+| 1. Explore | `/brainstorm` | Explore idea, clarify requirements, propose approaches, get approval | **Reads:** findings.md (prior decisions), lessons.md (constraints)<br/>**Writes:** findings.md (design decision) |
+| 1a. UI Design | `/frontend-design` | Design the UI (mockups, layouts, visual direction—**no code yet**) | **Reads:** findings.md (brainstorm output), lessons.md (constraints)<br/>**Writes:** findings.md (design artifacts) |
+| 2. Plan | `/write-plan` | Write decision-complete plan incorporating both brainstorm AND frontend design | **Reads:** findings.md (both outputs), lessons.md (constraints)<br/>Applies lessons as plan constraints |
 | 3. Implement | `/execute-plan` | Implement plan in small batches with progress tracking | **Reads:** todo.md, lessons.md (constraints), progress.md (error log)<br/>**Writes:** progress.md, findings.md |
 | 4. Commit | `/commit` | Stage changes, auto-detect type, generate conventional message | **Reads:** progress.md (for context) |
 | 5. Test | `/write-tests` | Generate tests matching framework and patterns | **Reads:** lessons.md<br/>**Writes:** (lessons.md if code bug found) |
@@ -326,18 +348,24 @@ The complete development workflow from idea to merge with **automatic context th
 
 ### Brainstorming + Frontend Design
 
-`/brainstorming` and `/frontend-design` are **sequential by design** — they cannot and should not run in parallel:
+`/brainstorm` and `/frontend-design` are **both design phases** — they produce designs and plans, **never code**:
 
-- **`/brainstorming` runs first** — it explores user intent, clarifies requirements, proposes design directions, and gets approval. No code is written at this stage.
-- **`/frontend-design` runs after** — it uses the output from `/brainstorming` to produce polished, production-grade UI. Without the brainstorming context, it would make assumptions and likely build the wrong thing.
+- **`/brainstorm` runs first** — explores user intent, clarifies requirements, proposes approaches, and gets approval. No code is written.
+- **`/frontend-design` runs after** — uses the brainstorm findings to design the UI (mockups, layouts, visual direction). Still no code—only design artifacts.
+- **`/write-plan` comes next** — incorporates both brainstorm findings AND frontend design into a single, unified plan for implementation.
+- **`/execute-plan` finally runs** — implements both the backend (from brainstorm) and frontend (from frontend-design) together.
 
 ```
-/brainstorming    ← clarify: what are we building? what aesthetic? what constraints?
+/brainstorm       ← clarify: what are we building? requirements? constraints?
                       ↓ (requirements confirmed)
-/frontend-design  ← build: distinctive, production-grade UI based on what was decided
+/frontend-design  ← design: UI mockups, layouts, visual direction (no code)
+                      ↓ (designs created)
+/write-plan       ← plan: unified implementation plan for both backend + frontend
+                      ↓ (plan approved)
+/execute-plan     ← build: implement everything based on the approved plan
 ```
 
-Skipping `/brainstorming` and jumping straight to `/frontend-design` works, but you'll get a generic result. The two-step flow consistently produces better, more intentional output.
+Skipping `/brainstorm` and jumping to `/frontend-design` works, but you'll get generic results. The three-step design → plan flow consistently produces better, more intentional output with both frontend and backend aligned.
 
 ---
 
@@ -575,13 +603,14 @@ Bootstrap or repair Claude Code infrastructure on any project.
 
 1. Run `/setup-claude` (creates scaffolding + commands).
 2. Run `/brainstorm` to explore the idea and clarify requirements (no code).
-3. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md` (no code).
-4. Run `/execute-plan` to implement in small batches while logging to `tasks/progress.md`.
-5. Run `/commit` after each logical unit of work.
-6. Run `/write-tests` to generate tests matching your framework.
-7. Run `/debug` if something breaks (structured investigation).
-8. Run `/review` to self-review all changes and create a PR.
-9. Run `/finish-feature` to finalize the branch (changelog, architecture log, verification).
+3. Run `/frontend-design` to design the UI (mockups, layouts—no code yet).
+4. Run `/write-plan` to write a decision-complete plan incorporating both brainstorm and design into `tasks/todo.md` (no code).
+5. Run `/execute-plan` to implement in small batches while logging to `tasks/progress.md`.
+6. Run `/commit` after each logical unit of work.
+7. Run `/write-tests` to generate tests matching your framework.
+8. Run `/debug` if something breaks (structured investigation).
+9. Run `/review` to self-review all changes and create a PR.
+10. Run `/finish-feature` to finalize the branch (changelog, architecture log, verification).
 
 #### Deterministic Bootstrap Script
 
@@ -733,13 +762,15 @@ vim CLAUDE.md
 
 ### `/frontend-design`
 
-Create distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics — with built-in browser verification via the Playwright MCP plugin.
+Design distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics — producing UI mockups and design artifacts (not code) with visual browser preview.
 
 **What it does:**
-- Commits to a bold aesthetic direction before writing a single line of code (brutalist, maximalist, refined minimal, retro-futuristic, etc.)
-- Generates production-grade HTML/CSS/JS, React, or Vue code with distinctive typography, color, motion, and spatial composition
+- Takes brainstorm findings and produces detailed UI designs: mockups, layouts, visual direction, component sketches
+- Commits to a bold aesthetic direction (brutalist, maximalist, refined minimal, retro-futuristic, etc.)
+- Creates design artifacts with distinctive typography, color, motion, and spatial composition
 - Avoids clichéd choices (Inter/Roboto, purple gradients, cookie-cutter layouts)
-- **Browser Verification** (when a dev server is running): after generating code, automatically navigates to the URL, takes a screenshot, tests responsive breakpoints (375px / 768px / 1440px), and checks the console for JS errors — presenting visual confirmation inline
+- **NO CODE YET** — this is a design phase, not implementation
+- **Browser Preview** (optional): shows visual mockups of the proposed design for feedback
 
 **Usage:**
 ```
@@ -747,9 +778,9 @@ Create distinctive, production-grade frontend interfaces that avoid generic "AI 
 /frontend-design create a dark dashboard with data visualizations
 ```
 
-> **Tip:** For best results, run `/brainstorming` first to clarify requirements and aesthetic direction before running `/frontend-design`. These two skills are sequential — brainstorming feeds context into the design step. See [Brainstorming + Frontend Design](#brainstorming--frontend-design).
+> **Workflow:** Run `/brainstorm` first to lock in requirements, then `/frontend-design` to design, then `/write-plan` to create a unified plan, then `/execute-plan` to implement. See [Brainstorming + Frontend Design](#brainstorming--frontend-design).
 
-> Requires the `playwright@claude-plugins-official` plugin for browser verification. Without it, code generation still works — only the screenshot step is skipped.
+> Requires the `playwright@claude-plugins-official` plugin for visual preview. Without it, design artifact generation still works — only the preview step is skipped.
 
 ---
 

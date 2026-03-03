@@ -38,8 +38,9 @@ The complete development workflow from idea to merge:
 
 | Step | Command | What Happens |
 |------|---------|--------------|
-| 1. Design | `/brainstorm` | Explore the idea, clarify requirements, propose approaches, get design approval |
-| 2. Plan | `/write-plan` | Write a decision-complete plan into `tasks/todo.md` |
+| 1. Explore | `/brainstorm` | Explore the idea, clarify requirements, propose approaches, get design approval |
+| 1a. UI Design | `/frontend-design` | Design the UI (no code yet—mockups, layouts, visual direction only) |
+| 2. Plan | `/write-plan` | Write a decision-complete plan incorporating both brainstorm findings AND frontend design |
 | 3. Implement | `/execute-plan` | Implement the plan in small batches with progress tracking |
 | 4. Commit | `/commit` | Stage changes, auto-detect commit type, generate conventional commit message |
 | 5. Test | `/write-tests` | Generate test files matching your framework and project patterns |
@@ -52,8 +53,13 @@ The complete development workflow from idea to merge:
 ### Rules
 - **Never skip steps.** Each command must be invoked separately by the user.
 - **Never auto-advance.** When one step completes, stop and tell the user which command to run next.
-- **Never write code during design or plan phases.**
+- **Never write code during design or plan phases.** (This includes `/frontend-design`—it's design, not implementation)
 - Never mark complete without running the verification commands above.
+
+### Frontend Design Workflow
+- `/frontend-design` is a **design phase**, not an implementation phase—it produces mockups and design artifacts, not code
+- **Sequence:** `/brainstorm` (clarify requirements) → `/frontend-design` (design UI) → `/write-plan` (plan both backend AND frontend) → `/execute-plan` (implement both)
+- `/write-plan` should reference both the brainstorm findings AND the frontend design outputs when writing the implementation plan
 
 ## Architectural Change Log
 
