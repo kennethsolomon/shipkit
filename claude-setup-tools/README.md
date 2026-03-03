@@ -84,25 +84,44 @@ Think of CLAUDE.md as a project "cheat sheet" for Claude Code. It tells Claude:
    2. Add a 'Development' section with setup instructions
 ```
 
-### My CLAUDE.md is too long, make it shorter
+### I want to enrich CLAUDE.md with my project structure and maintain it
 
 ```bash
 /optimize-claude
 ```
 
-**What happens**:
-1. Reads your CLAUDE.md
-2. Removes redundancy and verbose descriptions
-3. Keeps all important information
-4. Makes file shorter and cleaner
+**What happens** (ENHANCED):
+1. Scans your project for directories, documentation, and workflows
+2. Auto-discovers: src/, tests/, docs/, README.md, CONTRIBUTING.md, etc.
+3. Detects workflows: Makefile targets, npm scripts, GitHub Actions
+4. Intelligently merges discoveries with your existing CLAUDE.md
+5. Preserves all your custom edits and notes
+6. Reports what was added and preserved
 
 **Example output**:
 ```
-✨ CLAUDE.md optimized!
-   Before: 180 lines
-   After:  142 lines
-   Saved:  38 lines
+🔍 Analyzing project structure...
+
+📊 Analysis Complete:
+   📁 Directories discovered: 5
+   📚 Documentation files: 3
+   🔧 Workflows found: 2
+
+✅ Key Directories Found:
+   - src/
+   - tests/
+   - docs/
+
+✅ Preserved (user-edited):
+   - Important Context
+
+✨ CLAUDE.md enriched and saved!
+   Before: 95 lines
+   After: 145 lines
+   Added: 50 lines (comprehensive context)
 ```
+
+**Safe to run multiple times:** Your edits are preserved automatically!
 
 ---
 
@@ -453,57 +472,67 @@ git commit -m "docs: add CLAUDE.md with project setup"
 
 ---
 
-### Workflow 2: Improving an Existing CLAUDE.md
+### Workflow 2: Enriching and Maintaining CLAUDE.md During Development
 
 ```bash
 # Step 1: Check current state
 /doctor-claude
 
-# Step 2: See what could be improved
-# (Doctor shows issues and suggestions)
-
-# Step 3: If file is too long
+# Step 2: Enrich with project structure and discoveries
 /optimize-claude
+# ✅ Auto-discovers: src/, tests/, docs/, README.md, etc.
 
-# Step 4: Review the suggestions
-# (Check CLAUDE.md.setup-claude.md)
+# Step 3: Review what was discovered
+# (Check the report of added directories/docs/workflows)
 
-# Step 5: Apply good ideas to your file
-# Manually update CLAUDE.md
+# Step 4: Customize with your own notes
+# Edit Important Context section with project decisions
+vim CLAUDE.md
+
+# Step 5: Run again to refresh discoveries
+# (Your edits are preserved automatically!)
+/optimize-claude
 
 # Step 6: Final verification
 /doctor-claude
 
 # Step 7: Commit improvements
 git add CLAUDE.md
-git commit -m "docs: improve CLAUDE.md with latest tech stack"
+git commit -m "docs: enrich CLAUDE.md with project context and structure"
 ```
 
-**Time**: ~5 minutes | **Effort**: Manual review
+**Time**: ~5 minutes | **Effort**: Minimal (mostly automated)
+
+**Key Difference**: `/optimize-claude` now ADDS comprehensive context instead of just trimming, and safely re-runs during development without losing your work!
 
 ---
 
-### Workflow 3: Keeping CLAUDE.md Updated
+### Workflow 3: Regular Maintenance (Monthly or After Changes)
 
-**Do this monthly or when tech stack changes**:
+**Do this monthly or when project structure changes**:
 
 ```bash
-# Check if file still matches reality
+# Check current health
 /doctor-claude
 
-# If file is too long
+# Refresh discoveries and enrich
 /optimize-claude
+# ✅ Auto-discovers new directories, docs, workflows
+# ✅ Preserves all your custom notes
 
-# Manually update outdated information
-# (Change command versions, add new dependencies, etc.)
+# Manually update tech versions if needed
+# (Update Node.js version, React version, etc.)
+vim CLAUDE.md
 
-# Verify final result
+# Verify everything is good
 /doctor-claude
 
 # Commit updates
 git add CLAUDE.md
-git commit -m "docs: update CLAUDE.md with current stack"
+git commit -m "docs: refresh CLAUDE.md with latest project structure"
 ```
+
+**Result**: CLAUDE.md stays current with your project automatically!
 
 ---
 
