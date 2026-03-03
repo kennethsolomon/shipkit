@@ -86,10 +86,14 @@ Bootstrap or repair Claude Code infrastructure on any project.
 #### Tutorial: Recommended Workflow
 
 1. Run `/setup-claude` (creates scaffolding + commands).
-2. Run `/brainstorm` to clarify the goal/constraints before coding.
-3. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md`.
+2. Run `/brainstorm` to explore the idea and clarify requirements (no code).
+3. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md` (no code).
 4. Run `/execute-plan` to implement in small batches while logging to `tasks/progress.md`.
-5. Run `/finish-feature` to finalize the branch (changelog, architecture log, lint/build/test).
+5. Run `/commit` after each logical unit of work.
+6. Run `/write-tests` to generate tests matching your framework.
+7. Run `/debug` if something breaks (structured investigation).
+8. Run `/review` to self-review all changes and create a PR.
+9. Run `/finish-feature` to finalize the branch (changelog, architecture log, verification).
 
 #### Deterministic Bootstrap Script
 
@@ -406,7 +410,7 @@ The complete development workflow from idea to merge:
 |------|---------|
 | `CLAUDE.md` | Project instructions for Claude — tech stack, key dirs, workflow rules |
 | `.claude/commands/re-setup.md` | `/re-setup` — re-run the bootstrap script to refresh generated files |
-| `.claude/commands/brainstorm.md` | `/brainstorm` — force design-first via `brainstorming` skill |
+| `.claude/commands/brainstorm.md` | `/brainstorm` — design exploration with no-code enforcement |
 | `.claude/commands/write-plan.md` | `/write-plan` — write a decision-complete plan into `tasks/todo.md` |
 | `.claude/commands/execute-plan.md` | `/execute-plan` — implement the plan in batches with checkpoints |
 | `.claude/commands/finish-feature.md` | Branch finalization checklist (stack-aware) |
