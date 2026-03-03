@@ -7,6 +7,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 ## Table of Contents
 
 - [Installation](#installation)
+- [Recommended Workflow](#recommended-workflow)
 - [Skills](#skills)
   - [`/setup-claude`](#setup-claude) — Bootstrap project infrastructure
   - [`/claude-setup-tools`](#claude-setup-tools) — Create, diagnose, maintain CLAUDE.md
@@ -17,7 +18,6 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/debug`](#debug) — Structured debugging
   - [`/review`](#review) — Self-review + PR creation
   - [`/finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
-- [Recommended Workflow](#recommended-workflow)
 - [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
 - [Requirements](#requirements)
 
@@ -61,6 +61,41 @@ Pull the latest skills and re-run the link script to pick up new or renamed skil
 cd ~/.agents/skills && git pull
 ~/.agents/skills/scripts/link-claude-skills.sh
 ```
+
+---
+
+## Recommended Workflow
+
+The complete development workflow from idea to merge:
+
+| Step | Command | What Happens |
+|------|---------|-------------|
+| 1. Design | `/brainstorm` | Explore the idea, clarify requirements, propose approaches, get design approval |
+| 1a. UI Design | `/brainstorm` → `/frontend-design` | Run `/brainstorm` first to lock in requirements, then hand off to `/frontend-design` for production-grade implementation — **these must run sequentially, not in parallel** |
+| 2. Plan | `/write-plan` | Write a decision-complete plan into `tasks/todo.md` |
+| 3. Implement | `/execute-plan` | Implement the plan in small batches with progress tracking |
+| 4. Commit | `/commit` | Stage changes, auto-detect commit type, generate conventional commit message |
+| 5. Test | `/write-tests` | Generate test files matching your framework and project patterns |
+| 6. Debug | `/debug` | (If needed) Structured bug investigation with hypothesis tracking |
+| 7. Review | `/review` | Self-review all changes, flag issues, create PR via `gh` |
+| 8. Finalize | `/finish-feature` | Pre-merge checklist: changelog, architecture log, verification |
+
+> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks.
+
+### Brainstorming + Frontend Design
+
+`/brainstorming` and `/frontend-design` are **sequential by design** — they cannot and should not run in parallel:
+
+- **`/brainstorming` runs first** — it explores user intent, clarifies requirements, proposes design directions, and gets approval. No code is written at this stage.
+- **`/frontend-design` runs after** — it uses the output from `/brainstorming` to produce polished, production-grade UI. Without the brainstorming context, it would make assumptions and likely build the wrong thing.
+
+```
+/brainstorming    ← clarify: what are we building? what aesthetic? what constraints?
+                      ↓ (requirements confirmed)
+/frontend-design  ← build: distinctive, production-grade UI based on what was decided
+```
+
+Skipping `/brainstorming` and jumping straight to `/frontend-design` works, but you'll get a generic result. The two-step flow consistently produces better, more intentional output.
 
 ---
 
@@ -260,6 +295,8 @@ Create distinctive, production-grade frontend interfaces that avoid generic "AI 
 /frontend-design create a dark dashboard with data visualizations
 ```
 
+> **Tip:** For best results, run `/brainstorming` first to clarify requirements and aesthetic direction before running `/frontend-design`. These two skills are sequential — brainstorming feeds context into the design step. See [Brainstorming + Frontend Design](#brainstorming--frontend-design).
+
 > Requires the `playwright@claude-plugins-official` plugin for browser verification. Without it, code generation still works — only the screenshot step is skipped.
 
 ---
@@ -406,25 +443,6 @@ The test checklist is **framework-aware** — generated with guidance specific t
 - **React + Vitest**: Component rendering, state updates, user interactions
 - **FastAPI + pytest**: HTTP status codes, request/response validation, database state
 - **Express + Jest**: API endpoints, middleware, error handling
-
----
-
-## Recommended Workflow
-
-The complete development workflow from idea to merge:
-
-| Step | Command | What Happens |
-|------|---------|-------------|
-| 1. Design | `/brainstorm` | Explore the idea, clarify requirements, propose approaches, get design approval |
-| 2. Plan | `/write-plan` | Write a decision-complete plan into `tasks/todo.md` |
-| 3. Implement | `/execute-plan` | Implement the plan in small batches with progress tracking |
-| 4. Commit | `/commit` | Stage changes, auto-detect commit type, generate conventional commit message |
-| 5. Test | `/write-tests` | Generate test files matching your framework and project patterns |
-| 6. Debug | `/debug` | (If needed) Structured bug investigation with hypothesis tracking |
-| 7. Review | `/review` | Self-review all changes, flag issues, create PR via `gh` |
-| 8. Finalize | `/finish-feature` | Pre-merge checklist: changelog, architecture log, verification |
-
-> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks.
 
 ---
 
