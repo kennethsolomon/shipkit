@@ -300,21 +300,29 @@ During normal development, run the 8-step loop for every meaningful change: star
 
 ## Recommended Workflow
 
-The complete development workflow from idea to merge:
+The complete development workflow from idea to merge with **automatic context threading and bug prevention**:
 
-| Step | Command | What Happens |
-|------|---------|-------------|
-| 1. Design | `/brainstorm` | Explore the idea, clarify requirements, propose approaches, get design approval |
-| 1a. UI Design | `/brainstorm` → `/frontend-design` | Run `/brainstorm` first to lock in requirements, then hand off to `/frontend-design` for production-grade implementation — **these must run sequentially, not in parallel** |
-| 2. Plan | `/write-plan` | Write a decision-complete plan into `tasks/todo.md` |
-| 3. Implement | `/execute-plan` | Implement the plan in small batches with progress tracking |
-| 4. Commit | `/commit` | Stage changes, auto-detect commit type, generate conventional commit message |
-| 5. Test | `/write-tests` | Generate test files matching your framework and project patterns |
-| 6. Debug | `/debug` | (If needed) Structured bug investigation with hypothesis tracking |
-| 7. Review | `/review` | Self-review all changes, flag issues, create PR via `gh` |
-| 8. Finalize | `/finish-feature` | Pre-merge checklist: changelog, architecture log, verification |
+| Step | Command | What Happens | Context |
+|------|---------|---------|---------|
+| 1. Design | `/brainstorm` | Explore idea, clarify requirements, propose approaches, get approval | **Reads:** findings.md (prior decisions), lessons.md (constraints)<br/>**Writes:** findings.md (design decision) |
+| 1a. UI Design | `/brainstorm` → `/frontend-design` | Run brainstorm first to lock in requirements, then hand off to frontend-design — **sequential only** | **Reads:** findings.md (design brief), lessons.md (constraints) |
+| 2. Plan | `/write-plan` | Write decision-complete plan into `tasks/todo.md` | **Reads:** findings.md (requirements), lessons.md (constraints)<br/>Applies lessons as plan constraints |
+| 3. Implement | `/execute-plan` | Implement plan in small batches with progress tracking | **Reads:** todo.md, lessons.md (constraints), progress.md (error log)<br/>**Writes:** progress.md, findings.md |
+| 4. Commit | `/commit` | Stage changes, auto-detect type, generate conventional message | **Reads:** progress.md (for context) |
+| 5. Test | `/write-tests` | Generate tests matching framework and patterns | **Reads:** lessons.md<br/>**Writes:** (lessons.md if code bug found) |
+| 6. Debug | `/debug` | (If needed) Structured investigation with hypotheses | **Reads:** findings.md, lessons.md, progress.md<br/>**Writes:** findings.md, lessons.md (prevention rules) |
+| 7. Review | `/review` | Self-review against lessons patterns, create PR | **Reads:** lessons.md (Bug patterns as targeted checks) |
+| 8. Finalize | `/finish-feature` | Checklist: changelog, **auto-detect arch changes**, verify tests | **Auto-detects** architectural changes<br/>**Scans diff** against lessons.md (final gate) |
 
-> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks.
+### Key Features
+
+✅ **Context Threading** — findings.md flows brainstorm → write-plan → frontend-design; never re-ask decisions
+✅ **Compounding Lessons** — One bug debugged = one lesson written = 6+ skills apply it next time
+✅ **Auto-Architecture Detection** — `/finish-feature` intelligently detects & documents arch changes
+✅ **Bug Prevention Loop** — lessons.md Bug patterns become standing constraints throughout execution
+✅ **No Context Reset** — findings.md and lessons.md persist across sessions
+
+> Steps 4-6 can repeat as needed. Run `/commit` after each logical unit, `/write-tests` after implementing, `/debug` whenever something breaks. Lessons compound over time, making the system smarter per-project.
 
 ### Brainstorming + Frontend Design
 
