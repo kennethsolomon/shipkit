@@ -4,11 +4,60 @@
 import sys
 from pathlib import Path
 
-# Add lib to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add lib to path for local imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+# Add setup-optimizer lib to path for shared discovery modules
+sys.path.insert(0, str(Path(__file__).parent.parent / "setup-optimizer" / "lib"))
 
 from lib.detect import detect_project
 from lib.sidecar import get_target_file, add_marker, format_output, count_lines, extract_sections
+
+# Import discovery modules from setup-optimizer
+try:
+    from discover import discover_directories, discover_documentation, discover_workflows
+    from enrich import generate_directories_section, generate_documentation_section, generate_workflows_section
+    DISCOVERY_AVAILABLE = True
+except ImportError:
+    DISCOVERY_AVAILABLE = False
+
+
+def _insert_discovered_sections(content: str, discovered_sections: dict) -> str:
+    """Insert discovered sections into the content before the marker.
+
+    Args:
+        content: Base CLAUDE.md content
+        discovered_sections: Dict of discovered sections to insert
+
+    Returns:
+        Content with discovered sections inserted
+    """
+    lines = content.split('\n')
+    insert_index = len(lines)
+
+    # Find where to insert (before any marker comment)
+    for i, line in enumerate(lines):
+        if '<!-- Generated' in line or '<!-- Setup' in line:
+            insert_index = i
+            break
+
+    # Build sections to insert
+    new_sections = []
+    for key in ['directories', 'documentation', 'workflows']:
+        if key in discovered_sections:
+            section = discovered_sections[key]
+            new_sections.append(f"## {section['title']}\n")
+            new_sections.append(section['content'])
+            new_sections.append('')
+
+    # Insert sections
+    if new_sections:
+        inserted_content = '\n'.join(lines[:insert_index])
+        inserted_content += '\n\n' + '\n\n'.join(new_sections).rstrip()
+        inserted_content += '\n\n' + '\n'.join(lines[insert_index:])
+        return inserted_content
+
+    return content
 
 
 def render_template(template_path: Path, config) -> str:
@@ -64,13 +113,52 @@ def create_claude_md(project_root: Path = None) -> None:
     config = detect_project(project_root)
 
     # Get template
-    template_path = Path(__file__).parent.parent / "templates" / "CLAUDE.md.template"
+    template_path = Path(__file__).parent / "templates" / "CLAUDE.md.template"
     if not template_path.exists():
         print(f"❌ Template not found: {template_path}")
         return
 
     # Render template
     content = render_template(template_path, config)
+
+    # Discover and enrich with project structure
+    discovered_sections = {}
+    discovery_worked = False
+    if DISCOVERY_AVAILABLE:
+        try:
+            # Discover project structure
+            directories = discover_directories(project_root)
+            documentation = discover_documentation(project_root)
+            workflows = discover_workflows(project_root)
+
+            # Generate sections from discoveries
+            if directories:
+                discovered_sections['directories'] = {
+                    'title': 'Key Directories',
+                    'content': generate_directories_section(directories),
+                }
+
+            if documentation:
+                discovered_sections['documentation'] = {
+                    'title': 'Documentation & Resources',
+                    'content': generate_documentation_section(documentation),
+                }
+
+            if workflows:
+                discovered_sections['workflows'] = {
+                    'title': 'Common Workflows',
+                    'content': generate_workflows_section(workflows),
+                }
+
+            discovery_worked = True
+        except Exception as e:
+            # If discovery fails, continue without it
+            print(f"⚠️  Warning: Discovery failed ({e}), using basic template")
+
+    # Append discovered sections before marker
+    if discovered_sections:
+        content = _insert_discovered_sections(content, discovered_sections)
+
     content_with_marker = add_marker(content)
 
     # Determine target file
@@ -86,11 +174,24 @@ def create_claude_md(project_root: Path = None) -> None:
         output = format_output(target_path, is_sidecar, line_count, sections)
         print(output)
 
+        # Enhanced output showing discoveries
+        if discovery_worked and discovered_sections:
+            print("\n📁 Discoveries from project structure:")
+            for key, section in discovered_sections.items():
+                if key == 'directories':
+                    dirs = section['content'].count('\n') + 1
+                    print(f"   📂 {dirs} directories found")
+                elif key == 'documentation':
+                    docs = section['content'].count('\n') + 1
+                    print(f"   📚 {docs} documentation files")
+                elif key == 'workflows':
+                    print(f"   🔧 Workflows discovered and documented")
+
         if is_sidecar:
-            print("📖 To use this file, review the suggestions and merge into CLAUDE.md manually.")
+            print("\n📖 To use this file, review the suggestions and merge into CLAUDE.md manually.")
             print(f"📍 View suggestion: cat {target_path}")
         else:
-            print(f"✅ CLAUDE.md created successfully!")
+            print(f"\n✅ CLAUDE.md created successfully!")
 
     except Exception as e:
         print(f"❌ Error writing file: {e}")
