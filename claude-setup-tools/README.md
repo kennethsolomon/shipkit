@@ -4,6 +4,22 @@
 
 Create perfect project documentation in seconds. No more manual setup or outdated project files.
 
+## ⚙️ Installation & Availability
+
+After cloning the repo and running the installation:
+
+```bash
+git clone git@github.com:kennethsolomon/claude-skills.git ~/.agents/skills
+~/.agents/skills/scripts/link-claude-skills.sh
+```
+
+The three skills will be **automatically available** as `/` commands:
+- ✅ `/setup-starter` — Create CLAUDE.md
+- ✅ `/doctor-claude` — Diagnose issues
+- ✅ `/optimize-claude` — Optimize and trim
+
+**You can use them immediately** in any Claude Code session! The `link-claude-skills.sh` script automatically symlinks all skills (folders with `SKILL.md`) into `~/.claude/skills/`, making them discoverable.
+
 ---
 
 ## 🤔 What is CLAUDE.md?
