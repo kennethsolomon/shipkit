@@ -6,14 +6,42 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## Installation
 
+### Step 1: Clone and link (one-time setup)
+
 ```bash
 git clone git@github.com:kennethsolomon/claude-skills.git ~/.agents/skills
 ~/.agents/skills/scripts/link-claude-skills.sh
 ```
 
-> **Already have `~/.agents/skills`?** Clone elsewhere and copy the skill folders you want into `~/.agents/skills/`.
+This symlinks all skills into `~/.claude/skills/`, which is where Claude Code discovers them. After this, **global skills** are immediately available in every project when you type `/` — no per-project setup needed.
 
-This repo includes a helper script that symlinks all skills (folders containing `SKILL.md`) from `~/.agents/skills/` into `~/.claude/skills/`, which is where Claude Code discovers them.
+> **Already have `~/.agents/skills`?** Clone elsewhere and copy the skill folders you want into `~/.agents/skills/`, then re-run the link script.
+
+### Step 2: Set up a project (per-project)
+
+```bash
+cd /path/to/your-project
+# Then in Claude Code, run:
+/setup-claude
+```
+
+This generates **per-project commands** (like `/finish-feature`, `/write-plan`, `/execute-plan`) into your project's `.claude/commands/` directory. These commands are tailored to your project's stack and are only available inside that project.
+
+### What's available when?
+
+| Type | Available after | Scope | Commands |
+|------|----------------|-------|----------|
+| **Global skills** | Step 1 (clone + link) | Every project | `/commit`, `/write-tests`, `/debug`, `/review`, `/schema-migrate`, `/brainstorm`, `/setup-claude`, `/setup-starter`, `/doctor-claude`, `/optimize-claude` |
+| **Per-project commands** | Step 2 (`/setup-claude`) | That project only | `/finish-feature`, `/write-plan`, `/execute-plan`, `/plan`, `/status` |
+
+### Updating
+
+Pull the latest skills and re-run the link script to pick up new or renamed skills:
+
+```bash
+cd ~/.agents/skills && git pull
+~/.agents/skills/scripts/link-claude-skills.sh
+```
 
 ---
 
@@ -379,3 +407,6 @@ The complete development workflow from idea to merge:
 ## Requirements
 
 - [Claude Code CLI](https://claude.ai/code) installed and configured
+- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/review` PR creation
+- Python 3 — required for `/setup-claude` deterministic bootstrap script
+- Git — required for `/commit`, `/review`, `/debug`, and `/finish-feature`
