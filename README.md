@@ -2,6 +2,22 @@
 
 Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and maintaining projects.
 
+## ✨ What's New (March 2026)
+
+**Lessons + Findings Context Threading** — The complete feedback loop is now closed:
+- Every skill that makes decisions reads `tasks/lessons.md` (standing constraints)
+- Every skill that accepts handoff reads `tasks/findings.md` (design decisions)
+- One bug debugged with `/debug` → one lesson written → applied by 6+ skills on next feature
+
+**Intelligent Architectural Change Detection** — `/finish-feature` now automatically:
+- Scans your diff for architectural changes
+- Detects control flow, data flow, pattern, and integration changes
+- **Auto-generates 80% of the arch log markdown**
+- You review/edit the remaining 20% before committing
+- Never manually guess "is this an arch change?" again
+
+**Enhanced Workflow Documentation** — Complete flow diagram, updated tutorials, detailed scenarios showing how context threads through the system.
+
 ---
 
 ## Table of Contents
@@ -68,21 +84,137 @@ cd ~/.agents/skills && git pull
 
 ---
 
+## Complete Workflow Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         CLAUDE SKILLS WORKFLOW                              │
+│                        (Auto-context & Bug Prevention)                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+PHASE 1: DESIGN (No Code)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /brainstorm                                                              │
+│ • Reads: tasks/findings.md (prior decisions)                            │
+│ • Reads: tasks/lessons.md (known failure patterns)                      │
+│ • Asks clarifying questions (one at a time)                             │
+│ • Proposes 2-3 approaches with trade-offs                               │
+│ • Gets user approval                                                     │
+│ • Writes: tasks/findings.md (design decision + rationale)               │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 2: PLAN (No Code)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /write-plan                                                              │
+│ • Reads: tasks/findings.md (design brief)                               │
+│ • Reads: tasks/lessons.md (constraint: what not to do)                  │
+│ • Writes: tasks/todo.md (decision-complete checklist)                   │
+│ • Applies lessons as plan constraints                                   │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 3: IMPLEMENT (Code Time)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /execute-plan                                                            │
+│ • Reads: tasks/todo.md (what to build)                                  │
+│ • Reads: tasks/lessons.md (standing constraints)                        │
+│ • Reads: tasks/progress.md (error log from prior batches)              │
+│ • Implements in small batches (2-3 items per batch)                    │
+│ • Writes: tasks/progress.md (work log)                                  │
+│ • May write: tasks/findings.md (discoveries during implementation)      │
+│                                                                           │
+│   [Repeat: /execute-plan batch → /commit → loop]                       │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 4: COMMIT (After each logical unit)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /commit                                                                  │
+│ • Analyzes staged changes                                               │
+│ • Auto-classifies: feat, fix, test, docs, refactor, etc.               │
+│ • Generates conventional commit message                                 │
+│ • Gets user approval before committing                                  │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 5: TEST
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /write-tests                                                             │
+│ • Reads: tasks/lessons.md (test patterns to avoid)                      │
+│ • Auto-detects framework (Vitest, Jest, pytest, etc.)                   │
+│ • Generates test file with 6-8 test cases                               │
+│ • Runs tests, fixes failures (up to 3 attempts)                         │
+│ • May write: tasks/lessons.md (if code bug discovered)                  │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 6: DEBUG (If Needed)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /debug                                                                   │
+│ • Reproduces the bug (browser/CLI/server)                               │
+│ • Forms 2-3 ranked hypotheses                                           │
+│ • Hard gate: no code changes until hypothesis confirmed                 │
+│ • Uses Playwright for browser bugs (console, network, visual state)    │
+│ • Writes: tasks/findings.md (what was learned)                          │
+│ • Writes: tasks/lessons.md (prevention rule for future)                 │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 7: REVIEW
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /review                                                                  │
+│ • Reads: tasks/lessons.md (Bug patterns as targeted checks)             │
+│ • Scans diff for security issues, code quality, bugs                    │
+│ • Generates severity-leveled report (Critical/Warning/Nitpick)          │
+│ • Creates PR via gh pr create (with explanation)                        │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 8: FINALIZE
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /finish-feature                                                          │
+│ • Verifies git branch + naming                                          │
+│ • Checks CHANGELOG.md updated                                           │
+│ • AUTO-DETECTS architectural changes:                                   │
+│   → Scans diff for SKILL.md, template, data flow changes                │
+│   → Auto-generates arch log draft (.claude/docs/...)                    │
+│   → User reviews/edits the generated arch log                           │
+│   → User commits: git add .claude/docs/... && git commit                │
+│ • Verifies tests pass, coverage >80%                                    │
+│ • Scans diff against lessons.md Bug patterns (final gate)              │
+│ • Ready to merge                                                         │
+└──────────────────────────────────────────────────────────────────────────┘
+
+PERSISTENT CONTEXT FILES (Never Cleared)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ tasks/findings.md    ← Decisions, discoveries, prior context             │
+│ tasks/lessons.md     ← Prevention rules (read by 6+ skills)              │
+│ tasks/todo.md        ← Current plan (checkboxes)                         │
+│ tasks/progress.md    ← Session work log + error log                      │
+└──────────────────────────────────────────────────────────────────────────┘
+
+KEY PRINCIPLES
+✓ Every skill that makes decisions reads lessons.md
+✓ Every skill that accepts handoff reads findings.md
+✓ lessons.md Bug patterns become active constraints across 6+ workflows
+✓ One bug debugged = one lesson written = 5+ skills apply it next time
+✓ No context reset = no repeated mistakes
+```
+
+---
+
 ## Why This Workflow
 
 AI-assisted development without structure produces more bugs, not fewer. The reason is simple: AI has no memory, no discipline, and no accountability without explicit guardrails. Left to itself, it will make architectural decisions inline, inconsistently, without user visibility, and reset all context every session. This workflow enforces the guardrails that prevent that.
 
 **The five root causes of bugs in AI-assisted projects — and how each step addresses them:**
 
-1. **Building the wrong thing** → `/brainstorm` forces requirement clarity before a single line is written. You cannot skip it and expect the right outcome. It reads existing `tasks/findings.md` so prior decisions are never re-litigated accidentally.
+1. **Building the wrong thing** → `/brainstorm` forces requirement clarity before a single line is written. You cannot skip it and expect the right outcome. It reads existing `tasks/findings.md` so prior decisions are never re-litigated accidentally. Also reads `tasks/lessons.md` to apply known constraints.
 
 2. **Ad-hoc implementation** → `/write-plan` writes a decision-complete plan into `tasks/todo.md` — and reads `tasks/lessons.md` first, so known failure patterns become plan constraints. Without an approved plan, Claude makes architectural decisions inline — inconsistently and without user visibility.
 
-3. **Untested code reaching review** → `/write-tests` after every feature. Tests are not optional in this workflow. A feature without tests is not done.
+3. **Untested code reaching review** → `/write-tests` after every feature. Tests are not optional in this workflow. A feature without tests is not done. Reads lessons.md to apply known test patterns and avoid past mistakes.
 
-4. **Symptom masking instead of root-cause fixing** → `/debug` has a hard gate: no code changes until a hypothesis is confirmed. Random fixes are explicitly forbidden by the skill. It reads `tasks/progress.md` to correlate recent error patterns before forming any hypothesis.
+4. **Symptom masking instead of root-cause fixing** → `/debug` has a hard gate: no code changes until a hypothesis is confirmed. Random fixes are explicitly forbidden by the skill. It reads `tasks/progress.md` to correlate recent error patterns, reads `tasks/findings.md` and `tasks/lessons.md` to apply prior knowledge, and writes both when finding root causes.
 
-5. **Repeated mistakes** → `tasks/lessons.md` is read by `/execute-plan`, `/write-plan`, `/write-tests`, `/debug`, and `/review` before they start. The system compounds knowledge instead of resetting each session. When you correct the agent mid-execution, it writes the lesson immediately.
+5. **Repeated mistakes** → `tasks/lessons.md` is read by `/execute-plan`, `/write-plan`, `/write-tests`, `/debug`, `/review`, and `/finish-feature` before they start. The system compounds knowledge instead of resetting each session. When you correct the agent mid-execution, it writes the lesson immediately. Lessons become active constraints, not just documentation.
+
+**Architectural Changes Without Manual Guessing:**
+→ `/finish-feature` step 4 now auto-detects architectural changes using intelligent script analysis. No more "did I need an arch log?" questions. The script analyzes your diff, generates a markdown draft (80% complete), and you edit the final 20%.
 
 **The opinionated rule:** Follow all 8 steps in order. Steps 4–6 can repeat, but they cannot be skipped. A "quick fix" that bypasses brainstorm and planning is the source of most production bugs in AI-assisted codebases.
 
