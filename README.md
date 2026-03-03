@@ -327,8 +327,8 @@ The complete development workflow from idea to merge with **automatic context th
 | Step | Command | What Happens | Context |
 |------|---------|---------|---------|
 | 1. Explore | `/brainstorm` | Explore idea, clarify requirements, propose approaches, get approval | **Reads:** findings.md (prior decisions), lessons.md (constraints)<br/>**Writes:** findings.md (design decision) |
-| 1a. UI Design | `/frontend-design` | Design the UI (mockups, layouts, visual direction—**no code yet**) | **Reads:** findings.md (brainstorm output), lessons.md (constraints)<br/>**Writes:** findings.md (design artifacts) |
-| 2. Plan | `/write-plan` | Write decision-complete plan incorporating both brainstorm AND frontend design | **Reads:** findings.md (both outputs), lessons.md (constraints)<br/>Applies lessons as plan constraints |
+| 1a. UI Design | `/frontend-design` | *(Optional)* Design the UI (mockups, layouts, visual direction—**no code yet**). Skip for backend-only work. | **Reads:** findings.md (brainstorm output), lessons.md (constraints)<br/>**Writes:** findings.md (design artifacts) |
+| 2. Plan | `/write-plan` | Write decision-complete plan incorporating brainstorm findings and any frontend design | **Reads:** findings.md (all outputs), lessons.md (constraints)<br/>Applies lessons as plan constraints |
 | 3. Implement | `/execute-plan` | Implement plan in small batches with progress tracking | **Reads:** todo.md, lessons.md (constraints), progress.md (error log)<br/>**Writes:** progress.md, findings.md |
 | 4. Commit | `/commit` | Stage changes, auto-detect type, generate conventional message | **Reads:** progress.md (for context) |
 | 5. Test | `/write-tests` | Generate tests matching framework and patterns | **Reads:** lessons.md<br/>**Writes:** (lessons.md if code bug found) |
@@ -348,24 +348,29 @@ The complete development workflow from idea to merge with **automatic context th
 
 ### Brainstorming + Frontend Design
 
-`/brainstorm` and `/frontend-design` are **both design phases** — they produce designs and plans, **never code**:
+`/brainstorm` is essential. `/frontend-design` is **optional but recommended**:
 
-- **`/brainstorm` runs first** — explores user intent, clarifies requirements, proposes approaches, and gets approval. No code is written.
-- **`/frontend-design` runs after** — uses the brainstorm findings to design the UI (mockups, layouts, visual direction). Still no code—only design artifacts.
-- **`/write-plan` comes next** — incorporates both brainstorm findings AND frontend design into a single, unified plan for implementation.
-- **`/execute-plan` finally runs** — implements both the backend (from brainstorm) and frontend (from frontend-design) together.
+- **`/brainstorm` (required)** — explores user intent, clarifies requirements, proposes approaches, and gets approval. No code is written.
+- **`/frontend-design` (optional)** — if you're building frontend work, use this after brainstorm to design the UI (mockups, layouts, visual direction). Still no code—only design artifacts. **Skip this if doing backend-only work.**
+- **`/write-plan` (required)** — incorporates brainstorm findings AND any frontend design into a unified plan for implementation.
+- **`/execute-plan` (required)** — implements the plan.
 
+**With frontend design:**
 ```
-/brainstorm       ← clarify: what are we building? requirements? constraints?
-                      ↓ (requirements confirmed)
-/frontend-design  ← design: UI mockups, layouts, visual direction (no code)
-                      ↓ (designs created)
-/write-plan       ← plan: unified implementation plan for both backend + frontend
-                      ↓ (plan approved)
-/execute-plan     ← build: implement everything based on the approved plan
+/brainstorm       ← clarify: what are we building?
+/frontend-design  ← design: UI mockups, layouts (no code)
+/write-plan       ← unified plan for both backend + frontend
+/execute-plan     ← implement everything
 ```
 
-Skipping `/brainstorm` and jumping to `/frontend-design` works, but you'll get generic results. The three-step design → plan flow consistently produces better, more intentional output with both frontend and backend aligned.
+**Without frontend design (backend-only or simple work):**
+```
+/brainstorm       ← clarify: what are we building?
+/write-plan       ← plan the implementation
+/execute-plan     ← implement
+```
+
+The two-step design → plan → code flow consistently produces better output than jumping straight to `/write-plan`.
 
 ---
 
@@ -603,8 +608,8 @@ Bootstrap or repair Claude Code infrastructure on any project.
 
 1. Run `/setup-claude` (creates scaffolding + commands).
 2. Run `/brainstorm` to explore the idea and clarify requirements (no code).
-3. Run `/frontend-design` to design the UI (mockups, layouts—no code yet).
-4. Run `/write-plan` to write a decision-complete plan incorporating both brainstorm and design into `tasks/todo.md` (no code).
+3. *(Optional)* Run `/frontend-design` to design the UI (mockups, layouts—no code yet). Skip for backend-only work.
+4. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md` (no code).
 5. Run `/execute-plan` to implement in small batches while logging to `tasks/progress.md`.
 6. Run `/commit` after each logical unit of work.
 7. Run `/write-tests` to generate tests matching your framework.

@@ -58,8 +58,9 @@ The complete development workflow from idea to merge:
 
 ### Frontend Design Workflow
 - `/frontend-design` is a **design phase**, not an implementation phase—it produces mockups and design artifacts, not code
-- **Sequence:** `/brainstorm` (clarify requirements) → `/frontend-design` (design UI) → `/write-plan` (plan both backend AND frontend) → `/execute-plan` (implement both)
-- `/write-plan` should reference both the brainstorm findings AND the frontend design outputs when writing the implementation plan
+- **Optional but recommended:** `/brainstorm` (clarify requirements) → *`/frontend-design` (design UI, skipable for backend-only work)* → `/write-plan` (plan based on findings and any design artifacts) → `/execute-plan` (implement)
+- If skipping `/frontend-design`, go directly from `/brainstorm` to `/write-plan`
+- `/write-plan` should reference both the brainstorm findings AND any frontend design outputs when writing the implementation plan
 
 ## Architectural Change Log
 
