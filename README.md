@@ -85,39 +85,58 @@ python3 "$HOME/.agents/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd
 
 ### `/claude-setup-tools`
 
-Create, diagnose, and optimize `CLAUDE.md` files for any project with auto-detection and smart optimization.
+Create, diagnose, and intelligently maintain `CLAUDE.md` files with auto-detection, comprehensive context discovery, and safe re-running during development.
 
-**What it does:**
-- Auto-detects your tech stack (JavaScript, Python, Go, Rust, etc.)
-- Generates an optimized `CLAUDE.md` file in seconds (100-150 lines)
-- Diagnoses issues in existing `CLAUDE.md` files
-- Optimizes files to stay under the 150-line target
-- Includes guides for understanding CLAUDE.md structure and best practices
-- Protects custom files with a marker system (never overwrites without permission)
+**Three Skills + Three Guides:**
 
-**Available commands:**
-- `/setup-starter` — Generate CLAUDE.md by auto-detecting your project
-- `/doctor-claude` — Check existing CLAUDE.md for issues and get suggestions
-- `/optimize-claude` — Trim your CLAUDE.md to stay under 150 lines
+**Skills:**
+- `/setup-starter` — Auto-generate CLAUDE.md by detecting your tech stack
+- `/doctor-claude` — Diagnose issues and get suggestions for improvement
+- `/optimize-claude` — Enrich CLAUDE.md with project context (ENHANCED: discovers directories, documentation, workflows)
+
+**Guides:**
 - `/explain-claude` — Learn what each CLAUDE.md section means
-- `/implement-claude` — Follow a step-by-step workflow (5 steps, ~6 minutes)
+- `/implement-claude` — Step-by-step workflow to create perfect CLAUDE.md
 - `/review-claude` — Quality checklist before committing
 
+**What `/optimize-claude` Does (Enhanced):**
+- 🔍 **Auto-discovers** project structure: src/, tests/, docs/, config/, etc.
+- 📚 **Finds documentation**: README.md, CONTRIBUTING.md, docs/*.md, etc.
+- 🔧 **Detects workflows**: Makefile targets, npm scripts, GitHub Actions
+- 🔄 **Safely re-runs** during development without losing customizations
+- 🔒 **Preserves edits** with smart detection + auto-locking of user sections
+- 📊 **Reports findings** showing what was added and preserved
+
+**Key Features:**
+- ✅ Auto-detects JavaScript, Python, Go, Rust projects
+- ✅ Generates CLAUDE.md in seconds (100-150 lines)
+- ✅ Stays under 200 lines with comprehensive context
+- ✅ Safe to run multiple times (preserves all user work)
+- ✅ Never overwrites without permission (marker system)
+- ✅ Works with real project structure (not templates)
+
 **Why use it:**
-- 💨 Saves 15+ minutes per project (auto-generation vs manual writing)
-- 📚 Comprehensive 1,320-line README explains everything to your team
-- 🛡️ Protects your customizations with smart file handling
-- ✅ Self-documenting — your friends don't need to ask you questions
-- 🔄 Idempotent — safe to re-run multiple times
+- 💨 Saves 15+ minutes per project vs manual writing
+- 🔄 Maintenance command - run during development to keep CLAUDE.md fresh
+- 🛡️ Smart customization preservation - your edits are always safe
+- 📚 Comprehensive yet maintainable - grows with your project
+- 🤖 Automated discovery - new dirs/docs/workflows auto-detected
 
-**Supported stacks:** Node.js (React, Next.js, Svelte, etc.), Python (FastAPI, Django, Flask), Go, Rust, and any project (manual customization)
+**Supported stacks:** Node.js (React, Next.js, etc.), Python (FastAPI, Django, Flask), Go, Rust, and any project (manual customization)
 
-**Usage:** Run in any project:
+**Typical Usage:**
+```bash
+/setup-starter          # Create initial CLAUDE.md
+
+# Later, after adding directories/docs:
+/optimize-claude        # Discovers and adds them automatically!
+
+# Edit Important Context with custom notes
+vim CLAUDE.md
+/optimize-claude        # ✅ Your edits preserved!
 ```
-/setup-starter
-```
 
-**Example:** For a React + Prisma + Jest project, it auto-detects all technologies and generates a complete, optimized `CLAUDE.md` in under 30 seconds.
+**Example:** For a React + Prisma + Jest project with docs/, the tool discovers all structure automatically and generates complete, organized documentation in under 30 seconds.
 
 ---
 

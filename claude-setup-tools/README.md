@@ -174,43 +174,72 @@ Test command: npm test ✓
 
 ---
 
-### 3️⃣ `/optimize-claude` - Trim Your CLAUDE.md
+### 3️⃣ `/optimize-claude` - Enrich & Maintain Your CLAUDE.md (ENHANCED)
 
-**Use this when**: Your CLAUDE.md is too long (over 150 lines) or feels verbose.
+**Use this when**: You want to discover and document your project structure, or maintain CLAUDE.md during development.
 
-**What it does**:
-- 📉 **Removes redundancy** (doesn't repeat information)
-- ✂️ **Tightens descriptions** (keeps important info, removes fluff)
-- 🎯 **Keeps essentials** (never removes critical sections)
-- 📊 **Shows results** (tells you how many lines were saved)
+**What it does (NEW)**:
+- 🔍 **Auto-discovers** actual project directories (src/, tests/, docs/, etc.)
+- 📚 **Finds documentation** files and links them (README, CONTRIBUTING, docs/)
+- 🔧 **Detects workflows** (Makefile targets, npm scripts, GitHub Actions)
+- 🔄 **Safely re-runs** during development without losing your customizations
+- 🔒 **Preserves edits** with smart detection of user customizations
+- 📊 **Reports findings** so you know what was added
 
-**What it removes**:
-- ❌ Verbose, wordy descriptions
-- ❌ Multiple consecutive empty lines
-- ❌ Redundant information (things explained twice)
-- ❌ Unnecessary examples
+**Smart Features**:
+- ✅ **Auto-discovers real structure** - No hardcoded templates, uses actual filesystem
+- ✅ **Dual edit detection** - Compares content + looks for markers to detect user edits
+- ✅ **Auto-locking** - "Important Context" section is auto-locked if it has content
+- ✅ **Flexible line count** - Grows to ~200 lines if content is valuable
+- ✅ **Safe to run multiple times** - Preserves all your customizations
 
-**What it keeps**:
-- ✅ All section headers
-- ✅ Actual command examples
-- ✅ Important context and decisions
-- ✅ All critical information
+**Example Usage**:
+```bash
+# After adding tests/ directory
+mkdir tests
+/optimize-claude
+# CLAUDE.md now documents tests/ automatically!
 
-**Example**:
+# After adding docs
+touch docs/DEPLOYMENT.md
+/optimize-claude
+# New doc is automatically linked!
+
+# Edit Important Context
+vim CLAUDE.md  # Add custom notes
+/optimize-claude
+# ✅ Your notes are preserved!
 ```
-Before: 180 lines
-- Verbose descriptions
-- Redundant explanations
-- Too many empty lines
 
-After: 142 lines
-- Concise, clear descriptions
-- No duplication
-- Clean formatting
-- All essential info preserved
+**Expected Output**:
+```
+🔍 Analyzing project structure...
+
+📊 Analysis Complete:
+   📁 Directories discovered: 5
+   📚 Documentation files: 3
+   🔧 Workflows found: 4
+
+✅ Key Directories Found:
+   - src/
+   - tests/
+   - docs/
+
+📖 Documentation Found:
+   - README.md
+   - CONTRIBUTING.md
+   - docs/API.md
+
+✅ Preserved (user-edited):
+   - Important Context
+
+✨ CLAUDE.md enriched and saved!
+   Before: 95 lines
+   After: 145 lines
+   Added: 50 lines (comprehensive context)
 ```
 
-**Triggers**: `/optimize-claude`, `/optimize-setup`, `/trim-claude`
+**Triggers**: `/optimize-claude`, `/optimize-setup`, `/enrich-claude`, `/maintain-claude`
 
 ---
 

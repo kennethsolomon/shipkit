@@ -1,10 +1,11 @@
 ---
 name: setup-optimizer
-description: Optimize CLAUDE.md to stay under 150 lines
+description: Enrich CLAUDE.md with comprehensive project context and maintain it across development
 triggers:
-  - optimize setup
   - optimize claude
-  - trim claude
+  - optimize setup
+  - enrich claude
+  - maintain claude
 allowed-tools:
   - Bash
   - Read
@@ -13,81 +14,121 @@ allowed-tools:
 
 ## Overview
 
-Automatically optimizes your CLAUDE.md file to stay under the 150-line target while preserving essential information.
+Transform `/optimize-claude` from a simple line-trimmer into an intelligent **context enricher** that discovers and adds comprehensive information about your project to CLAUDE.md.
 
-### What it does:
-1. Analyzes current line count
-2. Applies optimization strategies
-3. Removes redundancy and verbose descriptions
-4. Collapses sections where possible
-5. Updates file directly or creates sidecar
-6. Reports before/after line counts
+### What It Does (Enhanced)
 
-### Optimization Strategies:
-- Remove multiple consecutive empty lines
-- Tighten section descriptions
-- Combine related information
-- Remove verbose examples
-- Clean up formatting
-- Preserve all essential sections
+Instead of just trimming lines, this command now:
+- 🔍 **Auto-discovers** actual project structure (src/, tests/, docs/, etc.)
+- 📚 **Finds documentation** and creates links to real files
+- 🔧 **Detects workflows** (Makefile targets, npm scripts, GitHub Actions)
+- 🔄 **Safely re-runs** during development without losing user work
+- 🔒 **Preserves customizations** with smart locking and detection
+- 📊 **Reports findings** so you know what was added
 
 ## Usage
 
+### Basic - Run in Project Root
+
 ```bash
-# Optimize current CLAUDE.md
 /optimize-claude
 ```
 
-## Output
+**What happens:**
+1. Scans project for directories, docs, and workflows
+2. Reads your existing CLAUDE.md
+3. Intelligently merges discoveries with your content
+4. Preserves any user customizations
+5. Updates CLAUDE.md with comprehensive context
 
-Shows:
-- Before/after line counts
-- Bytes/lines saved
-- Success message or sidecar location
+## What Gets Discovered
 
-## How It Works
+### Directories
+Auto-documents: src/, tests/, docs/, public/, scripts/, config/, migrations/, and more (intelligently excludes node_modules/, vendor/, etc.)
 
-### For Generated Files (with marker):
-- Updates file directly
-- Preserves all sections
-- Applies intelligent trimming
+### Documentation
+Finds and links: README.md, CONTRIBUTING.md, CHANGELOG.md, docs/*.md, .github/CONTRIBUTING.md, and more
 
-### For Custom Files (no marker):
-- Creates CLAUDE.md.setup-claude.md suggestion
-- Never modifies original file
-- Shows suggestions for review
+### Workflows
+Detects: Makefile targets, npm/yarn scripts, GitHub Actions workflows
 
-## Line Count Target
+## Smart Features
 
-**Goal**: Keep CLAUDE.md under 150 lines
+### 1. User Customization Preservation
 
-**Why**:
-- Easier to review and understand
-- Better Claude context efficiency
-- Forces prioritization of essential info
-- Remains scannable at a glance
+**Dual Detection:**
+- Compares content to detect user edits
+- Looks for `<!-- EDITED -->` markers
+- Automatically preserves customized sections
 
-## Optimization Examples
+**Auto-Locking:**
+- `Important Context` section - auto-locked if has content
+- `Known Issues` section - auto-locked
+- Any section with `<!-- LOCK -->` comment - permanently locked
 
-### Before (180 lines):
+**Result:** Run multiple times during development without losing work!
+
+### 2. Intelligent Merging
+
+When updating CLAUDE.md:
+- ✅ Keeps user customizations intact
+- ✅ Updates auto-generated discovery sections
+- ✅ Adds newly discovered items
+- ✅ Reports what was preserved
+
+### 3. Flexible Line Count
+
+- **Target:** Stay under 200 lines when possible
+- **Philosophy:** Comprehensive context > artificial line limit
+- **Strategy:** Link to docs instead of inlining if extensive
+
+## Maintenance Workflow
+
+### During Development
+
+```bash
+# After adding new test directory
+mkdir tests
+
+# Run optimizer to discover it
+/optimize-claude
+
+# CLAUDE.md now documents tests/ automatically!
 ```
-- Lengthy descriptions
-- Multiple empty lines between sections
-- Verbose examples
-- Redundant information
+
+### When Customizing
+
+```bash
+# Edit Important Context with custom notes
+vim CLAUDE.md
+
+# The edit is automatically preserved on next run
+/optimize-claude
+
+# ✅ Your notes stay intact!
 ```
 
-### After (140 lines):
-```
-- Concise descriptions
-- Single empty lines between sections
-- Brief examples
-- No repetition
+## Configuration
+
+### Smart Defaults (Auto-Locked)
+- **Important Context** - Your project decisions
+- **Known Issues** - Problems/limitations
+- Any section with `<!-- LOCK -->` comment
+
+### Explicit Locking
+
+```markdown
+## My Custom Section
+<!-- LOCK -->
+This content will never be regenerated.
 ```
 
-## Next Steps
+## When to Use
 
-1. Run `/optimize-claude` if file > 150 lines
-2. Review the optimized version
-3. If sidecar was created, merge manually
-4. Run `/doctor-claude` to verify
+✅ **Use `/optimize-claude` when:**
+- You've added new directories to your project
+- You've created documentation files
+- You want to refresh project context
+- Monthly maintenance of CLAUDE.md
+
+✅ **Safe to run multiple times during development** - Your customizations are always preserved!
