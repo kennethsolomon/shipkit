@@ -20,6 +20,18 @@ mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_play
 
 You MUST complete these steps in order:
 
+### 0. Check Project Lessons
+
+If `tasks/lessons.md` exists, read it before doing anything else. Apply every active lesson as a standing constraint throughout the session. Common test-related lessons to look for:
+- Known flaky test patterns in this project
+- Mocking approaches that caused issues before
+- Framework-specific gotchas (e.g. "always use `vi.mock` at top-level, not inside describe")
+- File location conventions that broke in the past
+
+If no `tasks/lessons.md` exists, skip this step.
+
+---
+
 ### 1. Detect Testing Framework
 
 Check project configuration files to identify the testing stack:
@@ -170,6 +182,15 @@ If tests fail:
 5. Re-run the specific failing tests
 
 Maximum 3 fix attempts. If still failing after 3, report the remaining failures to the user with analysis.
+
+**After fixing a real code bug** (not a test error), write a lesson to `tasks/lessons.md` if the root cause is a pattern that could recur:
+
+```markdown
+### [YYYY-MM-DD] [Brief title]
+**Bug:** What the test revealed
+**Root cause:** Why the code was wrong
+**Prevention:** What to check in future test runs or implementations
+```
 
 ### 9. Report Results
 

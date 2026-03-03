@@ -52,6 +52,8 @@ tasks/findings.md          — Previous debugging sessions, known bugs
 tasks/lessons.md           — Patterns that caused issues before
 ```
 
+**If `tasks/lessons.md` exists, read it in full.** For each active lesson, apply its prevention rule to your investigation — treat lessons as standing constraints, not just history. For example: if a lesson says "always check env vars before checking application code", do that first.
+
 Check if this bug (or something similar) has been investigated before.
 
 ### 3. Check Recent Changes
