@@ -27,7 +27,7 @@ After bootstrapping a project, the recommended workflow becomes:
 
 ### Project Commands (in `.claude/commands/`)
 - `brainstorm.md` — invokes the global `brainstorming` skill
-- `setup-claude.md` — runs the setup script for this repo (discoverable from inside the project)
+- `re-setup.md` — re-runs the setup script for this repo (refresh generated files)
 - `write-plan.md` — forces a decision-complete plan (writes to `tasks/todo.md`)
 - `execute-plan.md` — executes the plan in batches; logs to `tasks/progress.md`
 - `plan.md` — creates/refreshes planning files and starts planning

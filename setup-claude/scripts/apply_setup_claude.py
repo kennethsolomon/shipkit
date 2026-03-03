@@ -268,7 +268,7 @@ def apply(
     add("templates/commands/plan.md.template", ".claude/commands/plan.md", "generated")
     add("templates/commands/status.md.template", ".claude/commands/status.md", "generated")
     add("templates/commands/finish-feature.md.template", ".claude/commands/finish-feature.md", "generated")
-    add("templates/commands/setup-claude.md.template", ".claude/commands/setup-claude.md", "generated")
+    add("templates/commands/re-setup.md.template", ".claude/commands/re-setup.md", "generated")
 
     # docs (generated-update)
     add("templates/.claude/docs/changelog-guide.md.template", ".claude/docs/changelog-guide.md", "generated")

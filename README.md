@@ -50,7 +50,7 @@ This generates **per-project commands** (like `/finish-feature`, `/write-plan`, 
 | Type | Available after | Scope | Commands |
 |------|----------------|-------|----------|
 | **Global skills** | Step 1 (clone + link) | Every project | `/commit`, `/write-tests`, `/debug`, `/review`, `/schema-migrate`, `/brainstorm`, `/setup-claude`, `/setup-starter`, `/doctor-claude`, `/optimize-claude` |
-| **Per-project commands** | Step 2 (`/setup-claude`) | That project only | `/finish-feature`, `/write-plan`, `/execute-plan`, `/plan`, `/status` |
+| **Per-project commands** | Step 2 (`/setup-claude`) | That project only | `/finish-feature`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/re-setup` |
 
 ### Updating
 
@@ -73,7 +73,7 @@ Bootstrap or repair Claude Code infrastructure on any project.
 - Detects your tech stack (Next.js, Laravel, Python, Go, Ruby, etc.)
 - Creates or optimizes `CLAUDE.md`, project commands in `.claude/commands/`, and Claude docs in `.claude/docs/`
 - Adds `tasks/findings.md` + `tasks/progress.md` for persistent context across long sessions
-- Adds project-level workflow commands: `/setup-claude`, `/brainstorm`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/finish-feature`
+- Adds project-level workflow commands: `/re-setup`, `/brainstorm`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/finish-feature`
 - Fully idempotent — safe to re-run on existing projects
 
 **Supported stacks:** Next.js + Drizzle, Next.js + Prisma, Next.js + Supabase, Laravel + Eloquent, Supabase (any framework), Python + FastAPI, Generic
@@ -405,7 +405,7 @@ The complete development workflow from idea to merge:
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | Project instructions for Claude — tech stack, key dirs, workflow rules |
-| `.claude/commands/setup-claude.md` | `/setup-claude` — run the deterministic bootstrap script |
+| `.claude/commands/re-setup.md` | `/re-setup` — re-run the bootstrap script to refresh generated files |
 | `.claude/commands/brainstorm.md` | `/brainstorm` — force design-first via `brainstorming` skill |
 | `.claude/commands/write-plan.md` | `/write-plan` — write a decision-complete plan into `tasks/todo.md` |
 | `.claude/commands/execute-plan.md` | `/execute-plan` — implement the plan in batches with checkpoints |
