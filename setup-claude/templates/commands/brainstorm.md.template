@@ -17,7 +17,12 @@ Explore design and clarify requirements **before** any code is written.
 
 ## Steps
 
-1. **Understand the request** — Ask clarifying questions about what the user wants. Do not assume. Cover:
+1. **Understand the request** — First check if `tasks/findings.md` already has content.
+   If it does, read it — prior brainstorming has happened on this topic. Summarize
+   existing decisions to the user and ask: extend, revise, or start fresh? Do not
+   re-explore what is already decided unless the user asks.
+
+   Then ask clarifying questions about what the user wants. Do not assume. Cover:
    - What problem are we solving?
    - Who is it for?
    - What are the expected inputs/outputs or behaviors?
@@ -48,4 +53,3 @@ Tell the user:
 > "Brainstorming complete. Findings saved to `tasks/findings.md`. Run `/write-plan` to create the implementation plan."
 
 **Do not proceed to planning or implementation yourself.** The user must explicitly invoke the next step.
-

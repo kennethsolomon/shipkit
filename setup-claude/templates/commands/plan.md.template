@@ -8,6 +8,12 @@ description: "Create/refresh tasks planning files and start planning."
 
 Initialize planning files in `tasks/` (create-if-missing) and start Phase 1 planning.
 
+## Before You Start
+
+If `tasks/lessons.md` exists, read it in full. Apply every active lesson as a
+constraint when filling `tasks/todo.md` — lessons represent decisions already made
+about what not to do on this project.
+
 ## Steps
 
 1. Ensure `tasks/` exists.

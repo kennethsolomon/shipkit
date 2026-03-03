@@ -7,7 +7,11 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 ## Table of Contents
 
 - [Installation](#installation)
+- [Why This Workflow](#why-this-workflow)
+- [Tutorial — Building a Feature End to End](#tutorial--building-a-feature-end-to-end)
+- [New User Quick Start](#new-user-quick-start)
 - [Recommended Workflow](#recommended-workflow)
+- [Workflow Scenarios: When to Use Each Skill](#workflow-scenarios-when-to-use-each-skill)
 - [Skills](#skills)
   - [`/setup-claude`](#setup-claude) — Bootstrap project infrastructure
   - [`/claude-setup-tools`](#claude-setup-tools) — Create, diagnose, maintain CLAUDE.md
@@ -64,6 +68,101 @@ cd ~/.agents/skills && git pull
 
 ---
 
+## Why This Workflow
+
+AI-assisted development without structure produces more bugs, not fewer. The reason is simple: AI has no memory, no discipline, and no accountability without explicit guardrails. Left to itself, it will make architectural decisions inline, inconsistently, without user visibility, and reset all context every session. This workflow enforces the guardrails that prevent that.
+
+**The five root causes of bugs in AI-assisted projects — and how each step addresses them:**
+
+1. **Building the wrong thing** → `/brainstorm` forces requirement clarity before a single line is written. You cannot skip it and expect the right outcome. It reads existing `tasks/findings.md` so prior decisions are never re-litigated accidentally.
+
+2. **Ad-hoc implementation** → `/write-plan` writes a decision-complete plan into `tasks/todo.md` — and reads `tasks/lessons.md` first, so known failure patterns become plan constraints. Without an approved plan, Claude makes architectural decisions inline — inconsistently and without user visibility.
+
+3. **Untested code reaching review** → `/write-tests` after every feature. Tests are not optional in this workflow. A feature without tests is not done.
+
+4. **Symptom masking instead of root-cause fixing** → `/debug` has a hard gate: no code changes until a hypothesis is confirmed. Random fixes are explicitly forbidden by the skill. It reads `tasks/progress.md` to correlate recent error patterns before forming any hypothesis.
+
+5. **Repeated mistakes** → `tasks/lessons.md` is read by `/execute-plan`, `/write-plan`, `/write-tests`, `/debug`, and `/review` before they start. The system compounds knowledge instead of resetting each session. When you correct the agent mid-execution, it writes the lesson immediately.
+
+**The opinionated rule:** Follow all 8 steps in order. Steps 4–6 can repeat, but they cannot be skipped. A "quick fix" that bypasses brainstorm and planning is the source of most production bugs in AI-assisted codebases.
+
+This is an opinionated workflow. It will feel slower at first. It is faster over the lifetime of a project because rework is the most expensive operation in software development.
+
+---
+
+## Tutorial — Building a Feature End to End
+
+A concrete walkthrough: *Add user avatar upload to a Next.js app.*
+
+```
+Step 1 — Design: /brainstorm add user avatar upload
+→ Reads existing tasks/findings.md (none yet); asks clarifying questions;
+  saves approach decision to tasks/findings.md
+
+Step 2 — Plan: /write-plan
+→ Reads findings.md + lessons.md, writes 8 checkbox steps to tasks/todo.md
+
+Step 3 — Implement: /execute-plan
+→ Reads lessons.md + progress.md error log, runs batch 1 (items 1–3),
+  logs to tasks/progress.md; prompts: run /commit after batch passes
+
+Step 4 — Commit: /commit
+→ Reads tasks/progress.md for rationale; generates:
+  feat(avatar): add S3 upload endpoint
+
+Step 5 — Test: /write-tests src/avatar/upload.ts
+→ Reads lessons.md, generates upload.test.ts with 6 test cases, all pass
+
+Step 6 — Review: /review
+→ Reads CLAUDE.md + lessons.md Bug fields as targeted checks;
+  flags 1 warning (missing file-size validation); no criticals
+
+Step 7 — Finalize: /finish-feature
+→ Checklist: changelog updated ✓, test coverage >80% ✓, PR approved ✓
+```
+
+Each step hands context to the next. The lesson loop means a mistake caught in Step 6 becomes a prevention rule that Step 3 applies on the next feature.
+
+---
+
+## New User Quick Start
+
+### Prerequisites
+
+Install these before using the skills:
+
+- [Claude Code CLI](https://claude.ai/code) — the AI coding agent
+- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/review` PR creation
+- Python 3 — required for the `/setup-claude` deterministic bootstrap script
+- `playwright@claude-plugins-official` plugin — required for browser verification in `/frontend-design`, `/debug`, and `/write-tests` (Playwright projects). Enable in Claude Code settings under Plugins.
+
+### Your First Project
+
+Four commands to go from zero to a fully configured project:
+
+```bash
+# 1. Clone and link the skills (one-time, global)
+git clone git@github.com:kennethsolomon/claude-skills.git ~/.agents/skills
+~/.agents/skills/scripts/link-claude-skills.sh
+
+# 2. Open your project in Claude Code
+cd /path/to/your-project
+
+# 3. Bootstrap the project (run inside Claude Code)
+/setup-claude
+
+# 4. Verify your CLAUDE.md looks right
+/doctor-claude
+```
+
+After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` planning files exist, and all workflow commands (`/brainstorm`, `/write-plan`, `/execute-plan`, `/finish-feature`) are available inside that project.
+
+### Daily Workflow
+
+During normal development, run the 8-step loop for every meaningful change: start with `/brainstorm` to clarify what you're building, use `/write-plan` to create an approved plan before touching code, implement with `/execute-plan` (which logs every action and reads lessons from past mistakes), commit with `/commit` after each logical batch, write tests with `/write-tests`, debug structured with `/debug` if anything breaks, then `/review` to self-review and create a PR, and finally `/finish-feature` to confirm the branch is merge-ready. See the [Tutorial](#tutorial--building-a-feature-end-to-end) above for a concrete example with exact output.
+
+---
+
 ## Recommended Workflow
 
 The complete development workflow from idea to merge:
@@ -96,6 +195,216 @@ The complete development workflow from idea to merge:
 ```
 
 Skipping `/brainstorming` and jumping straight to `/frontend-design` works, but you'll get a generic result. The two-step flow consistently produces better, more intentional output.
+
+---
+
+## Workflow Scenarios: When to Use Each Skill
+
+Three concrete scenarios showing how the full skill system works together — **works identically for both new and existing projects.**
+
+### Scenario 1: Add a Feature (Feature Branch)
+
+**Context:** You're working in an existing project (Next.js app) or a new project just bootstrapped with `/setup-claude`. You want to add a new feature.
+
+```
+START:  I want to add two-factor authentication to user login
+
+Step 1 — DESIGN (no code yet)
+   /brainstorm Add two-factor authentication to login
+   → Reads tasks/findings.md (if it exists from prior work)
+   → Asks: SMS, email, or app-based? Required or optional?
+   → Asks: Should we store backup codes?
+   → Proposes 3 approaches, gets your approval
+   → Writes design decision to tasks/findings.md
+
+Step 2 — PLAN (no code yet)
+   /write-plan
+   → Reads tasks/findings.md (uses your prior design decision)
+   → Reads tasks/lessons.md (if prior bugs taught us lessons, applies them)
+   → Writes detailed 6-step plan to tasks/todo.md
+     [ ] Generate backup codes
+     [ ] Add QR code verification endpoint
+     [ ] Add 2FA toggle to user settings
+     [ ] Write tests for backup code recovery
+     [ ] Update API docs
+     [ ] Manual testing on staging
+
+Step 3 — IMPLEMENT (code time)
+   /execute-plan
+   → Reads tasks/todo.md (knows exactly what to do)
+   → Reads tasks/lessons.md (applies past lessons as constraints)
+   → Implements item 1, logs to tasks/progress.md
+   → Prompts: /commit after this batch? (you say yes)
+
+Step 4 — COMMIT
+   /commit
+   → Analyzes staged changes (generates, tests, types)
+   → Auto-classifies: feat(2fa): add backup code generation
+   → Asks approval: create this commit? (you say yes)
+
+   [repeat: /execute-plan batch → /commit after logical unit]
+
+Step 5 — TEST
+   /write-tests src/2fa/verify.ts
+   → Reads tasks/lessons.md (knows what not to do)
+   → Generates test cases: valid code, expired code, rate limiting
+   → Tests pass on first run
+
+Step 6 — DEBUG (if something breaks)
+   /debug The QR code endpoint returns 500 on iOS
+   → Reproduces: navigates to page, checks console errors
+   → Forms hypotheses: wrong CORS header? Image format issue?
+   → Tests hypothesis #1: checks CORS config
+   → CONFIRMED: missing Access-Control-Allow-Origin
+   → Proposes fix, you approve
+   → Logs finding to tasks/findings.md
+   → Writes lesson: "Always verify CORS headers for cross-origin image loads"
+     (this lesson will now be read by /write-plan, /execute-plan, /review on next feature)
+
+Step 7 — REVIEW
+   /review
+   → Reads tasks/lessons.md (uses Bug patterns as targeted checks)
+   → Scans diff for: CORS issues ✓, QR code encoding ✓, token expiry ✓
+   → Flags: 1 warning (missing refresh token rotation), no criticals
+   → Creates PR via gh pr create
+
+Step 8 — FINALIZE
+   /finish-feature
+   → Checklist: CHANGELOG updated ✓, tests pass ✓, coverage >80% ✓
+   → Scans diff for lesson patterns (CORS lesson applies here)
+   → Ready to merge
+
+SHIP: Feature is ready ✅
+```
+
+### Scenario 2: Bug Fix with Lesson Learning (The Debug Loop)
+
+**Context:** Code shipped, users report a bug. You need to fix it and prevent it from happening again.
+
+```
+START:  The reset password endpoint is failing for users with special chars in email
+
+Step 1 — ASSESS (quick look)
+   git log --oneline
+   git diff main
+   → Last changed 2 days ago in "feat: password reset"
+   → Suspicious: email validation looks too simple
+
+Step 2 — DEBUG (structured investigation)
+   /debug Users with + or _ in email can't reset password
+
+   PHASE 1: REPRODUCE
+   → Creates test user: user+test@example.com
+   → Tries password reset endpoint
+   → CONFIRMED: 400 Bad Request (not 200)
+
+   PHASE 2: ISOLATE
+   → Checks: is it the email validation? The token generation? The DB query?
+   → Runs curl with email-encoded: user%2Btest@example.com
+   → ISOLATED: email validation regex rejects + character
+
+   PHASE 3: HYPOTHESIZE (forms 3 ranked guesses)
+   → Hypothesis #1 (likely): Regex in email validation doesn't allow +
+     (RFC 5321 allows +, so this is a bug)
+   → Hypothesis #2: Database column encoding issue
+   → Hypothesis #3: Password reset token generation strips special chars
+
+   PHASE 4: VERIFY
+   → Checks src/auth/email-validation.ts
+   → Line 12: /^[a-zA-Z0-9._-]+@/ ← BUG! Should be /^[a-zA-Z0-9._+-]+@/
+   → Confirms: RFC 5321 allows +, dash, underscore, period
+
+   PHASE 5: FIX & VERIFY
+   → Proposes: update regex to /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$/
+   → Tests: user+test@example.com ✓, user_test@example.com ✓, user-test@example.com ✓
+   → Regression: user123@example.com ✓
+
+   PHASE 6: DOCUMENT LESSON
+   → Writes to tasks/findings.md:
+     ## Email Validation Bug (March 5)
+     - Issue: Regex didn't allow + in email local part
+     - Fix: Updated to /^[a-zA-Z0-9._+-]+@.../
+     - Reference: RFC 5321 allows these chars
+
+   → Writes to tasks/lessons.md (NEW LESSON):
+     **Bug:** Email validation too restrictive
+     **Root cause:** Regex pattern didn't follow RFC 5321 spec
+     **Prevention:** Always validate email against RFC 5321; allow +-._ in local part
+     (This lesson will now be read by /write-tests, /review, /execute-plan)
+
+Step 3 — TEST THE FIX
+   /write-tests src/auth/email-validation.ts
+   → Reads tasks/lessons.md (sees new email lesson)
+   → Generates tests: valid +, valid _, valid -, edge case: many special chars
+   → All pass
+
+Step 4 — COMMIT
+   /commit
+   → Auto-classifies: fix(auth): allow special chars in email validation (RFC 5321)
+
+Step 5 — REVIEW (with lesson checking!)
+   /review
+   → Reads tasks/lessons.md (email lesson is active)
+   → Checks diff for: email validation ✓, RFC compliance ✓
+   → No warnings
+   → Creates PR
+
+Step 6 — FINISH
+   /finish-feature
+   → Reads tasks/lessons.md
+   → Scans diff against email lesson: ✓ Pattern not found (we fixed it)
+
+RESULT: Bug fixed + lesson learned. Next time you work on email validation,
+/write-plan will read that lesson and remind you about RFC 5321 ✅
+```
+
+### Scenario 3: When to Use Each Command
+
+| Situation | Command | Why? |
+|-----------|---------|------|
+| **Starting a new feature** | `/brainstorm` | Lock in design before coding. Prevents "building the wrong thing." |
+| **Feature planned, ready to code** | `/write-plan` | Creates checklist. Applies lessons as constraints. Code doesn't start without approved plan. |
+| **Implementing the plan** | `/execute-plan` | Batches work, logs to progress.md, reads lessons before each batch. |
+| **Logical unit done** | `/commit` | After each 2-3 tasks. Generates conventional commit message. |
+| **Feature ready for tests** | `/write-tests` | Generate test file. Reads lessons, avoids past mistakes. |
+| **Something breaks** | `/debug` | Structured investigation. Reproduces, isolates, hypothesizes, verifies. Writes lessons for prevention. |
+| **Feature almost done** | `/review` | Self-review against lessons. Flags bugs before PR. Creates PR via gh. |
+| **Branch merge-ready** | `/finish-feature` | Final checklist: changelog, tests, coverage, no lesson patterns in diff. |
+
+### Scenario 4: Lessons Compounding Over Time
+
+Day 1: `/debug` finds race condition in cache invalidation → writes lesson
+```
+**Bug:** Cache not invalidated on concurrent updates
+**Root cause:** Missing mutex lock on cache write
+**Prevention:** Always use cache.invalidate() AFTER db.update(), never before
+```
+
+Day 5: `/write-plan` reads lesson, applies it to new feature:
+```
+Step 3: Update user profile
+   [Apply lesson: cache invalidation after DB update, never before]
+
+→ Plan now says: "Update DB, then invalidate cache"
+```
+
+Day 6: `/execute-plan` reads lesson as standing constraint:
+```
+Implementing "Update user profile"...
+→ Reading lessons.md for constraints
+→ Found: cache invalidation after DB update
+→ Applying: invalidate() call happens AFTER update() ✓
+```
+
+Day 10: `/review` scans diff against lessons:
+```
+Checking diff for cache patterns...
+→ Lesson says: "cache.invalidate() AFTER db.update()"
+→ Scanning diff... ✓ invalidate() on line 42 is AFTER update() on line 39
+→ No warnings
+```
+
+**Result:** One lesson learned → read by 3+ subsequent skills → prevents the same bug from happening again.
 
 ---
 

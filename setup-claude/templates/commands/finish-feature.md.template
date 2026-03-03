@@ -4,6 +4,13 @@
 
 Checklist for finalizing a feature/bug-fix branch before merging.
 
+## Before You Start
+
+If `tasks/lessons.md` exists, read it in full. For each active lesson, scan the
+final diff (`git diff main..HEAD`) for the **Bug** pattern described in that lesson
+before marking the feature done. This is the last gate before merge — catch recurring
+mistakes here rather than in review.
+
 ## Steps
 
 1. **Check Git Branch**

@@ -1,7 +1,5 @@
 # Claude Code system-managed skills (auto-installed, not custom)
-brainstorming/
 find-skills/
-frontend-design/
 web-design-guidelines/
 
 # Python
