@@ -111,6 +111,7 @@ def should_lock_section(section_name: str, current_content: str) -> bool:
         'Known Issues': True,
         'Notes': True,
         'Custom Configuration': True,
+        'Recommended Workflow': True,
     }
 
     if section_name in auto_lock_sections and current_content.strip():
@@ -200,6 +201,7 @@ def reconstruct_claude_md(
         'Development',
         'Common Workflows',
         'Build & Deploy',
+        'Recommended Workflow',
         'Important Context',
         'Environment Variables',
         'Common Tasks',
