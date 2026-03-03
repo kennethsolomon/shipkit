@@ -90,16 +90,32 @@ Create, diagnose, and intelligently maintain `CLAUDE.md` files with auto-detecti
 **Three Skills + Three Guides:**
 
 **Skills:**
-- `/setup-starter` — Auto-generate CLAUDE.md by detecting your tech stack
-- `/doctor-claude` — Diagnose issues and get suggestions for improvement
-- `/optimize-claude` — Enrich CLAUDE.md with project context (ENHANCED: discovers directories, documentation, workflows)
+- `/setup-starter` — Auto-generate CLAUDE.md with intelligent project discovery (ENHANCED)
+- `/doctor-claude` — Diagnose issues with context-aware suggestions (ENHANCED)
+- `/optimize-claude` — Enrich CLAUDE.md with project context and safely re-run during development
 
 **Guides:**
 - `/explain-claude` — Learn what each CLAUDE.md section means
 - `/implement-claude` — Step-by-step workflow to create perfect CLAUDE.md
 - `/review-claude` — Quality checklist before committing
 
-**What `/optimize-claude` Does (Enhanced):**
+**What `/setup-starter` Does (Enhanced):**
+- 🔍 **Auto-discovers** actual project directories: src/, tests/, docs/, config/, scripts/, etc.
+- 📚 **Finds documentation**: README.md, CONTRIBUTING.md, docs/*.md, .github/CONTRIBUTING.md
+- 🔧 **Detects workflows**: npm scripts, Makefile targets, GitHub Actions workflows
+- 📄 **Generates tailored CLAUDE.md** specific to each project (not generic)
+- 📊 **Reports discoveries** showing directories, docs, and workflows found
+- ✅ Preserves all file safety features (sidecar handling, markers)
+
+**What `/doctor-claude` Does (Enhanced):**
+- 🔍 **Discovers project structure** during diagnosis for comparison
+- 📊 **Compares documented vs actual** content to identify gaps
+- ⚠️ **Reports undocumented** directories and missing documentation sections
+- 💡 **Stack-specific suggestions**: Tailored to React, Django, FastAPI, etc.
+- 🔧 **Detects workflows** and suggests documentation improvements
+- ✅ Shows "Project Structure Detected" in diagnostic output
+
+**What `/optimize-claude` Does:**
 - 🔍 **Auto-discovers** project structure: src/, tests/, docs/, config/, etc.
 - 📚 **Finds documentation**: README.md, CONTRIBUTING.md, docs/*.md, etc.
 - 🔧 **Detects workflows**: Makefile targets, npm scripts, GitHub Actions
@@ -127,6 +143,10 @@ Create, diagnose, and intelligently maintain `CLAUDE.md` files with auto-detecti
 **Typical Usage:**
 ```bash
 /setup-starter          # Create initial CLAUDE.md
+                        # (auto-discovers: 7 directories, 10 doc files, workflows)
+
+# Verify the generated CLAUDE.md
+/doctor-claude          # Shows discovered structure and suggestions
 
 # Later, after adding directories/docs:
 /optimize-claude        # Discovers and adds them automatically!
@@ -134,6 +154,39 @@ Create, diagnose, and intelligently maintain `CLAUDE.md` files with auto-detecti
 # Edit Important Context with custom notes
 vim CLAUDE.md
 /optimize-claude        # ✅ Your edits preserved!
+```
+
+**Example Output from `/setup-starter`:**
+```
+✓ CLAUDE.md created: CLAUDE.md
+  Lines: 104/150
+  Sections: Stack, Quick Start, Project Structure, Key Files, Development,
+            Build & Deploy, Important Context, Environment Variables,
+            Common Tasks, Documentation, Key Directories,
+            Documentation & Resources, Common Workflows
+
+📁 Discoveries from project structure:
+   📂 7 directories found
+   📚 10 documentation files
+   🔧 Workflows discovered and documented
+
+✅ CLAUDE.md created successfully!
+```
+
+**Example Output from `/doctor-claude`:**
+```
+🔍 Project Structure Detected:
+   📂 7 directories: src, tests, docs, public, scripts, config, .github
+   📚 10 documentation files
+   🔧 Workflows: npm (4 scripts)
+
+⚠️ Issues found:
+   1. Project has undocumented directories: tests, scripts
+
+💡 Suggestions:
+   1. Add documentation for: tests, scripts
+   2. Document additional npm scripts: lint, format, type-check
+   3. Consider adding 'Components & Architecture' section for React
 ```
 
 **Example:** For a React + Prisma + Jest project with docs/, the tool discovers all structure automatically and generates complete, organized documentation in under 30 seconds.

@@ -56,8 +56,17 @@ Think of CLAUDE.md as a project "cheat sheet" for Claude Code. It tells Claude:
 **Example output**:
 ```
 ✓ CLAUDE.md created: CLAUDE.md
-  Lines: 94/150
-  Sections: Stack, Quick Start, Project Structure, ...
+  Lines: 104/150
+  Sections: Stack, Quick Start, Project Structure, Key Files, Development,
+            Build & Deploy, Important Context, Environment Variables,
+            Common Tasks, Documentation, Key Directories,
+            Documentation & Resources, Common Workflows
+
+📁 Discoveries from project structure:
+   📂 7 directories found
+   📚 10 documentation files
+   🔧 Workflows discovered and documented
+
 ✅ CLAUDE.md created successfully!
 ```
 
@@ -75,13 +84,28 @@ Think of CLAUDE.md as a project "cheat sheet" for Claude Code. It tells Claude:
 
 **Example output**:
 ```
+📋 Diagnosis Report for CLAUDE.md
+
+📊 Lines: 104/150
+📑 Sections: Stack, Quick Start, Project Structure, Key Files, Development,
+            Build & Deploy, Important Context, Environment Variables,
+            Common Tasks, Documentation, Key Directories,
+            Documentation & Resources, Common Workflows
+
+🔍 Project Structure Detected:
+   📂 7 directories: src, tests, docs, public, scripts, config, .github
+   📚 10 documentation files
+   🔧 Workflows: npm (4 scripts)
+
 ⚠️ Issues found:
-   1. File is too long: 180 lines (target: < 150)
-   2. Missing essential sections: Development
+   1. Project has undocumented directories: tests, scripts
+   2. Found 4 documentation files but no documentation section
 
 💡 Suggestions:
-   1. Run `/optimize-claude` to trim unnecessary sections
-   2. Add a 'Development' section with setup instructions
+   1. Add documentation for: tests, scripts
+   2. Add 'Documentation & Resources' section linking to docs
+   3. Document additional npm scripts: lint, format, type-check
+   4. Consider adding 'Components & Architecture' section for React
 ```
 
 ### I want to enrich CLAUDE.md with my project structure and maintain it
@@ -131,15 +155,18 @@ All skills are accessible with `/` commands in Claude Code.
 
 ## 🎯 The Three Skills Explained
 
-### 1️⃣ `/setup-starter` - Create Your CLAUDE.md
+### 1️⃣ `/setup-starter` - Create Your CLAUDE.md (ENHANCED)
 
 **Use this when**: You're starting a new project or your project doesn't have a CLAUDE.md yet.
 
 **What it does**:
 - 🔍 **Scans your project** automatically (reads package.json, pyproject.toml, Cargo.toml, etc.)
 - 🤖 **Auto-detects everything**: language, framework, database, testing setup
-- 📄 **Generates CLAUDE.md** with all essential sections
-- ✅ **Keeps it short** (optimized for ~100-150 lines)
+- 📂 **Auto-discovers directories**: Finds src/, tests/, docs/, config/, scripts/, etc.
+- 📚 **Finds documentation**: README.md, CONTRIBUTING.md, docs/*.md, and links them
+- 🔧 **Detects workflows**: npm scripts, Makefile targets, GitHub Actions workflows
+- 📄 **Generates tailored CLAUDE.md** specific to YOUR project (not generic)
+- ✅ **Keeps it concise** (typically 100-150 lines with comprehensive content)
 
 **Example: What it detects**
 
@@ -157,27 +184,50 @@ Test command: npm test ✓
 
 **Result**: Generates a complete CLAUDE.md in seconds that would take 15+ minutes to write manually.
 
+**What gets discovered** (NEW):
+- ✅ **7+ directories**: src/, tests/, docs/, config/, scripts/, public/, .github/
+- ✅ **Documentation**: README.md, CONTRIBUTING.md, docs/*.md, .github/CONTRIBUTING.md
+- ✅ **Workflows**: npm scripts (dev, build, test, lint, etc.), Makefile targets, GitHub Actions
+
+**Result**: Generated CLAUDE.md is tailored to your project, not generic! Includes discovered sections:
+- Key Directories
+- Documentation & Resources
+- Common Workflows
+
 **Triggers**: `/setup-starter`, `/create-claude`, `/new-claude`
 
 ---
 
-### 2️⃣ `/doctor-claude` - Check Your CLAUDE.md Health
+### 2️⃣ `/doctor-claude` - Check Your CLAUDE.md Health (ENHANCED)
 
-**Use this when**: You already have a CLAUDE.md and want to verify it's good.
+**Use this when**: You already have a CLAUDE.md and want to verify it's good and complete.
 
 **What it does**:
 - 📊 **Checks line count** (warns if > 150 lines)
+- 🔍 **Discovers actual project structure** (directories, documentation, workflows)
+- ⚖️ **Compares documented vs actual** content to identify gaps
+- ⚠️ **Reports undocumented** directories and missing documentation sections
+- 💡 **Stack-specific suggestions**: Tailored to React, Django, FastAPI, etc.
 - ✓ **Verifies essential sections** (Stack, Quick Start, Development, etc.)
-- 🔍 **Detects issues**: outdated commands, unreplaced placeholders, missing info
-- 💡 **Suggests improvements** with specific recommendations
+- 🔗 **Detects stale information** (outdated commands, unreplaced placeholders)
 - 📝 **Shows you a better version** to review and merge
 
 **Issues it can find**:
 ```
 ⚠️  File is too long (180 lines, target: < 150)
+⚠️  Project has undocumented directories: tests, scripts, docs
+⚠️  Found 4 documentation files but no documentation section
 ⚠️  Missing sections: Development workflow
 ⚠️  File mentions npm but no package.json found
 ⚠️  Has unreplaced placeholders like [PROJECT]
+```
+
+**Stack-specific suggestions** (NEW):
+```
+💡 Consider adding 'Components & Architecture' section for React projects
+💡 Consider adding 'Models & Database' section for Django projects
+💡 Consider adding 'API Endpoints' section for API projects
+💡 Document additional npm scripts: lint, format, type-check
 ```
 
 **Example workflow**:
@@ -448,62 +498,68 @@ npm start
 
 ## 🔄 Common Workflows
 
-### Workflow 1: Starting a New Project
+### Workflow 1: Starting a New Project (Enhanced!)
 
 ```bash
-# Step 1: Create CLAUDE.md automatically
+# Step 1: Create CLAUDE.md automatically with discovery
 /setup-starter
+# ✅ Auto-discovers: 7 directories, 10 doc files, workflows
+# ✅ Generates tailored CLAUDE.md (not generic!)
 
-# Step 2: Review what was created
-# (Opens CLAUDE.md in your editor)
-
-# Step 3: Customize with your project details
-# Edit the file, keep the structure
-
-# Step 4: Check for issues
+# Step 2: Verify the generated file
 /doctor-claude
+# ✅ Shows discovered project structure
+# ✅ Reports any gaps or issues
+# ✅ Provides stack-specific suggestions
 
-# Step 5: Commit to git
+# Step 3: Review and customize with your project details
+# (Edit CLAUDE.md, keep the discovered sections)
+
+# Step 4: Commit to git
 git add CLAUDE.md
-git commit -m "docs: add CLAUDE.md with project setup"
+git commit -m "docs: add CLAUDE.md with auto-discovered project context"
 ```
 
-**Time**: ~6 minutes | **Effort**: Minimal ✅
+**Time**: ~5 minutes | **Effort**: Minimal ✅ (mostly automated!)
+**Difference**: CLAUDE.md now includes auto-discovered directories, docs, and workflows!
 
 ---
 
-### Workflow 2: Enriching and Maintaining CLAUDE.md During Development
+### Workflow 2: Development Checks & Maintenance (Enhanced!)
 
 ```bash
-# Step 1: Check current state
+# Step 1: Check current state with intelligent diagnostics
 /doctor-claude
+# ✅ Discovers actual project structure
+# ✅ Compares documented vs actual content
+# ✅ Reports gaps and undocumented directories
+# ✅ Suggests stack-specific improvements
 
 # Step 2: Enrich with project structure and discoveries
 /optimize-claude
-# ✅ Auto-discovers: src/, tests/, docs/, README.md, etc.
+# ✅ Auto-discovers: src/, tests/, docs/, config/, README.md, etc.
+# ✅ Finds documentation and workflows
+# ✅ Reports what was added and preserved
 
-# Step 3: Review what was discovered
+# Step 3: Review discoveries and suggestions
 # (Check the report of added directories/docs/workflows)
 
 # Step 4: Customize with your own notes
 # Edit Important Context section with project decisions
 vim CLAUDE.md
 
-# Step 5: Run again to refresh discoveries
-# (Your edits are preserved automatically!)
-/optimize-claude
-
-# Step 6: Final verification
+# Step 5: Run diagnostics again to verify improvements
+# (All your edits are preserved!)
 /doctor-claude
 
-# Step 7: Commit improvements
+# Step 6: Commit improvements
 git add CLAUDE.md
-git commit -m "docs: enrich CLAUDE.md with project context and structure"
+git commit -m "docs: refresh CLAUDE.md with discovered project context"
 ```
 
 **Time**: ~5 minutes | **Effort**: Minimal (mostly automated)
 
-**Key Difference**: `/optimize-claude` now ADDS comprehensive context instead of just trimming, and safely re-runs during development without losing your work!
+**NEW**: `/doctor-claude` now shows project structure detected, identifies gaps between documented vs actual content, and provides stack-specific suggestions!
 
 ---
 
@@ -1332,6 +1388,46 @@ RESULT: Perfect Claude context!
 **Simple principle**: *Small, focused documentation that's actually useful.*
 
 Not 500-line guides. Not autogenerated API docs. Just the essentials that Claude needs to help you better.
+
+---
+
+## ✨ What's New (March 2026)
+
+### Major Enhancements to `/setup-starter` & `/doctor-claude`
+
+**`/setup-starter` Now Intelligently Discovers Your Project:**
+- 🔍 **Auto-discovers actual directories** (src/, tests/, docs/, config/, scripts/, public/, .github/)
+- 📚 **Finds all documentation** (README.md, CONTRIBUTING.md, docs/*.md, .github/CONTRIBUTING.md)
+- 🔧 **Detects workflows** (npm scripts, Makefile targets, GitHub Actions)
+- 📊 **Reports discoveries** showing what was found and added
+- ✅ **Result**: CLAUDE.md is now **project-specific**, not generic!
+
+**`/doctor-claude` Now Provides Context-Aware Diagnostics:**
+- 🔍 **Discovers project structure** during diagnosis
+- ⚖️ **Compares documented vs actual** to find gaps
+- ⚠️ **Reports undocumented** directories and missing sections
+- 💡 **Stack-specific suggestions** (React, Django, FastAPI, etc.)
+- 🔧 **Detects workflows** and suggests improvements
+- 📊 **Shows "Project Structure Detected"** in output
+
+**Code Reuse & Consistency:**
+- ✅ Both skills reuse discovery modules from `/optimize-claude`
+- ✅ Consistent detection logic across all three skills
+- ✅ No code duplication
+
+**Example: What Changed**
+
+Before:
+```
+/setup-starter → Generic CLAUDE.md (same for all projects)
+/doctor-claude → Basic checks (line count, missing sections)
+```
+
+After:
+```
+/setup-starter → Tailored CLAUDE.md (with 7 discovered directories, 10 doc files, workflows)
+/doctor-claude → Smart diagnostics (shows gaps, suggests framework-specific improvements)
+```
 
 ---
 
