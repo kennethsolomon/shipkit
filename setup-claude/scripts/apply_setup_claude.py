@@ -307,6 +307,7 @@ def apply(
     add("templates/commands/status.md.template", ".claude/commands/status.md", "generated")
     add("templates/commands/finish-feature.md.template", ".claude/commands/finish-feature.md", "generated")
     add("templates/commands/re-setup.md.template", ".claude/commands/re-setup.md", "generated")
+    add("templates/commands/release.md.template", ".claude/commands/release.md", "generated")
 
     # docs (generated-update)
     add("templates/.claude/docs/changelog-guide.md.template", ".claude/docs/changelog-guide.md", "generated")

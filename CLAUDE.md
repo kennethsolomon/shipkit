@@ -47,8 +47,9 @@ The complete development workflow from idea to merge:
 | 6. Debug | `/debug` | (If needed) Structured bug investigation with hypothesis tracking |
 | 7. Finalize | `/finish-feature` | Pre-merge checklist: changelog, architecture log, verification |
 | 8. Review | `/review` | Self-review all changes, flag issues, create PR via `gh` |
+| 9. Release | `/release` | Auto-detect version, update CHANGELOG.md, create git tag, push to GitHub |
 
-> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks.
+> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks. `/release` is run once when ready to publish (typically after merging the PR).
 
 ### Rules
 - **Never skip steps.** Each command must be invoked separately by the user.
