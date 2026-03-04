@@ -33,6 +33,7 @@ After bootstrapping a project, the recommended workflow becomes:
 - `plan.md` — creates/refreshes planning files and starts planning
 - `status.md` — prints a compact progress summary
 - `finish-feature.md` — branch finalization checklist (stack-aware)
+- `features.md` — sync `docs/features/` specs with current codebase; creates the spec system from scratch if it doesn't exist
 
 ### Project Docs (in `.claude/docs/`)
 - `changelog-guide.md`
