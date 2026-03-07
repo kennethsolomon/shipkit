@@ -34,6 +34,8 @@ npm test
 
 ## Recommended Workflow
 
+**Flow:** `/brainstorm` → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → `/finish-feature` → `/release`
+
 The complete development workflow from idea to merge:
 
 | Step | Command | What Happens |

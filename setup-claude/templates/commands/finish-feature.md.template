@@ -2,6 +2,8 @@
 
 # Finish Feature Command
 
+**Workflow:** `/brainstorm` → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → **`/finish-feature`** → `/release`
+
 Finalize a feature/bug-fix branch: changelog, arch log, security gate, verification, and PR creation.
 
 This is the **last step before `/release`**. It auto-commits documentation changes (changelog, arch log) so you don't need to loop back to `/commit` for docs-only work.

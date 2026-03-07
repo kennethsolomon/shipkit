@@ -6,6 +6,8 @@ description: "Audit changed code for security best practices, production-grade q
 
 # /security-check
 
+**Workflow:** `/brainstorm` → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → **`/security-check`** → `/review` → `/finish-feature` → `/release`
+
 Audit code for security vulnerabilities, production-grade quality, and industry gold-standard compliance.
 
 By default, this checks only files changed on the current branch. Use `--all` to scan the entire project.

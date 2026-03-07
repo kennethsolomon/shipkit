@@ -6,6 +6,8 @@ description: "Write a decision-complete plan into tasks/todo.md (no code yet)."
 
 # /write-plan
 
+**Workflow:** `/brainstorm` → `/frontend-design` → **`/write-plan`** → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → `/finish-feature` → `/release`
+
 Create a decision-complete plan **before** writing code.
 
 ## Steps
