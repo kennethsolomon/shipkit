@@ -7,7 +7,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 **Lessons + Findings Context Threading** — The complete feedback loop is now closed:
 - Every skill that makes decisions reads `tasks/lessons.md` (standing constraints)
 - Every skill that accepts handoff reads `tasks/findings.md` (design decisions)
-- One bug debugged with `/debug` → one lesson written → applied by 6+ skills on next feature
+- One bug debugged with `/debug` → one lesson written → applied by 8+ skills on next feature
 
 **Intelligent Architectural Change Detection** — `/finish-feature` now automatically:
 - Scans your diff for architectural changes

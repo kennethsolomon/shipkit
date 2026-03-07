@@ -121,7 +121,7 @@ A comprehensive overview of all features in the claude-skills system, with empha
 - ✅ Writes `tasks/findings.md` (root cause)
 - ✅ Writes `tasks/lessons.md` (prevention rule)
 
-**Key feature:** One bug debugged = one lesson written that 6+ skills apply next time.
+**Key feature:** One bug debugged = one lesson written that 8+ skills apply next time.
 
 ### 8. Code Review: `/review`
 

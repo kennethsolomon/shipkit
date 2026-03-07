@@ -14,7 +14,7 @@ Implemented a complete feedback loop system where:
 3. **Architectural changes are automatically detected and documented** (no guessing)
 4. **System gets smarter per-project** (compounding knowledge, no context reset)
 
-**Result:** One bug debugged → one lesson written → 6+ skills apply it on next feature
+**Result:** One bug debugged → one lesson written → 8+ skills apply it on next feature
 
 ---
 
@@ -312,7 +312,7 @@ Session 3 final: User runs /finish-feature
 Result:
 ✅ Feature shipped
 ✅ Two bugs prevented (cache invalidation, CORS)
-✅ One lesson written + applied by 6+ skills
+✅ One lesson written + applied by 8+ skills
 ✅ Architectural decision documented (auto-detected)
 ✅ Next feature will read this lesson and 2FA lessons
 ```
