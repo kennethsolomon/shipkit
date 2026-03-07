@@ -5,3 +5,4 @@ web-design-guidelines/
 # Python
 __pycache__/
 *.pyc
+release-workspace/
