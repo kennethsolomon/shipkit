@@ -166,7 +166,17 @@ PHASE 6: DEBUG (If Needed)
 │ • Writes: tasks/lessons.md (prevention rule for future)                 │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 7: REVIEW
+PHASE 7: SECURITY AUDIT
+┌──────────────────────────────────────────────────────────────────────────┐
+│ /security-check                                                          │
+│ • Reads: tasks/security-findings.md (prior audits), tasks/lessons.md    │
+│ • Audits changed files (or full project with --all)                     │
+│ • OWASP Top 10, CWE references, stack-specific checks                  │
+│ • Production readiness: error handling, input validation, secrets       │
+│ • Writes: tasks/security-findings.md (severity-rated findings)          │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 8: REVIEW
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ /review                                                                  │
 │ • Reads: tasks/lessons.md, tasks/security-findings.md                   │
@@ -174,10 +184,10 @@ PHASE 7: REVIEW
 │   → Correctness, Security, Performance, Reliability                     │
 │   → Design, Best Practices, Testing                                     │
 │ • Generates severity-leveled report (Critical/Warning/Nitpick)          │
-│ • Report-only: loop /debug + /commit until clean                        │
+│ • Report-only: loop /debug → /commit → /review until clean             │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 8: FINALIZE + PR
+PHASE 9: FINALIZE + PR
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ /finish-feature                                                          │
 │ • Verifies git branch + naming                                          │
@@ -197,7 +207,7 @@ PERSISTENT CONTEXT FILES (Never Cleared)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ tasks/findings.md         ← Decisions, discoveries, prior context        │
 │ tasks/lessons.md          ← Prevention rules (read by 8+ skills)        │
-│ tasks/security-findings.md← Security audit results (read by 4 skills)   │
+│ tasks/security-findings.md ← Security audit results (read by 4 skills)  │
 │ tasks/todo.md        ← Current plan (checkboxes)                         │
 │ tasks/progress.md    ← Session work log + error log                      │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -205,8 +215,8 @@ PERSISTENT CONTEXT FILES (Never Cleared)
 KEY PRINCIPLES
 ✓ Every skill that makes decisions reads lessons.md
 ✓ Every skill that accepts handoff reads findings.md
-✓ lessons.md Bug patterns become active constraints across 6+ workflows
-✓ One bug debugged = one lesson written = 5+ skills apply it next time
+✓ lessons.md Bug patterns become active constraints across 8+ skills
+✓ One bug debugged = one lesson written = 8+ skills apply it next time
 ✓ No context reset = no repeated mistakes
 ```
 
@@ -338,19 +348,19 @@ The complete development workflow from idea to merge with **automatic context th
 | 5. Test | `/write-tests` | Generate tests matching framework and patterns | **Reads:** lessons.md<br/>**Writes:** (lessons.md if code bug found) |
 | 6. Debug | `/debug` | (If needed) Structured investigation with hypotheses | **Reads:** findings.md, lessons.md, progress.md<br/>**Writes:** findings.md, lessons.md (prevention rules) |
 | 7. Security | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards | **Reads:** security-findings.md (prior audits), lessons.md<br/>**Writes:** security-findings.md |
-| 8. Review | `/review` | 7-dimension review (correctness, security, performance, reliability, design, best practices, testing). Loop `/debug` → `/commit` until clean | **Reads:** lessons.md, security-findings.md |
+| 8. Review | `/review` | 7-dimension review (correctness, security, performance, reliability, design, best practices, testing). If issues found: `/debug` → `/commit` → `/review` until clean | **Reads:** lessons.md, security-findings.md |
 | 9. Finalize | `/finish-feature` | Changelog, arch log (auto-committed), security gate, verification, **create PR** | **Auto-detects** architectural changes<br/>**Reads:** security-findings.md (unresolved findings)<br/>**Scans diff** against lessons.md (final gate) |
 
 ### Key Features
 
 ✅ **Context Threading** — findings.md flows brainstorm → write-plan → frontend-design; never re-ask decisions
-✅ **Compounding Lessons** — One bug debugged = one lesson written = 6+ skills apply it next time
+✅ **Compounding Lessons** — One bug debugged = one lesson written = 8+ skills apply it next time
 ✅ **Auto-Architecture Detection** — `/finish-feature` intelligently detects & documents arch changes
 ✅ **Security Audit Gate** — `/security-check` audits changed files against OWASP Top 10, CWE, and stack-specific standards
 ✅ **Bug Prevention Loop** — lessons.md Bug patterns become standing constraints throughout execution
 ✅ **No Context Reset** — findings.md, lessons.md, and security-findings.md persist across sessions
 
-> Steps 4-6 can repeat as needed. Run `/commit` after each logical unit, `/write-tests` after implementing, `/debug` whenever something breaks. Run `/security-check` before finalizing to catch vulnerabilities early. Lessons compound over time, making the system smarter per-project.
+> Steps 4-6 can repeat as needed. Run `/commit` after each logical unit, `/write-tests` after implementing, `/debug` whenever something breaks. Run `/security-check` before finalizing to catch vulnerabilities early. If `/review` finds issues, loop: `/debug` → `/commit` → `/review` until clean, then proceed to `/finish-feature`. Lessons compound over time, making the system smarter per-project.
 
 ### Brainstorming + Frontend Design
 

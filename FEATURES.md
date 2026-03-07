@@ -344,7 +344,7 @@ Result:
 | **Design Decisions** | Re-explained each time | Read from findings.md |
 | **Bug Prevention** | Random fixes | Lessons applied as constraints |
 | **Test Patterns** | Ad-hoc | Follow lesson patterns |
-| **Code Review** | Generic checks | Targeted lesson patterns |
+| **Code Review** | Generic checks | 7-dimension review with lesson + security patterns |
 | **Security** | Ad-hoc or skipped | OWASP + stack-specific audit with security gate |
 | **Arch Logs** | 0% drafted, tedious | 80% auto-generated |
 | **System Knowledge** | Resets | Compounds over time |

@@ -106,8 +106,8 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
       - Follows [LANGUAGE] conventions and style guide (see `CLAUDE.md`)
 
 6. **Security Gate**
-   - If `/security-check` has not been run on this branch, recommend: "Run `/security-check` before creating a PR."
-   - If `tasks/security-findings.md` has unresolved Critical or High findings, list them and ask the user to confirm they've been addressed.
+   - Read `tasks/security-findings.md`. If it doesn't exist or has no audit for this branch, recommend: "Run `/security-check` before creating a PR."
+   - If the most recent audit has unresolved Critical or High findings, list them and ask the user to confirm they've been addressed before proceeding.
 
 7. **Create Pull Request**
 
@@ -129,21 +129,21 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
    d) **Create PR:**
    ```bash
    gh pr create --title "title here" --body "$(cat <<'EOF'
-   ## Summary
-   - bullet points of key changes
+## Summary
+- bullet points of key changes
 
-   ## Review Notes
-   - Any findings from /review (or "Clean review — no issues found")
+## Review Notes
+- Any findings from /review (or "Clean review — no issues found")
 
-   ## Security
-   - Security check status (passed / N findings addressed)
+## Security
+- Security check status (passed / N findings addressed)
 
-   ## Test Plan
-   - How to verify the changes
+## Test Plan
+- How to verify the changes
 
-   Generated with [Claude Code](https://claude.com/claude-code)
-   EOF
-   )"
+Generated with [Claude Code](https://claude.com/claude-code)
+EOF
+)"
    ```
 
    e) Report the PR URL to the user.
