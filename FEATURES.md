@@ -15,9 +15,14 @@ A comprehensive overview of all features in the claude-skills system, with empha
 
 - **`tasks/lessons.md`** — Prevention rules (compounding knowledge)
   - Written by: `/debug`, `/write-tests` (when bugs found), `/execute-plan` (user corrections)
-  - Read by: `/brainstorm`, `/write-plan`, `/execute-plan`, `/write-tests`, `/debug`, `/review`, `/finish-feature`
-  - Active constraints applied to 7+ skills
+  - Read by: `/brainstorm`, `/write-plan`, `/execute-plan`, `/write-tests`, `/debug`, `/review`, `/security-check`, `/finish-feature`
+  - Active constraints applied to 8+ skills
   - Never overwritten (idempotent append-only)
+
+- **`tasks/security-findings.md`** — Security audit results (compounding security posture)
+  - Written by: `/security-check`
+  - Read by: `/brainstorm` (security constraints), `/review` (verify fixes), `/finish-feature` (security gate)
+  - Never overwritten (new audits append below previous)
 
 - **`tasks/todo.md`** — Current plan checkboxes
   - Written by: `/write-plan`
@@ -124,24 +129,47 @@ A comprehensive overview of all features in the claude-skills system, with empha
 - Self-reviews all changes on the branch
 - Checks for bugs, security issues, code quality
 - Framework-specific checks (React/Python/Go)
-- Creates PR via `gh pr create`
+- Report-only — flags issues by severity (Critical, Warning, Nitpick)
+- User loops `/debug` + `/commit` + `/review` until clean
 
 **Context Threading:**
 - ✅ Reads `tasks/lessons.md` (Bug patterns as targeted checks)
+- ✅ Reads `tasks/security-findings.md` (verify prior findings addressed)
 - Uses lesson Bug field as automated checklist
 
-### 9. Pre-Merge Finalization: `/finish-feature`
+### 9. Security Audit: `/security-check`
+
+**What it does:**
+- Audits changed files (default) or full project (`--all`) for security vulnerabilities
+- Checks against OWASP Top 10 (2021), CWE references, and stack-specific patterns
+- Evaluates production readiness (error handling, input validation, secrets management)
+- Rates findings by severity: Critical, High, Medium, Low
+- Every finding cites file:line and the standard violated
+
+**Context Threading:**
+- Reads `tasks/security-findings.md` (check if prior findings addressed)
+- Reads `tasks/lessons.md` (security-related lessons as targeted checks)
+- Writes `tasks/security-findings.md` (audit results)
+
+**Key feature:** Stack-aware — tailors checks to your framework (React XSS patterns, Express middleware, Python eval/exec, Go error handling, etc.). Downstream skills (`/review`, `/finish-feature`) read security-findings.md to enforce a security gate before merge.
+
+### 10. Finalize + PR: `/finish-feature`
 
 **What it does:**
 - Verifies git branch (feature/fix/chore naming)
-- Checks CHANGELOG.md entry
-- **Intelligent arch change detection** (NEW)
+- Checks CHANGELOG.md entry (auto-commits if updated)
+- **Intelligent arch change detection** (auto-commits arch log)
+- **Security gate** — checks unresolved Critical/High findings from `/security-check`
 - Verifies tests pass, coverage >80%
 - Scans diff against lesson patterns (final bug gate)
+- **Creates PR via `gh pr create`** — includes summary, review notes, security status
 
 **Context Threading:**
 - ✅ Reads `tasks/lessons.md` (Bug patterns to scan for)
+- ✅ Reads `tasks/security-findings.md` (unresolved security findings)
 - ✅ Auto-detects arch changes and generates draft logs
+
+**Key feature:** Auto-commits documentation changes (changelog, arch log) so you don't need to loop back to `/commit` for docs-only work.
 
 ---
 
@@ -269,26 +297,36 @@ User: "Add two-factor authentication"
   • CONFIRMED: missing Access-Control-Allow-Origin
   • Fixes + writes lesson: "Always verify CORS headers for cross-origin resources"
     ↓
+/security-check
+  • Reads security-findings.md (prior audits)
+  • Audits changed files: OWASP Top 10 + stack-specific checks
+  • Finds: 1 Medium (missing rate limiting on 2FA endpoint)
+  • Writes to security-findings.md
+  • User fixes, re-runs: all clear ✓
+    ↓
 /review
   • Reads lessons.md: CORS, cache invalidation, QR code patterns
+  • Reads security-findings.md: confirms prior findings addressed ✓
   • Scans diff: ✓ Cache invalidated after DB update (lesson applied)
   • Scans diff: ✓ CORS headers present (bug prevented)
-  • Creates PR
+  • Flags: 1 warning → user fixes with /debug, commits, re-runs /review: clean ✓
     ↓
 /finish-feature
-  • Checks CHANGELOG.md ✓
+  • Updates CHANGELOG.md, auto-commits: "docs: update CHANGELOG.md"
   • AUTO-DETECTS: Control Flow + Data Flow changes
-  • Auto-generates arch log draft
-  • User edits: "Added lessons.md reads to 6 skills for context threading"
-  • User commits arch log
+  • Auto-generates arch log draft, auto-commits: "docs: add arch log"
+  • Security gate: no unresolved Critical/High findings ✓
   • Scans diff against lesson patterns (final gate)
-  • Ready to merge
+  • Creates PR via gh pr create
+  • Reports PR URL
 
 Result:
 ✅ Two bugs prevented (cache invalidation, CORS)
+✅ One security finding caught and fixed before merge
 ✅ One lesson written during debug
 ✅ That lesson will be applied to next 3 features
 ✅ Architectural decision documented
+✅ PR created with full context
 ```
 
 ---
@@ -302,6 +340,7 @@ Result:
 | **Bug Prevention** | Random fixes | Lessons applied as constraints |
 | **Test Patterns** | Ad-hoc | Follow lesson patterns |
 | **Code Review** | Generic checks | Targeted lesson patterns |
+| **Security** | Ad-hoc or skipped | OWASP + stack-specific audit with security gate |
 | **Arch Logs** | 0% drafted, tedious | 80% auto-generated |
 | **System Knowledge** | Resets | Compounds over time |
 | **Bug Repetition** | Likely | Prevented by lessons |
@@ -316,8 +355,9 @@ Result:
 3. `/write-plan` — Plan (applies lessons as constraints)
 4. `/execute-plan` → `/commit` → `/write-tests` — Implement
 5. `/debug` (if needed) — Writes findings.md + lessons.md
-6. `/review` — Pre-PR review (reads lessons.md)
-7. `/finish-feature` — Final checks (auto-detects arch changes)
+6. `/security-check` — Audit changed files (OWASP, production quality, stack-specific)
+7. `/review` — Self-review (report-only). Loop `/debug` + `/commit` until clean
+8. `/finish-feature` — Changelog + arch log (auto-committed), security gate, create PR
 
 **Over time:**
 - lessons.md grows with project knowledge
@@ -345,14 +385,21 @@ Result:
 3. `/execute-plan` — Standing constraints
 4. `/write-tests` — Test pattern constraints
 5. `/debug` — Prevention rules (try first)
-6. `/review` — Bug pattern checks
-7. `/finish-feature` — Diff scanning (final gate)
+6. `/security-check` — Security-related lessons as targeted checks
+7. `/review` — Bug pattern checks
+8. `/finish-feature` — Diff scanning (final gate)
 
 ### Skills Reading Findings.md
 1. `/brainstorm` — Check if prior work exists
 2. `/write-plan` — Extract design brief
 3. `/debug` — Check what was already tried
 4. `/frontend-design` — Design brief for UI work
+
+### Skills Reading Security-Findings.md
+1. `/brainstorm` — Factor recurring security patterns into design
+2. `/security-check` — Check if prior findings addressed
+3. `/review` — Verify security fixes, check for regressions
+4. `/finish-feature` — Security gate (block on unresolved Critical/High)
 
 ---
 
@@ -366,5 +413,5 @@ Result:
 
 ---
 
-**Last Updated:** March 3, 2026
-**Version:** 2.0 (Context Threading + Auto-Architecture Detection)
+**Last Updated:** March 7, 2026
+**Version:** 2.1 (Context Threading + Auto-Architecture Detection + Security Audit Gate)

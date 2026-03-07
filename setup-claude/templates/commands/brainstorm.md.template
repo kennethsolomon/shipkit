@@ -23,6 +23,9 @@ Explore design and clarify requirements **before** any code is written.
    - If `tasks/lessons.md` exists, read it in full. Apply every active lesson as a design
      constraint throughout this brainstorm — treat each prevention rule as a hard constraint
      when proposing approaches.
+   - If `tasks/security-findings.md` exists and has audit results, skim for recurring
+     patterns — factor security constraints into proposed approaches (e.g., if prior audits
+     flagged missing input validation, ensure new designs account for it).
 
 2. **Understand the request** — Ask clarifying questions about what the user wants. Do not assume. Cover:
    - What problem are we solving?

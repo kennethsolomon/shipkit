@@ -39,7 +39,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/frontend-design`](#frontend-design) — Production-grade UI generation with browser verification
   - [`/write-tests`](#write-tests) — Test generation
   - [`/debug`](#debug) — Structured debugging
-  - [`/review`](#review) — Self-review + PR creation
+  - [`/review`](#review) — Self-review (report-only)
   - [`/finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
 - [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
 - [Requirements](#requirements)
@@ -170,30 +170,33 @@ PHASE 7: REVIEW
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ /review                                                                  │
 │ • Reads: tasks/lessons.md (Bug patterns as targeted checks)             │
+│ • Reads: tasks/security-findings.md (verify prior findings addressed)   │
 │ • Scans diff for security issues, code quality, bugs                    │
 │ • Generates severity-leveled report (Critical/Warning/Nitpick)          │
-│ • Creates PR via gh pr create (with explanation)                        │
+│ • Report-only: loop /debug + /commit until clean                        │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 8: FINALIZE
+PHASE 8: FINALIZE + PR
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ /finish-feature                                                          │
 │ • Verifies git branch + naming                                          │
-│ • Checks CHANGELOG.md updated                                           │
+│ • Updates CHANGELOG.md (auto-commits if changed)                        │
 │ • AUTO-DETECTS architectural changes:                                   │
 │   → Analyzes diff for: schema, API routes, components, subsystems       │
 │   → Auto-generates arch log draft (80% complete)                        │
 │   → User reviews/edits [TODO] sections                                  │
-│   → User commits: git add .claude/docs/... && git commit                │
+│   → Auto-commits: "docs: add architectural changelog entry"             │
+│ • Security gate: blocks on unresolved Critical/High findings            │
 │ • Verifies tests pass, coverage >80%                                    │
 │ • Scans diff against lessons.md Bug patterns (final gate)              │
-│ • Ready to merge                                                         │
+│ • Creates PR via gh pr create (with summary + security status)          │
 └──────────────────────────────────────────────────────────────────────────┘
 
 PERSISTENT CONTEXT FILES (Never Cleared)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ tasks/findings.md    ← Decisions, discoveries, prior context             │
-│ tasks/lessons.md     ← Prevention rules (read by 6+ skills)              │
+│ tasks/findings.md         ← Decisions, discoveries, prior context        │
+│ tasks/lessons.md          ← Prevention rules (read by 8+ skills)        │
+│ tasks/security-findings.md← Security audit results (read by 4 skills)   │
 │ tasks/todo.md        ← Current plan (checkboxes)                         │
 │ tasks/progress.md    ← Session work log + error log                      │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -289,7 +292,7 @@ Each step hands context to the next. The design + plan approach ensures frontend
 Install these before using the skills:
 
 - [Claude Code CLI](https://claude.ai/code) — the AI coding agent
-- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/review` PR creation
+- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/finish-feature` PR creation
 - Python 3 — required for the `/setup-claude` deterministic bootstrap script
 - `playwright@claude-plugins-official` plugin — required for browser verification in `/frontend-design`, `/debug`, and `/write-tests` (Playwright projects). Enable in Claude Code settings under Plugins.
 
@@ -312,11 +315,11 @@ cd /path/to/your-project
 /doctor-claude
 ```
 
-After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` planning files exist, and all workflow commands (`/brainstorm`, `/write-plan`, `/execute-plan`, `/finish-feature`) are available inside that project.
+After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` planning files exist, and all workflow commands (`/brainstorm`, `/write-plan`, `/execute-plan`, `/security-check`, `/review`, `/finish-feature`) are available inside that project.
 
 ### Daily Workflow
 
-During normal development, run the full workflow for every meaningful change: start with `/brainstorm` to clarify what you're building, use `/frontend-design` to design the UI (no code yet), use `/write-plan` to create a unified plan incorporating both brainstorm and design, then implement with `/execute-plan` (which logs every action and reads lessons from past mistakes), commit with `/commit` after each logical batch, write tests with `/write-tests`, debug structured with `/debug` if anything breaks, then `/review` to self-review and create a PR, and finally `/finish-feature` to confirm the branch is merge-ready. See the [Tutorial](#tutorial--building-a-feature-end-to-end) above for a concrete example with exact output.
+During normal development, run the full workflow for every meaningful change: start with `/brainstorm` to clarify what you're building, use `/frontend-design` to design the UI (no code yet), use `/write-plan` to create a unified plan incorporating both brainstorm and design, then implement with `/execute-plan` (which logs every action and reads lessons from past mistakes), commit with `/commit` after each logical batch, write tests with `/write-tests`, debug structured with `/debug` if anything breaks, run `/security-check` to audit for vulnerabilities and production quality, then `/review` to self-review (loop `/debug` + `/commit` if issues found), and finally `/finish-feature` to finalize, auto-commit docs, and create the PR. See the [Tutorial](#tutorial--building-a-feature-end-to-end) above for a concrete example with exact output.
 
 ---
 
@@ -333,18 +336,20 @@ The complete development workflow from idea to merge with **automatic context th
 | 4. Commit | `/commit` | Stage changes, auto-detect type, generate conventional message | **Reads:** progress.md (for context) |
 | 5. Test | `/write-tests` | Generate tests matching framework and patterns | **Reads:** lessons.md<br/>**Writes:** (lessons.md if code bug found) |
 | 6. Debug | `/debug` | (If needed) Structured investigation with hypotheses | **Reads:** findings.md, lessons.md, progress.md<br/>**Writes:** findings.md, lessons.md (prevention rules) |
-| 7. Review | `/review` | Self-review against lessons patterns, create PR | **Reads:** lessons.md (Bug patterns as targeted checks) |
-| 8. Finalize | `/finish-feature` | Checklist: changelog, **auto-detect arch changes**, verify tests | **Auto-detects** architectural changes<br/>**Scans diff** against lessons.md (final gate) |
+| 7. Security | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards | **Reads:** security-findings.md (prior audits), lessons.md<br/>**Writes:** security-findings.md |
+| 8. Review | `/review` | Self-review against lessons patterns. Loop `/debug` → `/commit` until clean | **Reads:** lessons.md, security-findings.md |
+| 9. Finalize | `/finish-feature` | Changelog, arch log (auto-committed), security gate, verification, **create PR** | **Auto-detects** architectural changes<br/>**Reads:** security-findings.md (unresolved findings)<br/>**Scans diff** against lessons.md (final gate) |
 
 ### Key Features
 
 ✅ **Context Threading** — findings.md flows brainstorm → write-plan → frontend-design; never re-ask decisions
 ✅ **Compounding Lessons** — One bug debugged = one lesson written = 6+ skills apply it next time
 ✅ **Auto-Architecture Detection** — `/finish-feature` intelligently detects & documents arch changes
+✅ **Security Audit Gate** — `/security-check` audits changed files against OWASP Top 10, CWE, and stack-specific standards
 ✅ **Bug Prevention Loop** — lessons.md Bug patterns become standing constraints throughout execution
-✅ **No Context Reset** — findings.md and lessons.md persist across sessions
+✅ **No Context Reset** — findings.md, lessons.md, and security-findings.md persist across sessions
 
-> Steps 4-6 can repeat as needed. Run `/commit` after each logical unit, `/write-tests` after implementing, `/debug` whenever something breaks. Lessons compound over time, making the system smarter per-project.
+> Steps 4-6 can repeat as needed. Run `/commit` after each logical unit, `/write-tests` after implementing, `/debug` whenever something breaks. Run `/security-check` before finalizing to catch vulnerabilities early. Lessons compound over time, making the system smarter per-project.
 
 ### Brainstorming + Frontend Design
 
@@ -437,20 +442,33 @@ Step 6 — DEBUG (if something breaks)
    → Writes lesson: "Always verify CORS headers for cross-origin image loads"
      (this lesson will now be read by /write-plan, /execute-plan, /review on next feature)
 
-Step 7 — REVIEW
+Step 7 — SECURITY AUDIT
+   /security-check
+   → Reads tasks/security-findings.md (prior audits)
+   → Audits changed files against OWASP Top 10 + stack-specific checks
+   → Finds: 1 Medium (missing rate limiting on QR endpoint)
+   → Writes findings to tasks/security-findings.md
+   → User fixes and re-runs: all clear ✓
+
+Step 8 — REVIEW
    /review
    → Reads tasks/lessons.md (uses Bug patterns as targeted checks)
+   → Reads tasks/security-findings.md (checks prior audit resolved)
    → Scans diff for: CORS issues ✓, QR code encoding ✓, token expiry ✓
    → Flags: 1 warning (missing refresh token rotation), no criticals
-   → Creates PR via gh pr create
+   → User fixes with /debug, commits, re-runs /review: all clean ✓
 
-Step 8 — FINALIZE
+Step 9 — FINALIZE + PR
    /finish-feature
-   → Checklist: CHANGELOG updated ✓, tests pass ✓, coverage >80% ✓
+   → Updates CHANGELOG.md, auto-commits: "docs: update CHANGELOG.md"
+   → AUTO-DETECTS arch changes, generates draft, auto-commits: "docs: add arch log"
+   → Security gate: no unresolved Critical/High findings ✓
+   → Tests pass ✓, coverage >80% ✓
    → Scans diff for lesson patterns (CORS lesson applies here)
-   → Ready to merge
+   → Creates PR via gh pr create
+   → Reports PR URL
 
-SHIP: Feature is ready ✅
+SHIP: PR created, ready for merge ✅
 ```
 
 ### Scenario 2: Bug Fix with Lesson Learning (The Debug Loop)
@@ -522,13 +540,14 @@ Step 5 — REVIEW (with lesson checking!)
    /review
    → Reads tasks/lessons.md (email lesson is active)
    → Checks diff for: email validation ✓, RFC compliance ✓
-   → No warnings
-   → Creates PR
+   → No warnings — review is clean
 
-Step 6 — FINISH
+Step 6 — FINALIZE + PR
    /finish-feature
+   → Updates CHANGELOG.md, auto-commits docs
    → Reads tasks/lessons.md
    → Scans diff against email lesson: ✓ Pattern not found (we fixed it)
+   → Creates PR via gh pr create
 
 RESULT: Bug fixed + lesson learned. Next time you work on email validation,
 /write-plan will read that lesson and remind you about RFC 5321 ✅
@@ -544,8 +563,9 @@ RESULT: Bug fixed + lesson learned. Next time you work on email validation,
 | **Logical unit done** | `/commit` | After each 2-3 tasks. Generates conventional commit message. |
 | **Feature ready for tests** | `/write-tests` | Generate test file. Reads lessons, avoids past mistakes. |
 | **Something breaks** | `/debug` | Structured investigation. Reproduces, isolates, hypothesizes, verifies. Writes lessons for prevention. |
-| **Feature almost done** | `/review` | Self-review against lessons. Flags bugs before PR. Creates PR via gh. |
-| **Branch merge-ready** | `/finish-feature` | Final checklist: changelog, tests, coverage, no lesson patterns in diff. |
+| **Code complete, pre-review** | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards. Writes to security-findings.md. |
+| **Ready for review** | `/review` | Self-review against lessons + security findings. Flags bugs — loop `/debug` + `/commit` until clean. |
+| **Review clean, ready to ship** | `/finish-feature` | Changelog + arch log (auto-committed), security gate, verification, create PR via `gh`. |
 
 ### Scenario 4: Lessons Compounding Over Time
 
@@ -594,7 +614,7 @@ Bootstrap or repair Claude Code infrastructure on any project.
 - Detects your tech stack (Next.js, Laravel, Python, Go, Ruby, etc.)
 - Creates or optimizes `CLAUDE.md`, project commands in `.claude/commands/`, and Claude docs in `.claude/docs/`
 - Adds `tasks/findings.md` + `tasks/progress.md` for persistent context across long sessions
-- Adds project-level workflow commands: `/re-setup`, `/brainstorm`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/finish-feature`
+- Adds project-level workflow commands: `/re-setup`, `/brainstorm`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/security-check`, `/finish-feature`
 - Fully idempotent — safe to re-run on existing projects
 
 **Supported stacks:** Next.js + Drizzle, Next.js + Prisma, Next.js + Supabase, Laravel + Eloquent, Supabase (any framework), Python + FastAPI, Generic
@@ -614,8 +634,9 @@ Bootstrap or repair Claude Code infrastructure on any project.
 6. Run `/commit` after each logical unit of work.
 7. Run `/write-tests` to generate tests matching your framework.
 8. Run `/debug` if something breaks (structured investigation).
-9. Run `/review` to self-review all changes and create a PR.
-10. Run `/finish-feature` to finalize the branch (changelog, architecture log, verification).
+9. Run `/security-check` to audit changed files for vulnerabilities and production quality.
+10. Run `/review` to self-review all changes. Loop `/debug` + `/commit` if issues found.
+11. Run `/finish-feature` to finalize (changelog, arch log auto-committed, security gate, create PR).
 
 #### Deterministic Bootstrap Script
 
@@ -890,19 +911,20 @@ Structured bug investigation with hypothesis tracking and documentation.
 
 ### `/review`
 
-Honest self-review of all branch changes with severity levels and PR creation.
+Honest self-review of all branch changes with severity levels. Report-only — PR creation is handled by `/finish-feature`.
 
 **What it does:**
 - Reviews all changes on the current branch against main
 - Checks for bugs (off-by-one, null access, race conditions, resource leaks)
-- Checks security (OWASP top 10 patterns with built-in checklist)
+- Checks security (OWASP top 10 patterns with built-in checklist + security-findings.md)
 - Checks code quality (naming, dead code, DRY, function length)
 - Framework-specific checks (React keys/useEffect, Python type hints, Go error handling)
 - Generates severity-leveled report: Critical / Warning / Nitpick (max 15 items)
-- Creates PR via `gh pr create` if requested
+- Critical/Warning: loop `/debug` + `/commit` + `/review` until clean
+- Nitpick only: asks user — fix now or proceed to `/finish-feature`?
 - Report-only: intentionally cannot modify files
 
-**Usage:** When ready to review and ship:
+**Usage:** When ready for review:
 ```
 /review
 ```
@@ -1069,7 +1091,7 @@ When templates improve (e.g., new guidance in `/finish-feature`), running `/re-s
 ## Requirements
 
 - [Claude Code CLI](https://claude.ai/code) installed and configured
-- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/review` PR creation
+- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/finish-feature` PR creation
 - Python 3 — required for `/setup-claude` deterministic bootstrap script
 - Git — required for `/commit`, `/review`, `/debug`, and `/finish-feature`
 - `playwright@claude-plugins-official` plugin — required for browser verification in `/frontend-design`, browser reproduction in `/debug`, and live-page assertion capture in `/write-tests` (Playwright projects only). Enable in Claude Code settings under Plugins.

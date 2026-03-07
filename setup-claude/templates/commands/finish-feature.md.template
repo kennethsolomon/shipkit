@@ -2,7 +2,9 @@
 
 # Finish Feature Command
 
-Checklist for finalizing a feature/bug-fix branch before merging.
+Finalize a feature/bug-fix branch: changelog, arch log, security gate, verification, and PR creation.
+
+This is the **last step before `/release`**. It auto-commits documentation changes (changelog, arch log) so you don't need to loop back to `/commit` for docs-only work.
 
 ## Before You Start
 
@@ -10,6 +12,10 @@ If `tasks/lessons.md` exists, read it in full. For each active lesson, scan the
 final diff (`git diff main..HEAD`) for the **Bug** pattern described in that lesson
 before marking the feature done. This is the last gate before merge — catch recurring
 mistakes here rather than in review.
+
+If `tasks/security-findings.md` exists, read it. Check that any Critical or High
+severity findings from the most recent `/security-check` audit have been addressed.
+If unresolved Critical/High findings remain, warn the user before proceeding.
 
 ## Steps
 
@@ -24,6 +30,11 @@ mistakes here rather than in review.
 3. **Verify `CHANGELOG.md` Updated**
    - Ensure an entry exists under `[Unreleased]`
    - Follow `.claude/docs/changelog-guide.md`
+   - If CHANGELOG.md needs updating, make the edit and auto-commit:
+     ```bash
+     git add CHANGELOG.md
+     git commit -m "docs: update CHANGELOG.md for unreleased changes"
+     ```
 
 4. **Check for Architectural Changes**
 
@@ -56,7 +67,7 @@ mistakes here rather than in review.
         - Migration/Compatibility: Any breaking changes?
       - Verify the auto-filled sections (Summary, Type, What Changed, Impact)
 
-   c) **Stage and commit the arch log:**
+   c) **Auto-commit the arch log** (no need to go back to `/commit`):
       ```bash
       git add .claude/docs/architectural_change_log/
       git commit -m "docs: add architectural changelog entry"
@@ -94,6 +105,49 @@ mistakes here rather than in review.
       - Comments explain *why*, not *what*
       - Follows [LANGUAGE] conventions and style guide (see `CLAUDE.md`)
 
-6. **Next Steps**
-   - Run `/review` to self-review all changes, flag issues, and create a PR via `gh`
+6. **Security Gate**
+   - If `/security-check` has not been run on this branch, recommend: "Run `/security-check` before creating a PR."
+   - If `tasks/security-findings.md` has unresolved Critical or High findings, list them and ask the user to confirm they've been addressed.
 
+7. **Create Pull Request**
+
+   a) **Check remote status:**
+   ```bash
+   git remote -v
+   git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "no upstream"
+   ```
+
+   b) **Push branch if needed:**
+   ```bash
+   git push -u origin HEAD
+   ```
+
+   c) **Generate PR title and body:**
+      - Title: Short, imperative, under 70 characters
+      - Body: Summary of changes, review findings (if any from `/review`), test status
+
+   d) **Create PR:**
+   ```bash
+   gh pr create --title "title here" --body "$(cat <<'EOF'
+   ## Summary
+   - bullet points of key changes
+
+   ## Review Notes
+   - Any findings from /review (or "Clean review — no issues found")
+
+   ## Security
+   - Security check status (passed / N findings addressed)
+
+   ## Test Plan
+   - How to verify the changes
+
+   Generated with [Claude Code](https://claude.com/claude-code)
+   EOF
+   )"
+   ```
+
+   e) Report the PR URL to the user.
+
+## When Done
+
+> "Feature finalized and PR created! Run `/release` when ready to tag and publish."

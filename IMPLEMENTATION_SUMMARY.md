@@ -294,10 +294,10 @@ Session 3 continued: User runs /review
 ├─ Reads: tasks/lessons.md → uses Bug patterns as checks
 ├─ Scans diff: ✓ Cache invalidated after DB update (lesson applied)
 ├─ Scans diff: ✓ CORS headers present (bug prevented by lesson)
-└─ Creates PR
+└─ Report-only — no issues, proceed to /finish-feature
 
 Session 3 final: User runs /finish-feature
-├─ Checks: CHANGELOG.md ✓
+├─ Checks: CHANGELOG.md ✓ (auto-commits if updated)
 ├─ AUTO-DETECTS: Control Flow + Data Flow changes
 │  ├─ brainstorming/SKILL.md modified → control flow
 │  ├─ lessons.md reads added → data flow

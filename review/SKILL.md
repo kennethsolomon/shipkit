@@ -1,15 +1,17 @@
 ---
 name: review
-description: "Honest self-review of all branch changes with severity levels. Flags bugs, security issues, code quality. Creates PR via gh."
+description: "Honest self-review of all branch changes with severity levels. Flags bugs, security issues, code quality. Report-only — no PR creation (that's /finish-feature's job)."
 ---
 
-# Self-Review + PR Creation
+# Self-Review
 
 ## Overview
 
-Perform an honest, thorough review of all changes on the current branch. Flag bugs, security issues, and code quality problems with severity levels. Then create a PR via `gh` if requested.
+Perform an honest, thorough review of all changes on the current branch. Flag bugs, security issues, and code quality problems with severity levels.
 
 **You are the reviewer, not the cheerleader.** Your job is to find problems, not to praise the code. If you find nothing wrong, look harder. Real code almost always has something worth flagging.
+
+This is a **report-only** step. If Critical or Warning issues are found, the user loops back to `/debug` → `/commit` → `/review` until the branch is clean. Once clean, the user runs `/finish-feature` to finalize and create the PR.
 
 ## Allowed Tools
 
@@ -26,6 +28,7 @@ You MUST complete these steps in order:
 ```
 CLAUDE.md                  — Coding standards, conventions, known patterns
 tasks/lessons.md           — Recurrent bug patterns for this project (if exists)
+tasks/security-findings.md — Prior security audit results (if exists)
 ```
 
 Understand what "correct" looks like for this project.
@@ -33,6 +36,10 @@ Understand what "correct" looks like for this project.
 If `tasks/lessons.md` exists, read it in full. Use each active lesson's **Bug** field
 as an additional targeted check during diff analysis in Steps 3–5 — treat each lesson
 as a known failure mode to explicitly scan for.
+
+If `tasks/security-findings.md` exists, read the most recent audit. Use any unresolved
+Critical/High findings as additional targeted checks during the security analysis in
+Step 4 — verify the current diff doesn't reintroduce previously flagged vulnerabilities.
 
 ### 2. Collect All Changes
 
@@ -141,48 +148,17 @@ Rules:
 - Every item must explain **why** it matters, not just what's wrong
 - If you genuinely find nothing, say so — but that's rare
 
-### 8. Ask About PR
+### 8. Next Steps
 
 After presenting the review:
 
-> Review complete. Would you like to create a pull request?
+If there are **Critical** or **Warning** items:
+> "Review found issues that should be addressed. Fix them with `/debug`, commit with `/commit`, then re-run `/review` to verify."
 
-If the user says no, stop here.
+If there are only **Nitpick** items (no Critical/Warning):
+> "Review complete — no critical issues found, but there are some nitpicks. Would you like to fix them now, or proceed to `/finish-feature`?"
 
-### 9. Create PR
+If the user wants to fix nitpicks, loop back to `/debug` + `/commit` → `/review`.
 
-If the user wants a PR:
-
-1. **Check remote status:**
-```bash
-git remote -v
-git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "no upstream"
-```
-
-2. **Push branch if needed:**
-```bash
-git push -u origin HEAD
-```
-
-3. **Generate PR title and body:**
-   - Title: Short, imperative, under 70 characters
-   - Body: Summary of changes, review findings (if any critical/warnings), test status
-
-4. **Create PR:**
-```bash
-gh pr create --title "title here" --body "$(cat <<'EOF'
-## Summary
-- bullet points of key changes
-
-## Review Notes
-- Any critical or warning items from the review
-
-## Test Plan
-- How to verify the changes
-
-Generated with [Claude Code](https://claude.com/claude-code)
-EOF
-)"
-```
-
-5. Report the PR URL to the user.
+If the review is **completely clean**:
+> "Review complete — no issues found. Run `/finish-feature` to finalize the branch and create a PR."

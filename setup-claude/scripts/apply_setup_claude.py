@@ -298,6 +298,7 @@ def apply(
     add("templates/tasks/findings.md.template", "tasks/findings.md", "missing")
     add("templates/tasks/progress.md.template", "tasks/progress.md", "missing")
     add("templates/tasks/lessons.md.template", "tasks/lessons.md", "missing")
+    add("templates/tasks/security-findings.md.template", "tasks/security-findings.md", "missing")
 
     # commands (update if generated)
     add("templates/commands/brainstorm.md.template", ".claude/commands/brainstorm.md", "generated")
@@ -309,6 +310,7 @@ def apply(
     add("templates/commands/re-setup.md.template", ".claude/commands/re-setup.md", "generated")
     add("templates/commands/release.md.template", ".claude/commands/release.md", "generated")
     add("templates/commands/features.md.template", ".claude/commands/features.md", "generated")
+    add("templates/commands/security-check.md.template", ".claude/commands/security-check.md", "generated")
 
     # docs (generated-update)
     add("templates/.claude/docs/changelog-guide.md.template", ".claude/docs/changelog-guide.md", "generated")
