@@ -6,6 +6,48 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [Unreleased]
+
+### Added
+
+#### Security Audit Skill (`/security-check`)
+- New command template: audits changed files (or full project with `--all`) for security vulnerabilities
+- OWASP Top 10 (2021) checklist with CWE references
+- Stack-specific checks (React/Next.js, Express/Node.js, Python, Go, PHP)
+- Production readiness checks (error handling, input validation, secrets management)
+- Writes structured findings to `tasks/security-findings.md` (severity-rated, never overwritten)
+
+#### Security Context Threading
+- `tasks/security-findings.md` — new persistent audit log read by 4 skills
+- `/brainstorm` now reads security-findings.md for recurring security patterns
+- `/finish-feature` enforces security gate (blocks on unresolved Critical/High findings)
+
+#### 7-Dimension Code Review (`/review` upgrade)
+- Expanded from 4 categories to 7 dimensions: Correctness, Security, Performance, Reliability, Design, Best Practices, Testing
+- Performance analysis: N+1 queries, memory leaks, O(n²), unnecessary re-renders
+- Reliability checks: error handling quality, graceful degradation, timeout handling
+- Every finding tagged with dimension, file:line, and impact explanation
+- Max findings increased from 15 to 20 with "What Looks Good" section
+
+### Changed
+
+#### Workflow Restructuring
+- `/review` is now report-only — no longer creates PRs
+- `/finish-feature` now creates PRs via `gh pr create` (with summary + security status)
+- `/finish-feature` auto-commits changelog and arch log entries (no need to loop back to `/commit`)
+- New workflow order: `/security-check` → `/review` → `/finish-feature` → `/release`
+- Explicit review loop: `/debug` → `/commit` → `/review` until clean
+- Review severity tiers: Critical (must fix), Warning (should fix), Nitpick (asks user)
+
+### Fixed
+
+- Heredoc syntax in finish-feature template (EOF delimiter spacing)
+- Stale skill counts across documentation (6+ → 8+)
+- Missing `/security-check` phase in README flow diagram
+- Vague "loop until clean" replaced with explicit `/debug` → `/commit` → `/review` cycle
+
+---
+
 ## [2.0.0] - 2026-03-03
 
 ### Added
