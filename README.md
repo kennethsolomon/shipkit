@@ -4,6 +4,12 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## ✨ What's New (March 2026)
 
+**Mobile Store Readiness Audits** — `/release` now supports `--android` and `--ios` flags:
+- Run `/release --android` to audit your app against all Play Store requirements before submitting
+- Run `/release --ios` to audit against all App Store requirements (including 2024 Privacy Manifest)
+- Auto-detects framework (Expo, React Native, Flutter, native), checks configs, reports PASS/FAIL per item
+- Covers signing, permissions, icons, privacy policy, SDK levels, store listing, and common rejection reasons
+
 **Lessons + Findings Context Threading** — The complete feedback loop is now closed:
 - Every skill that makes decisions reads `tasks/lessons.md` (standing constraints)
 - Every skill that accepts handoff reads `tasks/findings.md` (design decisions)
@@ -41,6 +47,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/debug`](#debug) — Structured debugging
   - [`/review`](#review) — Self-review (report-only)
   - [`/finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
+  - [`/release`](#release) — Release automation + mobile store audits
 - [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
 - [Requirements](#requirements)
 
@@ -73,7 +80,7 @@ This generates **per-project commands** (like `/finish-feature`, `/write-plan`, 
 
 | Type | Available after | Scope | Commands |
 |------|----------------|-------|----------|
-| **Global skills** | Step 1 (clone + link) | Every project | `/commit`, `/write-tests`, `/debug`, `/review`, `/schema-migrate`, `/brainstorm`, `/setup-claude`, `/setup-starter`, `/doctor-claude`, `/optimize-claude` |
+| **Global skills** | Step 1 (clone + link) | Every project | `/commit`, `/write-tests`, `/debug`, `/review`, `/release`, `/schema-migrate`, `/brainstorm`, `/setup-claude`, `/setup-starter`, `/doctor-claude`, `/optimize-claude` |
 | **Per-project commands** | Step 2 (`/setup-claude`) | That project only | `/finish-feature`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/re-setup` |
 
 ### Updating
@@ -648,6 +655,7 @@ Bootstrap or repair Claude Code infrastructure on any project.
 9. Run `/security-check` to audit changed files for vulnerabilities and production quality.
 10. Run `/review` to self-review all changes. Loop `/debug` + `/commit` if issues found.
 11. Run `/finish-feature` to finalize (changelog, arch log auto-committed, security gate, create PR).
+12. Run `/release` to tag and push (add `--android` or `--ios` for store audits).
 
 #### Deterministic Bootstrap Script
 
@@ -1007,6 +1015,42 @@ Then: git add .claude/docs/architectural_change_log/ && git commit -m "docs: add
 - New inter-skill connections → System architecture changes
 
 No more manual guessing about whether something is an "architectural change" — the detector analyzes your actual code and tells you.
+
+---
+
+### `/release`
+
+Automate releases with optional mobile store submission audits.
+
+**Modes:**
+
+| Invocation | What happens |
+|---|---|
+| `/release` | Git release: version bump, CHANGELOG update, git tag, push to GitHub |
+| `/release --android` | Git release + Play Store readiness audit |
+| `/release --ios` | Git release + App Store readiness audit |
+| `/release --android --ios` | Git release + both store audits |
+
+**What the store audit does:**
+- Auto-detects your mobile framework (Expo, React Native, Flutter, native Android/iOS, Capacitor/Ionic, .NET MAUI)
+- Detects first-time submission vs update (checks versionCode, signing configs, bundle IDs)
+- Walks through every section of the store checklist, checking your actual config files
+- Reports status per item: **PASS** / **FAIL** / **WARN** / **MANUAL CHECK NEEDED**
+- Proposes fixes for config issues (with your approval before applying)
+- Guides you through manual steps (screenshots, store listing, privacy policy, etc.)
+- Presents a structured summary report with build/submit commands
+
+**Android checklist covers (14 sections):** Developer account, app identity, signing (keystore/EAS), AndroidManifest permissions, target SDK levels, AAB format, icons, splash screen, privacy & data safety, content rating, store listing, testing tracks, build commands, common rejection reasons.
+
+**iOS checklist covers (14 sections):** Developer account, bundle ID, code signing (certs/provisioning/EAS), Info.plist permission descriptions, privacy manifest (2024 requirement), app icons, launch screen, deployment target, privacy & data collection, App Store Connect setup, App Review guidelines, build commands, TestFlight, review preparation.
+
+**Usage:**
+```
+/release                    # Just tag and push
+/release --android          # + Play Store audit
+/release --ios              # + App Store audit
+/release --android --ios    # + both audits
+```
 
 ---
 

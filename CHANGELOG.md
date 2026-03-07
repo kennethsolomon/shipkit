@@ -6,6 +6,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [Unreleased]
+
+### Added
+
+#### Mobile Store Readiness Audit (`/release --android`, `/release --ios`)
+- New `--android` flag: runs full Play Store readiness audit after git release
+- New `--ios` flag: runs full App Store readiness audit after git release
+- Flags can be combined: `/release --android --ios` for both stores
+- Auto-detects mobile framework (Expo, React Native, Flutter, native, Capacitor, MAUI)
+- Detects first-time vs update submission based on project config
+- Per-item PASS/FAIL/WARN/MANUAL CHECK grading across all checklist sections
+- Proposes config fixes with user approval before applying
+- Framework-specific build and submit commands (EAS, Gradle, xcodebuild)
+- New reference files:
+  - `release/references/android-checklist.md` — 14-section Play Store checklist
+  - `release/references/ios-checklist.md` — 14-section App Store checklist
+
+---
+
 ## [2.1.0] - 2026-03-07
 
 ### Added
