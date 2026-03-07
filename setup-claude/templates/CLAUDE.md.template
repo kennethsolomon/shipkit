@@ -47,9 +47,9 @@ The complete development workflow from idea to merge:
 | 7. Security | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards |
 | 8. Review | `/review` | 7-dimension review (bugs, security, performance, reliability, design, practices, tests). If issues found: `/debug` → `/commit` → `/review` until clean |
 | 9. Finalize | `/finish-feature` | Changelog, arch log (auto-committed), security gate, verification, create PR |
-| 10. Release | `/release` | Auto-detect version, update CHANGELOG.md, create git tag, push to GitHub |
+| 10. Release | `/release` | Auto-detect version, update CHANGELOG.md, create git tag, push to GitHub. Add `--android` or `--ios` for Play Store / App Store readiness audit |
 
-> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks. Run `/security-check` before finalizing to catch vulnerabilities early. If `/review` finds issues, loop: `/debug` → `/commit` → `/review` until clean, then proceed to `/finish-feature`. `/release` is run once when ready to publish (typically after merging the PR).
+> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks. Run `/security-check` before finalizing to catch vulnerabilities early. If `/review` finds issues, loop: `/debug` → `/commit` → `/review` until clean, then proceed to `/finish-feature`. `/release` is run once when ready to publish (typically after merging the PR). For mobile apps, use `/release --android` and/or `/release --ios` to audit store requirements before submitting.
 
 ### Rules
 - **Never skip steps.** Each command must be invoked separately by the user.
