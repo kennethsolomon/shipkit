@@ -126,16 +126,21 @@ A comprehensive overview of all features in the claude-skills system, with empha
 ### 8. Code Review: `/review`
 
 **What it does:**
-- Self-reviews all changes on the branch
-- Checks for bugs, security issues, code quality
-- Framework-specific checks (React/Python/Go)
+- Rigorous multi-dimensional review across **7 dimensions:**
+  - Correctness, Security, Performance, Reliability, Design, Best Practices, Testing
+- Every finding tagged with dimension, file:line, and impact explanation
+- Framework-specific deep checks (React, Python, Go, Node.js)
+- Performance analysis: N+1 queries, memory leaks, O(n²), unnecessary re-renders
+- Reliability checks: error handling quality, graceful degradation, timeout handling
 - Report-only — flags issues by severity (Critical, Warning, Nitpick)
 - User loops `/debug` + `/commit` + `/review` until clean
 
 **Context Threading:**
-- ✅ Reads `tasks/lessons.md` (Bug patterns as targeted checks)
+- ✅ Reads `tasks/lessons.md` (Bug patterns as targeted checks across all 7 dimensions)
 - ✅ Reads `tasks/security-findings.md` (verify prior findings addressed)
 - Uses lesson Bug field as automated checklist
+
+**Key feature:** Reviews at the quality bar of a senior engineer at a top-tier tech company — thorough, specific, and honest. Thinks about what could go wrong in production at scale.
 
 ### 9. Security Audit: `/security-check`
 

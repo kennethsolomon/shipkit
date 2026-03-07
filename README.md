@@ -169,9 +169,10 @@ PHASE 6: DEBUG (If Needed)
 PHASE 7: REVIEW
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ /review                                                                  │
-│ • Reads: tasks/lessons.md (Bug patterns as targeted checks)             │
-│ • Reads: tasks/security-findings.md (verify prior findings addressed)   │
-│ • Scans diff for security issues, code quality, bugs                    │
+│ • Reads: tasks/lessons.md, tasks/security-findings.md                   │
+│ • 7-dimension analysis:                                                  │
+│   → Correctness, Security, Performance, Reliability                     │
+│   → Design, Best Practices, Testing                                     │
 │ • Generates severity-leveled report (Critical/Warning/Nitpick)          │
 │ • Report-only: loop /debug + /commit until clean                        │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -337,7 +338,7 @@ The complete development workflow from idea to merge with **automatic context th
 | 5. Test | `/write-tests` | Generate tests matching framework and patterns | **Reads:** lessons.md<br/>**Writes:** (lessons.md if code bug found) |
 | 6. Debug | `/debug` | (If needed) Structured investigation with hypotheses | **Reads:** findings.md, lessons.md, progress.md<br/>**Writes:** findings.md, lessons.md (prevention rules) |
 | 7. Security | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards | **Reads:** security-findings.md (prior audits), lessons.md<br/>**Writes:** security-findings.md |
-| 8. Review | `/review` | Self-review against lessons patterns. Loop `/debug` → `/commit` until clean | **Reads:** lessons.md, security-findings.md |
+| 8. Review | `/review` | 7-dimension review (correctness, security, performance, reliability, design, best practices, testing). Loop `/debug` → `/commit` until clean | **Reads:** lessons.md, security-findings.md |
 | 9. Finalize | `/finish-feature` | Changelog, arch log (auto-committed), security gate, verification, **create PR** | **Auto-detects** architectural changes<br/>**Reads:** security-findings.md (unresolved findings)<br/>**Scans diff** against lessons.md (final gate) |
 
 ### Key Features
@@ -911,15 +912,19 @@ Structured bug investigation with hypothesis tracking and documentation.
 
 ### `/review`
 
-Honest self-review of all branch changes with severity levels. Report-only — PR creation is handled by `/finish-feature`.
+Rigorous multi-dimensional code review across 7 dimensions — the quality bar of a senior engineer at a top-tier tech company. Report-only — PR creation is handled by `/finish-feature`.
 
 **What it does:**
-- Reviews all changes on the current branch against main
-- Checks for bugs (off-by-one, null access, race conditions, resource leaks)
-- Checks security (OWASP top 10 patterns with built-in checklist + security-findings.md)
-- Checks code quality (naming, dead code, DRY, function length)
-- Framework-specific checks (React keys/useEffect, Python type hints, Go error handling)
-- Generates severity-leveled report: Critical / Warning / Nitpick (max 15 items)
+- Reviews all changes on the current branch against main across **7 dimensions:**
+  1. **Correctness** — logic errors, null safety, async bugs, race conditions, edge cases, data integrity
+  2. **Security** — OWASP Top 10, injection, XSS, auth/authz, data exposure, hardcoded secrets
+  3. **Performance** — N+1 queries, O(n²) in hot paths, memory leaks, unnecessary re-renders, missing pagination
+  4. **Reliability** — error handling quality, graceful degradation, timeouts, retry logic, validation at boundaries
+  5. **Design** — separation of concerns, API contract changes, code clarity, dependency management
+  6. **Best Practices** — framework-specific (React, Python, Go, Node.js), conventions, testing quality
+  7. **Testing** — coverage gaps, edge cases, assertion quality, test isolation, flakiness risks
+- Every finding tagged with dimension, file:line, and **why** it matters
+- Generates severity-leveled report: Critical / Warning / Nitpick (max 20 items)
 - Critical/Warning: loop `/debug` + `/commit` + `/review` until clean
 - Nitpick only: asks user — fix now or proceed to `/finish-feature`?
 - Report-only: intentionally cannot modify files
