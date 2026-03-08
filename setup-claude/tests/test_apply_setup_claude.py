@@ -110,6 +110,60 @@ class TestApplySetupClaude(unittest.TestCase):
             expected = mod.render_template(tpl, detection)
             self.assertEqual(marker_path.read_text(encoding="utf-8"), expected)
 
+    def test_workflow_status_created_on_fresh_setup(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "package.json").write_text(json.dumps({"name": "demo"}), encoding="utf-8")
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                rc = mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=mod.detect(repo_root),
+                )
+            self.assertEqual(rc, 0)
+
+            wf_path = repo_root / "tasks" / "workflow-status.md"
+            self.assertTrue(wf_path.exists())
+            content = wf_path.read_text(encoding="utf-8")
+            self.assertIn(">> next <<", content)
+            self.assertIn("/brainstorm", content)
+            self.assertIn("/finish-feature", content)
+            self.assertIn("/release", content)
+            # All 14 steps present
+            self.assertIn("| 14 |", content)
+
+    def test_workflow_status_not_overwritten_on_rerun(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "package.json").write_text(json.dumps({"name": "demo"}), encoding="utf-8")
+
+            # First run creates the file
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(repo_root, skill_root, update_generated=False, dry_run=False, detection=mod.detect(repo_root))
+
+            # Simulate user progress by modifying the file
+            wf_path = repo_root / "tasks" / "workflow-status.md"
+            custom_content = wf_path.read_text(encoding="utf-8").replace(">> next <<", "done")
+            wf_path.write_text(custom_content, encoding="utf-8")
+
+            # Second run should NOT overwrite
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(repo_root, skill_root, update_generated=False, dry_run=False, detection=mod.detect(repo_root))
+
+            self.assertEqual(wf_path.read_text(encoding="utf-8"), custom_content)
+
     def test_existing_custom_claude_md_writes_sidecar(self):
         mod = _load_apply_module()
         skill_root = Path(__file__).resolve().parents[1]
