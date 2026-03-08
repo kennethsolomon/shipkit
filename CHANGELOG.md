@@ -10,6 +10,17 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Added
 
+#### Workflow Tracker (`tasks/workflow-status.md`)
+- New persistent tracker file tracks progress through the 14-step development workflow
+- Status dashboard printed after every slash command (done/partial/skipped/not yet)
+- `>> next <<` indicator shows which step to run next
+- Zero-tolerance enforcement loops for `/security-check` (0 issues, all severities) and `/review` (0 issues, including nitpicks)
+- Attempt counting for looped steps (e.g., "clean on attempt 3")
+- Optional steps (frontend-design, debug, release) require explicit skip confirmation
+- Conditional commits (steps 7, 10, 12) auto-skip with reason when no changes exist
+- Tracker resets on new feature/bug via `/brainstorm` or manual request
+- Created automatically by `/setup-claude` and `/re-setup`
+
 #### Mobile Store Readiness Audit (`/release --android`, `/release --ios`)
 - New `--android` flag: runs full Play Store readiness audit after git release
 - New `--ios` flag: runs full App Store readiness audit after git release
