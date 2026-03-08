@@ -1,20 +1,25 @@
 # Progress Log
 
-## Session: YYYY-MM-DD
-- Started: HH:MM
-- Summary:
-  - (what changed)
+## Session: 2026-03-08
+- Started: workflow tracker enhancement
+- Summary: Implementing 14-step workflow tracker with strict enforcement
 
 ## Work Log
-- YYYY-MM-DD HH:MM — did X (files: a, b) (verify: cmd)
+- 2026-03-08 — Created workflow-status.md template (files: setup-claude/templates/tasks/workflow-status.md.template)
+- 2026-03-08 — Registered template in apply script (files: setup-claude/scripts/apply_setup_claude.py:302)
+- 2026-03-08 — Replaced CLAUDE.md workflow section with strict tracker rules (files: setup-claude/templates/CLAUDE.md.template:34-88)
+- 2026-03-08 — Added reset detection step 0 to brainstorm template (files: setup-claude/templates/commands/brainstorm.md.template)
+- 2026-03-08 — Added dashboard printing to brainstorm "When Done" section
+- 2026-03-08 — Created local tasks/workflow-status.md with current session state
 
 ## Test Results
 | Command | Expected | Actual | Status |
 |---------|----------|--------|--------|
-|         |          |        |        |
+| grep "workflow-status" apply_setup_claude.py | mapping line | found at line 302 | pass |
+| grep "Workflow Tracker" CLAUDE.md.template | rules section | found at line 57 | pass |
+| cat workflow-status.md.template | 14-step table | all 14 steps present | pass |
 
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|
 |           |       | 1       |            |
-

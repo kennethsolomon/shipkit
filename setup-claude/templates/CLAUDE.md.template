@@ -31,39 +31,65 @@
 [TEST_COMMAND]
 ```
 
-## Recommended Workflow
+## Workflow
 
-**Flow:** `/brainstorm` → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → `/finish-feature` → `/release`
+**Flow:** `/brainstorm` → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/commit` → `/debug` → `/security-check` → `/commit` → `/review` → `/commit` → `/finish-feature` → `/release`
 
-The complete development workflow from idea to merge:
+Progress is tracked in `tasks/workflow-status.md`. This file persists across conversations.
 
-| Step | Command | What Happens |
-|------|---------|--------------|
-| 1. Explore | `/brainstorm` | Reads: findings.md (prior decisions), lessons.md (known patterns). Clarifies requirements, proposes 2-3 approaches with trade-offs, gets design approval. Writes: findings.md |
-| 1a. UI Design | `/frontend-design` | Design the UI (no code yet—mockups, layouts, visual direction only) |
-| 2. Plan | `/write-plan` | Write a decision-complete plan incorporating both brainstorm findings AND frontend design |
-| 3. Implement | `/execute-plan` | Implement the plan in small batches with progress tracking |
-| 4. Commit | `/commit` | Stage changes, auto-detect commit type, generate conventional commit message |
-| 5. Test | `/write-tests` | Generate test files matching your framework and project patterns |
-| 6. Debug | `/debug` | (If needed) Structured bug investigation with hypothesis tracking |
-| 7. Security | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards |
-| 8. Review | `/review` | 7-dimension review (bugs, security, performance, reliability, design, practices, tests). If issues found: `/debug` → `/commit` → `/review` until clean |
-| 9. Finalize | `/finish-feature` | Changelog, arch log (auto-committed), security gate, verification, create PR |
-| 10. Release | `/release` | Auto-detect version, update CHANGELOG.md, create git tag, push to GitHub. Add `--android` or `--ios` for Play Store / App Store readiness audit |
+| # | Step | Command | Type | Loop? |
+|---|------|---------|------|-------|
+| 1 | Explore | `/brainstorm` | required | no |
+| 2 | UI Design | `/frontend-design` | optional (confirm to skip) | no |
+| 3 | Plan | `/write-plan` | required | no |
+| 4 | Implement | `/execute-plan` | required | no |
+| 5 | Commit | `/commit` | required | no |
+| 6 | Test | `/write-tests` | required | no |
+| 7 | Commit | `/commit` | conditional (auto-skip if no changes) | no |
+| 8 | Debug | `/debug` | optional (confirm to skip) | no |
+| 9 | Security | `/security-check` | required | yes — must reach 0 issues (all severities) |
+| 10 | Commit | `/commit` | conditional (auto-skip if security was clean) | no |
+| 11 | Review | `/review` | required | yes — must reach 0 issues (including nitpicks) |
+| 12 | Commit | `/commit` | conditional (auto-skip if review was clean) | no |
+| 13 | Finalize | `/finish-feature` | required | no |
+| 14 | Release | `/release` | optional (confirm to skip) | no |
 
-> Steps 4-6 can repeat as needed during development. Run `/commit` after each logical unit of work, `/write-tests` after implementing features, and `/debug` whenever something breaks. Run `/security-check` before finalizing to catch vulnerabilities early. If `/review` finds issues, loop: `/debug` → `/commit` → `/review` until clean, then proceed to `/finish-feature`. `/release` is run once when ready to publish (typically after merging the PR). For mobile apps, use `/release --android` and/or `/release --ios` to audit store requirements before submitting.
+### Workflow Tracker Rules
 
-### Rules
-- **Never skip steps.** Each command must be invoked separately by the user.
-- **Never auto-advance.** When one step completes, stop and tell the user which command to run next.
-- **Never write code during design or plan phases.** (This includes `/frontend-design`—it's design, not implementation)
-- Never mark complete without running the verification commands above.
+**These rules are mandatory for every slash command execution:**
 
-### Frontend Design Workflow
-- `/frontend-design` is a **design phase**, not an implementation phase—it produces mockups and design artifacts, not code
-- **Optional but recommended:** `/brainstorm` (clarify requirements) → *`/frontend-design` (design UI, skipable for backend-only work)* → `/write-plan` (plan based on findings and any design artifacts) → `/execute-plan` (implement)
-- If skipping `/frontend-design`, go directly from `/brainstorm` to `/write-plan`
-- `/write-plan` should reference both the brainstorm findings AND any frontend design outputs when writing the implementation plan
+1. **Read tracker first.** At the start of every slash command, read `tasks/workflow-status.md` to verify the current step. If the command being run does not match the `>> next <<` step, STOP and ask the user to confirm skipping the intervening steps.
+
+2. **Update tracker after.** At the end of every slash command, update `tasks/workflow-status.md`:
+   - Set the current step's Status to `done`, `skipped`, or `partial`
+   - Add relevant Notes (e.g., "clean on attempt 2", "backend-only, no UI")
+   - Move `>> next <<` to the next pending step
+   - Print the full dashboard table in the response
+
+3. **Optional steps** (steps 2, 8, 14): Ask the user "Skip [step]?" and require explicit confirmation. Record the reason in Notes.
+
+4. **Conditional commits** (steps 7, 10, 12): Auto-skip with a reason if no changes were made. Examples: "no new changes after /write-tests", "security-check was clean", "review was clean".
+
+5. **Security-check loop** (step 9): Must reach **0 issues across all severities** (critical, high, medium, low, informational). If any issues remain: fix them → `/commit` → `/security-check` again. Track attempt number in Notes (e.g., "clean on attempt 3").
+
+6. **Review loop** (step 11): Must reach **0 issues including nitpicks**. If any issues remain: fix them → `/commit` → `/review` again. Track attempt number in Notes.
+
+7. **Never skip steps without confirmation.** Steps cannot run out of order. If a user invokes a command that is not the next step, ask for explicit confirmation to skip all steps in between.
+
+8. **Never auto-advance.** When one step completes, stop and tell the user which command to run next. Do not proceed automatically.
+
+9. **Never write code during design or plan phases.** Steps 1-3 are design/planning only — no code, no file edits (except tasks/ files).
+
+### Tracker Reset
+
+- `/brainstorm` checks if `tasks/workflow-status.md` has any `done` or `skipped` steps. If yes, ask: "Existing workflow detected. Start fresh and reset tracker?"
+- The user can request a tracker reset at any time (e.g., "reset workflow").
+- Reset sets all steps to `not yet` and marks step 1 as `>> next <<`.
+
+### Frontend Design
+- `/frontend-design` is a **design phase** — mockups and visual direction only, no code
+- If skipping, go directly from `/brainstorm` to `/write-plan`
+- `/write-plan` should reference both brainstorm findings AND any frontend design outputs
 
 ## Architectural Change Log
 
