@@ -21,7 +21,7 @@ Project instructions for Claude Code.
 
 | Path | Purpose |
 |------|---------|
-| `<skill-name>/` | Skill implementations (root-level, each with SKILL.md) |
+| `skills/` | All skill implementations (skills/*/SKILL.md) |
 | `commands/` | Claude Code slash commands |
 | `tasks/` | Planning + findings + progress + security logs |
 
