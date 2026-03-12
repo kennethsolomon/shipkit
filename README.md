@@ -22,7 +22,8 @@ No re-install needed — it's a symlink, so updates apply instantly.
 ### Uninstalling
 
 ```bash
-rm ~/.claude/plugins/claude-skills
+cd claude-skills
+./uninstall.sh
 ```
 
 ## Skills
