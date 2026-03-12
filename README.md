@@ -49,4 +49,4 @@ cd ~/.agents/skills && git pull
 
 ## Full Documentation
 
-See [DOCUMENTATION.md](./DOCUMENTATION.md) for detailed usage, tutorials, workflow diagrams, and per-skill reference.
+See [DOCUMENTATION.md](./docs/DOCUMENTATION.md) for detailed usage, tutorials, workflow diagrams, and per-skill reference.
