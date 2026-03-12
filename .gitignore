@@ -1,6 +1,6 @@
 # Claude Code system-managed skills (auto-installed, not custom)
-skills/find-skills/
-skills/web-design-guidelines/
+find-skills/
+web-design-guidelines/
 
 # Python
 __pycache__/

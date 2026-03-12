@@ -50,13 +50,13 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
 
    Run to see what would be detected:
    ```bash
-   python3 .claude/../../../../skills/setup-claude/scripts/detect_arch_changes.py --dry-run
+   python3 $HOME/.agents/skills/setup-claude/scripts/detect_arch_changes.py --dry-run
    ```
 
    If architectural changes detected:
    a) **Auto-generate the draft:**
       ```bash
-      python3 .claude/../../../../skills/setup-claude/scripts/detect_arch_changes.py
+      python3 $HOME/.agents/skills/setup-claude/scripts/detect_arch_changes.py
       ```
       This creates a markdown draft in `.claude/docs/architectural_change_log/`
 
