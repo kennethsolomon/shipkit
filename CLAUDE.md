@@ -21,6 +21,8 @@ Project instructions for Claude Code.
 
 | Path | Purpose |
 |------|---------|
+| `skills/` | All skill implementations |
+| `commands/` | Claude Code slash commands |
 | `tasks/` | Planning + findings + progress + security logs |
 
 ## Build & Run

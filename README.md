@@ -5,13 +5,24 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 ## Installation
 
 ```bash
-git clone git@github.com:kennethsolomon/claude-skills.git ~/.agents/skills
-bash ~/.agents/skills/scripts/link-claude-skills.sh
+git clone git@github.com:kennethsolomon/claude-skills.git
+cd claude-skills
+./install.sh
 ```
 
-Updates:
+### Updating
+
 ```bash
-cd ~/.agents/skills && git pull
+cd claude-skills
+git pull
+```
+
+No re-install needed — it's a symlink, so updates apply instantly.
+
+### Uninstalling
+
+```bash
+rm ~/.claude/plugins/claude-skills
 ```
 
 ## Skills
@@ -38,15 +49,15 @@ cd ~/.agents/skills && git pull
 ## Workflow
 
 ```
-/setup-claude     ← bootstrap project
-/brainstorm       ← clarify design
-/write-tests      ← generate tests
-/review           ← self-review
-/debug            ← fix issues
-/smart-commit     ← commit
-/release          ← ship it
+/setup-claude     <- bootstrap project
+/brainstorm       <- clarify design
+/write-tests      <- generate tests
+/review           <- self-review
+/debug            <- fix issues
+/smart-commit     <- commit
+/release          <- ship it
 ```
 
 ## Full Documentation
 
-See [DOCUMENTATION.md](./docs/DOCUMENTATION.md) for detailed usage, tutorials, workflow diagrams, and per-skill reference.
+See [DOCUMENTATION.md](.claude/docs/DOCUMENTATION.md) for detailed usage, tutorials, workflow diagrams, and per-skill reference.
