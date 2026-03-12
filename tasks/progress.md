@@ -12,12 +12,29 @@
 - 2026-03-08 — Added dashboard printing to brainstorm "When Done" section
 - 2026-03-08 — Created local tasks/workflow-status.md with current session state
 
+## Session: 2026-03-12
+- Started: Fix plugin setup & script paths
+- Summary: Replace broken $HOME/.agents paths with $HOME/.claude/plugins/claude-skills, add plugin manifest
+
+## Work Log (2026-03-12)
+- Created `.claude-plugin/plugin.json` (plugin manifest)
+- Fixed paths in `skills/setup-claude/SKILL.md` (4 occurrences)
+- Fixed paths in `skills/setup-claude/templates/commands/re-setup.md.template` (3 occurrences)
+- Fixed paths in `skills/setup-claude/templates/commands/finish-feature.md.template` (2 occurrences)
+- Fixed paths in `commands/re-setup.md` (3 occurrences)
+- Fixed paths in `commands/finish-feature.md` (2 occurrences)
+- Fixed paths in `.claude/docs/arch-changelog-guide.md` (1 occurrence)
+- Fixed paths in `.claude/docs/DOCUMENTATION.md` (4 script paths + 5 legacy install instruction references)
+
 ## Test Results
 | Command | Expected | Actual | Status |
 |---------|----------|--------|--------|
 | grep "workflow-status" apply_setup_claude.py | mapping line | found at line 302 | pass |
 | grep "Workflow Tracker" CLAUDE.md.template | rules section | found at line 57 | pass |
 | cat workflow-status.md.template | 14-step table | all 14 steps present | pass |
+| dry-run from new path | success | success | pass |
+| grep .agents/skills (non-tasks) | no matches | no matches | pass |
+| python3 validate plugin.json | valid | valid | pass |
 
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |

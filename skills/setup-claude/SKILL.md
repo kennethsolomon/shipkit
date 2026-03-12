@@ -123,25 +123,25 @@ All output files are rendered from templates in `templates/`:
 If you want `/setup-claude` to **actually write files** (not just describe what to do), run:
 
 ```bash
-python3 "$HOME/.agents/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)"
+python3 "$HOME/.claude/plugins/claude-skills/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)"
 ```
 
 Preview what would change (no writes):
 
 ```bash
-python3 "$HOME/.agents/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)" --dry-run
+python3 "$HOME/.claude/plugins/claude-skills/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)" --dry-run
 ```
 
 Print detected values (JSON):
 
 ```bash
-python3 "$HOME/.agents/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)" --print-detection
+python3 "$HOME/.claude/plugins/claude-skills/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)" --print-detection
 ```
 
 Optional: update previously generated files (only ones containing the marker):
 
 ```bash
-python3 "$HOME/.agents/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)" --update-generated
+python3 "$HOME/.claude/plugins/claude-skills/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd)" --update-generated
 ```
 
 This will:

@@ -29,7 +29,7 @@ If you need to create an arch log manually (or if auto-detection missed somethin
 
 1. **Run the detector** to get a draft:
    ```bash
-   python3 $HOME/.agents/skills/setup-claude/scripts/detect_arch_changes.py
+   python3 $HOME/.claude/plugins/claude-skills/skills/setup-claude/scripts/detect_arch_changes.py
    ```
 
 2. **Edit the generated file** at `.claude/docs/architectural_change_log/`

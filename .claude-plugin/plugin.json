@@ -1,0 +1,7 @@
+{
+  "name": "claude-skills",
+  "description": "Custom Claude Code skills for bootstrapping and maintaining projects.",
+  "author": {
+    "name": "Kenneth Solomon"
+  }
+}
