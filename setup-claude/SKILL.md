@@ -58,6 +58,29 @@ When anything fails, log it immediately (error + attempt # + resolution). If the
 ### Always write findings/progress to disk
 If you discover anything important (stack details, key paths, constraints, failures), write it into `tasks/findings.md` or `tasks/progress.md` before moving on.
 
+### Lessons Capture (lessons.md)
+
+`tasks/lessons.md` is a permanent log of corrections. Two triggers:
+
+**Explicit** — user says any of these phrases:
+- `lesson:` / `remember:` / `don't do this again:` / `add to lessons`
+→ Immediately append to `tasks/lessons.md` without asking.
+
+**Implicit** — detect correction language in user messages:
+- Keywords: "no", "don't", "instead", "wrong", "not like that", "stop doing"
+→ Ask: *"Should I add this to lessons.md?"* → append on confirmation only.
+
+Entry format:
+```markdown
+### [YYYY-MM-DD] [Brief title]
+**Mistake:** What went wrong (symptom)
+**Root cause:** Why it happened
+**Prevention:** What to do differently next time
+```
+
+Never remove lessons unless the user explicitly asks to remove a specific one.
+Never overwrite `tasks/lessons.md` — always append.
+
 ## Idempotency Rules (Non-Negotiable)
 
 **Never overwrite:**
