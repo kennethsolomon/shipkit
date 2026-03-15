@@ -1,5 +1,5 @@
 {
-  "name": "shipkit",
+  "name": "@kennethsolomon/shipkit",
   "version": "1.0.0",
   "description": "A structured workflow toolkit for Claude Code.",
   "keywords": ["claude", "claude-code", "workflow", "tdd", "ai", "developer-tools"],

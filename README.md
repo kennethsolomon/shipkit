@@ -4,36 +4,38 @@ A structured, quality-gated workflow system for Claude Code.
 
 Ship features with TDD, auto-detecting linters, security audits, and AI-powered code review — all wired into a single repeatable workflow.
 
-[![npm](https://img.shields.io/npm/v/shipkit)](https://www.npmjs.com/package/shipkit)
+[![npm](https://img.shields.io/npm/v/@kennethsolomon%2Fshipkit)](https://www.npmjs.com/package/@kennethsolomon/shipkit)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-Mac%20%2F%20Linux%20%2F%20Windows-lightgrey)](#)
 
 ```
-npx shipkit
+npx @kennethsolomon/shipkit
 ```
 
 Works on Mac, Linux, and Windows.
 
 ```
-~ $ npx shipkit
+~ $ npx @kennethsolomon/shipkit
 
-                 ▄
-                 █
-                 █
-           ▄████████▄
-          ██░░░☠░░░░██
-          ██░░░░░░░░██
-           ▀████████▀
-       ▄███████████████▄
-      ██░░◉░░░░░░░░◉░░██
-       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-        ≋  ≋  ≋  ≋  ≋  ≋
+           ⚑
+           |
+          /|\
+         / | \
+        /  |  \
+       /   |   \
+      / ☠  |  ☠ \
+     /     |     \
+    /______|______\
+  ▄████████████████▄
+  █  ◉          ◉  █
+   ▀██████████████▀
+     ≋  ≋  ≋  ≋  ≋
 
   ShipKit v1.0.0
   A structured workflow toolkit for Claude Code.
   by Kenneth Solomon
 
-  ✓ Installed commands/sk (13 commands)
+  ✓ Installed commands/sk (15 commands)
   ✓ Installed skills (19 skills)
 
   Done! Run /sk:help to get started.
@@ -60,7 +62,7 @@ Every gate must pass before the next step. If lint fails, you fix it. If tests d
 ## Installation
 
 ```bash
-npx shipkit
+npx @kennethsolomon/shipkit
 ```
 
 Or clone and install locally (symlinks — changes reflect immediately):
@@ -74,7 +76,7 @@ cd shipkit
 ### Update
 
 ```bash
-npx shipkit
+npx @kennethsolomon/shipkit
 ```
 
 Re-running always installs the latest version.
@@ -82,7 +84,7 @@ Re-running always installs the latest version.
 ### Uninstall
 
 ```bash
-npx shipkit --uninstall
+npx @kennethsolomon/shipkit --uninstall
 ```
 
 ---

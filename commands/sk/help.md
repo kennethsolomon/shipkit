@@ -100,4 +100,4 @@ Config lives in `.shipkit/sk:config.json` — per project, gitignored by default
 
 ---
 
-**ShipKit** by Kenneth Solomon · `npx shipkit` to install/update
+**ShipKit** by Kenneth Solomon · `npx @kennethsolomon/shipkit` to install/update
