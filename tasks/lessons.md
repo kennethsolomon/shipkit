@@ -36,4 +36,5 @@ Accumulated patterns from past bugs and corrections. Read this file at the **sta
 11. `skills/setup-claude/templates/commands/security-check.md.template` — has a `**Workflow:**` breadcrumb line
 12. `skills/setup-claude/templates/commands/finish-feature.md.template` — has a `**Workflow:**` breadcrumb line
 13. `skills/setup-claude/templates/commands/release.md.template` — has a `**Workflow:**` breadcrumb line
+14. `.claude/docs/DOCUMENTATION.md` — internal docs with full workflow diagram, recommended workflow table, skills list, and scenario tables
 

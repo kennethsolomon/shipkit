@@ -4,25 +4,24 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## ✨ What's New (March 2026)
 
+**Workflow expanded to 24 steps** — Four new skills added to the core workflow:
+- `/api-design` (Step 4) — Design REST/GraphQL API contracts before implementation; mirrors `/frontend-design` but for APIs
+- `/accessibility` (Step 5) — WCAG 2.1 AA audit after design; writes `tasks/accessibility-findings.md`
+- `/perf` (Step 18) — Performance audit (bundle size, N+1 queries, Core Web Vitals); optional gate before review
+- `/hotfix` — Emergency fix workflow; skips design/TDD, all 4 quality gates still enforced
+
+**Pencil MCP Integration** — `/frontend-design` now optionally creates visual `.pen` mockups:
+- After the text design summary, prompts: "Would you like me to create a Pencil visual mockup? (y/n)"
+- Saves `.pen` files to `docs/design/` in the project
+- Requires Pencil app open with MCP connected
+
 **Mobile Store Readiness Audits** — `/release` now supports `--android` and `--ios` flags:
-- Run `/release --android` to audit your app against all Play Store requirements before submitting
-- Run `/release --ios` to audit against all App Store requirements (including 2024 Privacy Manifest)
-- Auto-detects framework (Expo, React Native, Flutter, native), checks configs, reports PASS/FAIL per item
 - Covers signing, permissions, icons, privacy policy, SDK levels, store listing, and common rejection reasons
+- Auto-detects framework (Expo, React Native, Flutter, native), checks configs, reports PASS/FAIL per item
 
-**Lessons + Findings Context Threading** — The complete feedback loop is now closed:
-- Every skill that makes decisions reads `tasks/lessons.md` (standing constraints)
-- Every skill that accepts handoff reads `tasks/findings.md` (design decisions)
-- One bug debugged with `/debug` → one lesson written → applied by 8+ skills on next feature
+**Lessons + Findings Context Threading** — Every skill that makes decisions reads `tasks/lessons.md`; every skill that accepts handoff reads `tasks/findings.md`.
 
-**Intelligent Architectural Change Detection** — `/finish-feature` now automatically:
-- Scans your diff for architectural changes
-- Detects control flow, data flow, pattern, and integration changes
-- **Auto-generates 80% of the arch log markdown**
-- You review/edit the remaining 20% before committing
-- Never manually guess "is this an arch change?" again
-
-**Enhanced Workflow Documentation** — Complete flow diagram, updated tutorials, detailed scenarios showing how context threads through the system.
+**Intelligent Architectural Change Detection** — `/finish-feature` auto-generates 80% of arch log markdown from your diff.
 
 ---
 
@@ -42,10 +41,14 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/claude-setup-tools`](#claude-setup-tools) — Create, diagnose, maintain CLAUDE.md
   - [`/schema-migrate`](#schema-migrate) — Multi-ORM schema change analysis
   - [`/commit`](#commit) — Smart conventional commits
-  - [`/frontend-design`](#frontend-design) — Production-grade UI generation with browser verification
-  - [`/write-tests`](#write-tests) — Test generation
+  - [`/frontend-design`](#frontend-design) — Production-grade UI design + optional Pencil mockup
+  - [`/api-design`](#api-design) — REST/GraphQL API contract design
+  - [`/accessibility`](#accessibility) — WCAG 2.1 AA audit
+  - [`/write-tests`](#write-tests) — TDD: write failing tests before implementation
   - [`/debug`](#debug) — Structured debugging
-  - [`/review`](#review) — Self-review (report-only)
+  - [`/perf`](#perf) — Performance audit (bundle, N+1, Core Web Vitals)
+  - [`/review`](#review) — Self-review across 7 dimensions (report-only)
+  - [`/hotfix`](#hotfix) — Emergency fix workflow
   - [`/finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
   - [`/release`](#release) — Release automation + mobile store audits
 - [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
@@ -79,7 +82,7 @@ This generates **per-project commands** (like `/finish-feature`, `/write-plan`, 
 
 | Type | Available after | Scope | Commands |
 |------|----------------|-------|----------|
-| **Global skills** | Step 1 (clone + link) | Every project | `/commit`, `/write-tests`, `/debug`, `/review`, `/release`, `/schema-migrate`, `/brainstorm`, `/setup-claude`, `/setup-starter`, `/doctor-claude`, `/optimize-claude` |
+| **Global skills** | Step 1 (clone + link) | Every project | `/brainstorm`, `/frontend-design`, `/api-design`, `/accessibility`, `/write-tests`, `/execute-plan`, `/smart-commit`, `/lint`, `/test`, `/debug`, `/security-check`, `/perf`, `/review`, `/hotfix`, `/update-task`, `/finish-feature`, `/release`, `/schema-migrate`, `/setup-claude`, `/setup-optimizer` |
 | **Per-project commands** | Step 2 (`/setup-claude`) | That project only | `/finish-feature`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/re-setup` |
 
 ### Updating
@@ -97,132 +100,108 @@ git pull
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         CLAUDE SKILLS WORKFLOW                              │
+│                         CLAUDE SKILLS WORKFLOW (24 STEPS)                   │
 │                        (Auto-context & Bug Prevention)                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-PHASE 1: DESIGN (No Code)
+PHASE 1: READ (No Code)
+  Step 1 — Read tasks/todo.md         Pick the next incomplete task
+  Step 2 — Read tasks/lessons.md      Review past corrections before writing code
+
+PHASE 2: DESIGN (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ /brainstorm                                                              │
-│ • Reads: tasks/findings.md (prior decisions)                            │
-│ • Reads: tasks/lessons.md (known failure patterns)                      │
-│ • Asks clarifying questions (one at a time)                             │
-│ • Proposes 2-3 approaches with trade-offs                               │
-│ • Gets user approval                                                     │
+│ Step 3 — /brainstorm                                                     │
+│ • Reads: tasks/findings.md (prior decisions), tasks/lessons.md          │
+│ • Clarifies requirements, proposes approaches, gets approval             │
 │ • Writes: tasks/findings.md (design decision + rationale)               │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ /frontend-design                                                         │
-│ • Reads: tasks/findings.md (brainstorm output)                          │
-│ • Reads: tasks/lessons.md (UI/UX constraints)                           │
-│ • Produces: UI mockups, layouts, visual direction (NO CODE)             │
+│ Step 4 — /frontend-design or /api-design  (OPTIONAL)                    │
+│ • /frontend-design: UI mockups, layouts, visual direction (NO CODE)     │
+│   → Prompts to create Pencil .pen mockup (saved to docs/design/)        │
+│ • /api-design: REST/GraphQL endpoint contracts, request/response shapes │
+│ • Skip if pure backend with no UI and no new API                        │
 │ • Writes: findings.md (design artifacts + decisions)                    │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 2: PLAN (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ /write-plan                                                              │
-│ • Reads: tasks/findings.md (brainstorm + frontend-design outputs)       │
-│ • Reads: tasks/lessons.md (constraint: what not to do)                  │
-│ • Writes: tasks/todo.md (decision-complete checklist for BOTH)          │
+│ Step 5 — /accessibility  (OPTIONAL)                                      │
+│ • WCAG 2.1 AA audit on the design spec                                  │
+│ • Checks: color contrast, keyboard nav, ARIA, forms, motion, content    │
+│ • Writes: tasks/accessibility-findings.md (append-only)                 │
+│ • Skip if backend-only with no frontend                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 3: PLAN (No Code)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Step 6 — /write-plan                                                     │
+│ • Reads: tasks/findings.md (all design outputs), tasks/lessons.md       │
+│ • Writes: tasks/todo.md (decision-complete checklist)                   │
 │ • Applies lessons as plan constraints                                   │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 3: IMPLEMENT (Code Time)
+PHASE 4: BRANCH + MIGRATE
+  Step 7 — /branch            Create feature branch auto-named from task
+  Step 8 — /schema-migrate    (OPTIONAL) Analyze schema changes safely
+
+PHASE 5: IMPLEMENT (Code Time)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ /execute-plan                                                            │
-│ • Reads: tasks/todo.md (what to build)                                  │
-│ • Reads: tasks/lessons.md (standing constraints)                        │
-│ • Reads: tasks/progress.md (error log from prior batches)              │
-│ • Implements in small batches (2-3 items per batch)                    │
-│ • Writes: tasks/progress.md (work log)                                  │
-│ • May write: tasks/findings.md (discoveries during implementation)      │
-│                                                                           │
-│   [Repeat: /execute-plan batch → /commit → loop]                       │
+│ Step 9 — /write-tests   TDD RED: write failing tests first              │
+│ Step 10 — /execute-plan TDD GREEN: implement to make tests pass         │
+│ Step 11 — /smart-commit Commit tests + implementation                   │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 4: COMMIT (After each logical unit)
+PHASE 6: QUALITY GATES (all are HARD GATES — cannot be skipped)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ /commit                                                                  │
-│ • Analyzes staged changes                                               │
-│ • Auto-classifies: feat, fix, test, docs, refactor, etc.               │
-│ • Generates conventional commit message                                 │
-│ • Gets user approval before committing                                  │
-└──────────────────────────────────────────────────────────────────────────┘
-                              ↓
-PHASE 5: TEST
-┌──────────────────────────────────────────────────────────────────────────┐
-│ /write-tests                                                             │
-│ • Reads: tasks/lessons.md (test patterns to avoid)                      │
-│ • Auto-detects framework (Vitest, Jest, pytest, etc.)                   │
-│ • Generates test file with 6-8 test cases                               │
-│ • Runs tests, fixes failures (up to 3 attempts)                         │
-│ • May write: tasks/lessons.md (if code bug discovered)                  │
-└──────────────────────────────────────────────────────────────────────────┘
-                              ↓
-PHASE 6: DEBUG (If Needed)
-┌──────────────────────────────────────────────────────────────────────────┐
-│ /debug                                                                   │
-│ • Reproduces the bug (browser/CLI/server)                               │
-│ • Forms 2-3 ranked hypotheses                                           │
-│ • Hard gate: no code changes until hypothesis confirmed                 │
-│ • Uses Playwright for browser bugs (console, network, visual state)    │
-│ • Writes: tasks/findings.md (what was learned)                          │
-│ • Writes: tasks/lessons.md (prevention rule for future)                 │
-└──────────────────────────────────────────────────────────────────────────┘
-                              ↓
-PHASE 7: SECURITY AUDIT
-┌──────────────────────────────────────────────────────────────────────────┐
-│ /security-check                                                          │
-│ • Reads: tasks/security-findings.md (prior audits), tasks/lessons.md    │
-│ • Audits changed files (or full project with --all)                     │
+│ Step 12 — /lint  ★ HARD GATE                                            │
+│ • All linting tools must pass. Fix and re-run until clean.              │
+│ Step 13 — /smart-commit  (conditional — skip if lint was clean)         │
+├──────────────────────────────────────────────────────────────────────────┤
+│ Step 14 — /test  ★ HARD GATE — 100% coverage on new code               │
+│ • All test suites must pass. Fix and re-run until clean.                │
+│ Step 15 — /smart-commit  (conditional)                                  │
+├──────────────────────────────────────────────────────────────────────────┤
+│ Step 16 — /security-check  ★ HARD GATE — 0 issues across all severities│
+│ • Reads: tasks/security-findings.md (prior audits), tasks/lessons.md   │
 │ • OWASP Top 10, CWE references, stack-specific checks                  │
-│ • Production readiness: error handling, input validation, secrets       │
 │ • Writes: tasks/security-findings.md (severity-rated findings)          │
+│ Step 17 — /smart-commit  (conditional)                                  │
+├──────────────────────────────────────────────────────────────────────────┤
+│ Step 18 — /perf  (OPTIONAL GATE — loop until critical/high = 0)        │
+│ • Frontend: bundle size, render perf, Core Web Vitals (LCP, CLS, INP) │
+│ • Backend: N+1 queries, missing indexes, unbounded queries, caching    │
+│ • Writes: tasks/perf-findings.md (append-only)                         │
+│ Step 19 — /smart-commit  (conditional)                                  │
+├──────────────────────────────────────────────────────────────────────────┤
+│ Step 20 — /review  ★ HARD GATE — 0 issues including nitpicks           │
+│ • 7 dimensions: Correctness, Security, Performance, Reliability,       │
+│   Design, Best Practices, Testing                                       │
+│ • Reads: tasks/lessons.md, tasks/security-findings.md                  │
+│ Step 21 — /smart-commit  (conditional)                                  │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 8: REVIEW
-┌──────────────────────────────────────────────────────────────────────────┐
-│ /review                                                                  │
-│ • Reads: tasks/lessons.md, tasks/security-findings.md                   │
-│ • 7-dimension analysis:                                                  │
-│   → Correctness, Security, Performance, Reliability                     │
-│   → Design, Best Practices, Testing                                     │
-│ • Generates severity-leveled report (Critical/Warning/Nitpick)          │
-│ • Report-only: loop /debug → /commit → /review until clean             │
-└──────────────────────────────────────────────────────────────────────────┘
-                              ↓
-PHASE 9: FINALIZE + PR
-┌──────────────────────────────────────────────────────────────────────────┐
-│ /finish-feature                                                          │
-│ • Verifies git branch + naming                                          │
-│ • Updates CHANGELOG.md (auto-commits if changed)                        │
-│ • AUTO-DETECTS architectural changes:                                   │
-│   → Analyzes diff for: schema, API routes, components, subsystems       │
-│   → Auto-generates arch log draft (80% complete)                        │
-│   → User reviews/edits [TODO] sections                                  │
-│   → Auto-commits: "docs: add architectural changelog entry"             │
-│ • Security gate: blocks on unresolved Critical/High findings            │
-│ • Verifies tests pass, coverage >80%                                    │
-│ • Scans diff against lessons.md Bug patterns (final gate)              │
-│ • Creates PR via gh pr create (with summary + security status)          │
-└──────────────────────────────────────────────────────────────────────────┘
+PHASE 7: FINISH
+  Step 22 — /update-task     Mark task done in tasks/todo.md
+  Step 23 — /finish-feature  Changelog + arch log (auto-committed) + PR
+  Step 24 — /release         (OPTIONAL) Version bump + tag + store audits
 
 PERSISTENT CONTEXT FILES (Never Cleared)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ tasks/findings.md         ← Decisions, discoveries, prior context        │
-│ tasks/lessons.md          ← Prevention rules (read by 8+ skills)        │
-│ tasks/security-findings.md ← Security audit results (read by 4 skills)  │
-│ tasks/todo.md        ← Current plan (checkboxes)                         │
-│ tasks/progress.md    ← Session work log + error log                      │
+│ tasks/findings.md              ← Decisions, discoveries, prior context  │
+│ tasks/lessons.md               ← Prevention rules (read by 8+ skills)  │
+│ tasks/security-findings.md     ← Security audit results                 │
+│ tasks/accessibility-findings.md← WCAG audit results                     │
+│ tasks/perf-findings.md         ← Performance audit results              │
+│ tasks/todo.md                  ← Current plan (checkboxes)              │
+│ tasks/progress.md              ← Session work log + error log           │
 └──────────────────────────────────────────────────────────────────────────┘
 
 KEY PRINCIPLES
+✓ Hard gates (12, 14, 16, 20) BLOCK all forward progress until clean
+✓ Optional steps (4, 5, 7, 18, 24) require explicit confirmation to skip
 ✓ Every skill that makes decisions reads lessons.md
 ✓ Every skill that accepts handoff reads findings.md
-✓ lessons.md Bug patterns become active constraints across 8+ skills
-✓ One bug debugged = one lesson written = 8+ skills apply it next time
 ✓ No context reset = no repeated mistakes
 ```
 
@@ -247,7 +226,7 @@ AI-assisted development without structure produces more bugs, not fewer. The rea
 **Architectural Changes Without Manual Guessing:**
 → `/finish-feature` step 4 now auto-detects architectural changes using intelligent script analysis. No more "did I need an arch log?" questions. The script analyzes your diff, generates a markdown draft (80% complete), and you edit the final 20%.
 
-**The opinionated rule:** Follow all 8 steps in order. Steps 4–6 can repeat, but they cannot be skipped. A "quick fix" that bypasses brainstorm and planning is the source of most production bugs in AI-assisted codebases.
+**The opinionated rule:** Follow all steps in order. Optional steps (design, accessibility, performance) can be skipped with confirmation. Hard gates (lint, tests, security, review) can never be skipped. A "quick fix" that bypasses brainstorm and planning is the source of most production bugs in AI-assisted codebases.
 
 This is an opinionated workflow. It will feel slower at first. It is faster over the lifetime of a project because rework is the most expensive operation in software development.
 
@@ -332,67 +311,84 @@ cd /path/to/your-project
 /doctor-claude
 ```
 
-After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` planning files exist, and all workflow commands (`/brainstorm`, `/write-plan`, `/execute-plan`, `/security-check`, `/review`, `/finish-feature`) are available inside that project.
+After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` planning files exist, and all workflow commands (`/brainstorm`, `/frontend-design`, `/api-design`, `/write-plan`, `/write-tests`, `/execute-plan`, `/lint`, `/test`, `/security-check`, `/perf`, `/review`, `/finish-feature`) are available.
 
 ### Daily Workflow
 
-During normal development, run the full workflow for every meaningful change: start with `/brainstorm` to clarify what you're building, use `/frontend-design` to design the UI (no code yet), use `/write-plan` to create a unified plan incorporating both brainstorm and design, then implement with `/execute-plan` (which logs every action and reads lessons from past mistakes), commit with `/commit` after each logical batch, write tests with `/write-tests`, debug structured with `/debug` if anything breaks, run `/security-check` to audit for vulnerabilities and production quality, then `/review` to self-review (loop `/debug` + `/commit` if issues found), and finally `/finish-feature` to finalize, auto-commit docs, and create the PR. See the [Tutorial](#tutorial--building-a-feature-end-to-end) above for a concrete example with exact output.
+During normal development, follow the 24-step workflow: read the task and lessons → brainstorm → design (frontend or API, optional) → accessibility audit (optional) → plan → branch → migrate (optional) → write failing tests → implement → commit → lint → test → security → performance (optional) → review → finalize. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
 
 ---
 
 ## Recommended Workflow
 
-The complete development workflow from idea to merge with **automatic context threading and bug prevention**:
+The complete 24-step workflow from idea to merge with **automatic context threading and bug prevention**:
 
-| Step | Command | What Happens | Context |
-|------|---------|---------|---------|
-| 1. Explore | `/brainstorm` | Explore idea, clarify requirements, propose approaches, get approval | **Reads:** findings.md (prior decisions), lessons.md (constraints)<br/>**Writes:** findings.md (design decision) |
-| 1a. UI Design | `/frontend-design` | *(Optional)* Design the UI (mockups, layouts, visual direction—**no code yet**). Skip for backend-only work. | **Reads:** findings.md (brainstorm output), lessons.md (constraints)<br/>**Writes:** findings.md (design artifacts) |
-| 2. Plan | `/write-plan` | Write decision-complete plan incorporating brainstorm findings and any frontend design | **Reads:** findings.md (all outputs), lessons.md (constraints)<br/>Applies lessons as plan constraints |
-| 3. Implement | `/execute-plan` | Implement plan in small batches with progress tracking | **Reads:** todo.md, lessons.md (constraints), progress.md (error log)<br/>**Writes:** progress.md, findings.md |
-| 4. Commit | `/commit` | Stage changes, auto-detect type, generate conventional message | **Reads:** progress.md (for context) |
-| 5. Test | `/write-tests` | Generate tests matching framework and patterns | **Reads:** lessons.md<br/>**Writes:** (lessons.md if code bug found) |
-| 6. Debug | `/debug` | (If needed) Structured investigation with hypotheses | **Reads:** findings.md, lessons.md, progress.md<br/>**Writes:** findings.md, lessons.md (prevention rules) |
-| 7. Security | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards | **Reads:** security-findings.md (prior audits), lessons.md<br/>**Writes:** security-findings.md |
-| 8. Review | `/review` | 7-dimension review (correctness, security, performance, reliability, design, best practices, testing). If issues found: `/debug` → `/commit` → `/review` until clean | **Reads:** lessons.md, security-findings.md |
-| 9. Finalize | `/finish-feature` | Changelog, arch log (auto-committed), security gate, verification, **create PR** | **Auto-detects** architectural changes<br/>**Reads:** security-findings.md (unresolved findings)<br/>**Scans diff** against lessons.md (final gate) |
+| # | Step | Command | Notes |
+|---|------|---------|-------|
+| 1 | Read Todo | read `tasks/todo.md` | Pick the next incomplete task |
+| 2 | Read Lessons | read `tasks/lessons.md` | Review past corrections |
+| 3 | Explore | `/brainstorm` | Clarify requirements — no code |
+| 4 | Design | `/frontend-design` or `/api-design` | Optional — skip if pure backend |
+| 5 | Accessibility | `/accessibility` | Optional — skip if no frontend |
+| 6 | Plan | `/write-plan` | Decision-complete plan — no code |
+| 7 | Branch | `/branch` | Auto-named from current task |
+| 8 | Migrate | `/schema-migrate` | Optional — skip if no schema changes |
+| 9 | Write Tests | `/write-tests` | TDD red: failing tests first |
+| 10 | Implement | `/execute-plan` | TDD green: make tests pass |
+| 11 | Commit | `/smart-commit` | Commit tests + implementation |
+| 12 | **Lint** | `/lint` | **HARD GATE** — all tools must pass |
+| 13 | Commit | `/smart-commit` | Conditional — skip if lint was clean |
+| 14 | **Verify Tests** | `/test` | **HARD GATE** — 100% coverage |
+| 15 | Commit | `/smart-commit` | Conditional |
+| 16 | **Security** | `/security-check` | **HARD GATE** — 0 issues |
+| 17 | Commit | `/smart-commit` | Conditional |
+| 18 | Performance | `/perf` | Optional gate — critical/high must reach 0 |
+| 19 | Commit | `/smart-commit` | Conditional |
+| 20 | **Review** | `/review` | **HARD GATE** — 0 issues including nitpicks |
+| 21 | Commit | `/smart-commit` | Conditional |
+| 22 | Update | `/update-task` | Mark done, log completion |
+| 23 | Finalize | `/finish-feature` | Changelog + PR |
+| 24 | Release | `/release` | Optional — version bump + tag |
 
 ### Key Features
 
-✅ **Context Threading** — findings.md flows brainstorm → write-plan → frontend-design; never re-ask decisions
+✅ **4 Hard Gates** — Lint (12), Tests (14), Security (16), Review (20) block all forward progress until clean
+✅ **TDD Enforced** — Tests written before implementation (step 9), verified after (step 14)
+✅ **Context Threading** — findings.md flows brainstorm → design → plan; never re-ask decisions
 ✅ **Compounding Lessons** — One bug debugged = one lesson written = 8+ skills apply it next time
 ✅ **Auto-Architecture Detection** — `/finish-feature` intelligently detects & documents arch changes
-✅ **Security Audit Gate** — `/security-check` audits changed files against OWASP Top 10, CWE, and stack-specific standards
-✅ **Bug Prevention Loop** — lessons.md Bug patterns become standing constraints throughout execution
-✅ **No Context Reset** — findings.md, lessons.md, and security-findings.md persist across sessions
+✅ **No Context Reset** — findings.md, lessons.md, security-findings.md, perf-findings.md persist across sessions
 
-> Steps 4-6 can repeat as needed. Run `/commit` after each logical unit, `/write-tests` after implementing, `/debug` whenever something breaks. Run `/security-check` before finalizing to catch vulnerabilities early. If `/review` finds issues, loop: `/debug` → `/commit` → `/review` until clean, then proceed to `/finish-feature`. Lessons compound over time, making the system smarter per-project.
+### Design Phase Options
 
-### Brainstorming + Frontend Design
-
-`/brainstorm` is essential. `/frontend-design` is **optional but recommended**:
+`/brainstorm` is required. Design step (4) is optional — choose based on what you're building:
 
 - **`/brainstorm` (required)** — explores user intent, clarifies requirements, proposes approaches, and gets approval. No code is written.
-- **`/frontend-design` (optional)** — if you're building frontend work, use this after brainstorm to design the UI (mockups, layouts, visual direction). Still no code—only design artifacts. **Skip this if doing backend-only work.**
-- **`/write-plan` (required)** — incorporates brainstorm findings AND any frontend design into a unified plan for implementation.
-- **`/execute-plan` (required)** — implements the plan.
+- **`/frontend-design` (optional)** — for UI work: mockups, layouts, visual direction, optional Pencil `.pen` mockup. Skip for backend-only.
+- **`/api-design` (optional)** — for new APIs: endpoint design, request/response shapes, auth flows, error codes. Skip if no new API surface.
+- **`/accessibility` (optional, step 5)** — WCAG 2.1 AA audit on the design spec. Skip if no frontend.
+- **`/write-plan` (required)** — incorporates brainstorm + design outputs into a unified plan.
 
-**With frontend design:**
+**With UI work:**
 ```
-/brainstorm       ← clarify: what are we building?
-/frontend-design  ← design: UI mockups, layouts (no code)
-/write-plan       ← unified plan for both backend + frontend
-/execute-plan     ← implement everything
-```
-
-**Without frontend design (backend-only or simple work):**
-```
-/brainstorm       ← clarify: what are we building?
-/write-plan       ← plan the implementation
-/execute-plan     ← implement
+/brainstorm        ← clarify: what are we building?
+/frontend-design   ← design: UI mockups, layouts (no code)
+/accessibility     ← WCAG 2.1 AA audit on the design
+/write-plan        ← unified plan for frontend + backend
 ```
 
-The two-step design → plan → code flow consistently produces better output than jumping straight to `/write-plan`.
+**With new API:**
+```
+/brainstorm    ← clarify requirements
+/api-design    ← design: endpoints, payloads, auth, errors
+/write-plan    ← plan the implementation
+```
+
+**Backend-only (no UI, no new API):**
+```
+/brainstorm    ← clarify: what are we building?
+/write-plan    ← plan the implementation
+```
 
 ---
 
@@ -575,14 +571,21 @@ RESULT: Bug fixed + lesson learned. Next time you work on email validation,
 | Situation | Command | Why? |
 |-----------|---------|------|
 | **Starting a new feature** | `/brainstorm` | Lock in design before coding. Prevents "building the wrong thing." |
-| **Feature planned, ready to code** | `/write-plan` | Creates checklist. Applies lessons as constraints. Code doesn't start without approved plan. |
+| **Building UI** | `/frontend-design` | Design mockups before code. Optional Pencil visual mockup. |
+| **Building a new API** | `/api-design` | Design contracts before code. Endpoint, payloads, errors. |
+| **UI design needs review** | `/accessibility` | WCAG 2.1 AA audit before planning. |
+| **Feature planned, ready to code** | `/write-plan` | Creates checklist. Applies lessons as constraints. |
 | **Implementing the plan** | `/execute-plan` | Batches work, logs to progress.md, reads lessons before each batch. |
-| **Logical unit done** | `/commit` | After each 2-3 tasks. Generates conventional commit message. |
-| **Feature ready for tests** | `/write-tests` | Generate test file. Reads lessons, avoids past mistakes. |
-| **Something breaks** | `/debug` | Structured investigation. Reproduces, isolates, hypothesizes, verifies. Writes lessons for prevention. |
-| **Code complete, pre-review** | `/security-check` | Audit changed files for OWASP Top 10, production quality, industry standards. Writes to security-findings.md. |
-| **Ready for review** | `/review` | Self-review against lessons + security findings. Flags bugs — loop `/debug` + `/commit` until clean. |
-| **Review clean, ready to ship** | `/finish-feature` | Changelog + arch log (auto-committed), security gate, verification, create PR via `gh`. |
+| **Logical unit done** | `/smart-commit` | After each 2-3 tasks. Generates conventional commit message. |
+| **Feature ready for tests** | `/write-tests` | TDD: write failing tests first, then implement. |
+| **Something breaks** | `/debug` | Structured investigation. Reproduces, isolates, hypothesizes, verifies. |
+| **Code complete — lint gate** | `/lint` | All linters must pass. Hard gate — cannot skip. |
+| **Code complete — test gate** | `/test` | 100% coverage on new code. Hard gate — cannot skip. |
+| **Code complete, pre-review** | `/security-check` | OWASP Top 10, 0 issues required. Hard gate. |
+| **Performance concerns** | `/perf` | Bundle, N+1, Core Web Vitals. Optional gate. |
+| **Ready for review** | `/review` | 7-dimension self-review. 0 issues required. Hard gate. |
+| **Production emergency** | `/hotfix` | Skips design/TDD, quality gates still enforced. |
+| **Review clean, ready to ship** | `/finish-feature` | Changelog + arch log + security gate + create PR. |
 
 ### Scenario 4: Lessons Compounding Over Time
 
@@ -644,17 +647,24 @@ Bootstrap or repair Claude Code infrastructure on any project.
 #### Tutorial: Recommended Workflow
 
 1. Run `/setup-claude` (creates scaffolding + commands).
-2. Run `/brainstorm` to explore the idea and clarify requirements (no code).
-3. *(Optional)* Run `/frontend-design` to design the UI (mockups, layouts—no code yet). Skip for backend-only work.
-4. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md` (no code).
-5. Run `/execute-plan` to implement in small batches while logging to `tasks/progress.md`.
-6. Run `/commit` after each logical unit of work.
-7. Run `/write-tests` to generate tests matching your framework.
-8. Run `/debug` if something breaks (structured investigation).
-9. Run `/security-check` to audit changed files for vulnerabilities and production quality.
-10. Run `/review` to self-review all changes. Loop `/debug` + `/commit` if issues found.
-11. Run `/finish-feature` to finalize (changelog, arch log auto-committed, security gate, create PR).
-12. Run `/release` to tag and push (add `--android` or `--ios` for store audits).
+2. Read `tasks/todo.md` (pick next task) and `tasks/lessons.md` (past corrections).
+3. Run `/brainstorm` to explore requirements (no code).
+4. *(Optional)* Run `/frontend-design` or `/api-design` for design artifacts (no code).
+5. *(Optional)* Run `/accessibility` for WCAG 2.1 AA audit on the design.
+6. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md`.
+7. Run `/branch` to create a feature branch.
+8. *(Optional)* Run `/schema-migrate` for database changes.
+9. Run `/write-tests` to write failing tests first (TDD red phase).
+10. Run `/execute-plan` to implement in small batches (TDD green phase).
+11. Run `/smart-commit` to commit tests + implementation.
+12. Run `/lint` — **hard gate**, fix and re-run until clean.
+13. Run `/test` — **hard gate**, 100% coverage on new code.
+14. Run `/security-check` — **hard gate**, 0 issues across all severities.
+15. *(Optional)* Run `/perf` for performance audit.
+16. Run `/review` — **hard gate**, 0 issues including nitpicks.
+17. Run `/update-task` to mark the task done.
+18. Run `/finish-feature` to finalize (changelog, arch log, security gate, create PR).
+19. Run `/release` to tag and push (add `--android` or `--ios` for store audits).
 
 #### Deterministic Bootstrap Script
 
@@ -1049,6 +1059,74 @@ Automate releases with optional mobile store submission audits.
 /release --android          # + Play Store audit
 /release --ios              # + App Store audit
 /release --android --ios    # + both audits
+```
+
+---
+
+### `/api-design`
+
+Design REST/GraphQL API contracts before any implementation begins.
+
+**What it does:**
+- Designs endpoint structure, resource relationships, and URL conventions
+- Defines request/response shapes, status codes, and error format
+- Covers auth flows (JWT, OAuth, API keys), rate limiting, and versioning strategy
+- Output: complete API Design Specification — no code, design only
+
+**Usage:** After `/brainstorm`, before `/write-plan`:
+```
+/api-design
+```
+
+---
+
+### `/accessibility`
+
+WCAG 2.1 AA compliance audit on frontend design specs and existing UI code.
+
+**What it does:**
+- Audits 7 categories: color/contrast, keyboard navigation, ARIA/semantics, images/media, forms, motion/animation, content/structure
+- Every finding includes: WCAG criterion, severity (Critical/High/Medium/Low), specific recommendation
+- Writes to `tasks/accessibility-findings.md` (append-only — never overwritten)
+
+**Usage:** After `/frontend-design`, before `/write-plan`:
+```
+/accessibility
+```
+
+---
+
+### `/perf`
+
+Performance audit — auto-detects stack and checks both frontend and backend.
+
+**What it does:**
+- **Frontend:** bundle size, render performance, Core Web Vitals (LCP, CLS, INP)
+- **Backend:** N+1 queries, missing indexes, unbounded queries, missing caching
+- Severity levels: Critical / High / Medium / Low
+- Writes to `tasks/perf-findings.md` (append-only)
+- Optional gate (step 18): loop until critical/high findings = 0
+
+**Usage:** After security check, before review:
+```
+/perf
+```
+
+---
+
+### `/hotfix`
+
+Emergency fix workflow for production incidents — skips design and TDD, quality gates still enforced.
+
+**What it does:**
+- 15-step flow: investigate → branch → fix → lint → test → security → review → finish
+- Skips: brainstorm, design, accessibility, write-tests phases
+- All 4 quality gates still enforced (lint, test, security, review cannot be skipped)
+- After merging: prompts to add a regression test and a lessons.md entry
+
+**Usage:** Production emergency only:
+```
+/hotfix
 ```
 
 ---
