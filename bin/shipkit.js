@@ -17,17 +17,19 @@ const reset  = '\x1b[0m';
 
 // ── Pirate ship ASCII art ────────────────────────────────────────────────────
 const banner = `
-${cyan}                 ▄${reset}
-${cyan}                 █${reset}
-${cyan}                 █${reset}
-${cyan}           ▄████████▄${reset}
-${cyan}          ██░░░☠░░░░██${reset}
-${cyan}          ██░░░░░░░░██${reset}
-${cyan}           ▀████████▀${reset}
-${cyan}       ▄███████████████▄${reset}
-${cyan}      ██░░◉░░░░░░░░◉░░██${reset}
-${cyan}       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀${reset}
-${cyan}        ≋  ≋  ≋  ≋  ≋  ≋${reset}
+${cyan}           ⚑${reset}
+${cyan}           |${reset}
+${cyan}          /|\\${reset}
+${cyan}         / | \\${reset}
+${cyan}        /  |  \\${reset}
+${cyan}       /   |   \\${reset}
+${cyan}      / ☠  |  ☠ \\${reset}
+${cyan}     /     |     \\${reset}
+${cyan}    /______|______\\${reset}
+${cyan}  ▄████████████████▄${reset}
+${cyan}  █  ◉          ◉  █${reset}
+${cyan}   ▀██████████████▀${reset}
+${cyan}     ≋  ≋  ≋  ≋  ≋${reset}
 
   ${bold}ShipKit${reset} ${dim}v${pkg.version}${reset}
   A structured workflow toolkit for Claude Code.
