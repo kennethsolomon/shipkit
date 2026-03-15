@@ -1,11 +1,14 @@
 ---
 name: setup-optimizer
-description: Enrich CLAUDE.md with comprehensive project context and maintain it across development
+description: Diagnose, enrich, and maintain CLAUDE.md with comprehensive project context
 triggers:
   - optimize claude
   - optimize setup
   - enrich claude
   - maintain claude
+  - doctor claude
+  - check claude
+  - diagnose claude
 allowed-tools:
   - Bash
   - Read
@@ -14,30 +17,39 @@ allowed-tools:
 
 ## Overview
 
-Transform `/optimize-claude` from a simple line-trimmer into an intelligent **context enricher** that discovers and adds comprehensive information about your project to CLAUDE.md.
+Diagnoses your CLAUDE.md for problems, then enriches it with comprehensive project context. Combines health-checking with intelligent auto-discovery.
 
-### What It Does (Enhanced)
+### What It Does
 
-Instead of just trimming lines, this command now:
-- 🔍 **Auto-discovers** actual project structure (src/, tests/, docs/, etc.)
-- 📚 **Finds documentation** and creates links to real files
-- 🔧 **Detects workflows** (Makefile targets, npm scripts, GitHub Actions)
-- 🔄 **Safely re-runs** during development without losing user work
-- 🔒 **Preserves customizations** with smart locking and detection
-- 📊 **Reports findings** so you know what was added
+1. **Diagnoses** — finds missing sections, stale info, inconsistencies, and gaps
+2. **Discovers** — scans project structure, docs, and workflows
+3. **Enriches** — merges discoveries into CLAUDE.md while preserving your edits
 
 ## Usage
-
-### Basic - Run in Project Root
 
 ```bash
 /optimize-claude
 ```
 
-**What happens:**
+### Step 0: Diagnose
+
+Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
+
+- **Missing sections** — checks for essential sections (Stack, Quick Start, Development, etc.)
+- **Stale content** — detects outdated info (stale model/route counts, removed dependencies still referenced, generic placeholders)
+- **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
+- **Section completeness** — flags sections that exist but are empty or have only placeholder text
+- **Line count** — warns if file exceeds 150-line target
+
+Reports findings before proceeding. If issues are found, they inform the enrichment step.
+
+### Step 1: Scan & Enrich
+
+After diagnosis, proceeds with discovery and enrichment:
+
 1. Scans project for directories, docs, and workflows
 2. Reads your existing CLAUDE.md
-3. Intelligently merges discoveries with your content
+3. Intelligently merges discoveries with your content (prioritizing diagnosed gaps)
 4. Preserves any user customizations
 5. Updates CLAUDE.md with comprehensive context
 

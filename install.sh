@@ -37,6 +37,21 @@ echo ""
 mkdir -p "${SKILLS_DIR}"
 mkdir -p "${COMMANDS_DIR}"
 
+# ── Clean stale symlinks ────────────────────
+for stale in starter-setup claude-doctor laravel-setup-claude laravel-lint laravel-test laravel-write-tests; do
+  if [[ -L "${SKILLS_DIR}/${stale}" ]]; then
+    rm "${SKILLS_DIR}/${stale}"
+    echo "  Cleaned stale: ${stale}"
+  fi
+done
+
+for stale_cmd in re-setup.md; do
+  if [[ -L "${COMMANDS_DIR}/${stale_cmd}" ]]; then
+    rm "${COMMANDS_DIR}/${stale_cmd}"
+    echo "  Cleaned stale: ${stale_cmd}"
+  fi
+done
+
 # ── Link skills ──────────────────────────────
 skills_linked=0
 skills_skipped=0
@@ -94,18 +109,27 @@ echo ""
 echo "Installation complete."
 echo ""
 echo "Workflow commands:"
+echo "  /setup-claude        bootstrap project scaffolding"
 echo "  /brainstorm          explore requirements and design"
 echo "  /frontend-design     UI mockup before implementation"
 echo "  /write-plan          write decision-complete plan"
 echo "  /branch              create feature branch from current task"
-echo "  /write-tests         TDD: write failing tests before implementation"
+echo "  /write-tests         TDD: write failing tests (auto-detects stack)"
 echo "  /execute-plan        implement plan in batches"
 echo "  /smart-commit        conventional commit with approval"
+echo "  /lint                auto-detect and run all linters"
+echo "  /test                auto-detect and verify all tests pass"
+echo "  /debug               bug fix entry point"
 echo "  /security-check      OWASP security audit"
 echo "  /review              self-review of branch changes"
 echo "  /update-task         mark task done, log completion"
 echo "  /finish-feature      changelog + PR creation"
 echo "  /release             version bump + changelog + tag"
 echo "  /status              show workflow + task status"
+echo "  /setup-optimizer     enrich CLAUDE.md by scanning codebase"
+echo ""
+echo "Laravel:"
+echo "  /laravel-init        configure existing Laravel project"
+echo "  /laravel-new         scaffold new Laravel project"
 echo ""
 echo "Get started: open any project and run /setup-claude"

@@ -30,9 +30,9 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 | 7 | Write Tests | `/write-tests` | required | no |
 | 8 | Implement | `/execute-plan` | required | no |
 | 9 | Commit | `/smart-commit` | required | no |
-| 10 | Lint | run project linter | required | yes — must be clean |
+| 10 | Lint | `/lint` | required | yes — must be clean |
 | 11 | Commit | `/smart-commit` | conditional (skip if lint was clean) | no |
-| 12 | Verify Tests | run project test suite | required | yes — 100% coverage required |
+| 12 | Verify Tests | `/test` | required | yes — 100% coverage required |
 | 13 | Commit | `/smart-commit` | conditional (skip if tests passed) | no |
 | 14 | Security | `/security-check` | required | yes — must reach 0 issues |
 | 15 | Commit | `/smart-commit` | conditional (skip if security was clean) | no |
@@ -53,9 +53,9 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 7.  **Write Tests** — run `/write-tests` (TDD red phase). Write failing tests for all planned code. If modifying existing behavior, update existing tests first. Tests SHOULD fail — no implementation yet.
 8.  **Implement** — run `/execute-plan` to execute `tasks/todo.md` checkboxes in small batches, making the failing tests pass (TDD green phase). Log progress to `tasks/progress.md`.
 9.  **Commit** — run `/smart-commit` to commit tests + implementation
-10. **Lint** — run the project's linter. Fix all issues immediately, then re-run until clean.
+10. **Lint** — run `/lint` — auto-detects and runs all project linters. Fix all issues immediately, then re-run until clean.
 11. **Commit** — run `/smart-commit` if lint required fixes. Auto-skip if lint was clean.
-12. **Verify Tests** — run the project's test suite. **100% test coverage is required.** All tests must pass. Fix any failures immediately, then re-run until all pass with full coverage.
+12. **Verify Tests** — run `/test` — auto-detects and runs all project test suites. **100% test coverage required.** Fix failures immediately, then re-run.
 13. **Commit** — run `/smart-commit` if test fixes were needed. Auto-skip if tests passed first try.
 14. **Security** — run `/security-check`. Must reach 0 issues across all severities. Fix issues immediately, commit, then re-run. Loop until clean.
 15. **Commit** — run `/smart-commit` if security required fixes. Auto-skip if clean.
@@ -108,6 +108,30 @@ This tells the user exactly what happened and what to do next. Never finish a st
 - When starting a new task, check if `tasks/workflow-status.md` has any `done` or `skipped` steps. If yes, ask: "Existing workflow detected. Start fresh and reset tracker?"
 - Reset sets all steps to `not yet` and marks step 1 as `>> next <<`.
 
+### Bug Fix Flow
+
+When fixing a bug (not building a feature), use `/debug` as the entry point. This sets up a shorter workflow:
+
+| # | Step | Command |
+|---|------|---------|
+| 1 | Debug | `/debug` |
+| 2 | Branch | `/branch` |
+| 3 | Write Tests | `/write-tests` (regression test) |
+| 4 | Fix | implement the fix |
+| 5 | Commit | `/smart-commit` |
+| 6 | Lint | `/lint` |
+| 7 | Commit | `/smart-commit` (skip if clean) |
+| 8 | Verify Tests | `/test` |
+| 9 | Commit | `/smart-commit` (skip if clean) |
+| 10 | Security | `/security-check` |
+| 11 | Commit | `/smart-commit` (skip if clean) |
+| 12 | Review | `/review` |
+| 13 | Commit | `/smart-commit` (skip if clean) |
+| 14 | Update | `/update-task` |
+| 15 | Finalize | `/finish-feature` |
+
+Start with `/debug` to investigate, then follow the abbreviated flow.
+
 ## Commands
 
 | Command | Purpose |
@@ -119,6 +143,9 @@ This tells the user exactly what happened and what to do next. Never finish a st
 | `/write-tests` | TDD: Write failing tests before implementation |
 | `/execute-plan` | Execute `tasks/todo.md` checkboxes in batches |
 | `/smart-commit` | Conventional commit with approval |
+| `/lint` | Auto-detect and run all project linters |
+| `/test` | Auto-detect and run all project test suites |
+| `/debug` | Investigate and debug issues (bug fix entry point) |
 | `/security-check` | OWASP security audit on changed files |
 | `/review` | Self-review of branch changes |
 | `/update-task` | Mark task done and log completion |
