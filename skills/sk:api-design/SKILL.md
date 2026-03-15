@@ -11,9 +11,9 @@ license: Complete terms in LICENSE.txt
 - **DO NOT** write, edit, or generate any code (no controllers, routes, models, migrations)
 - **DO NOT** use file editing tools (Edit, Write, Bash)
 - **DO produce** endpoint contracts, request/response shapes, error codes, auth flows, and data models
-- Implementation happens in `/execute-plan` — not here
+- Implementation happens in `/sk:execute-plan` — not here
 
-This skill designs clear, consistent API contracts that `/write-plan` and `/execute-plan` can implement without ambiguity.
+This skill designs clear, consistent API contracts that `/sk:write-plan` and `/sk:execute-plan` can implement without ambiguity.
 
 ## Before You Start
 
@@ -103,7 +103,7 @@ Standardize error responses:
 
 ## Output Format
 
-End every `/api-design` session with a structured specification:
+End every `/sk:api-design` session with a structured specification:
 
 ```
 ## API Design Specification
@@ -137,13 +137,13 @@ End every `/api-design` session with a structured specification:
 [What constitutes a breaking change, deprecation policy]
 ```
 
-After presenting the specification, tell the user: **"Run `/write-plan` to turn this into an implementation plan."**
+After presenting the specification, tell the user: **"Run `/sk:write-plan` to turn this into an implementation plan."**
 
 ---
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:api-design"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

@@ -1,5 +1,5 @@
 ---
-description: "View and edit ShipKit project configuration (.shipkit/config.json)."
+description: "View and edit ShipKit project configuration (.shipkit/sk:config.json)."
 ---
 
 # /sk:config
@@ -8,14 +8,14 @@ View and manage ShipKit configuration for this project.
 
 ## Config File
 
-ShipKit stores per-project config in `.shipkit/config.json` at the project root.
+ShipKit stores per-project config in `.shipkit/sk:config.json` at the project root.
 If the file does not exist, display defaults and offer to create it.
 
 ## Steps
 
 ### 1 — Read current config
 
-Check if `.shipkit/config.json` exists. If yes, read and parse it.
+Check if `.shipkit/sk:config.json` exists. If yes, read and parse it.
 If not, use defaults:
 
 ```json
@@ -83,14 +83,14 @@ If the user specifies a setting:
 
 If any setting was changed:
 1. Create `.shipkit/` directory if it does not exist
-2. Write updated config to `.shipkit/config.json`
-3. Add `.shipkit/config.json` to `.gitignore` if not already present
-4. Confirm: "Config saved to `.shipkit/config.json`"
+2. Write updated config to `.shipkit/sk:config.json`
+3. Add `.shipkit/sk:config.json` to `.gitignore` if not already present
+4. Confirm: "Config saved to `.shipkit/sk:config.json`"
 
 If no changes, exit cleanly.
 
 ## Notes
 
-- Config is **per-project** — each repo has its own `.shipkit/config.json`
+- Config is **per-project** — each repo has its own `.shipkit/sk:config.json`
 - `model_overrides` takes precedence over `profile` for individual skills
-- Gitignore: `.shipkit/config.json` is personal preference — don't commit it unless the team agrees on a shared profile
+- Gitignore: `.shipkit/sk:config.json` is personal preference — don't commit it unless the team agrees on a shared profile

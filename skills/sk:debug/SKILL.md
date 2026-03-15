@@ -207,7 +207,7 @@ After the fix is applied:
 1. Re-run the original reproduction steps — bug should be gone
 2. Run the full test suite — no new failures
 3. If there was a related test, confirm it passes
-4. If there was no test, suggest writing one (reference `/write-tests`)
+4. If there was no test, suggest writing one (reference `/sk:write-tests`)
 
 ```bash
 # Verify the specific fix
@@ -237,7 +237,7 @@ Skip the lesson entry if it was a simple typo or one-off mistake.
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:debug"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

@@ -3,7 +3,7 @@ name: sk:lint
 description: "Auto-detect and run all linting tools: formatters first (sequential), then analyzers in parallel. Fix and re-run until clean."
 ---
 
-# /lint
+# /sk:lint
 
 Auto-detect project linting tools, run them, fix issues, repeat until clean.
 
@@ -98,7 +98,7 @@ Only include lines for detected tools. All must show "clean" before this skill p
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:lint"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

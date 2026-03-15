@@ -34,4 +34,4 @@ Behavior depends on who owns the file:
 
 ## After Running
 
-Start with `/brainstorm` to plan your feature.
+Start with `/sk:brainstorm` to plan your feature.

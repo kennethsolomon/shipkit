@@ -32,7 +32,7 @@ The single command to keep your CLAUDE.md current. Diagnoses problems, updates t
 ## Usage
 
 ```bash
-/setup-optimizer
+/sk:setup-optimizer
 ```
 
 ### Step 0: Diagnose
@@ -40,7 +40,7 @@ The single command to keep your CLAUDE.md current. Diagnoses problems, updates t
 Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 
 - **Missing sections** — checks for essential sections (Workflow, Sub-Agent Patterns, Project Memory, Lessons Capture, Testing, Commands, etc.)
-- **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/lint`)
+- **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/sk:lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 24-step TDD flow with hard gates
@@ -57,7 +57,7 @@ Read → Explore → Design → Accessibility → Plan → Branch → Migrate �
 ```
 
 **What gets updated:**
-- Workflow table (24 steps with correct commands: `/write-tests`, `/lint`, `/test`, `/accessibility`, `/perf`)
+- Workflow table (24 steps with correct commands: `/sk:write-tests`, `/sk:lint`, `/sk:test`, `/sk:accessibility`, `/sk:perf`)
 - Step details (TDD red/green/verify descriptions)
 - Tracker rules (hard gates at 12, 14, 16, 20; optional steps 4, 5, 7, 18, 24)
 - Step completion summary rule (NON-NEGOTIABLE)
@@ -75,7 +75,7 @@ Read → Explore → Design → Accessibility → Plan → Branch → Migrate �
 - Any section with `<!-- EDITED -->` marker
 
 **How it works:**
-1. Read the latest workflow template from `~/.claude/skills/setup-claude/templates/CLAUDE.md.template`
+1. Read the latest workflow template from `~/.claude/skills/sk:setup-claude/templates/CLAUDE.md.template`
 2. Compare with the current CLAUDE.md workflow section
 3. If different, replace the workflow section (between `## Workflow` and the next `##` that isn't a workflow subsection)
 4. Insert missing sections (Sub-Agent Patterns, Project Memory, etc.) in their correct positions

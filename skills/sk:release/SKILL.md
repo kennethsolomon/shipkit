@@ -11,10 +11,10 @@ Automate the release process with optional mobile store submission review.
 
 | Invocation | What happens |
 |---|---|
-| `/release` | Git release only: version bump, CHANGELOG, tag, push |
-| `/release --android` | Git release + Play Store readiness audit |
-| `/release --ios` | Git release + App Store readiness audit |
-| `/release --android --ios` | Git release + both store audits |
+| `/sk:release` | Git release only: version bump, CHANGELOG, tag, push |
+| `/sk:release --android` | Git release + Play Store readiness audit |
+| `/sk:release --ios` | Git release + App Store readiness audit |
+| `/sk:release --android --ios` | Git release + both store audits |
 
 ## Step 1: Detect Flags
 
@@ -60,7 +60,7 @@ Report the detected framework to the user. If detection fails, ask them.
 
 Check if the app has been previously submitted:
 
-- **Android**: Look for `android/app/release/` builds, `google-services.json`, existing `sa_key.json` (service account), or `android/app/build.gradle` with a `versionCode` > 1
+- **Android**: Look for `android/app/sk:release/` builds, `google-services.json`, existing `sa_key.json` (service account), or `android/app/build.gradle` with a `versionCode` > 1
 - **iOS**: Look for existing provisioning profiles in `ios/`, `ExportOptions.plist`, or `app.json` with an existing `bundleIdentifier` that follows reverse-domain convention with a real domain
 
 Report whether this appears to be a **first-time submission** or an **update to an existing app**.

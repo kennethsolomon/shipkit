@@ -61,8 +61,8 @@ Files created:
   tasks/lessons.md
   tasks/todo.md
   tasks/progress.md
-  .claude/commands/lint.md
-  .claude/commands/test.md
+  .claude/commands/sk:lint.md
+  .claude/commands/sk:test.md
 
-Next step: /brainstorm
+Next step: /sk:brainstorm
 ```

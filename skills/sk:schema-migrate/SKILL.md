@@ -1,6 +1,6 @@
 ---
 name: sk:schema-migrate
-description: "/schema-migrate — Multi-ORM Schema Change Analysis"
+description: "/sk:schema-migrate — Multi-ORM Schema Change Analysis"
 ---
 
 # /sk:schema-migrate — Multi-ORM Schema Change Analysis
@@ -34,7 +34,7 @@ Read the following files simultaneously (read-only, tolerate missing files):
 drizzle.config.ts        prisma/schema.prisma
 drizzle.config.js        composer.json
 alembic.ini              Gemfile
-package.json             supabase/config.toml
+package.json             supabase/sk:config.toml
 ```
 
 ### Step 2 — Apply Priority Rules (first match wins)
@@ -47,7 +47,7 @@ package.json             supabase/config.toml
 | 4 | SQLAlchemy | `alembic.ini` exists | `alembic/versions/` exists |
 | 5 | Rails | `Gemfile` → `rails` or `activerecord` gem | `db/migrate/` + `db/schema.rb` |
 
-**Supabase overlay (independent check):** If `supabase/config.toml` exists → set `isSupabase = true`. This adds Supabase CLI commands in Phase 5, alongside standard ORM commands.
+**Supabase overlay (independent check):** If `supabase/sk:config.toml` exists → set `isSupabase = true`. This adds Supabase CLI commands in Phase 5, alongside standard ORM commands.
 
 **Ambiguity:** If two definitive signals match (e.g., monorepo), ask the user before proceeding:
 > "Found both `drizzle.config.ts` (Drizzle) and `composer.json` (Laravel). Which ORM should I analyze?"
@@ -110,7 +110,7 @@ Read the appropriate file from `orms/` and execute **Phases 2 through 5** as def
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:schema-migrate"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

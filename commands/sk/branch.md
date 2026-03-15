@@ -2,7 +2,7 @@
 description: "Create a feature branch from the current task in tasks/todo.md."
 ---
 
-# /branch
+# /sk:branch
 
 Create a feature branch for the current task.
 

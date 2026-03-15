@@ -49,7 +49,7 @@ Run these commands in order for a complete, quality-gated feature build.
 | `/sk:branch` | Create branch from current task |
 | `/sk:debug` | Structured bug investigation |
 | `/sk:execute-plan` | Implement plan in batches |
-| `/sk:features` | Sync docs/features/ specs with codebase |
+| `/sk:features` | Sync docs/sk:features/ specs with codebase |
 | `/sk:finish-feature` | Changelog + PR creation |
 | `/sk:frontend-design` | UI mockup + design spec before implementation |
 | `/sk:hotfix` | Emergency fix workflow (skips design/TDD) |
@@ -96,7 +96,7 @@ ShipKit routes each skill to the right model automatically. Set once per project
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
 
 `opus` = inherit (uses your current session model).
-Config lives in `.shipkit/config.json` — per project, gitignored by default.
+Config lives in `.shipkit/sk:config.json` — per project, gitignored by default.
 
 ---
 

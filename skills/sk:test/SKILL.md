@@ -7,7 +7,7 @@ description: "Auto-detect BE + FE test runners, run both in parallel, verify 100
 
 ## Overview
 
-Auto-detect the project's backend and frontend testing frameworks from config files, run all suites in parallel, and verify 100% coverage on new code. This is the **verification step** (TDD green check) — tests should already exist from `/write-tests`. This skill does NOT write tests.
+Auto-detect the project's backend and frontend testing frameworks from config files, run all suites in parallel, and verify 100% coverage on new code. This is the **verification step** (TDD green check) — tests should already exist from `/sk:write-tests`. This skill does NOT write tests.
 
 ## Allowed Tools
 
@@ -72,7 +72,7 @@ npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-
 
 Create `vitest.config.ts`:
 ```ts
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/sk:config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -133,7 +133,7 @@ Sub-agent 3: [FE command]
 
 - **100% coverage on new code** is required for both suites
 - Check the coverage output from each runner
-- If coverage is below 100% on new code, identify the uncovered lines and report them — do NOT write new tests (that is `/write-tests` responsibility)
+- If coverage is below 100% on new code, identify the uncovered lines and report them — do NOT write new tests (that is `/sk:write-tests` responsibility)
 
 ### 6. Report Results
 
@@ -156,7 +156,7 @@ All detected suites pass with 100% coverage on new code. Both lines of the repor
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:test"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

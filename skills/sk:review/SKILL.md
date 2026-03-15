@@ -1,6 +1,6 @@
 ---
 name: sk:review
-description: "Rigorous self-review of all branch changes across 7 dimensions: correctness, security, performance, reliability, design quality, best practices, and testing. Report-only — no PR creation (that's /finish-feature's job). Use when code is complete and ready for review before merging."
+description: "Rigorous self-review of all branch changes across 7 dimensions: correctness, security, performance, reliability, design quality, best practices, and testing. Report-only — no PR creation (that's /sk:finish-feature's job). Use when code is complete and ready for review before merging."
 ---
 
 # Self-Review
@@ -11,7 +11,7 @@ Perform a rigorous, multi-dimensional review of all changes on the current branc
 
 **You are the reviewer, not the cheerleader.** Your job is to find problems, not to praise the code. If you find nothing wrong, look harder. Real code almost always has something worth flagging. Think about what could go wrong in production at scale, under adversarial conditions, and over time as the codebase evolves.
 
-This is a **report-only** step. If Critical or Warning issues are found, the user loops back to `/debug` → `/commit` → `/review` until the branch is clean. Once clean, the user runs `/finish-feature` to finalize and create the PR.
+This is a **report-only** step. If Critical or Warning issues are found, the user loops back to `/sk:debug` → `/sk:smart-commit` → `/sk:review` until the branch is clean. Once clean, the user runs `/sk:finish-feature` to finalize and create the PR.
 
 ## Allowed Tools
 
@@ -317,21 +317,21 @@ Format findings with severity levels and review dimensions:
 After presenting the review:
 
 If there are **Critical** or **Warning** items:
-> "Review found issues that should be addressed. Fix them with `/debug`, commit with `/commit`, then re-run `/review` to verify."
+> "Review found issues that should be addressed. Fix them with `/sk:debug`, commit with `/sk:smart-commit`, then re-run `/sk:review` to verify."
 
 If there are only **Nitpick** items (no Critical/Warning):
-> "Review complete — no critical issues found, but there are some nitpicks. Would you like to fix them now, or proceed to `/finish-feature`?"
+> "Review complete — no critical issues found, but there are some nitpicks. Would you like to fix them now, or proceed to `/sk:finish-feature`?"
 
-If the user wants to fix nitpicks, loop back to `/debug` + `/commit` → `/review`.
+If the user wants to fix nitpicks, loop back to `/sk:debug` + `/sk:smart-commit` → `/sk:review`.
 
 If the review is **completely clean**:
-> "Review complete — no issues found. Run `/finish-feature` to finalize the branch and create a PR."
+> "Review complete — no issues found. Run `/sk:finish-feature` to finalize the branch and create a PR."
 
 ---
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:review"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

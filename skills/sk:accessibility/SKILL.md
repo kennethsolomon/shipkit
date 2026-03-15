@@ -1,6 +1,6 @@
 ---
 name: sk:accessibility
-description: WCAG 2.1 AA accessibility audit. Use after /frontend-design or on existing frontend code to catch accessibility issues before implementation or before shipping. Reports findings — does NOT fix code.
+description: WCAG 2.1 AA accessibility audit. Use after /sk:frontend-design or on existing frontend code to catch accessibility issues before implementation or before shipping. Reports findings — does NOT fix code.
 license: Complete terms in LICENSE.txt
 ---
 
@@ -9,8 +9,8 @@ license: Complete terms in LICENSE.txt
 Audit the frontend design spec or existing UI code for WCAG 2.1 AA compliance. This is an audit skill — it identifies issues and produces a findings report. It does NOT fix code.
 
 Run this skill:
-- **After `/frontend-design`** — validate the design spec before implementation starts
-- **Before `/finish-feature`** — validate the implemented UI before merging
+- **After `/sk:frontend-design`** — validate the design spec before implementation starts
+- **Before `/sk:finish-feature`** — validate the implemented UI before merging
 - **On existing code** — audit any frontend code or component
 
 ## Hard Rules
@@ -22,7 +22,7 @@ Run this skill:
 
 ## Before You Start
 
-1. Determine scope: design spec (from `/frontend-design` output) or existing code files?
+1. Determine scope: design spec (from `/sk:frontend-design` output) or existing code files?
 2. If auditing code: `git diff main..HEAD --name-only` to find changed frontend files.
 3. If `tasks/accessibility-findings.md` exists, read it — check if prior findings have been addressed.
 4. If `tasks/lessons.md` exists, read it — apply accessibility-related lessons as targeted checks.
@@ -126,16 +126,16 @@ Tell the user:
 > "Accessibility audit complete. Findings saved to `tasks/accessibility-findings.md`.
 > - **Failures:** N | **Warnings:** N | **Manual checks:** N
 >
-> Address failures before implementation, then run `/write-plan` to proceed."
+> Address failures before implementation, then run `/sk:write-plan` to proceed."
 
 If there are no failures:
-> "No accessibility failures found. N warnings noted. Run `/write-plan` to proceed."
+> "No accessibility failures found. N warnings noted. Run `/sk:write-plan` to proceed."
 
 ---
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:accessibility"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

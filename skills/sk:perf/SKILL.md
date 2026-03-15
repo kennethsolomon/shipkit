@@ -1,6 +1,6 @@
 ---
 name: sk:perf
-description: Performance audit. Use before /review to catch performance issues: bundle size, N+1 queries, slow DB queries, Core Web Vitals, memory leaks, caching opportunities. Auto-detects stack. Reports findings — does NOT fix code.
+description: Performance audit. Use before /sk:review to catch performance issues: bundle size, N+1 queries, slow DB queries, Core Web Vitals, memory leaks, caching opportunities. Auto-detects stack. Reports findings — does NOT fix code.
 license: Complete terms in LICENSE.txt
 ---
 
@@ -8,7 +8,7 @@ license: Complete terms in LICENSE.txt
 
 Audit the implementation for performance issues before the final review. This is an audit skill — it identifies issues and produces a findings report. It does NOT fix code.
 
-Run this skill after implementing and passing lint/tests, but before `/review`.
+Run this skill after implementing and passing lint/tests, but before `/sk:review`.
 
 ## Hard Rules
 
@@ -164,16 +164,16 @@ Tell the user:
 > "Performance audit complete. Findings saved to `tasks/perf-findings.md`.
 > - **Critical:** N | **High:** N | **Medium:** N | **Low:** N
 >
-> Address critical and high findings, then run `/review` to proceed."
+> Address critical and high findings, then run `/sk:review` to proceed."
 
 If there are no critical or high findings:
-> "No critical or high performance issues found. N medium/low findings noted in `tasks/perf-findings.md`. Run `/review` to proceed."
+> "No critical or high performance issues found. N medium/low findings noted in `tasks/perf-findings.md`. Run `/sk:review` to proceed."
 
 ---
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:perf"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

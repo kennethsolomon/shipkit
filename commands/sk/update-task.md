@@ -2,7 +2,7 @@
 description: "Mark current task done in tasks/todo.md and log completion to tasks/progress.md."
 ---
 
-# /update-task
+# /sk:update-task
 
 Mark the current task as complete and log progress.
 

@@ -12,9 +12,9 @@ license: Complete terms in LICENSE.txt
 - **DO NOT** use file editing tools (Edit, Write, Bash)
 - **Pencil MCP tools ARE allowed** — they create visual design artifacts, not code
 - **DO produce** design direction, ASCII mockups, layout specs, component structure descriptions, color/typography decisions, and interaction notes
-- Implementation happens in `/execute-plan` — not here
+- Implementation happens in `/sk:execute-plan` — not here
 
-This skill guides the design of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Output is a design artifact: a clear, decision-complete visual specification that `/write-plan` and `/execute-plan` can use to implement.
+This skill guides the design of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Output is a design artifact: a clear, decision-complete visual specification that `/sk:write-plan` and `/sk:execute-plan` can use to implement.
 
 The user provides frontend requirements: a component, page, application, or interface to design. They may include context about the purpose, audience, or technical constraints.
 
@@ -65,7 +65,7 @@ Remember: Claude is capable of extraordinary creative thinking. Don't hold back 
 
 ## Output Format
 
-End every `/frontend-design` session with a structured summary:
+End every `/sk:frontend-design` session with a structured summary:
 
 ```
 ## Design Summary
@@ -92,7 +92,7 @@ End every `/frontend-design` session with a structured summary:
 [What moves, when, how — described in words]
 
 ### Implementation Notes
-[Specific Tailwind classes, CSS patterns, or gotchas for /execute-plan]
+[Specific Tailwind classes, CSS patterns, or gotchas for /sk:execute-plan]
 ```
 
 After presenting the design summary, ask the user:
@@ -170,13 +170,13 @@ When opening an existing `.pen` file to update a design:
 
 Tell the user the path to the saved `.pen` file and confirm which screens were created or updated.
 
-Then tell the user: **"Run `/write-plan` to turn this design into an implementation plan."**
+Then tell the user: **"Run `/sk:write-plan` to turn this design into an implementation plan."**
 
 ---
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:frontend-design"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

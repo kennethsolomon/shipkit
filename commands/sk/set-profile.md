@@ -41,7 +41,7 @@ If an invalid profile name is given, show the valid options.
 
 ### 2 — Read current config
 
-Read `.shipkit/config.json` if it exists. Otherwise start with defaults.
+Read `.shipkit/sk:config.json` if it exists. Otherwise start with defaults.
 
 ### 3 — Update profile
 
@@ -50,7 +50,7 @@ Set `profile` to the chosen value.
 ### 4 — Write config
 
 1. Create `.shipkit/` directory if it does not exist
-2. Write updated config to `.shipkit/config.json`
+2. Write updated config to `.shipkit/sk:config.json`
 3. Add `.shipkit/` to `.gitignore` if not already present
 
 ### 5 — Confirm

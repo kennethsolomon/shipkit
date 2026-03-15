@@ -13,7 +13,7 @@ Auto-detect the project's backend AND frontend testing frameworks, read the plan
 
 Bash, Read, Write, Edit, Glob, Grep
 
-**When the detected framework is `@playwright/test`**, also use:
+**When the detected framework is `@playwright/sk:test`**, also use:
 mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_run_code, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_take_screenshot
 
 ## Steps
@@ -145,7 +145,7 @@ Skip this step if no FE stack was detected.
 
 ### 8b. Playwright-Specific (conditional)
 
-**Only if `@playwright/test` is detected:**
+**Only if `@playwright/sk:test` is detected:**
 
 Use the Playwright MCP plugin to inspect live page state for more accurate selectors:
 
@@ -180,7 +180,7 @@ Tests define the **expected behavior**. Implementation makes them pass. If you'r
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/sk:config.json` from the project root if it exists.
 
 - If `model_overrides["sk:write-tests"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.
