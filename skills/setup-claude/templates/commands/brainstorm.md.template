@@ -6,7 +6,7 @@ description: "Start with design questions before writing code."
 
 # /brainstorm
 
-**Workflow:** **`/brainstorm`** → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → `/finish-feature` → `/release`
+**Workflow:** Read → **Explore** → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → Finalize → Release
 
 Explore design and clarify requirements **before** any code is written.
 

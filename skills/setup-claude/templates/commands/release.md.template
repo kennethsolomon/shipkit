@@ -6,7 +6,7 @@ description: "Automate releases: bump version, update CHANGELOG, create tag, pus
 
 # /release
 
-**Workflow:** `/brainstorm` → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → `/finish-feature` → **`/release`**
+**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → Finalize → **Release**
 
 Automate the release process for your project. Supports optional mobile store submission review.
 
