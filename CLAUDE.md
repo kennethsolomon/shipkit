@@ -15,7 +15,7 @@ Custom Claude Code skills and commands for bootstrapping and maintaining project
 ## Workflow — Follow This Order
 <!-- LOCK -->
 
-**Flow:** Read → Explore → Design → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Review → Finish
+**Flow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → Finish
 
 Progress is tracked in `tasks/workflow-status.md`. This file persists across conversations.
 
@@ -24,48 +24,54 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 | 1 | Read Todo | read `tasks/todo.md` | required | no |
 | 2 | Read Lessons | read `tasks/lessons.md` | required | no |
 | 3 | Explore | `/brainstorm` | required | no |
-| 4 | Design | `/frontend-design` | optional (confirm to skip) | no |
-| 5 | Plan | `/write-plan` | required | no |
-| 6 | Branch | `/branch` | required | no |
-| 7 | Migrate | `/schema-migrate` | optional (confirm to skip) | no |
-| 8 | Write Tests | `/write-tests` | required | no |
-| 9 | Implement | `/execute-plan` | required | no |
-| 10 | Commit | `/smart-commit` | required | no |
-| 11 | Lint | `/lint` | required | yes — must be clean |
-| 12 | Commit | `/smart-commit` | conditional (skip if lint was clean) | no |
-| 13 | Verify Tests | `/test` | required | yes — 100% coverage required |
-| 14 | Commit | `/smart-commit` | conditional (skip if test fixes needed) | no |
-| 15 | Security | `/security-check` | required | yes — must reach 0 issues |
-| 16 | Commit | `/smart-commit` | conditional (skip if security was clean) | no |
-| 17 | Review | `/review` | required | yes — must reach 0 issues |
-| 18 | Commit | `/smart-commit` | conditional (skip if review was clean) | no |
-| 19 | Update | `/update-task` | required | no |
-| 20 | Finalize | `/finish-feature` | required | no |
-| 21 | Release | `/release` | optional (confirm to skip) | no |
+| 4 | Design | `/frontend-design` or `/api-design` | optional (confirm to skip) | no |
+| 5 | Accessibility | `/accessibility` | optional (confirm to skip) | no |
+| 6 | Plan | `/write-plan` | required | no |
+| 7 | Branch | `/branch` | required | no |
+| 8 | Migrate | `/schema-migrate` | optional (confirm to skip) | no |
+| 9 | Write Tests | `/write-tests` | required | no |
+| 10 | Implement | `/execute-plan` | required | no |
+| 11 | Commit | `/smart-commit` | required | no |
+| 12 | Lint | `/lint` | required | yes — must be clean |
+| 13 | Commit | `/smart-commit` | conditional (skip if lint was clean) | no |
+| 14 | Verify Tests | `/test` | required | yes — 100% coverage required |
+| 15 | Commit | `/smart-commit` | conditional (skip if tests passed clean) | no |
+| 16 | Security | `/security-check` | required | yes — must reach 0 issues |
+| 17 | Commit | `/smart-commit` | conditional (skip if security was clean) | no |
+| 18 | Performance | `/perf` | optional (confirm to skip) | yes — loop until critical/high = 0 |
+| 19 | Commit | `/smart-commit` | conditional (skip if perf was clean) | no |
+| 20 | Review | `/review` | required | yes — must reach 0 issues |
+| 21 | Commit | `/smart-commit` | conditional (skip if review was clean) | no |
+| 22 | Update | `/update-task` | required | no |
+| 23 | Finalize | `/finish-feature` | required | no |
+| 24 | Release | `/release` | optional (confirm to skip) | no |
 
 ### Step Details
 
 1.  **Read** `tasks/todo.md` — pick the next incomplete task
 2.  **Read** `tasks/lessons.md` — review past corrections before writing code
 3.  **Explore** — run `/brainstorm` to clarify requirements, constraints, and approach. No code in this step.
-4.  **Design** — run `/frontend-design` for UI mockup. No code — design only. Skip if backend-only. After the design summary, the skill prompts to create a Pencil visual mockup (saved to `docs/design/`). Requires Pencil app open and Pencil MCP connected.
-5.  **Plan** — run `/write-plan` to write a decision-complete plan into `tasks/todo.md` using brainstorm + design outputs. No code in this step.
-6.  **Branch** — run `/branch` to create a feature branch auto-named from the current task.
-7.  **Migrate** — run `/schema-migrate` for database changes. Skip if no schema changes needed.
-8.  **Write Tests** — run `/write-tests` (TDD red phase). Write failing tests for all planned code. If modifying existing behavior, update existing tests first. Tests SHOULD fail — no implementation yet.
-9.  **Implement** — run `/execute-plan` to execute `tasks/todo.md` checkboxes in small batches, making the failing tests pass (TDD green phase). Log progress to `tasks/progress.md`.
-10. **Commit** — run `/smart-commit` to commit tests + implementation
-11. **Lint** — run `/lint` — auto-detects and runs all project linters. Fix all issues immediately, then re-run until clean. Do not ask to re-run — fix and re-run automatically.
-12. **Commit** — run `/smart-commit` if lint required fixes. Auto-skip if lint was clean.
-13. **Verify Tests** — run `/test` — auto-detects and runs all project test suites. **100% test coverage required.** Fix failures immediately, then re-run. Do not ask to re-run — fix and re-run automatically.
-14. **Commit** — run `/smart-commit` if test fixes were needed. Auto-skip if tests passed first try.
-15. **Security** — run `/security-check`. Must reach 0 issues across all severities. Fix issues immediately, commit, then re-run. Loop until clean.
-16. **Commit** — run `/smart-commit` if security required fixes. Auto-skip if clean.
-17. **Review** — run `/review`. Must reach 0 issues including nitpicks. Fix issues immediately, commit, then re-run. Loop until clean.
-18. **Commit** — run `/smart-commit` if review required fixes. Auto-skip if clean.
-19. **Update** — run `/update-task` to mark the task done in `tasks/todo.md` and log completion to `tasks/progress.md`.
-20. **Finalize** — run `/finish-feature` for changelog + PR
-21. **Release** — run `/release` if deploying. Skip if not ready.
+4.  **Design** — run `/frontend-design` for UI mockup or `/api-design` for API contracts. No code — design only. Skip if pure backend with no UI and no new API. After `/frontend-design`, the skill prompts to create a Pencil visual mockup (saved to `docs/design/`). Requires Pencil app open and Pencil MCP connected.
+5.  **Accessibility** — run `/accessibility` to audit the design spec for WCAG 2.1 AA compliance. Produces `tasks/accessibility-findings.md`. Skip if backend-only with no frontend.
+6.  **Plan** — run `/write-plan` to write a decision-complete plan into `tasks/todo.md` using brainstorm + design outputs. No code in this step.
+7.  **Branch** — run `/branch` to create a feature branch auto-named from the current task.
+8.  **Migrate** — run `/schema-migrate` for database changes. Skip if no schema changes needed.
+9.  **Write Tests** — run `/write-tests` (TDD red phase). Write failing tests for all planned code. If modifying existing behavior, update existing tests first. Tests SHOULD fail — no implementation yet.
+10. **Implement** — run `/execute-plan` to execute `tasks/todo.md` checkboxes in small batches, making the failing tests pass (TDD green phase). Log progress to `tasks/progress.md`.
+11. **Commit** — run `/smart-commit` to commit tests + implementation
+12. **Lint** — run `/lint` — auto-detects and runs all project linters. Fix all issues immediately, then re-run until clean. Do not ask to re-run — fix and re-run automatically.
+13. **Commit** — run `/smart-commit` if lint required fixes. Auto-skip if lint was clean.
+14. **Verify Tests** — run `/test` — auto-detects and runs all project test suites. **100% test coverage required.** Fix failures immediately, then re-run. Do not ask to re-run — fix and re-run automatically.
+15. **Commit** — run `/smart-commit` if test fixes were needed. Auto-skip if tests passed first try.
+16. **Security** — run `/security-check`. Must reach 0 issues across all severities. Fix issues immediately, commit, then re-run. Loop until clean.
+17. **Commit** — run `/smart-commit` if security required fixes. Auto-skip if clean.
+18. **Performance** — run `/perf` to audit for performance issues. Produces `tasks/perf-findings.md`. Fix critical/high findings, commit, then re-run. Loop until critical/high = 0. Skip if confirmed with user.
+19. **Commit** — run `/smart-commit` if perf required fixes. Auto-skip if clean.
+20. **Review** — run `/review`. Must reach 0 issues including nitpicks. Fix issues immediately, commit, then re-run. Loop until clean.
+21. **Commit** — run `/smart-commit` if review required fixes. Auto-skip if clean.
+22. **Update** — run `/update-task` to mark the task done in `tasks/todo.md` and log completion to `tasks/progress.md`.
+23. **Finalize** — run `/finish-feature` for changelog + PR
+24. **Release** — run `/release` if deploying. Skip if not ready.
 
 ### Workflow Tracker Rules
 
@@ -78,22 +84,23 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
    - Add relevant Notes (e.g., "clean on attempt 2", "backend-only, no UI")
    - Move `>> next <<` to the next pending step
 
-3. **Optional steps** (4, 7, 21): Ask the user "Skip [step]?" and require explicit confirmation. Record the reason in Notes.
+3. **Optional steps** (4, 5, 7, 18, 24): Ask the user "Skip [step]?" and require explicit confirmation. Record the reason in Notes.
 
-4. **Conditional commits** (12, 14, 16, 18): Auto-skip if no changes were made. Record reason (e.g., "lint was clean", "tests passed first try").
+4. **Conditional commits** (13, 15, 17, 19, 21): Auto-skip if no changes were made. Record reason (e.g., "lint was clean", "tests passed first try").
 
-5. **Loop steps are HARD GATES** (11, 13, 15, 17): These steps BLOCK all forward progress until they pass clean. Fix issues immediately and re-run. Do NOT ask the user to re-run — fix and re-run automatically. Track attempt number in Notes (e.g., "clean on attempt 3").
-   - **Step 11 (Lint)**: All detected linting tools must pass — every single one.
-   - **Step 13 (Verify Tests)**: All detected test suites (BE + FE) must pass with 100% coverage on new code.
-   - **Step 15 (Security)**: 0 issues across all severities.
-   - **Step 17 (Review)**: 0 issues including nitpicks.
+5. **Loop steps are HARD GATES** (12, 14, 16, 20): These steps BLOCK all forward progress until they pass clean. Fix issues immediately and re-run. Do NOT ask the user to re-run — fix and re-run automatically. Track attempt number in Notes (e.g., "clean on attempt 3").
+   - **Step 12 (Lint)**: All detected linting tools must pass — every single one.
+   - **Step 14 (Verify Tests)**: All detected test suites (BE + FE) must pass with 100% coverage on new code.
+   - **Step 16 (Security)**: 0 issues across all severities.
+   - **Step 20 (Review)**: 0 issues including nitpicks.
+   - **Step 18 (Performance)**: Optional gate — if run, loop until critical/high findings = 0. Can be skipped with explicit confirmation.
    - **DO NOT mark these steps as `done` until every check passes.** If even one tool fails, the step is NOT done. Never proceed to the next step with errors remaining.
 
-6. **Never skip steps without confirmation.** Steps cannot run out of order. Quality gate steps (11, 13, 15, 17) can NEVER be skipped.
+6. **Never skip steps without confirmation.** Steps cannot run out of order. Hard gate steps (12, 14, 16, 20) can NEVER be skipped. Optional gate step (18) requires explicit confirmation to skip.
 
 7. **Never auto-advance.** When one step completes, stop and tell the user which step is next. Do not proceed automatically.
 
-8. **Never write code during design or plan phases.** Steps 1-5 are reading/exploring/planning/design only — no code, no file edits (except `tasks/` files).
+8. **Never write code during design or plan phases.** Steps 1-6 are reading/exploring/planning/design only — no code, no file edits (except `tasks/` files).
 
 9. **Step completion summary is NON-NEGOTIABLE.** After finishing ANY step, you MUST output a summary block in this exact format before stopping:
 
@@ -133,6 +140,30 @@ When fixing a bug (not building a feature), use `/debug` as the entry point. Thi
 | 15 | Finalize | `/finish-feature` |
 
 Start with `/debug` to investigate, then follow the abbreviated flow.
+
+### Hotfix Flow
+
+For production emergencies that need to ship immediately, use `/hotfix`. Skips brainstorm, design, and write-tests. Quality gates still apply.
+
+| # | Step | Command |
+|---|------|---------|
+| 1 | Investigate | `/debug` |
+| 2 | Branch | `/branch` |
+| 3 | Fix | implement directly |
+| 4 | Smoke Test | run existing tests |
+| 5 | Commit | `/smart-commit` |
+| 6 | Lint | `/lint` |
+| 7 | Commit | `/smart-commit` (skip if clean) |
+| 8 | Verify Tests | `/test` |
+| 9 | Commit | `/smart-commit` (skip if clean) |
+| 10 | Security | `/security-check` |
+| 11 | Commit | `/smart-commit` (skip if clean) |
+| 12 | Review | `/review` |
+| 13 | Commit | `/smart-commit` (skip if clean) |
+| 14 | Update | `/update-task` |
+| 15 | Finalize | `/finish-feature` |
+
+After merging: add a regression test and a lessons.md entry.
 
 ## Sub-Agent Patterns
 <!-- BEGIN:sub-agent-patterns -->
@@ -185,7 +216,9 @@ Never retry the same failing approach.
 | Command | Purpose |
 |---------|---------|
 | `/brainstorm` | Explore requirements and design |
-| `/frontend-design` | UI mockup before implementation |
+| `/frontend-design` | UI mockup before implementation. Prompts to create Pencil visual mockup |
+| `/api-design` | Design API contracts (endpoints, payloads, auth, errors) before implementation |
+| `/accessibility` | WCAG 2.1 AA audit — runs after design, before implementation |
 | `/write-plan` | Write decision-complete plan into `tasks/todo.md` |
 | `/branch` | Create feature branch auto-named from current task |
 | `/write-tests` | TDD: Write failing tests before implementation |
@@ -195,7 +228,9 @@ Never retry the same failing approach.
 | `/test` | Auto-detect and run all project test suites |
 | `/debug` | Investigate and debug issues (bug fix entry point) |
 | `/security-check` | OWASP security audit on changed files |
+| `/perf` | Performance audit — bundle, N+1, Core Web Vitals, memory |
 | `/review` | Self-review of branch changes |
+| `/hotfix` | Emergency fix workflow — skip design/TDD, quality gates enforced |
 | `/update-task` | Mark task done and log completion |
 | `/finish-feature` | Changelog + PR creation |
 | `/release` | Version bump + changelog + tag |

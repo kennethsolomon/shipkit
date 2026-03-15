@@ -10,6 +10,39 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Added
 
+#### New Skills and Commands (P1–P4 workflow enhancements)
+
+**`/api-design` skill (P2)**
+- Design REST/GraphQL API contracts before implementation — mirrors `/frontend-design` but for APIs
+- Covers endpoint design, request/response shapes, auth flows, error codes, rate limiting, versioning
+- Outputs a complete API specification; implementation happens in `/execute-plan`
+- Added to workflow Step 4 alongside `/frontend-design`
+
+**`/accessibility` skill (P3)**
+- WCAG 2.1 AA audit runs after `/frontend-design` or on existing frontend code
+- Checks color contrast, keyboard navigation, ARIA semantics, forms, images, motion, content structure
+- Writes findings to `tasks/accessibility-findings.md` (append-only, never overwritten)
+- Added as new optional workflow Step 5; skip if backend-only
+
+**`/perf` skill (P3)**
+- Performance audit runs before `/review` — auto-detects stack (React, Laravel, Node, Go, Python)
+- Frontend: bundle size, render performance, Core Web Vitals (LCP, CLS, INP)
+- Backend: N+1 queries, missing indexes, unbounded queries, missing caching
+- Writes findings to `tasks/perf-findings.md` (append-only)
+- Added as new optional gate Step 18; loops until critical/high findings = 0
+
+**`/hotfix` command (P2)**
+- Emergency fix workflow — skips brainstorm, design, and write-tests phases
+- 15-step flow: debug → branch → fix → lint → test → security → review → finish
+- All 4 quality gates still enforced; cannot be skipped even in emergencies
+- After merging: prompts to add regression test and lessons.md entry
+
+**Workflow expanded from 21 → 24 steps**
+- Step 5: Accessibility (new optional step after Design)
+- Step 18: Performance (new optional gate before Review)
+- All existing step numbers shifted accordingly
+- Optional steps: 4, 5, 7, 18, 24 — Hard gates: 12, 14, 16, 20
+
 #### Pencil MCP Integration (`/frontend-design`)
 - After the text design summary, skill now prompts: "Would you like me to create a Pencil visual mockup? (y/n)"
 - If yes: creates a `.pen` file in `docs/design/` using Pencil MCP tools
