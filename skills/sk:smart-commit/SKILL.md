@@ -160,7 +160,7 @@ If yes, go back to step 4. If no, done.
 
 ## Model Routing
 
-Read `.shipkit/sk:config.json` from the project root if it exists.
+Read `.shipkit/config.json` from the project root if it exists.
 
 - If `model_overrides["sk:smart-commit"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

@@ -110,7 +110,7 @@ Read the appropriate file from `orms/` and execute **Phases 2 through 5** as def
 
 ## Model Routing
 
-Read `.shipkit/sk:config.json` from the project root if it exists.
+Read `.shipkit/config.json` from the project root if it exists.
 
 - If `model_overrides["sk:schema-migrate"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

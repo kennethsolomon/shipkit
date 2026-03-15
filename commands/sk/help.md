@@ -96,7 +96,7 @@ ShipKit routes each skill to the right model automatically. Set once per project
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
 
 `opus` = inherit (uses your current session model).
-Config lives in `.shipkit/sk:config.json` — per project, gitignored by default.
+Config lives in `.shipkit/config.json` — per project, gitignored by default.
 
 ---
 

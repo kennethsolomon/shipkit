@@ -176,7 +176,7 @@ Then tell the user: **"Run `/sk:write-plan` to turn this design into an implemen
 
 ## Model Routing
 
-Read `.shipkit/sk:config.json` from the project root if it exists.
+Read `.shipkit/config.json` from the project root if it exists.
 
 - If `model_overrides["sk:frontend-design"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

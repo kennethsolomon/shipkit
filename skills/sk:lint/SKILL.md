@@ -98,7 +98,7 @@ Only include lines for detected tools. All must show "clean" before this skill p
 
 ## Model Routing
 
-Read `.shipkit/sk:config.json` from the project root if it exists.
+Read `.shipkit/config.json` from the project root if it exists.
 
 - If `model_overrides["sk:lint"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.

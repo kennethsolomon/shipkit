@@ -237,7 +237,7 @@ Skip the lesson entry if it was a simple typo or one-off mistake.
 
 ## Model Routing
 
-Read `.shipkit/sk:config.json` from the project root if it exists.
+Read `.shipkit/config.json` from the project root if it exists.
 
 - If `model_overrides["sk:debug"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.
