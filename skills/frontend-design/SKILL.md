@@ -10,6 +10,7 @@ license: Complete terms in LICENSE.txt
 
 - **DO NOT** write, edit, or generate any code (no React, no HTML/CSS/JS, no file edits)
 - **DO NOT** use file editing tools (Edit, Write, Bash)
+- **Pencil MCP tools ARE allowed** — they create visual design artifacts, not code
 - **DO produce** design direction, ASCII mockups, layout specs, component structure descriptions, color/typography decisions, and interaction notes
 - Implementation happens in `/execute-plan` — not here
 
@@ -94,4 +95,79 @@ End every `/frontend-design` session with a structured summary:
 [Specific Tailwind classes, CSS patterns, or gotchas for /execute-plan]
 ```
 
-After presenting the design summary, tell the user: **"Run `/write-plan` to turn this into an implementation plan."**
+After presenting the design summary, ask the user:
+
+**"Would you like me to create a Pencil visual mockup? (y/n)"**
+
+---
+
+## Pencil Visual Mockup Phase
+
+Only run this phase if the user answers **y** or **yes**.
+
+### Step 1 — Find or create the .pen file
+
+Check `docs/design/` for an existing `.pen` file that matches this design (by name or topic).
+
+- **Existing file found**: call `open_document(filePath)` to open it, then skip to Step 3.
+- **No file found**: call `open_document('new')` to create a fresh canvas.
+  - The file will be saved to `docs/design/{design-name}.pen` — use a slug derived from the design subject (e.g., `docs/design/dashboard-analytics.pen`).
+
+### Step 2 — Load design context
+
+Run these two calls before drawing anything:
+
+1. `get_guidelines(topic)` — pick the closest topic:
+   - `web-app` → dashboards, SaaS, admin panels
+   - `landing-page` → marketing sites, portfolios, product pages
+   - `mobile-app` → mobile-first interfaces
+   - `design-system` → component libraries, style guides
+   - `table` → data-heavy UIs
+   - `slides` → presentations
+
+2. `get_style_guide_tags` → then `get_style_guide(tags, name)` — pick tags that match the aesthetic direction decided in the design summary (e.g., dark, minimal, editorial, playful, corporate, luxury). This gives Pencil a visual language to work from.
+
+### Step 3 — Set the color palette as variables
+
+Call `set_variables` to register the color palette from the Design Summary as Pencil variables so they can be referenced throughout the design:
+
+```
+{
+  "color-bg": "#xxxxxx",
+  "color-fg": "#xxxxxx",
+  "color-accent": "#xxxxxx"
+  // + any other palette values
+}
+```
+
+### Step 4 — Build the mockup
+
+Use `batch_design` to construct the visual. Work screen by screen:
+
+1. Create a **frame** for each key screen identified in the Layout Mockup.
+2. Inside each frame, add sections matching the component hierarchy from Component Notes.
+3. Reuse components from the design system where they fit (buttons, inputs, cards, tables, etc.) — these are already available as reusable components in the canvas.
+4. Apply the color variables and typography direction to every element.
+5. Keep batches focused: aim for one screen per batch_design call to stay within limits.
+
+### Step 5 — Validate and iterate
+
+After each screen is built, call `get_screenshot` to visually inspect the result.
+
+- If layout or spacing is off: call `snapshot_layout` to inspect computed positions, then fix with another `batch_design` call.
+- Iterate until the screen faithfully represents the Design Summary.
+
+### Step 6 — Handle existing file updates
+
+When opening an existing `.pen` file to update a design:
+
+1. Call `get_editor_state(include_schema: false)` to see current top-level nodes.
+2. Call `snapshot_layout` on affected frames to understand what's there.
+3. Use `batch_design` with `update` or `replace` operations — do not delete and recreate unless necessary.
+4. Validate with `get_screenshot` after each batch.
+
+### Step 7 — Finish
+
+Tell the user the path to the saved `.pen` file and confirm which screens were created or updated.
+
+Then tell the user: **"Run `/write-plan` to turn this design into an implementation plan."**

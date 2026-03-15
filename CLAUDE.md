@@ -48,7 +48,7 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 1.  **Read** `tasks/todo.md` — pick the next incomplete task
 2.  **Read** `tasks/lessons.md` — review past corrections before writing code
 3.  **Explore** — run `/brainstorm` to clarify requirements, constraints, and approach. No code in this step.
-4.  **Design** — run `/frontend-design` for UI mockup. No code — design only. Skip if backend-only.
+4.  **Design** — run `/frontend-design` for UI mockup. No code — design only. Skip if backend-only. After the design summary, the skill prompts to create a Pencil visual mockup (saved to `docs/design/`). Requires Pencil app open and Pencil MCP connected.
 5.  **Plan** — run `/write-plan` to write a decision-complete plan into `tasks/todo.md` using brainstorm + design outputs. No code in this step.
 6.  **Branch** — run `/branch` to create a feature branch auto-named from the current task.
 7.  **Migrate** — run `/schema-migrate` for database changes. Skip if no schema changes needed.

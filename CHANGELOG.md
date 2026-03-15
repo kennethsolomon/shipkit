@@ -10,6 +10,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Added
 
+#### Pencil MCP Integration (`/frontend-design`)
+- After the text design summary, skill now prompts: "Would you like me to create a Pencil visual mockup? (y/n)"
+- If yes: creates a `.pen` file in `docs/design/` using Pencil MCP tools
+- Loads design guidelines (`get_guidelines`) and a matching style guide (`get_style_guide`) based on the chosen aesthetic
+- Sets the color palette as Pencil variables via `set_variables`
+- Builds frames and components with `batch_design`, one screen per batch
+- Validates output visually with `get_screenshot` and iterates if needed
+- Supports updating existing `.pen` files when iterating on a design
+- Pencil MCP config updated: uses Pencil app's own MCP binary (`/Applications/Pencil.app/...`) with `--app desktop` identifier
+
 #### Workflow Tracker (`tasks/workflow-status.md`)
 - New persistent tracker file tracks progress through the 14-step development workflow
 - Status dashboard printed after every slash command (done/partial/skipped/not yet)

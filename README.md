@@ -35,7 +35,7 @@ Read → Explore → Design → Plan → Branch → Migrate → Write Tests → 
 | 1 | Read Todo | read `tasks/todo.md` | Pick the next task |
 | 2 | Read Lessons | read `tasks/lessons.md` | Review past corrections |
 | 3 | Explore | `/brainstorm` | Clarify requirements, no code |
-| 4 | Design | `/frontend-design` | UI mockup, skip if backend-only |
+| 4 | Design | `/frontend-design` | UI mockup + optional Pencil visual mockup, skip if backend-only |
 | 5 | Plan | `/write-plan` | Write plan to `tasks/todo.md`, no code |
 | 6 | Branch | `/branch` | Auto-named from current task |
 | 7 | Migrate | `/schema-migrate` | Skip if no schema changes |
@@ -97,7 +97,7 @@ Next step: [#] [Name] — run `[command]`
 | `setup-claude` | `/setup-claude` | Bootstrap scaffolding (CLAUDE.md, tasks/, commands/) |
 | `setup-optimizer` | `/setup-optimizer` | Enrich CLAUDE.md with project context |
 | `brainstorming` | `/brainstorm` | Explore design before writing code |
-| `frontend-design` | `/frontend-design` | Design direction + specs for UI work |
+| `frontend-design` | `/frontend-design` | Design direction + specs for UI work. Optionally creates a Pencil `.pen` visual mockup via Pencil MCP (saved to `docs/design/`) |
 | `write-tests` | `/write-tests` | TDD: write failing tests before implementation |
 | `lint` | `/lint` | Run project linter |
 | `test` | `/test` | Run project test suite |
@@ -116,7 +116,7 @@ Next step: [#] [Name] — run `[command]`
 | Command | Purpose |
 |---------|---------|
 | `/brainstorm` | Explore requirements and design |
-| `/frontend-design` | UI mockup before implementation |
+| `/frontend-design` | UI mockup before implementation. Prompts to create Pencil visual mockup |
 | `/write-plan` | Write decision-complete plan |
 | `/branch` | Create feature branch from current task |
 | `/execute-plan` | Execute plan checkboxes in batches |
