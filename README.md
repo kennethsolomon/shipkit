@@ -31,7 +31,7 @@ Works on Mac, Linux, and Windows.
    ▀██████████████▀
      ≋  ≋  ≋  ≋  ≋
 
-  ShipKit v3.0.0
+  ShipKit v3.0.1
   A structured workflow toolkit for Claude Code.
   by Kenneth Solomon
 
