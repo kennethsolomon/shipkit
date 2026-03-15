@@ -1,5 +1,5 @@
 ---
-name: setup-optimizer
+name: sk:setup-optimizer
 description: "Diagnose, update workflow, enrich, and maintain CLAUDE.md. The single command to keep any CLAUDE.md current."
 triggers:
   - optimize claude

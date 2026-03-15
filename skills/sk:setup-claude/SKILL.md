@@ -1,5 +1,5 @@
 ---
-name: setup-claude
+name: sk:setup-claude
 description: "Bootstrap/repair Claude Code project scaffolding (.claude docs/commands + tasks planning files) with an enforced workflow cadence."
 ---
 

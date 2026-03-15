@@ -1,5 +1,5 @@
 ---
-name: review
+name: sk:review
 description: "Rigorous self-review of all branch changes across 7 dimensions: correctness, security, performance, reliability, design quality, best practices, and testing. Report-only — no PR creation (that's /finish-feature's job). Use when code is complete and ready for review before merging."
 ---
 
@@ -326,3 +326,21 @@ If the user wants to fix nitpicks, loop back to `/debug` + `/commit` → `/revie
 
 If the review is **completely clean**:
 > "Review complete — no issues found. Run `/finish-feature` to finalize the branch and create a PR."
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:review"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | opus (inherit) |
+| `balanced` | sonnet |
+| `budget` | sonnet |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

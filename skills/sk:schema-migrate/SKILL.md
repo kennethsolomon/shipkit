@@ -1,6 +1,11 @@
-# /schema-migrate — Multi-ORM Schema Change Analysis
+---
+name: sk:schema-migrate
+description: "/schema-migrate — Multi-ORM Schema Change Analysis"
+---
 
-**Invocation:** `/schema-migrate`
+# /sk:schema-migrate — Multi-ORM Schema Change Analysis
+
+**Invocation:** `/sk:schema-migrate`
 
 Analyzes pending schema changes across **5 ORMs** and provides safe, dialect-specific migration
 guidance. Auto-detects the ORM from project files — no configuration needed.
@@ -100,3 +105,21 @@ Read the appropriate file from `orms/` and execute **Phases 2 through 5** as def
 3. **Remote schema sync:** Supabase remote schema comparison requires a valid `SUPABASE_ACCESS_TOKEN` — falls back to local-only analysis if unavailable
 4. **Custom SQL migrations:** Manually written SQL migration files (outside ORM conventions) cannot be fully parsed — user must verify independently
 5. **Type cast validation:** Cannot predict if a type cast will succeed at runtime — always recommend staging test first
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:schema-migrate"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | sonnet |
+| `balanced` | sonnet |
+| `budget` | haiku |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

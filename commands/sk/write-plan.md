@@ -52,3 +52,21 @@ Create a decision-complete plan **before** writing code.
 - If something is unclear, add a plan step to explore it first.
 - Every requirement in `tasks/findings.md` must map to at least one task.
 - Prefer parallel waves where possible to minimize total steps.
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:write-plan"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | opus (inherit) |
+| `balanced` | sonnet |
+| `budget` | sonnet |
+
+> `opus` = inherit. When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

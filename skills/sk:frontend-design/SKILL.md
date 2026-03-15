@@ -1,5 +1,5 @@
 ---
-name: frontend-design
+name: sk:frontend-design
 description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Produces design direction, mockups, and visual specifications — NOT code.
 license: Complete terms in LICENSE.txt
 ---
@@ -171,3 +171,21 @@ When opening an existing `.pen` file to update a design:
 Tell the user the path to the saved `.pen` file and confirm which screens were created or updated.
 
 Then tell the user: **"Run `/write-plan` to turn this design into an implementation plan."**
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:frontend-design"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | opus (inherit) |
+| `balanced` | sonnet |
+| `budget` | sonnet |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

@@ -1,5 +1,5 @@
 ---
-name: laravel-init
+name: sk:laravel-init
 description: "Configure an existing Laravel project with opinionated production-ready conventions. Detects stack, installs tools, generates CLAUDE.md and tasks/ files."
 ---
 

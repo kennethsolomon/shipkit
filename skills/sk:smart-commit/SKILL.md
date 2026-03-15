@@ -1,5 +1,5 @@
 ---
-name: smart-commit
+name: sk:smart-commit
 description: "Analyze staged changes, auto-detect commit type, and generate conventional commit messages with approval workflow."
 ---
 
@@ -155,3 +155,21 @@ git status --short
 If changes remain, ask: "There are more changes. Stage and commit another batch?"
 
 If yes, go back to step 4. If no, done.
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:smart-commit"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | haiku |
+| `quality` | haiku |
+| `balanced` | haiku |
+| `budget` | haiku |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

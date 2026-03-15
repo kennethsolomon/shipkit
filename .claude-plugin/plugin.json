@@ -1,6 +1,6 @@
 {
-  "name": "claude-skills",
-  "description": "Custom Claude Code skills for bootstrapping and maintaining projects.",
+  "name": "shipkit",
+  "description": "A structured workflow toolkit for Claude Code.",
   "author": {
     "name": "Kenneth Solomon"
   }

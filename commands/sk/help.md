@@ -71,6 +71,32 @@ Run these commands in order for a complete, quality-gated feature build.
 | `/sk:update-task` | Mark task done, log completion |
 | `/sk:write-plan` | Write plan to `tasks/todo.md` |
 | `/sk:write-tests` | TDD: write failing tests first |
+| `/sk:config` | View and edit project config |
+| `/sk:set-profile` | Switch model routing profile |
+
+---
+
+## Model Routing Profiles
+
+ShipKit routes each skill to the right model automatically. Set once per project:
+
+```
+/sk:set-profile balanced   ← default
+/sk:set-profile quality    ← most projects
+/sk:set-profile full-sail  ← high-stakes / client work
+/sk:set-profile budget     ← side projects / exploration
+```
+
+| Skill group | full-sail | quality | balanced | budget |
+|-------------|-----------|---------|----------|--------|
+| brainstorm, write-plan, debug, execute-plan, review | opus | opus | sonnet | sonnet |
+| write-tests, frontend-design, api-design, security-check | opus | sonnet | sonnet | sonnet |
+| perf, schema-migrate, accessibility | opus | sonnet | sonnet | haiku |
+| lint, test | sonnet | sonnet | haiku | haiku |
+| smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
+
+`opus` = inherit (uses your current session model).
+Config lives in `.shipkit/config.json` — per project, gitignored by default.
 
 ---
 

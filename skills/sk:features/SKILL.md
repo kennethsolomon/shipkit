@@ -1,5 +1,5 @@
 ---
-name: features
+name: sk:features
 description: "Sync docs/features/ specs with the current codebase. Auto-detects changed areas and updates only affected specs. Creates the spec system from scratch if it doesn't exist."
 ---
 

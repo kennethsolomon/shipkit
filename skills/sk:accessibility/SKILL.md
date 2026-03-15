@@ -1,5 +1,5 @@
 ---
-name: accessibility
+name: sk:accessibility
 description: WCAG 2.1 AA accessibility audit. Use after /frontend-design or on existing frontend code to catch accessibility issues before implementation or before shipping. Reports findings — does NOT fix code.
 license: Complete terms in LICENSE.txt
 ---
@@ -130,3 +130,21 @@ Tell the user:
 
 If there are no failures:
 > "No accessibility failures found. N warnings noted. Run `/write-plan` to proceed."
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:accessibility"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | sonnet |
+| `quality` | sonnet |
+| `balanced` | sonnet |
+| `budget` | haiku |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

@@ -1,5 +1,5 @@
 ---
-name: debug
+name: sk:debug
 description: "Structured bug investigation: reproduce, isolate, hypothesize, verify, fix. Logs findings systematically."
 ---
 
@@ -232,3 +232,21 @@ Update the entry from step 8 with the final resolution.
 ```
 
 Skip the lesson entry if it was a simple typo or one-off mistake.
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:debug"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | opus (inherit) |
+| `balanced` | sonnet |
+| `budget` | sonnet |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

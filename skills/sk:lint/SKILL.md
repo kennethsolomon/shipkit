@@ -1,5 +1,5 @@
 ---
-name: lint
+name: sk:lint
 description: "Auto-detect and run all linting tools: formatters first (sequential), then analyzers in parallel. Fix and re-run until clean."
 ---
 
@@ -93,3 +93,21 @@ cargo clippy:  X warnings fixed / clean
 ```
 
 Only include lines for detected tools. All must show "clean" before this skill passes.
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:lint"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | sonnet |
+| `quality` | sonnet |
+| `balanced` | haiku |
+| `budget` | haiku |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

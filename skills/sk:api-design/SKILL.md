@@ -1,5 +1,5 @@
 ---
-name: api-design
+name: sk:api-design
 description: Design REST or GraphQL API contracts before implementation. Use this skill when the user needs to design API endpoints, request/response shapes, authentication patterns, error codes, or data contracts. Produces an API specification — NOT code.
 license: Complete terms in LICENSE.txt
 ---
@@ -138,3 +138,21 @@ End every `/api-design` session with a structured specification:
 ```
 
 After presenting the specification, tell the user: **"Run `/write-plan` to turn this into an implementation plan."**
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:api-design"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | opus (inherit) |
+| `balanced` | sonnet |
+| `budget` | sonnet |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

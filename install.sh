@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # ─────────────────────────────────────────────
-# claude-skills — Claude Code Skills Installer
+# ShipKit — Claude Code Workflow Toolkit
 # ─────────────────────────────────────────────
 # Symlinks skills into ~/.claude/skills/ and
-# commands into ~/.claude/commands/ so they are
-# globally available in every project.
+# commands into ~/.claude/commands/sk/ so they
+# are globally available in every project.
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -14,8 +14,6 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 detect_claude_dir() {
   if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || -n "${WINDIR:-}" ]]; then
     echo "${APPDATA}/Claude"
-  elif [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "${HOME}/.claude"
   else
     echo "${HOME}/.claude"
   fi
@@ -23,13 +21,13 @@ detect_claude_dir() {
 
 CLAUDE_DIR="$(detect_claude_dir)"
 SKILLS_DIR="${CLAUDE_DIR}/skills"
-COMMANDS_DIR="${CLAUDE_DIR}/commands"
+COMMANDS_DIR="${CLAUDE_DIR}/commands/sk"
 
 echo ""
-echo "claude-skills installer"
+echo "ShipKit installer"
 echo "─────────────────────────────────────────"
-echo "Source : ${REPO_DIR}"
-echo "Skills : ${SKILLS_DIR}"
+echo "Source  : ${REPO_DIR}"
+echo "Skills  : ${SKILLS_DIR}"
 echo "Commands: ${COMMANDS_DIR}"
 echo ""
 
@@ -37,18 +35,20 @@ echo ""
 mkdir -p "${SKILLS_DIR}"
 mkdir -p "${COMMANDS_DIR}"
 
-# ── Clean stale symlinks ────────────────────
-for stale in starter-setup claude-doctor laravel-setup-claude laravel-lint laravel-test laravel-write-tests; do
+# ── Clean stale symlinks (pre-rebrand names) ─
+stale_skills=(starter-setup claude-doctor laravel-setup-claude laravel-lint laravel-test laravel-write-tests accessibility api-design brainstorming debug features frontend-design laravel-init laravel-new lint perf release review schema-migrate setup-claude setup-optimizer skill-creator smart-commit test write-tests)
+for stale in "${stale_skills[@]}"; do
   if [[ -L "${SKILLS_DIR}/${stale}" ]]; then
     rm "${SKILLS_DIR}/${stale}"
-    echo "  Cleaned stale: ${stale}"
+    echo "  Cleaned stale skill: ${stale}"
   fi
 done
 
-for stale_cmd in re-setup.md re-setup-claude.md; do
-  if [[ -L "${COMMANDS_DIR}/${stale_cmd}" ]]; then
-    rm "${COMMANDS_DIR}/${stale_cmd}"
-    echo "  Cleaned stale: ${stale_cmd}"
+stale_commands=(re-setup.md re-setup-claude.md brainstorm.md branch.md execute-plan.md features.md finish-feature.md hotfix.md plan.md release.md security-check.md status.md update-task.md write-plan.md)
+for stale_cmd in "${stale_commands[@]}"; do
+  if [[ -L "${CLAUDE_DIR}/commands/${stale_cmd}" ]]; then
+    rm "${CLAUDE_DIR}/commands/${stale_cmd}"
+    echo "  Cleaned stale command: ${stale_cmd}"
   fi
 done
 
@@ -60,14 +60,12 @@ for skill_dir in "${REPO_DIR}"/skills/*/; do
   skill_name="$(basename "${skill_dir}")"
   target="${SKILLS_DIR}/${skill_name}"
 
-  # Remove existing symlink (re-install)
   if [[ -L "${target}" ]]; then
     rm "${target}"
   fi
 
-  # Skip if real directory exists (user-managed)
   if [[ -d "${target}" && ! -L "${target}" ]]; then
-    echo "  SKIP  ${skill_name} (real directory exists, not a symlink)"
+    echo "  SKIP  ${skill_name} (real directory exists)"
     skills_skipped=$((skills_skipped + 1))
     continue
   fi
@@ -76,23 +74,21 @@ for skill_dir in "${REPO_DIR}"/skills/*/; do
   skills_linked=$((skills_linked + 1))
 done
 
-# ── Link commands ────────────────────────────
+# ── Link commands/sk/ ────────────────────────
 commands_linked=0
 commands_skipped=0
 
-for cmd_file in "${REPO_DIR}"/commands/*.md; do
+for cmd_file in "${REPO_DIR}"/commands/sk/*.md; do
   [[ -f "${cmd_file}" ]] || continue
   cmd_name="$(basename "${cmd_file}")"
   target="${COMMANDS_DIR}/${cmd_name}"
 
-  # Remove existing symlink (re-install)
   if [[ -L "${target}" ]]; then
     rm "${target}"
   fi
 
-  # Skip if real file exists (user-managed)
   if [[ -f "${target}" && ! -L "${target}" ]]; then
-    echo "  SKIP  ${cmd_name} (real file exists, not a symlink)"
+    echo "  SKIP  ${cmd_name} (real file exists)"
     commands_skipped=$((commands_skipped + 1))
     continue
   fi
@@ -108,32 +104,5 @@ fi
 echo ""
 echo "Installation complete."
 echo ""
-echo "Workflow commands:"
-echo "  /setup-claude        bootstrap project scaffolding"
-echo "  /brainstorm          explore requirements and design"
-echo "  /frontend-design     UI mockup before implementation (optional Pencil mockup)"
-echo "  /api-design          REST/GraphQL API contracts before implementation"
-echo "  /accessibility       WCAG 2.1 AA audit after design"
-echo "  /write-plan          write decision-complete plan"
-echo "  /branch              create feature branch from current task"
-echo "  /write-tests         TDD: write failing tests (auto-detects stack)"
-echo "  /execute-plan        implement plan in batches"
-echo "  /smart-commit        conventional commit with approval"
-echo "  /lint                auto-detect and run all linters"
-echo "  /test                auto-detect and verify all tests pass"
-echo "  /debug               bug fix entry point"
-echo "  /security-check      OWASP security audit"
-echo "  /perf                performance audit (bundle, N+1, Core Web Vitals)"
-echo "  /review              self-review of branch changes"
-echo "  /hotfix              emergency fix workflow (skips design/TDD)"
-echo "  /update-task         mark task done, log completion"
-echo "  /finish-feature      changelog + PR creation"
-echo "  /release             version bump + changelog + tag"
-echo "  /status              show workflow + task status"
-echo "  /setup-optimizer     enrich CLAUDE.md by scanning codebase"
+echo "Run /sk:help to see all commands."
 echo ""
-echo "Laravel:"
-echo "  /laravel-init        configure existing Laravel project"
-echo "  /laravel-new         scaffold new Laravel project"
-echo ""
-echo "Get started: open any project and run /setup-claude"

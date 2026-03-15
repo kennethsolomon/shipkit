@@ -1,5 +1,5 @@
 ---
-name: write-tests
+name: sk:write-tests
 description: "TDD: Auto-detect BE + FE testing stacks, write failing tests before implementation. Updates existing tests when behavior changes."
 ---
 
@@ -175,3 +175,21 @@ Status: RED (tests fail as expected — ready for implementation)
 ## Key Principle
 
 Tests define the **expected behavior**. Implementation makes them pass. If you're unsure what a piece of code should do, the test is where you decide.
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:write-tests"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | sonnet |
+| `balanced` | sonnet |
+| `budget` | haiku |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

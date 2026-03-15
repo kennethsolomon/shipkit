@@ -1,5 +1,5 @@
 ---
-name: perf
+name: sk:perf
 description: Performance audit. Use before /review to catch performance issues: bundle size, N+1 queries, slow DB queries, Core Web Vitals, memory leaks, caching opportunities. Auto-detects stack. Reports findings — does NOT fix code.
 license: Complete terms in LICENSE.txt
 ---
@@ -168,3 +168,21 @@ Tell the user:
 
 If there are no critical or high findings:
 > "No critical or high performance issues found. N medium/low findings noted in `tasks/perf-findings.md`. Run `/review` to proceed."
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:perf"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | sonnet |
+| `balanced` | sonnet |
+| `budget` | haiku |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

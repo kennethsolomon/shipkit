@@ -1,5 +1,5 @@
 ---
-name: test
+name: sk:test
 description: "Auto-detect BE + FE test runners, run both in parallel, verify 100% coverage on new code, fix failures and re-run until all pass."
 ---
 
@@ -151,3 +151,21 @@ FE: X tests passed, X failed — coverage X%
 ## Pass Criteria
 
 All detected suites pass with 100% coverage on new code. Both lines of the report show zero failures.
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:test"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | sonnet |
+| `quality` | sonnet |
+| `balanced` | haiku |
+| `budget` | haiku |
+
+> `opus` = inherit (uses the current session model). When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

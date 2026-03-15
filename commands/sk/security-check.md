@@ -168,3 +168,21 @@ If there are Critical or High findings:
 > "There are critical/high findings that should be addressed before merging. Fix them, then re-run `/security-check` to verify."
 
 **Do not auto-fix.** The user decides what to address.
+
+---
+
+## Model Routing
+
+Read `.shipkit/config.json` from the project root if it exists.
+
+- If `model_overrides["sk:security-check"]` is set, use that model — it takes precedence.
+- Otherwise use the `profile` field. Default: `balanced`.
+
+| Profile | Model |
+|---------|-------|
+| `full-sail` | opus (inherit) |
+| `quality` | opus (inherit) |
+| `balanced` | sonnet |
+| `budget` | haiku |
+
+> `opus` = inherit. When spawning sub-agents via the Agent tool, pass `model: "<resolved-model>"`.

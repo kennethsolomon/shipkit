@@ -1,5 +1,5 @@
 ---
-name: laravel-new
+name: sk:laravel-new
 description: "Scaffold a fresh Laravel app and configure it with opinionated production-ready conventions. Usage: /laravel-new [project-name]"
 ---
 
