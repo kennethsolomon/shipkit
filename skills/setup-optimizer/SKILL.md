@@ -1,6 +1,6 @@
 ---
 name: setup-optimizer
-description: Diagnose, enrich, and maintain CLAUDE.md with comprehensive project context
+description: "Diagnose, update workflow, enrich, and maintain CLAUDE.md. The single command to keep any CLAUDE.md current."
 triggers:
   - optimize claude
   - optimize setup
@@ -9,6 +9,9 @@ triggers:
   - doctor claude
   - check claude
   - diagnose claude
+  - refresh claude
+  - update claude
+  - re-setup
 allowed-tools:
   - Bash
   - Read
@@ -17,35 +20,70 @@ allowed-tools:
 
 ## Overview
 
-Diagnoses your CLAUDE.md for problems, then enriches it with comprehensive project context. Combines health-checking with intelligent auto-discovery.
+The single command to keep your CLAUDE.md current. Diagnoses problems, updates the workflow to the latest version, scans your codebase, and enriches with project context — all while preserving your customizations.
 
 ### What It Does
 
 1. **Diagnoses** — finds missing sections, stale info, inconsistencies, and gaps
-2. **Discovers** — scans project structure, docs, and workflows
-3. **Enriches** — merges discoveries into CLAUDE.md while preserving your edits
+2. **Updates workflow** — refreshes the workflow section to the latest template version
+3. **Discovers** — scans project structure, docs, and workflows
+4. **Enriches** — merges discoveries into CLAUDE.md while preserving your edits
 
 ## Usage
 
 ```bash
-/optimize-claude
+/setup-optimizer
 ```
 
 ### Step 0: Diagnose
 
 Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 
-- **Missing sections** — checks for essential sections (Stack, Quick Start, Development, etc.)
-- **Stale content** — detects outdated info (stale model/route counts, removed dependencies still referenced, generic placeholders)
+- **Missing sections** — checks for essential sections (Workflow, Sub-Agent Patterns, Project Memory, Lessons Capture, Testing, Commands, etc.)
+- **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
-- **Line count** — warns if file exceeds 150-line target
+- **Outdated workflow** — checks if the workflow matches the current 21-step TDD flow with hard gates
 
-Reports findings before proceeding. If issues are found, they inform the enrichment step.
+Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
-### Step 1: Scan & Enrich
+### Step 1: Update Workflow
 
-After diagnosis, proceeds with discovery and enrichment:
+If the workflow section is outdated or missing, replace it with the latest version:
+
+**Current workflow (21 steps, TDD with hard gates):**
+```
+Read → Explore → Design → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Review → Finish
+```
+
+**What gets updated:**
+- Workflow table (21 steps with correct commands: `/write-tests`, `/lint`, `/test`)
+- Step details (TDD red/green/verify descriptions)
+- Tracker rules (hard gates at 11, 13, 15, 17)
+- Step completion summary rule (NON-NEGOTIABLE)
+- Bug fix flow section
+- Sub-Agent Patterns section (if missing)
+- Project Memory section (if missing)
+- Lessons Capture section (if missing)
+- Testing TDD section (if missing)
+- 3-Strike Protocol (if missing)
+
+**What gets preserved:**
+- Everything marked with `<!-- LOCK -->` is never touched
+- Project-specific content below the workflow (conventions, models, routes, architecture)
+- Stack section, Build & Run section
+- Any section with `<!-- EDITED -->` marker
+
+**How it works:**
+1. Read the latest workflow template from `~/.claude/skills/setup-claude/templates/CLAUDE.md.template`
+2. Compare with the current CLAUDE.md workflow section
+3. If different, replace the workflow section (between `## Workflow` and the next `##` that isn't a workflow subsection)
+4. Insert missing sections (Sub-Agent Patterns, Project Memory, etc.) in their correct positions
+5. Preserve all `<!-- LOCK -->` and project-specific sections
+
+### Step 2: Scan & Enrich
+
+After workflow update, proceeds with codebase discovery and enrichment:
 
 1. Scans project for directories, docs, and workflows
 2. Reads your existing CLAUDE.md

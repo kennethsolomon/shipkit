@@ -45,7 +45,7 @@ for stale in starter-setup claude-doctor laravel-setup-claude laravel-lint larav
   fi
 done
 
-for stale_cmd in re-setup.md; do
+for stale_cmd in re-setup.md re-setup-claude.md; do
   if [[ -L "${COMMANDS_DIR}/${stale_cmd}" ]]; then
     rm "${COMMANDS_DIR}/${stale_cmd}"
     echo "  Cleaned stale: ${stale_cmd}"

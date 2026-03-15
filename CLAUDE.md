@@ -200,6 +200,7 @@ Never retry the same failing approach.
 | `/finish-feature` | Changelog + PR creation |
 | `/release` | Version bump + changelog + tag |
 | `/status` | Show workflow + task status |
+| `/setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 
 ## Architectural Change Log
 

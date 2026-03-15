@@ -129,7 +129,7 @@ Next step: [#] [Name] — run `[command]`
 | `/finish-feature` | Changelog + PR creation |
 | `/release` | Version bump + changelog + tag |
 | `/status` | Show workflow + task status |
-| `/re-setup-claude` | Re-run CLAUDE.md setup |
+| `/setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 | `/plan` | Quick plan without full workflow |
 
 ## Laravel Support
