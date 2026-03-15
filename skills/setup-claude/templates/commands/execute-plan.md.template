@@ -6,7 +6,7 @@ description: "Execute tasks/todo.md checkboxes in small batches; log to tasks/pr
 
 # /execute-plan
 
-**Workflow:** `/brainstorm` → `/frontend-design` → `/write-plan` → **`/execute-plan`** → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → `/finish-feature` → `/release`
+**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → **Implement** → Lint → Verify Tests → Security → Performance → Review → Finalize → Release
 
 Execute the plan in `tasks/todo.md` in small batches with clear checkpoints.
 

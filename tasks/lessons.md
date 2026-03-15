@@ -29,3 +29,8 @@ Accumulated patterns from past bugs and corrections. Read this file at the **sta
 **Additionally, if new commands are added:**
 7. `install.sh` — the "Workflow commands:" echo block lists every available command
 
+**Additionally, if the flow line or step names change:**
+8. `skills/setup-claude/templates/commands/write-plan.md.template` — has a `**Workflow:**` breadcrumb line
+9. `skills/setup-claude/templates/commands/execute-plan.md.template` — has a `**Workflow:**` breadcrumb line
+10. `skills/setup-claude/templates/commands/finish-feature.md.template` — has a `**Workflow:**` breadcrumb line
+

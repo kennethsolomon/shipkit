@@ -2,7 +2,7 @@
 
 # Finish Feature Command
 
-**Workflow:** `/brainstorm` → `/frontend-design` → `/write-plan` → `/execute-plan` → `/commit` → `/write-tests` → `/debug` → `/security-check` → `/review` → **`/finish-feature`** → `/release`
+**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → **Finalize** → Release
 
 Finalize a feature/bug-fix branch: changelog, arch log, security gate, verification, and PR creation.
 
