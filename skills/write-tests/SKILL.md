@@ -1,13 +1,13 @@
 ---
 name: write-tests
-description: "Detect testing framework, analyze target code, and generate comprehensive test files matching project conventions."
+description: "TDD: Auto-detect BE + FE testing stacks, write failing tests before implementation. Updates existing tests when behavior changes."
 ---
 
-# Test Generation
+# Test Generation (TDD)
 
 ## Overview
 
-Detect the project's testing framework, read existing test patterns, analyze target code, and generate comprehensive test files that match the project's style. Run the tests and fix failures.
+Auto-detect the project's backend AND frontend testing frameworks, read the plan from `tasks/todo.md`, and write comprehensive failing tests BEFORE implementation. Tests define the expected behavior — implementation makes them pass.
 
 ## Allowed Tools
 
@@ -22,83 +22,95 @@ You MUST complete these steps in order:
 
 ### 0. Check Project Lessons
 
-If `tasks/lessons.md` exists, read it before doing anything else. Apply every active lesson as a standing constraint throughout the session. Common test-related lessons to look for:
+If `tasks/lessons.md` exists, read it before doing anything else. Apply every active lesson as a standing constraint. Look for:
 - Known flaky test patterns in this project
 - Mocking approaches that caused issues before
-- Framework-specific gotchas (e.g. "always use `vi.mock` at top-level, not inside describe")
+- Framework-specific gotchas
 - File location conventions that broke in the past
 
-If no `tasks/lessons.md` exists, skip this step.
+### 1. Read the Plan
 
----
+- Read `tasks/todo.md` to understand what will be implemented
+- Read `tasks/progress.md` for context from brainstorm/design steps
+- Identify all code that will be created or modified
+- This is the **source of truth** for what tests to write
 
-### 1. Detect Testing Framework
+### 2. Detect ALL Testing Frameworks
 
-Check project configuration files to identify the testing stack:
+Scan for **both backend and frontend** testing stacks:
 
+**Backend detection:**
 ```bash
-# Check for config/dependency files
-cat package.json 2>/dev/null        # Jest, Vitest, Mocha
+cat composer.json 2>/dev/null       # PHPUnit / Pest
 cat pyproject.toml 2>/dev/null      # pytest
 cat go.mod 2>/dev/null              # Go testing
 cat Cargo.toml 2>/dev/null          # Rust #[cfg(test)]
-cat composer.json 2>/dev/null       # PHPUnit
+cat Gemfile 2>/dev/null             # RSpec / Minitest
+cat build.gradle 2>/dev/null        # JUnit
 ```
 
-Also check for framework-specific config:
-- `vitest.config.ts` / `vite.config.ts` (vitest)
-- `jest.config.js` / `jest.config.ts` (Jest)
-- `.mocharc.yml` / `.mocharc.js` (Mocha)
-- `pytest.ini` / `conftest.py` / `setup.cfg` (pytest)
-- `phpunit.xml` (PHPUnit)
-
-Report what was detected:
-```
-Detected: [framework] ([language]) — [test runner command]
-```
-
-### 2. Identify Target Code
-
-Determine what to write tests for, in order of priority:
-
-1. **User-specified**: If the user named a file, function, or module — use that
-2. **Recent changes**: `git diff --name-only HEAD~1` — test the most recently changed code
-3. **Untested code**: Find source files without corresponding test files
-
-Ask the user to confirm the target if ambiguous.
-
-### 3. Learn Project Test Conventions
-
-Find and read 1-2 existing test files to learn the project's patterns:
-
+**Frontend detection:**
 ```bash
-# Find existing tests
-find . -name "*.test.*" -o -name "*.spec.*" -o -name "test_*.py" -o -name "*_test.go" | head -5
+cat package.json 2>/dev/null        # Jest, Vitest, Mocha, Cypress, Playwright
 ```
+
+Check for framework-specific config:
+- `vitest.config.ts` / `vite.config.ts` (Vitest)
+- `jest.config.js` / `jest.config.ts` (Jest)
+- `phpunit.xml` / `pest` in composer.json (PHPUnit / Pest)
+- `pytest.ini` / `conftest.py` (pytest)
+- `cypress.config.ts` (Cypress)
+- `playwright.config.ts` (Playwright)
+
+Report ALL detected frameworks:
+```
+Backend:  [framework] ([language]) — [test runner command]
+Frontend: [framework] ([language]) — [test runner command]
+```
+
+If only one stack exists (e.g., API-only with no FE, or FE-only SPA), report that and proceed with what's available.
+
+### 3. Check Existing Tests
+
+- Find existing tests related to the code being changed
+- If modifying existing behavior: **update those tests first** to expect the new behavior
+- If adding new code: identify what test files need to be created
+- Report: "Updating X existing test files, creating Y new test files"
+
+### 4. Learn Project Test Conventions
+
+Find and read 1-2 existing test files **per stack** to learn patterns:
 
 From existing tests, learn:
 - Import style and aliases
 - Test structure (describe/it, test(), func TestX)
 - Assertion library and patterns
-- Mocking approach (jest.mock, vi.mock, unittest.mock, etc.)
+- Mocking approach
 - Setup/teardown patterns
 - File naming convention
 - Test file location (co-located vs `tests/` directory)
 
 If **no existing tests** are found, use `references/patterns.md` for framework-appropriate templates.
 
-### 4. Analyze Target Code
+### 5. Analyze Target Code from Plan
 
-Read the target file(s) and identify test cases:
+Based on the plan in `tasks/todo.md`, identify test cases for each piece of planned code:
 
-- **Happy path**: Normal expected behavior for each function/method
-- **Edge cases**: Empty inputs, boundary values, null/undefined, large inputs
+**Backend tests:**
+- **Happy path**: Normal expected behavior for each endpoint/function
+- **Edge cases**: Empty inputs, boundary values, null/undefined
 - **Error handling**: Invalid inputs, thrown exceptions, error responses
-- **Branches**: Every if/else, switch case, ternary, early return
-- **Async behavior**: Promise resolution/rejection, timeout handling
-- **Integration points**: API calls, database queries, external dependencies (mock these)
+- **Authorization**: Ensure policies/guards are tested
+- **Validation**: All form request / input validation rules
 
-### 5. Determine Test File Location
+**Frontend tests:**
+- **Component rendering**: Correct output for given props
+- **User interactions**: Click, type, submit, navigate
+- **Conditional rendering**: Show/hide based on state
+- **Error states**: Loading, empty, error displays
+- **Form handling**: Validation, submission, reset
+
+### 6. Determine Test File Locations
 
 Follow the project's existing convention:
 
@@ -106,108 +118,60 @@ Follow the project's existing convention:
 |-----------|---------|---------|
 | Co-located | Same directory as source | `src/auth/login.test.ts` |
 | Mirror `tests/` | Parallel directory structure | `tests/auth/login.test.ts` |
-| `__tests__/` | Jest convention subdirectory | `src/auth/__tests__/login.test.ts` |
+| `__tests__/` | Jest/Vitest convention | `src/auth/__tests__/login.test.ts` |
 | `test_` prefix | Python convention | `tests/test_login.py` |
 | `_test` suffix | Go convention | `auth/login_test.go` |
+| `tests/Feature/` + `tests/Unit/` | Laravel/Pest convention | `tests/Feature/ServerTest.php` |
 
-If no convention exists, prefer co-located tests.
+### 7. Write Backend Test Files
 
-### 6. Write Test File
-
-Generate the complete test file. Follow these principles:
-
-- Match the project's existing style exactly (imports, structure, naming)
+Generate complete test files matching the project's style:
 - One test per behavior, not per line of code
-- Descriptive test names that explain the expected behavior
+- Descriptive test names that explain expected behavior
 - Arrange-Act-Assert pattern
 - Mock external dependencies, not the code under test
 - Test behavior, not implementation details
-- Include setup/teardown if needed
 
-Write the file using the Write or Edit tool.
+### 8. Write Frontend Test Files
 
-### 6b. Playwright-Specific: Capture Page State for Assertions (conditional)
+If a frontend stack was detected, generate FE test files:
+- Component tests for every new/modified component
+- Page tests for every new/modified page
+- Hook tests for custom hooks
+- Mock framework helpers (e.g., Inertia's `useForm`, Next.js `useRouter`, SvelteKit `goto`)
+- Use `@testing-library` conventions: prefer `getByRole`, `getByText`, `getByLabelText`
 
-**Only if the detected framework is `@playwright/test`:**
+Skip this step if no FE stack was detected.
 
-Before finalizing test assertions, use the Playwright MCP plugin to inspect the live page state. This produces more accurate selectors and assertions than guessing from source code alone.
+### 8b. Playwright-Specific (conditional)
 
-1. **Navigate to the target URL** (from dev server or test fixture):
-   ```
-   mcp__plugin_playwright_playwright__browser_navigate({ url: "http://localhost:[PORT]/[path]" })
-   ```
+**Only if `@playwright/test` is detected:**
 
-2. **Capture accessibility snapshot** — use the ARIA tree to derive role-based selectors (`getByRole`, `getByLabel`, `getByText`) that match Playwright best practices:
-   ```
-   mcp__plugin_playwright_playwright__browser_snapshot()
-   ```
+Use the Playwright MCP plugin to inspect live page state for more accurate selectors:
 
-3. **Screenshot** — use as a visual reference to confirm the correct page is loaded:
-   ```
-   mcp__plugin_playwright_playwright__browser_take_screenshot({ type: "png" })
-   ```
+1. Navigate to target URL
+2. Capture accessibility snapshot for role-based selectors
+3. Screenshot for visual reference
+4. Optionally run inline assertions for complex interactions
 
-4. **Run a quick assertion inline** (optional, for complex interactions):
-   ```
-   mcp__plugin_playwright_playwright__browser_run_code({
-     code: async (page) => { /* assertion or interaction */ }
-   })
-   ```
+### 9. Verify Tests Fail (Red Phase)
 
-Use the snapshot output to write assertions. Prefer `getByRole` and `getByLabel` over CSS selectors. Skip this step if no dev server is running — fall back to writing tests from source code inspection only.
+Run both suites to confirm tests fail as expected:
 
----
+- **Tests SHOULD fail** — this confirms they're testing the right thing
+- If tests pass without implementation, they're not testing anything useful — rewrite them
+- Report which tests fail and why (missing class, missing route, missing component, etc.)
 
-### 7. Run Tests
+### 10. Report
 
-Execute only the new test file:
-
-```bash
-# Examples by framework
-npx vitest run path/to/file.test.ts
-npx jest path/to/file.test.ts
-python -m pytest path/to/test_file.py -v
-go test ./path/to/package/ -run TestName -v
-cargo test test_name -- --nocapture
+Output:
+```
+BE tests written: X tests in Y files ([framework])
+FE tests written: X tests in Y files ([framework])  ← omit if no FE stack
+Existing tests updated: X files
+Status: RED (tests fail as expected — ready for implementation)
 ```
 
-### 8. Fix Failures (up to 3 attempts)
+## Key Principle
 
-If tests fail:
-
-1. Read the error output carefully
-2. Determine if it's a test bug or a real code bug
-3. If test bug: fix the test
-4. If real code bug: report to user, don't fix silently
-5. Re-run the specific failing tests
-
-Maximum 3 fix attempts. If still failing after 3, report the remaining failures to the user with analysis.
-
-**After fixing a real code bug** (not a test error), write a lesson to `tasks/lessons.md` if the root cause is a pattern that could recur:
-
-```markdown
-### [YYYY-MM-DD] [Brief title]
-**Bug:** What the test revealed
-**Root cause:** Why the code was wrong
-**Prevention:** What to check in future test runs or implementations
-```
-
-### 9. Report Results
-
-Summarize:
-- Tests written: count and file path
-- Tests passing: count
-- Tests failing: count (with details if any)
-- Coverage: if available from the test runner output
-
-### 10. Coverage (Optional)
-
-If the user requests coverage or the framework supports it easily:
-
-```bash
-npx vitest run --coverage path/to/file.test.ts
-python -m pytest --cov=module path/to/test_file.py
-go test -cover ./path/to/package/
-```
-
-Report coverage for the target file(s).
+Tests define the **expected behavior**. Implementation makes them pass. If you're unsure what a piece of code should do, the test is where you decide.
