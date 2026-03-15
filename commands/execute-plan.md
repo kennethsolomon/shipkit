@@ -19,21 +19,33 @@ Execute the plan in `tasks/todo.md` in small batches with clear checkpoints.
 
 ## Steps
 
-1. Read `tasks/todo.md` and identify the next unchecked items.
-2. Execute the next **batch of 3 items** (default). For each item:
-   - Mark it in progress (in your narrative)
-   - Make the smallest change that satisfies the step
-   - Run the verification specified (or add it if missing)
-   - Log what you did in `tasks/progress.md` (files touched + commands run + results)
-   - If you learned something important, append it to `tasks/findings.md`
-3. After the batch, report:
+1. Read `tasks/todo.md` and identify the next unchecked items (up to ~6).
+2. **Analyze dependencies and build waves.** For each unchecked item, determine
+   which other items it depends on. Group independent items into **waves**:
+   - Tasks within a wave have no dependency on each other — they run in parallel.
+   - A wave only starts after the previous wave completes.
+   - Example: Task A and B are independent → Wave 1. Task C depends on A → Wave 2.
+3. **Execute each wave:**
+   - For waves with a single task, execute it directly.
+   - For waves with multiple tasks, dispatch each task to a **sub-agent** (Agent tool)
+     with fresh context. Each sub-agent receives:
+     - The specific task(s) to implement
+     - The full plan from `tasks/todo.md` for orientation
+     - Relevant file paths / codebase context needed for that task
+     - NOT the current conversation history (fresh context prevents context rot)
+   - Each task (whether direct or sub-agent):
+     - Make the smallest change that satisfies the step
+     - Run the verification specified (or add it if missing)
+     - Log what was done in `tasks/progress.md` (files touched + commands run + results)
+     - If something important was learned, append it to `tasks/findings.md`
+4. After all waves in the batch complete, report:
    - what changed
    - verification results
    - what's next
    - After all items in this batch pass verification, the code is ready to stage.
      Run `/commit` after any passed batch, or accumulate and commit at plan completion.
      Never combine more than one logical unit of work in a single commit.
-4. Stop and wait for user feedback before continuing.
+5. Stop and wait for user feedback before continuing.
 
 ## Failure handling
 - Log every failure (error + attempt # + fix) in `tasks/progress.md`.

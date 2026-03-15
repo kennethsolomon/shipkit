@@ -21,12 +21,34 @@ Create a decision-complete plan **before** writing code.
      before writing any plan steps
 3. Update `tasks/todo.md` with:
    - **Goal** (1–2 lines)
-   - **Plan** as checkboxes (small, verifiable steps)
+   - **Milestones** — group tasks under milestone headers for multi-phase projects
+   - **Plan** as checkboxes organized into waves:
+     ```
+     ### Milestone: <name> (optional, for multi-phase projects)
+
+     #### Wave 1 (parallel)
+     - [ ] Task A
+     - [ ] Task B
+
+     #### Wave 2 (depends on Wave 1)
+     - [ ] Task C (needs A)
+     - [ ] Task D (needs A, B)
+     ```
+     Tasks in the same wave can run in parallel. Tasks in later waves
+     depend on earlier waves — note the specific dependency in parentheses.
    - **Verification** commands (exact commands + expected outcomes)
    - **Acceptance criteria** (clear "done" conditions)
    - **Risks/unknowns** (anything still ambiguous)
-4. Present the plan to the user and wait for approval.
+4. Verify the plan against requirements:
+   - Cross-check every requirement from `tasks/findings.md` — does the plan
+     address what brainstorm decided? Flag any requirement with no matching task.
+   - Completeness check — are all requirements covered? List any gaps.
+   - Dependency analysis — are tasks ordered correctly? Could any sequential
+     tasks actually run in parallel (same wave)?
+5. Present the plan to the user and wait for approval.
 
 ## Rules
 - No implementation until the plan is approved.
 - If something is unclear, add a plan step to explore it first.
+- Every requirement in `tasks/findings.md` must map to at least one task.
+- Prefer parallel waves where possible to minimize total steps.

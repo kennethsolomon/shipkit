@@ -18,8 +18,9 @@ Explore design and clarify requirements **before** any code is written.
 ## Steps
 
 1. **Read context files first:**
-   - If `tasks/findings.md` exists and has content, read it — summarize prior decisions
-     and ask: extend, revise, or start fresh?
+   - If `tasks/findings.md` exists and has content, read **only sections relevant to the
+     current phase/task** — skip decisions from completed or unrelated phases. Summarize
+     prior decisions and ask: extend, revise, or start fresh?
    - If `tasks/lessons.md` exists, read it in full. Apply every active lesson as a design
      constraint throughout this brainstorm — treat each prevention rule as a hard constraint
      when proposing approaches.
@@ -33,10 +34,12 @@ Explore design and clarify requirements **before** any code is written.
    - What are the expected inputs/outputs or behaviors?
    - Are there constraints (performance, compatibility, existing patterns)?
 
-3. **Explore the current codebase** (read-only) — Identify:
-   - Relevant files, modules, and patterns already in place
-   - How similar features are implemented today
-   - Potential impact areas and dependencies
+3. **Parallel codebase research** — Launch 3 Explore agents **in parallel** (read-only) before proposing approaches:
+   - **Agent 1 — Affected areas:** Explore models, services, controllers, and files directly related to the task. Map the relevant code surface.
+   - **Agent 2 — Existing patterns:** Explore how similar features were built in this project. Identify conventions, shared abstractions, and naming patterns to follow.
+   - **Agent 3 — Tests & edge cases:** Explore existing test coverage for the affected area. Identify gaps, edge cases, and validation patterns already in use.
+
+   Wait for all three agents to return, then synthesize their findings into a brief summary before moving to step 4.
 
 4. **Propose approaches** — Present 2–3 design options with trade-offs:
    - Approach name + 1-sentence summary
