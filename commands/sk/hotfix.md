@@ -2,7 +2,7 @@
 description: "Emergency fix workflow for production issues. Skips brainstorm, design, and TDD setup. Goes straight to: investigate → branch → fix → gates → ship."
 ---
 
-# /hotfix
+# /sk:hotfix
 
 Emergency workflow for production issues that need to ship fast. Skips brainstorm, design, and write-tests phases. Quality gates still apply — they cannot be skipped.
 
@@ -12,7 +12,7 @@ Emergency workflow for production issues that need to ship fast. Skips brainstor
 - There is no time for full TDD workflow
 - The fix is small and well-understood
 
-**If the bug is complex or the fix is unclear, use the full Bug Fix Flow (`/debug`) instead.**
+**If the bug is complex or the fix is unclear, use the full Bug Fix Flow (`/sk:debug`) instead.**
 
 ## Before You Start
 
@@ -23,21 +23,21 @@ Emergency workflow for production issues that need to ship fast. Skips brainstor
 
 | # | Step | Command | Notes |
 |---|------|---------|-------|
-| 1 | Investigate | `/debug` | Root-cause analysis only — understand before touching code |
-| 2 | Branch | `/branch` | Auto-named from the bug description |
+| 1 | Investigate | `/sk:debug` | Root-cause analysis only — understand before touching code |
+| 2 | Branch | `/sk:branch` | Auto-named from the bug description |
 | 3 | Fix | implement directly | No write-tests phase — go straight to the fix |
 | 4 | Smoke Test | run existing tests | Existing tests MUST still pass — no new failures allowed |
-| 5 | Commit | `/smart-commit` | Commit the fix |
-| 6 | **Lint** | `/lint` | **GATE** — all lint tools must pass |
-| 7 | Commit | `/smart-commit` | Skip if lint was clean |
-| 8 | **Verify Tests** | `/test` | **GATE** — all existing tests must pass |
-| 9 | Commit | `/smart-commit` | Skip if tests passed first try |
-| 10 | **Security** | `/security-check` | **GATE** — 0 issues across all severities |
-| 11 | Commit | `/smart-commit` | Skip if security was clean |
-| 12 | **Review** | `/review` | **GATE** — 0 issues including nitpicks |
-| 13 | Commit | `/smart-commit` | Skip if review was clean |
-| 14 | Update | `/update-task` | Mark done, log completion |
-| 15 | Finalize | `/finish-feature` | Changelog + PR — mark PR as hotfix |
+| 5 | Commit | `/sk:smart-commit` | Commit the fix |
+| 6 | **Lint** | `/sk:lint` | **GATE** — all lint tools must pass |
+| 7 | Commit | `/sk:smart-commit` | Skip if lint was clean |
+| 8 | **Verify Tests** | `/sk:test` | **GATE** — all existing tests must pass |
+| 9 | Commit | `/sk:smart-commit` | Skip if tests passed first try |
+| 10 | **Security** | `/sk:security-check` | **GATE** — 0 issues across all severities |
+| 11 | Commit | `/sk:smart-commit` | Skip if security was clean |
+| 12 | **Review** | `/sk:review` | **GATE** — 0 issues including nitpicks |
+| 13 | Commit | `/sk:smart-commit` | Skip if review was clean |
+| 14 | Update | `/sk:update-task` | Mark done, log completion |
+| 15 | Finalize | `/sk:finish-feature` | Changelog + PR — mark PR as hotfix |
 
 ## Quality Gates Are Non-Negotiable
 

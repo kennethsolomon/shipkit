@@ -138,6 +138,30 @@ Debug → Plan → Branch → Write Tests → Implement → Lint ✓ → Test �
 | 6–9 | lint → test → security → review | Quality gates |
 | 10 | `/sk:finish-feature` | Changelog + PR |
 
+### Hotfix Flow
+
+For production issues that need to ship immediately. Skips brainstorm, design, and TDD. **Quality gates are non-negotiable even in a hotfix.**
+
+```
+Debug → Branch → Fix → Smoke Test → Lint ✓ → Test ✓ → Security ✓ → Review ✓ → Finish
+```
+
+| # | Command | Purpose |
+|---|---------|---------|
+| 1 | `/sk:debug` | Root-cause analysis — understand before touching code |
+| 2 | `/sk:branch` | Auto-named from the bug description |
+| 3 | implement directly | No write-tests phase — go straight to the fix |
+| 4 | run existing tests | Existing tests MUST still pass |
+| 5 | `/sk:smart-commit` | Commit the fix |
+| 6 | **`/sk:lint`** | **GATE** |
+| 7 | **`/sk:test`** | **GATE** |
+| 8 | **`/sk:security-check`** | **GATE** |
+| 9 | **`/sk:review`** | **GATE** |
+| 10 | `/sk:update-task` | Mark done |
+| 11 | `/sk:finish-feature` | Changelog + PR — mark as hotfix |
+
+After merging: add a regression test and a lesson to `tasks/lessons.md`.
+
 ---
 
 ## Commands
