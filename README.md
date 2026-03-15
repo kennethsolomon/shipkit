@@ -8,14 +8,14 @@ Ship features with TDD, auto-detecting linters, security audits, and AI-powered 
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-Mac%20%2F%20Linux%20%2F%20Windows-lightgrey)](#)
 
-```
-npx @kennethsolomon/shipkit
+```bash
+npm install -g @kennethsolomon/shipkit && shipkit
 ```
 
 Works on Mac, Linux, and Windows.
 
 ```
-~ $ npx @kennethsolomon/shipkit
+~ $ shipkit
 
            ⚑
            |
@@ -31,7 +31,7 @@ Works on Mac, Linux, and Windows.
    ▀██████████████▀
      ≋  ≋  ≋  ≋  ≋
 
-  ShipKit v1.0.0
+  ShipKit v1.0.2
   A structured workflow toolkit for Claude Code.
   by Kenneth Solomon
 
@@ -62,7 +62,7 @@ Every gate must pass before the next step. If lint fails, you fix it. If tests d
 ## Installation
 
 ```bash
-npx @kennethsolomon/shipkit
+npm install -g @kennethsolomon/shipkit && shipkit
 ```
 
 Or clone and install locally (symlinks — changes reflect immediately):
@@ -76,7 +76,7 @@ cd shipkit
 ### Update
 
 ```bash
-npx @kennethsolomon/shipkit
+npm install -g @kennethsolomon/shipkit && shipkit
 ```
 
 Re-running always installs the latest version.
@@ -84,7 +84,7 @@ Re-running always installs the latest version.
 ### Uninstall
 
 ```bash
-npx @kennethsolomon/shipkit --uninstall
+shipkit --uninstall
 ```
 
 ---

@@ -1,8 +1,15 @@
 {
   "name": "@kennethsolomon/shipkit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A structured workflow toolkit for Claude Code.",
-  "keywords": ["claude", "claude-code", "workflow", "tdd", "ai", "developer-tools"],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "workflow",
+    "tdd",
+    "ai",
+    "developer-tools"
+  ],
   "author": "Kenneth Solomon",
   "license": "MIT",
   "bin": {
