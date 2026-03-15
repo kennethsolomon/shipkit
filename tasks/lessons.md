@@ -26,3 +26,6 @@ Accumulated patterns from past bugs and corrections. Read this file at the **sta
 5. `skills/setup-optimizer/SKILL.md` — embeds step count, flow line, and hard gate numbers
 6. `CHANGELOG.md` — document what changed
 
+**Additionally, if new commands are added:**
+7. `install.sh` — the "Workflow commands:" echo block lists every available command
+
