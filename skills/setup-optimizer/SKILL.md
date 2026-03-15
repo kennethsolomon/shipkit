@@ -43,7 +43,7 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
-- **Outdated workflow** — checks if the workflow matches the current 21-step TDD flow with hard gates
+- **Outdated workflow** — checks if the workflow matches the current 24-step TDD flow with hard gates
 
 Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
@@ -51,15 +51,15 @@ Reports findings before proceeding. If issues are found, they inform subsequent 
 
 If the workflow section is outdated or missing, replace it with the latest version:
 
-**Current workflow (21 steps, TDD with hard gates):**
+**Current workflow (24 steps, TDD with hard gates):**
 ```
-Read → Explore → Design → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Review → Finish
+Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → Finish
 ```
 
 **What gets updated:**
-- Workflow table (21 steps with correct commands: `/write-tests`, `/lint`, `/test`)
+- Workflow table (24 steps with correct commands: `/write-tests`, `/lint`, `/test`, `/accessibility`, `/perf`)
 - Step details (TDD red/green/verify descriptions)
-- Tracker rules (hard gates at 11, 13, 15, 17)
+- Tracker rules (hard gates at 12, 14, 16, 20; optional steps 4, 5, 7, 18, 24)
 - Step completion summary rule (NON-NEGOTIABLE)
 - Bug fix flow section
 - Sub-Agent Patterns section (if missing)
