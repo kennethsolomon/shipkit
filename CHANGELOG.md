@@ -8,6 +8,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.0.6] - 2026-03-16
+
+### Fixed
+
+- **`sk:test`**: Fix Vitest config import path (`vitest/sk:config` → `vitest/config`) — generated `vitest.config.ts` would fail to compile
+- **`sk:security-check`**: Replace hardcoded `Unknown` stack placeholders with dynamic stack detection instructions — stack-specific checks were being skipped entirely
+- **`sk:finish-feature`**: Replace hardcoded `Unknown` framework references in verification checklist with stack-detection instructions
+
 ### Added
 
 #### New Skills and Commands (P1–P4 workflow enhancements)
