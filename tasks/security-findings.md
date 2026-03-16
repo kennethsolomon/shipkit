@@ -51,3 +51,60 @@ None.
 | Medium   | 0 |
 | Low      | 0 |
 | **Total** | **0** |
+
+---
+
+# Security Audit — 2026-03-16
+
+**Scope:** Changed files on branch `feature/workflow-e2e-fix-retest-sk-prefix`
+**Stack:** Shell/Bash, Markdown
+**Files audited:** 22
+
+## Critical (must fix before deploy)
+
+None.
+
+## High (fix before production)
+
+None.
+
+## Medium (should fix)
+
+- **[install.sh:109]** `npm install -g agent-browser` has no version pin — installs latest at time of execution.
+  **Standard:** OWASP A06 — Vulnerable and Outdated Components (CWE-1395)
+  **Risk:** Supply chain attack; a malicious publish to npm could execute arbitrary code on installer machines.
+  **Recommendation:** Pin to a specific version: `npm install -g agent-browser@<version>` and document the expected version in the README.
+
+## Low / Informational
+
+- **[tests/verify-workflow.sh:6]** `set -uo pipefail` is missing the `-e` flag. Without `-e`, the script continues after a failing command in some contexts (e.g., outside of pipelines or `[[ ]]` constructs), which can mask silent failures in the assertion helpers.
+  **Recommendation:** Change to `set -euo pipefail` for consistency and early-exit safety.
+
+- **[install.sh:109-110]** `npm install -g agent-browser && agent-browser install` downloads a ~100MB Chrome binary with no checksum verification.
+  **Standard:** OWASP A08 — Software and Data Integrity Failures (CWE-494)
+  **Risk:** If the CDN or npm package is compromised, a malicious binary could be silently installed. Low likelihood for a dev tool but worth noting.
+  **Recommendation:** Document the expected hash of the Chrome binary in the README, or use `agent-browser`'s built-in integrity check if it provides one.
+
+## Passed Checks
+
+- **A01 Broken Access Control** — No auth logic. All changed files are local shell scripts and Markdown docs.
+- **A02 Cryptographic Failures** — No cryptographic operations introduced.
+- **A03 Injection** — `install.sh` constructs no shell commands from user input. All paths are derived from `${BASH_SOURCE[0]}` and `${REPO_DIR}`. No eval, no dynamic string exec.
+- **A04 Insecure Design** — Symlink creation limited to `~/.claude/skills/` and `~/.claude/commands/sk/`. Stale symlink cleanup uses a hardcoded allow-list. No arbitrary path traversal possible.
+- **A05 Security Misconfiguration** — No servers, no network listeners, no credentials. `install.sh` outputs a WARN (not silent fail) when npm is missing.
+- **A07 Auth Failures** — N/A (local install script, no auth).
+- **A09 Logging Failures** — N/A (stdout-only CLI tool).
+- **A10 SSRF** — No URL construction from user input. `npm install` and `agent-browser install` use hardcoded package/tool names.
+- **Shell injection** — All variable expansions in `install.sh` are double-quoted. `basename` is called on controlled paths. No `$()` or backtick expansion on user-provided data.
+- **Markdown/SKILL.md files** — Static documentation only. No executable code, no secrets, no PII.
+- **verify-workflow.sh** — Uses `grep -q` on controlled file paths. No user input flows into shell commands.
+
+## Summary
+
+| Severity | Count |
+|----------|-------|
+| Critical | 0 |
+| High     | 0 |
+| Medium   | 1 |
+| Low      | 2 |
+| **Total** | **3** |

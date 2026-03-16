@@ -18,7 +18,7 @@ These are all independent — run in parallel.
 
 #### Wave 1 (parallel)
 
-- [ ] Create `skills/sk:e2e/SKILL.md` — new hard gate E2E skill using agent-browser
+- [x] Create `skills/sk:e2e/SKILL.md` — new hard gate E2E skill using agent-browser
   - Purpose: behavioral verification of final reviewed+secure code
   - Steps: read context (todo.md + findings.md) → detect local server → run agent-browser E2E tests written in Write Tests step → classify fixes → apply Fix & Retest Protocol for logic changes
   - Hard gate: all scenarios must pass, 0 failures
@@ -27,7 +27,7 @@ These are all independent — run in parallel.
   - Semantic locators: `find role button`, `find text "X"` — never CSS selectors
   - Model routing section (balanced = sonnet)
 
-- [ ] Update `skills/sk:lint/SKILL.md` — add dep audit + Fix & Retest Protocol
+- [x] Update `skills/sk:lint/SKILL.md` — add dep audit + Fix & Retest Protocol
   - After Step 4 (Run Analyzers), add new Step 5: **Dependency Audit**
     - PHP: run `composer audit` if composer.json exists
     - Node: run `npm audit --audit-level=high` if package.json exists (or `yarn audit` / `pnpm audit` if detected)
@@ -43,24 +43,24 @@ These are all independent — run in parallel.
     - Analyzer fixes (PHPStan, Rector, ESLint, ruff, golangci-lint, clippy): classify each fix
     - Logic change → trigger protocol (update tests → /sk:test → commit → re-run /sk:lint)
 
-- [ ] Update `skills/sk:test/SKILL.md` — add Fix & Retest Protocol
+- [x] Update `skills/sk:test/SKILL.md` — add Fix & Retest Protocol
   - Add section after the existing exit criteria:
   - **Fix & Retest Protocol:** If a test failure requires an implementation fix, classify the fix:
     - Bug fix that doesn't change behavior contract → fix impl, re-run /sk:test
     - Logic change (new behavior, changed contract) → update/add tests first, then fix impl, then re-run /sk:test
 
-- [ ] Update `skills/sk:security-check/SKILL.md` — add Fix & Retest Protocol
+- [x] Update `skills/sk:security-check/SKILL.md` — add Fix & Retest Protocol
   - Add Fix & Retest Protocol section to Next Steps:
   - When presenting a fix, classify it as style/config OR logic change
   - Logic change → must update/add unit tests → run /sk:test → commit → re-run /sk:security-check
   - Update the "loop back" instruction to include test update step for logic changes
 
-- [ ] Update `skills/sk:perf/SKILL.md` — add Fix & Retest Protocol
+- [x] Update `skills/sk:perf/SKILL.md` — add Fix & Retest Protocol
   - Same as security-check: add classification + Fix & Retest Protocol to next steps
   - N+1 fixes, query changes, algorithm changes are always logic changes → trigger protocol
   - Bundle/config changes are style/config → bypass protocol
 
-- [ ] Update `skills/sk:review/SKILL.md` — add simplify pre-step + Fix & Retest Protocol
+- [x] Update `skills/sk:review/SKILL.md` — add simplify pre-step + Fix & Retest Protocol
   - Add new Step 0 (before "Read Project Context"): **Run Simplify**
     - Invoke the built-in `simplify` skill on changed files: "Review changed code for reuse, quality, and efficiency, then fix any issues found."
     - If simplify makes changes → commit those changes first with /sk:smart-commit before continuing review
@@ -77,7 +77,7 @@ All files in this milestone are independent and can be updated in parallel. All 
 
 #### Wave 2 (parallel — all workflow definition files)
 
-- [ ] Update `CLAUDE.md` — master workflow reference
+- [x] Update `CLAUDE.md` — master workflow reference
   - **Flow line:** `Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features`
   - **Workflow table:** expand 24 → 27 steps:
     - Steps 1–21: same as current except rename "Lint" → "Lint + Dep Audit" (step 12) and "Review" → "Review + Simplify" (step 20), update all command refs to /sk: prefix
@@ -103,9 +103,9 @@ All files in this milestone are independent and can be updated in parallel. All 
   - **TDD section:** update command refs to /sk: prefix
   - **Commands table:** add /sk: prefix to all entries; add sk:e2e, sk:features, sk:change entries; remove old entries without prefix
 
-- [ ] Update `skills/sk:setup-claude/templates/CLAUDE.md.template` — identical changes to CLAUDE.md above
+- [x] Update `skills/sk:setup-claude/templates/CLAUDE.md.template` — identical changes to CLAUDE.md above
 
-- [ ] Update `skills/sk:setup-claude/templates/tasks/workflow-status.md.template`
+- [x] Update `skills/sk:setup-claude/templates/tasks/workflow-status.md.template`
   - Expand from 24 → 27 rows
   - Steps 1–21: update HARD GATE notes — old gates were 12, 14, 16, 20; now add 22
   - Rename row 12: "Lint" → "Lint + Dep Audit" with HARD GATE note
@@ -115,21 +115,21 @@ All files in this milestone are independent and can be updated in parallel. All 
   - Renumber 22→24 (Update Task), 23→25 (Finalize), 24→27 (Release)
   - Add row 26: `/sk:features | not yet | required — sync feature specs after ship`
 
-- [ ] Update `README.md` — workflow table section
+- [x] Update `README.md` — workflow table section
   - Update step count reference (24 → 27)
   - Update flow line
   - Update workflow table to match new 27 steps with /sk: prefix
   - Update Bug Fix Flow and Hotfix Flow command refs to /sk: prefix
   - Mention Fix & Retest Protocol briefly
 
-- [ ] Update `skills/sk:setup-optimizer/SKILL.md`
+- [x] Update `skills/sk:setup-optimizer/SKILL.md`
   - Update step count: "24 steps" → "27 steps"
   - Update flow line string
   - Update hard gate numbers: `(12, 14, 16, 20)` → `(12, 14, 16, 20, 22)`
   - Update optional steps list: add 27 (Release), ensure 18 still listed
   - Update any command refs to /sk: prefix
 
-- [ ] Update `install.sh`
+- [x] Update `install.sh`
   - Add agent-browser mandatory install block after the symlink section:
     ```
     echo "Installing agent-browser (E2E testing, ~100MB Chrome download)..."
@@ -138,31 +138,31 @@ All files in this milestone are independent and can be updated in parallel. All 
     ```
   - Note: skills/sk:e2e is auto-discovered by the existing `for skill_dir in skills/*/` loop — no manual entry needed
 
-- [ ] Update `skills/sk:setup-claude/templates/commands/brainstorm.md.template`
+- [x] Update `skills/sk:setup-claude/templates/commands/brainstorm.md.template`
   - Update `**Workflow:**` breadcrumb to new flow line
   - Update any /command refs to /sk: prefix
 
-- [ ] Update `skills/sk:setup-claude/templates/commands/write-plan.md.template`
+- [x] Update `skills/sk:setup-claude/templates/commands/write-plan.md.template`
   - Update `**Workflow:**` breadcrumb to new flow line
   - Update any /command refs to /sk: prefix
 
-- [ ] Update `skills/sk:setup-claude/templates/commands/execute-plan.md.template`
+- [x] Update `skills/sk:setup-claude/templates/commands/execute-plan.md.template`
   - Update `**Workflow:**` breadcrumb to new flow line
   - Update any /command refs to /sk: prefix
 
-- [ ] Update `skills/sk:setup-claude/templates/commands/security-check.md.template`
+- [x] Update `skills/sk:setup-claude/templates/commands/security-check.md.template`
   - Update `**Workflow:**` breadcrumb to new flow line
   - Update any /command refs to /sk: prefix
 
-- [ ] Update `skills/sk:setup-claude/templates/commands/finish-feature.md.template`
+- [x] Update `skills/sk:setup-claude/templates/commands/finish-feature.md.template`
   - Update `**Workflow:**` breadcrumb to new flow line
   - Update any /command refs to /sk: prefix
 
-- [ ] Update `skills/sk:setup-claude/templates/commands/release.md.template`
+- [x] Update `skills/sk:setup-claude/templates/commands/release.md.template`
   - Update `**Workflow:**` breadcrumb to new flow line
   - Update any /command refs to /sk: prefix
 
-- [ ] Update `.claude/docs/DOCUMENTATION.md`
+- [x] Update `.claude/docs/DOCUMENTATION.md`
   - Update ASCII flowchart: "27 STEPS" label, add Phase for E2E Tests + Sync Features
   - Update workflow table to 27 steps with /sk: prefix
   - Update skills list: add sk:e2e entry
@@ -176,7 +176,7 @@ All files in this milestone are independent and can be updated in parallel. All 
 
 #### Wave 3 (depends on Wave 2 being complete)
 
-- [ ] Update `CHANGELOG.md` — add v3.1.0 or next patch entry
+- [x] Update `CHANGELOG.md` — add v3.1.0 or next patch entry
   - Workflow expanded: 24 → 27 steps
   - New: sk:e2e skill (agent-browser E2E hard gate at step 22)
   - New: Fix & Retest Protocol (steps 12, 14, 16, 18, 20, 22)
@@ -186,7 +186,7 @@ All files in this milestone are independent and can be updated in parallel. All 
   - Enhanced: sk:review now runs simplify as pre-step
   - Convention: all command references now use /sk: prefix
 
-- [ ] Update `tasks/lessons.md` — append new entry (never overwrite)
+- [x] Update `tasks/lessons.md` — append new entry (never overwrite)
   - Entry: "2026-03-16: sk: prefix convention — all commands must use /sk: prefix"
   - Update existing "Update ALL 6 files" entry to reflect the full 14+ file list including sk:e2e
 
@@ -225,17 +225,17 @@ grep -c "not yet" skills/sk:setup-claude/templates/tasks/workflow-status.md.temp
 
 ## Acceptance Criteria
 
-- [ ] 27-step workflow table present and consistent across CLAUDE.md, CLAUDE.md.template, README.md, DOCUMENTATION.md
-- [ ] workflow-status.md.template has 27 rows with correct HARD GATE annotations (steps 12, 14, 16, 20, 22)
-- [ ] skills/sk:e2e/SKILL.md exists and documents agent-browser usage, hard gate behavior, Fix & Retest Protocol
-- [ ] Fix & Retest Protocol present in all 6 code-producing gate skills (lint, test, security, perf, review, e2e)
-- [ ] Dep audit (composer audit / npm audit) present in sk:lint
-- [ ] Simplify pre-step present in sk:review
-- [ ] agent-browser install present in install.sh
-- [ ] All /command refs use /sk: prefix in CLAUDE.md, templates, README, DOCUMENTATION
-- [ ] Requirement Change Flow section present in CLAUDE.md with /sk:change command
-- [ ] CHANGELOG.md updated
-- [ ] tasks/lessons.md updated with /sk: prefix convention (appended, not overwritten)
+- [x] 27-step workflow table present and consistent across CLAUDE.md, CLAUDE.md.template, README.md, DOCUMENTATION.md
+- [x] workflow-status.md.template has 27 rows with correct HARD GATE annotations (steps 12, 14, 16, 20, 22)
+- [x] skills/sk:e2e/SKILL.md exists and documents agent-browser usage, hard gate behavior, Fix & Retest Protocol
+- [x] Fix & Retest Protocol present in all 6 code-producing gate skills (lint, test, security, perf, review, e2e)
+- [x] Dep audit (composer audit / npm audit) present in sk:lint
+- [x] Simplify pre-step present in sk:review
+- [x] agent-browser install present in install.sh
+- [x] All /command refs use /sk: prefix in CLAUDE.md, templates, README, DOCUMENTATION
+- [x] Requirement Change Flow section present in CLAUDE.md with /sk:change command
+- [x] CHANGELOG.md updated
+- [x] tasks/lessons.md updated with /sk: prefix convention (appended, not overwritten)
 
 ## Risks/Unknowns
 
