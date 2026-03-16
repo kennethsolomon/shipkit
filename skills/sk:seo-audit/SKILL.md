@@ -53,14 +53,18 @@ Print: `"Source mode: found N template files ([extensions detected])"`
 
 ### Server Mode — Optional
 
-Probe these ports with a HEAD request (`curl -s -o /dev/null -w "%{http_code}" --max-time 2`):
-- 3000, 5173, 8000, 8080, 4321, 4000, 8888
+Probe ports in parallel (background curl processes) to avoid 14-second worst-case serial timeout:
+- Ports: 3000, 5173, 8000, 8080, 4321, 4000, 8888
+- Command: `curl -s -I --max-time 2 http://localhost:PORT` (HEAD request to capture both status code and headers)
+- Use the first port that returns HTTP 200 **and** has a `Content-Type: text/html` response header
 
-If any port returns 200: `"Server mode: detected running dev server at http://localhost:PORT"`
+If a port returns 200 but no `Content-Type: text/html` header, skip it — it is likely a non-HTTP service (e.g., a database, gRPC server) and not a web app. Try the next port.
 
-If none respond: `"Server mode: no dev server detected — skipping Phase 2. Start your dev server and re-run for full audit."`
+If any port qualifies: `"Server mode: detected running dev server at http://localhost:PORT"`
 
-> Note: confirm the detected URL looks correct before trusting Phase 2 results (some machines run unrelated services on these ports).
+If none respond or qualify: `"Server mode: no dev server detected — skipping Phase 2. Start your dev server and re-run for full audit."`
+
+> Note: confirm the detected URL looks correct before trusting Phase 2 results.
 
 ## Phase 1 — Source Audit
 
@@ -124,9 +128,8 @@ Apply mechanical fixes? [y/N]
 ```
 
 3. Wait for user response
-4. On `y`: apply each fix in order, log `"Fixed: [description] in [file:line]"`, mark as `- [x]` in report
+4. On `y`: apply each fix in order, log `"Fixed: [description] in [file:line]"`, mark as `- [x]` in report. On individual fix failure: log the error, mark that item `- [ ]`, and continue with remaining fixes.
 5. On `n`: mark all as `- [ ]` in report with Fix instructions
-6. On `y` with partial failure: apply what succeeds, log failures, mark failed items as `- [ ]`
 
 ## Mechanical Fixes Reference
 
@@ -150,6 +153,7 @@ Things this skill CANNOT auto-apply (report only):
 - Title/description CONTENT (only adds TODOs)
 - Schema markup content (only flags missing)
 - Backlink strategy
+- `<meta name="robots" content="noindex">` removal — only the developer can confirm whether a page is intentionally noindexed
 
 ## Generate Report
 
@@ -237,6 +241,9 @@ If only Medium/Low/Content Strategy open:
 
 If all clean:
 > "SEO audit passed — no issues found. `tasks/seo-findings.md` updated with clean baseline."
+
+If fixes were declined (`n`):
+> "SEO audit complete. **N auto-fixable issues** left open (fixes declined). Checklist in `tasks/seo-findings.md` — check off items as you manually address them."
 
 ---
 

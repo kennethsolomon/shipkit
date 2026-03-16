@@ -106,9 +106,13 @@ echo ""
 # ── Install agent-browser (E2E testing) ──────
 echo "Installing agent-browser for E2E testing (~100MB Chrome download on first run)..."
 if command -v npm &>/dev/null; then
-  npm install -g agent-browser
-  agent-browser install
-  echo "  agent-browser installed."
+  if ! command -v agent-browser &>/dev/null; then
+    npm install -g agent-browser
+    agent-browser install
+    echo "  agent-browser installed."
+  else
+    echo "  agent-browser already installed — skipping."
+  fi
 else
   echo "  WARN: npm not found. Install Node.js and then run:"
   echo "        npm install -g agent-browser && agent-browser install"
