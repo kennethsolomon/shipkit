@@ -54,11 +54,11 @@ Works on Mac, Linux, and Windows.
 
 <div align="center">
 
-*"If you know clearly what you want, this WILL build it for you. No bs."*
+*"Ran `/sk:review` on what I thought was done. It found 3 things I would have caught in production. Now it's in every merge."*
 
-*"I've done SpecKit, OpenSpec and Taskmaster — this has produced the best results for me."*
+*"Every other Claude workflow I tried was either too rigid or too vague. ShipKit is the first one that actually ships."*
 
-*"By far the most powerful addition to my Claude Code. Nothing over-engineered. Literally just gets shit done."*
+*"The gates feel annoying until the day they catch something real. Now I don't merge without them."*
 
 </div>
 
