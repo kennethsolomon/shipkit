@@ -21,34 +21,11 @@ Works on Mac, Linux, and Windows.
 
 </div>
 
-```
-~ $ shipkit
+<div align="center">
 
-           ⚑
-           |
-          /|\
-         / | \
-        /  |  \
-       /   |   \
-      / ☠  |  ☠ \
-     /     |     \
-    /______|______\
-  ▄████████████████▄
-  █  ◉          ◉  █
-   ▀██████████████▀
-     ≋  ≋  ≋  ≋  ≋
+![ShipKit terminal demo](assets/shipkit-terminal.png)
 
-  ShipKit v3.0.1
-  A structured workflow toolkit for Claude Code.
-  by Kenneth Solomon
-
-  ✓ Installed commands/sk (15 commands)
-  ✓ Installed skills (19 skills)
-
-  Done! Run /sk:help to get started.
-
-~ $
-```
+</div>
 
 ---
 
