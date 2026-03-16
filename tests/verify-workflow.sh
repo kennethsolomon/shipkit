@@ -3,7 +3,7 @@
 # Tests MUST FAIL before implementation and PASS after.
 # Run: bash tests/verify-workflow.sh
 
-set -uo pipefail
+set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PASS=0

@@ -124,7 +124,7 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 
 6. **Never skip steps without confirmation.** Steps cannot run out of order. Hard gate steps (12, 14, 16, 20, 22) can NEVER be skipped. Optional gate step (18) requires explicit confirmation to skip.
 
-7. **Requirements change mid-workflow?** Stop the current step and run `/change` immediately. It will classify the scope (behavior tweak / new requirements / scope shift) and tell you exactly where to re-enter the workflow. Never continue implementing stale requirements.
+7. **Requirements change mid-workflow?** Stop the current step and run `/sk:change` immediately. It will classify the scope (behavior tweak / new requirements / scope shift) and tell you exactly where to re-enter the workflow. Never continue implementing stale requirements.
 
 7. **Never auto-advance.** When one step completes, stop and tell the user which step is next. Do not proceed automatically.
 

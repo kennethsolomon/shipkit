@@ -72,7 +72,7 @@ Run dependency vulnerability checks for detected stacks:
 
 | Stack | Command | Block on |
 |-------|---------|----------|
-| PHP (composer.json) | `composer audit` | critical or high with fix available |
+| PHP (composer.json) | `composer audit` | any severity with fix available (`composer audit` has no severity filter) |
 | Node (package.json) | `npm audit --audit-level=high` | high or critical |
 | Node (yarn.lock) | `yarn audit --level high` | high or critical |
 | Node (pnpm-lock.yaml) | `pnpm audit --audit-level high` | high or critical |
@@ -80,9 +80,11 @@ Run dependency vulnerability checks for detected stacks:
 
 For each detected package manager, run the audit command and capture output.
 
-**Block (fail this gate):** critical or high severity vulnerabilities that have a fix available — package name, CVE, current version, fix version.
+**Block (fail this gate):**
+- PHP: any vulnerability that has a fix available (`composer audit` exits non-zero for all severities — no filtering option exists)
+- Node/Python: critical or high severity vulnerabilities that have a fix available
 
-**Warn (pass with note):** medium/low severity, or critical/high with no available fix — note in report but do not block.
+**Warn (pass with note):** medium/low severity for Node/Python, or any severity with no available fix — note in report but do not block.
 
 Skip stacks not present in the project.
 

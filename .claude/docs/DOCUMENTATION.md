@@ -4,11 +4,12 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## ✨ What's New (March 2026)
 
-**Workflow expanded to 27 steps** — Four new skills added to the core workflow:
-- `/api-design` (Step 4) — Design REST/GraphQL API contracts before implementation; mirrors `/frontend-design` but for APIs
-- `/accessibility` (Step 5) — WCAG 2.1 AA audit after design; writes `tasks/accessibility-findings.md`
-- `/perf` (Step 18) — Performance audit (bundle size, N+1 queries, Core Web Vitals); optional gate before review
-- `/hotfix` — Emergency fix workflow; skips design/TDD, all 4 quality gates still enforced
+**Workflow expanded to 27 steps (v3.1.0)** — New skills and protocols:
+- `/sk:e2e` (Step 22) — E2E behavioral verification using agent-browser; hard gate after Review
+- **Fix & Retest Protocol** — applies to all code-producing gates (Lint, Test, Security, Performance, Review, E2E): logic changes require updating unit tests before committing
+- **Sync Features step** (Step 26) — `/sk:features` runs after Finalize to keep feature specs in sync with shipped code
+- **Dependency audit** folded into `/sk:lint` — runs `composer audit` / `npm audit` / `pip-audit` alongside code linters
+- All commands standardized to `/sk:` prefix throughout docs and templates
 
 **Pencil MCP Integration** — `/frontend-design` now optionally creates visual `.pen` mockups:
 - After the text design summary, prompts: "Would you like me to create a Pencil visual mockup? (y/n)"

@@ -15,9 +15,9 @@ This is a **report-only** step. If Critical or Warning issues are found, the use
 
 ## Allowed Tools
 
-Bash, Read, Glob, Grep
+Bash, Read, Glob, Grep, Skill
 
-**Intentionally NO Write or Edit** — this skill is report-only. If issues are found, the user decides what to fix.
+**Step 0 only:** the `simplify` skill is invoked via the Skill tool, which carries its own Write/Edit permissions. All other steps are read-only — no direct Write or Edit calls. If issues are found in the main review, the user decides what to fix.
 
 ## Steps
 

@@ -84,31 +84,30 @@ Brainstorm → Plan → Branch → [Schema] → Write Tests → Implement → Co
 | 1 | read `tasks/todo.md` | Pick the next task |
 | 2 | read `tasks/lessons.md` | Review past corrections |
 | 3 | `/sk:brainstorm` | Clarify requirements — no code |
-| 4 | `/sk:frontend-design` | UI design spec *(skip if backend-only)*. Add `--pencil` to also generate a Pencil visual mockup |
-| 5 | `/sk:api-design` | API contracts *(skip if no new endpoints)* |
-| 6 | `/sk:accessibility` | WCAG 2.1 AA audit on design *(skip if no frontend)* |
-| 7 | `/sk:write-plan` | Write plan to `tasks/todo.md` |
-| 8 | `/sk:branch` | Create branch from current task |
-| 9 | `/sk:schema-migrate` | Schema change analysis *(skip if no DB changes)* |
-| 10 | `/sk:write-tests` | TDD red: write failing tests first |
-| 11 | `/sk:execute-plan` | TDD green: make tests pass |
-| 12 | `/sk:smart-commit` | Conventional commit |
-| 13 | **`/sk:lint`** | **GATE** — Lint + Dep Audit — all linters must pass |
-| 14 | `/sk:smart-commit` | Auto-skip if already clean |
-| 15 | **`/sk:test`** | **GATE** — 100% coverage on new code |
-| 16 | `/sk:smart-commit` | Auto-skip if already clean |
-| 17 | **`/sk:security-check`** | **GATE** — 0 issues |
-| 18 | `/sk:smart-commit` | Auto-skip if already clean |
-| 19 | **`/sk:perf`** | **GATE** *(optional)* — critical/high findings = 0 |
-| 20 | `/sk:smart-commit` | Auto-skip if already clean |
-| 21 | **`/sk:review`** | **GATE** — Review + Simplify — 0 issues including nitpicks |
-| 22 | `/sk:smart-commit` | Auto-skip if already clean |
-| 23 | **`/sk:e2e`** | **GATE** — E2E Tests — all end-to-end tests must pass |
-| 24 | `/sk:smart-commit` | Auto-skip if already clean |
-| 25 | `/sk:update-task` | Mark done, log completion |
-| 26 | `/sk:finish-feature` | Changelog + PR |
-| 27 | `/sk:features` | Sync Features — update docs/features/ specs *(required)* |
-| 28 | `/sk:release` | Version bump + tag *(optional)* |
+| 4 | `/sk:frontend-design` or `/sk:api-design` | Design spec *(skip if not needed)*. Frontend: add `--pencil` for Pencil visual mockup. API: REST/GraphQL contracts. |
+| 5 | `/sk:accessibility` | WCAG 2.1 AA audit on design *(skip if no frontend)* |
+| 6 | `/sk:write-plan` | Write plan to `tasks/todo.md` |
+| 7 | `/sk:branch` | Create branch from current task |
+| 8 | `/sk:schema-migrate` | Schema change analysis *(skip if no DB changes)* |
+| 9 | `/sk:write-tests` | TDD red: write failing tests first |
+| 10 | `/sk:execute-plan` | TDD green: make tests pass |
+| 11 | `/sk:smart-commit` | Conventional commit |
+| 12 | **`/sk:lint`** | **GATE** — Lint + Dep Audit — all linters must pass |
+| 13 | `/sk:smart-commit` | Auto-skip if already clean |
+| 14 | **`/sk:test`** | **GATE** — 100% coverage on new code |
+| 15 | `/sk:smart-commit` | Auto-skip if already clean |
+| 16 | **`/sk:security-check`** | **GATE** — 0 issues |
+| 17 | `/sk:smart-commit` | Auto-skip if already clean |
+| 18 | **`/sk:perf`** | **GATE** *(optional)* — critical/high findings = 0 |
+| 19 | `/sk:smart-commit` | Auto-skip if already clean |
+| 20 | **`/sk:review`** | **GATE** — Review + Simplify — 0 issues including nitpicks |
+| 21 | `/sk:smart-commit` | Auto-skip if already clean |
+| 22 | **`/sk:e2e`** | **GATE** — E2E Tests — all end-to-end tests must pass |
+| 23 | `/sk:smart-commit` | Auto-skip if already clean |
+| 24 | `/sk:update-task` | Mark done, log completion |
+| 25 | `/sk:finish-feature` | Changelog + PR |
+| 26 | `/sk:features` | Sync Features — update docs/features/ specs *(required)* |
+| 27 | `/sk:release` | Version bump + tag *(optional)* |
 
 > **Fix & Retest Protocol:** All code-producing gates (Lint, Test, Security, Performance, Review, E2E) apply the Fix & Retest Protocol: logic changes require updating unit tests before committing the fix. Fix immediately, then re-run — never ask the user to re-run.
 
