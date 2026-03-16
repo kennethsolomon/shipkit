@@ -8,6 +8,23 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.0.7] - 2026-03-16
+
+### Fixed
+
+- **Command palette duplicates**: Removed `commands/sk/release.md` and `commands/sk/features.md` — both duplicated their SKILL.md counterparts, causing `/sk:release` and `/sk:features` to appear multiple times in the palette
+- Removed corresponding `release.md.template` and `features.md.template` from `sk:setup-claude` templates to prevent re-generating the conflict
+
+### Added
+
+- **`/sk:frontend-design --pencil`**: New `--pencil` flag to jump directly to the Pencil visual mockup phase without going through the design summary prompt
+- Pencil prompt at end of design summary is now a hard-stop (`MUST stop and ask`) so it can no longer be silently skipped
+
+### Changed
+
+- Updated Pencil prompt to clearly state prerequisites: Pencil app must be open and Pencil MCP must be connected
+- Updated `README.md`, `CLAUDE.md`, `help.md`, and `sk:setup-claude` CLAUDE.md template to document the `--pencil` flag and clarify it is opt-in
+
 ## [3.0.6] - 2026-03-16
 
 ### Fixed
