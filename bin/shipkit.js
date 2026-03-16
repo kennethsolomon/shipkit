@@ -32,7 +32,8 @@ ${cyan}   ▀██████████████▀${reset}
 ${cyan}     ≋  ≋  ≋  ≋  ≋${reset}
 
   ${bold}ShipKit${reset} ${dim}v${pkg.version}${reset}
-  A structured workflow toolkit for Claude Code.
+  Quality-gated workflow toolkit for Claude Code.
+  TDD · Lint · Security · Review · Ship.
   by Kenneth Solomon
 
 `;
