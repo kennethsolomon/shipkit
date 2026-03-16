@@ -77,6 +77,24 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
   - `release/references/android-checklist.md` — 14-section Play Store checklist
   - `release/references/ios-checklist.md` — 14-section App Store checklist
 
+### Fixed
+
+#### Command Implementations & Quality Gates
+- **`/sk:help`** — Improved output with clean "Meta" section at top (displays 3 key commands: `/sk:help`, `/sk:status`, `/sk:skill-creator`)
+- **`/sk:help`** — Removed duplicate `/sk:release` entry from all-commands list
+- **`/sk:config`** — Added full executable implementation (Python) for viewing and managing `.shipkit/config.json`
+  - Displays current config in formatted table with descriptions
+  - Shows model assignments for current profile
+  - Integrates with `/sk:set-profile` for profile switching
+- **`/sk:set-profile`** — Added full executable implementation (Python) for switching model routing profiles
+  - Accepts profile argument or displays options interactively
+  - Validates profile names (full-sail, quality, balanced, budget)
+  - Updates config file and displays new model assignments
+  - Creates `.shipkit/` directory and adds to `.gitignore` automatically
+- **`/sk:finish-feature`** — Fixed missing YAML frontmatter (was preventing skill registration)
+  - All 18 ShipKit commands now have valid frontmatter and descriptions
+  - Audit script validates all commands pass validation checks
+
 ---
 
 ## [2.1.0] - 2026-03-07
