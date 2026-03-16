@@ -72,7 +72,7 @@ npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-
 
 Create `vitest.config.ts`:
 ```ts
-import { defineConfig } from 'vitest/sk:config';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({

@@ -53,36 +53,38 @@ Read each file in scope before auditing.
 - **A09 Logging Failures** — Missing audit logs, PII in logs, no alerting on security events
 - **A10 SSRF** — Unvalidated URLs, internal network access, DNS rebinding
 
-### 2. Stack-Specific Checks (Unknown / Unknown)
+### 2. Stack-Specific Checks
 
-**If Unknown includes React/Next.js:**
+Detect the project stack from `CLAUDE.md`, `package.json`, `composer.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, etc. Apply the relevant checks below for every detected framework/language.
+
+**If the project uses React/Next.js:**
 - `dangerouslySetInnerHTML` usage without sanitization
 - Client-side secrets (API keys in browser bundles)
 - Missing CSP headers
 - Server component data leaking to client
 - `getServerSideProps`/Server Actions exposing internal data
 
-**If Unknown includes Express/Node.js:**
+**If the project uses Express/Node.js:**
 - Missing helmet/security headers
 - Unsanitized user input in `req.params`, `req.query`, `req.body`
 - Path traversal via `req.params` in file operations
 - Missing rate limiting on auth endpoints
 - Prototype pollution
 
-**If Unknown is Python:**
+**If the project uses Python:**
 - `eval()`, `exec()`, `pickle.loads()` with untrusted input
 - SQL string formatting instead of parameterized queries
 - `subprocess.shell=True` with user input
 - Missing input validation on FastAPI/Django endpoints
 - Jinja2 `| safe` filter misuse
 
-**If Unknown is Go:**
+**If the project uses Go:**
 - Unchecked error returns on security-critical operations
 - `html/template` vs `text/template` confusion
 - Missing context cancellation/timeouts
 - Race conditions on shared state
 
-**If Unknown is PHP:**
+**If the project uses PHP/Laravel:**
 - `include`/`require` with user-controlled paths
 - `mysqli_query` without prepared statements
 - Missing CSRF tokens
@@ -112,7 +114,7 @@ Write findings to `tasks/security-findings.md` using this format:
 # Security Audit — YYYY-MM-DD
 
 **Scope:** Changed files on branch `<branch-name>` | Full project scan
-**Stack:** Unknown / Unknown
+**Stack:** `<detected stack — e.g. Laravel / React>`
 **Files audited:** N
 
 ## Critical (must fix before deploy)

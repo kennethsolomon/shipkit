@@ -83,22 +83,24 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
 
    Tests should have been created during `/sk:execute-plan`. Verify:
 
-   a) **Automated Tests**
-      - Execute: `npm test`
-      - Verify all tests pass with no failures
-      - Check test coverage (target: >80% for new code in `Unknown` projects)
-      - No skipped tests (`test.skip`, `it.skip`, `@skip`, etc.)
-      - Run other CI checks: lint (`npm run lint` or equivalent), build (`npm run build` or equivalent)
+   Detect the project stack from `CLAUDE.md`, `package.json`, `composer.json`, etc. before running checks.
 
-   b) **Manual Testing - Unknown / Unknown**
-      - For frontend (Unknown): Render the component/page in browser, verify state updates work correctly, test all user interactions (clicks, form inputs, navigation), verify conditional rendering, check edge cases and error states
-      - For backend/API (Unknown): Test HTTP status codes and responses, verify request/response bodies match spec, test error cases and input validation, check database transactions/state, verify authentication/authorization if applicable
-      - For CLI/desktop (Unknown): Test command-line arguments and flags, verify output format and readability, test error messages and help text, check file I/O operations
-      - Using Unknown framework: Verify test structure matches project conventions, assertions are clear and specific, setup/teardown is properly handled
+   a) **Automated Tests**
+      - Execute the detected test runner (e.g. `npm test`, `./vendor/bin/pest`, `python -m pytest`)
+      - Verify all tests pass with no failures
+      - Check test coverage (target: >80% for new code)
+      - No skipped tests (`test.skip`, `it.skip`, `@skip`, etc.)
+      - Run other CI checks: lint and build using project-detected commands
+
+   b) **Manual Testing**
+      - For frontend (if detected): Render the component/page in browser, verify state updates work correctly, test all user interactions (clicks, form inputs, navigation), verify conditional rendering, check edge cases and error states
+      - For backend/API (if detected): Test HTTP status codes and responses, verify request/response bodies match spec, test error cases and input validation, check database transactions/state, verify authentication/authorization if applicable
+      - For CLI/desktop (if detected): Test command-line arguments and flags, verify output format and readability, test error messages and help text, check file I/O operations
+      - Verify test structure matches project conventions, assertions are clear and specific, setup/teardown is properly handled
 
    c) **Regression Testing**
       - Test related existing functionality to ensure no breakage
-      - For Unknown projects: check related components/endpoints/commands work correctly
+      - Check related components/endpoints/commands work correctly
       - Verify no new console errors, warnings, or debug statements
       - Confirm existing tests still pass
 
@@ -107,7 +109,7 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
       - Proper error handling and validation
       - No debugging code (`console.log`, `debugger`, `pdb`, `print` statements, etc.)
       - Comments explain *why*, not *what*
-      - Follows Unknown conventions and style guide (see `CLAUDE.md`)
+      - Follows project conventions and style guide (see `CLAUDE.md`)
 
 6. **Security Gate**
    - If `/sk:security-check` has not been run on this branch, recommend: "Run `/sk:security-check` before creating a PR."
