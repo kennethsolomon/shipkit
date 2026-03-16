@@ -89,20 +89,25 @@ Write findings to `tasks/accessibility-findings.md`:
 
 ## Failures (must fix)
 
-- **[Component/File:Line]** Description
+- [ ] **[Component/File:Line]** Description
+  **Criterion:** WCAG X.X.X — [Name]
+  **Impact:** [Who is affected and how]
+  **Recommendation:** [How to fix]
+
+- [x] **[Component/File:Line]** Description *(resolved)*
   **Criterion:** WCAG X.X.X — [Name]
   **Impact:** [Who is affected and how]
   **Recommendation:** [How to fix]
 
 ## Warnings (should fix)
 
-- **[Component/File:Line]** Description
+- [ ] **[Component/File:Line]** Description
   **Criterion:** WCAG X.X.X — [Name]
   **Recommendation:** [How to fix]
 
 ## Manual Checks Required
 
-- [Things that require human/screen reader testing]
+- [ ] [Things that require human/screen reader testing]
 
 ## Passed Checks
 
@@ -110,11 +115,11 @@ Write findings to `tasks/accessibility-findings.md`:
 
 ## Summary
 
-| Level    | Count |
-|----------|-------|
-| Failures | N     |
-| Warnings | N     |
-| Manual   | N     |
+| Level    | Open | Resolved this run |
+|----------|------|-------------------|
+| Failures | N    | N                 |
+| Warnings | N    | N                 |
+| Manual   | N    | N                 |
 ```
 
 **Never overwrite** `tasks/accessibility-findings.md` — append new audits with a date header.

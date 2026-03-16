@@ -108,7 +108,7 @@ Detect the project stack from `CLAUDE.md`, `package.json`, `composer.json`, `pyp
 
 ## Generate Report
 
-Write findings to `tasks/security-findings.md` using this format:
+Write findings to `tasks/security-findings.md` using this format. **Never overwrite** `tasks/security-findings.md` — append new audits with a date header. Old run checkboxes stay as-is (audit trail); only update findings from the current run.
 
 ```markdown
 # Security Audit — YYYY-MM-DD
@@ -119,42 +119,43 @@ Write findings to `tasks/security-findings.md` using this format:
 
 ## Critical (must fix before deploy)
 
-- **[FILE:LINE]** Description of vulnerability
+- [ ] **[FILE:LINE]** Description of vulnerability
   **Standard:** OWASP A03 — Injection (CWE-89)
   **Risk:** What could happen if exploited
   **Recommendation:** How to fix it
+- [x] **[FILE:LINE]** Description *(resolved)*
 
 ## High (fix before production)
 
-- **[FILE:LINE]** Description
+- [ ] **[FILE:LINE]** Description
   **Standard:** ...
   **Risk:** ...
   **Recommendation:** ...
 
 ## Medium (should fix)
 
-- **[FILE:LINE]** Description
+- [ ] **[FILE:LINE]** Description
   **Standard:** ...
   **Recommendation:** ...
 
 ## Low / Informational
 
-- **[FILE:LINE]** Description
+- [ ] **[FILE:LINE]** Description
   **Recommendation:** ...
 
 ## Passed Checks
 
-- List of categories that passed with no findings
+- [Categories with no findings]
 
 ## Summary
 
-| Severity | Count |
-|----------|-------|
-| Critical | N |
-| High     | N |
-| Medium   | N |
-| Low      | N |
-| **Total** | **N** |
+| Severity | Open | Resolved this run |
+|----------|------|-------------------|
+| Critical | N    | N                 |
+| High     | N    | N                 |
+| Medium   | N    | N                 |
+| Low      | N    | N                 |
+| **Total** | **N** | **N**            |
 ```
 
 ## When Done
@@ -162,12 +163,12 @@ Write findings to `tasks/security-findings.md` using this format:
 Tell the user:
 
 > "Security audit complete. Findings saved to `tasks/security-findings.md`.
-> - **Critical:** N | **High:** N | **Medium:** N | **Low:** N
+> - **Critical:** N open (N resolved) | **High:** N open (N resolved) | **Medium:** N open | **Low:** N open
 >
 > Review the findings, then run `/sk:finish-feature` when ready to finalize."
 
 If there are Critical or High findings:
-> "There are critical/high findings that should be addressed before merging. Fix them, then re-run `/sk:security-check` to verify."
+> "There are critical/high findings that MUST be fixed before merging. These are HARD GATE items — `- [ ]` findings block all forward progress. Fix them, then re-run `/sk:security-check` to verify."
 
 **Do not auto-fix.** The user decides what to address.
 

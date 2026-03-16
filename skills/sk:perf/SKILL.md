@@ -120,24 +120,25 @@ Write findings to `tasks/perf-findings.md`:
 
 ## Critical
 
-- **[FILE:LINE]** Description
+- [ ] **[FILE:LINE]** Description
   **Impact:** What happens at scale
   **Recommendation:** How to fix
+- [x] **[FILE:LINE]** Description *(resolved)*
 
 ## High
 
-- **[FILE:LINE]** Description
+- [ ] **[FILE:LINE]** Description
   **Impact:** ...
   **Recommendation:** ...
 
 ## Medium
 
-- **[FILE:LINE]** Description
+- [ ] **[FILE:LINE]** Description
   **Recommendation:** ...
 
 ## Low
 
-- **[FILE:LINE]** Description
+- [ ] **[FILE:LINE]** Description
   **Recommendation:** ...
 
 ## Passed Checks
@@ -146,13 +147,13 @@ Write findings to `tasks/perf-findings.md`:
 
 ## Summary
 
-| Severity | Count |
-|----------|-------|
-| Critical | N |
-| High     | N |
-| Medium   | N |
-| Low      | N |
-| **Total** | **N** |
+| Severity | Open | Resolved this run |
+|----------|------|-------------------|
+| Critical | N    | N                 |
+| High     | N    | N                 |
+| Medium   | N    | N                 |
+| Low      | N    | N                 |
+| **Total** | **N** | **N**            |
 ```
 
 **Never overwrite** `tasks/perf-findings.md` — append new audits with a date header.

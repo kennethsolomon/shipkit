@@ -353,6 +353,129 @@ assert_contains \
 
 echo ""
 
+# ── Milestone 3: sk:seo-audit Skill ─────────────────────────────────────────
+
+echo "── Milestone 3: sk:seo-audit Skill ──"
+
+SEO_SKILL="$REPO/skills/sk:seo-audit/SKILL.md"
+
+assert_file_exists \
+  "sk:seo-audit SKILL.md exists" \
+  "$SEO_SKILL"
+
+assert_contains \
+  "sk:seo-audit documents dual-mode (running dev server)" \
+  "$SEO_SKILL" \
+  "running dev server"
+
+assert_contains \
+  "sk:seo-audit documents port detection" \
+  "$SEO_SKILL" \
+  "3000"
+
+assert_contains \
+  "sk:seo-audit has ask-before-fix prompt" \
+  "$SEO_SKILL" \
+  "Apply.*fixes"
+
+assert_contains \
+  "sk:seo-audit uses checkbox format" \
+  "$SEO_SKILL" \
+  "\- \[ \]"
+
+assert_contains \
+  "sk:seo-audit outputs to seo-findings.md" \
+  "$SEO_SKILL" \
+  "seo-findings.md"
+
+assert_contains \
+  "sk:seo-audit has Content Strategy section" \
+  "$SEO_SKILL" \
+  "Content Strategy"
+
+assert_contains \
+  "sk:seo-audit has Passed Checks section" \
+  "$SEO_SKILL" \
+  "Passed Checks"
+
+assert_contains \
+  "sk:seo-audit audits robots.txt" \
+  "$SEO_SKILL" \
+  "robots.txt"
+
+assert_contains \
+  "sk:seo-audit audits Open Graph tags" \
+  "$SEO_SKILL" \
+  "og:title"
+
+assert_contains \
+  "sk:seo-audit has Fix & Retest Protocol" \
+  "$SEO_SKILL" \
+  "Fix & Retest Protocol"
+
+assert_contains \
+  "sk:seo-audit has model routing section" \
+  "$SEO_SKILL" \
+  "Model Routing"
+
+assert_contains \
+  "sk:seo-audit in CLAUDE.md commands table" \
+  "$CLAUDE" \
+  "sk:seo-audit"
+
+assert_contains \
+  "sk:seo-audit in README.md" \
+  "$REPO/README.md" \
+  "sk:seo-audit"
+
+assert_contains \
+  "sk:seo-audit in DOCUMENTATION.md" \
+  "$REPO/.claude/docs/DOCUMENTATION.md" \
+  "sk:seo-audit"
+
+assert_contains \
+  "sk:seo-audit in install.sh" \
+  "$REPO/install.sh" \
+  "sk:seo-audit"
+
+echo ""
+
+# ── Milestone 4: Checklist Format Rollout ────────────────────────────────────
+
+echo "── Milestone 4: Checklist Format Rollout ──"
+
+assert_contains \
+  "sk:perf report uses checkbox format" \
+  "$REPO/skills/sk:perf/SKILL.md" \
+  "\- \[ \]"
+
+assert_contains \
+  "sk:perf report has Passed Checks section" \
+  "$REPO/skills/sk:perf/SKILL.md" \
+  "Passed Checks"
+
+assert_contains \
+  "sk:accessibility report uses checkbox format" \
+  "$REPO/skills/sk:accessibility/SKILL.md" \
+  "\- \[ \]"
+
+assert_contains \
+  "sk:accessibility report has Passed Checks section" \
+  "$REPO/skills/sk:accessibility/SKILL.md" \
+  "Passed Checks"
+
+assert_contains \
+  "sk:security-check report uses checkbox format" \
+  "$REPO/commands/sk/security-check.md" \
+  "\- \[ \]"
+
+assert_contains \
+  "sk:security-check report has Passed Checks section" \
+  "$REPO/commands/sk/security-check.md" \
+  "Passed Checks"
+
+echo ""
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 echo "=== Results: $PASS passed, $FAIL failed ==="
