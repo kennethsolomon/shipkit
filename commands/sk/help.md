@@ -19,6 +19,7 @@ Run these commands in order for a complete, quality-gated feature build.
 | `/sk:schema-migrate` | Analyze schema changes *(skip if no DB changes)* |
 | `/sk:write-tests` | TDD red: write failing tests first |
 | `/sk:execute-plan` | TDD green: implement until tests pass |
+| `/sk:change` | Requirements changed? Re-enter at the right step |
 | `/sk:smart-commit` | Conventional commit with approval |
 | `/sk:lint` | **GATE** — all linters must pass |
 | `/sk:test` | **GATE** — 100% coverage on new code |
@@ -112,4 +113,4 @@ Config lives in `.shipkit/config.json` — per project, gitignored by default.
 
 ---
 
-**ShipKit** by Kenneth Solomon · `npx @kennethsolomon/shipkit` to install/update
+**ShipKit** by Kenneth Solomon · `npm install -g @kennethsolomon/shipkit` to install/update
