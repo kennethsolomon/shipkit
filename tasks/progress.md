@@ -36,6 +36,34 @@
 | grep .agents/skills (non-tasks) | no matches | no matches | pass |
 | python3 validate plugin.json | valid | valid | pass |
 
+## Session: 2026-03-16
+- Started: Workflow enhancement — E2E, Fix & Retest Protocol, sk:features, simplify, dep audit, sk:change, /sk: prefix
+- Branch: feature/workflow-e2e-fix-retest-sk-prefix
+
+## Work Log (2026-03-16)
+- Created `skills/sk:e2e/SKILL.md` — new agent-browser E2E hard gate skill
+- Updated `skills/sk:lint/SKILL.md` — dep audit (composer audit, npm audit, pip-audit) + Fix & Retest Protocol
+- Updated `skills/sk:test/SKILL.md` — Fix & Retest Protocol
+- Updated `commands/sk/security-check.md` — Fix & Retest Protocol (note: security-check lives here, not in skills/)
+- Updated `skills/sk:perf/SKILL.md` — Fix & Retest Protocol
+- Updated `skills/sk:review/SKILL.md` — simplify pre-step (Step 0) + Fix & Retest Protocol
+- Updated `CLAUDE.md` — 27-step workflow, Fix & Retest Protocol, Requirement Change Flow, /sk: prefix on all commands
+- Updated `skills/sk:setup-claude/templates/CLAUDE.md.template` — identical changes
+- Updated `skills/sk:setup-claude/templates/tasks/workflow-status.md.template` — 27 rows, new hard gate step 22
+- Updated `README.md` — 27-step workflow, /sk: prefix, Fix & Retest mention
+- Updated `skills/sk:setup-optimizer/SKILL.md` — step count 24→27, new flow line, hard gates 12/14/16/20/22
+- Updated `install.sh` — agent-browser mandatory install block
+- Updated 5 command templates (brainstorm, write-plan, execute-plan, security-check, finish-feature) — new flow breadcrumb
+- Updated `.claude/docs/DOCUMENTATION.md` — 27 steps, sk:e2e in skills list, updated flowchart
+- Updated `CHANGELOG.md` — v3.1.0 entry
+- Appended `tasks/lessons.md` — /sk: prefix convention + expanded 14-file update list
+- Created `tests/verify-workflow.sh` — 52 assertions, all passing
+
+## Test Results (2026-03-16)
+| Suite | Result |
+|-------|--------|
+| tests/verify-workflow.sh | 52/52 PASS |
+
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|

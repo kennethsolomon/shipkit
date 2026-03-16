@@ -23,6 +23,23 @@ Bash, Read, Glob, Grep
 
 You MUST complete these steps in order:
 
+### 0. Run Simplify First
+
+Before reviewing, invoke the built-in `simplify` skill on the changed files to catch reuse, quality, and efficiency issues automatically:
+
+> "Review the changed files on this branch for reuse, quality, and efficiency. Fix any issues found."
+
+Use `git diff main..HEAD --name-only` to identify the changed files, then run simplify on them.
+
+If simplify makes any changes:
+1. Verify the changes are correct
+2. Commit them with `/sk:smart-commit` before continuing the review
+3. Note in the review report: "Simplify pre-pass: X files updated"
+
+If simplify makes no changes, proceed directly to step 1.
+
+**Note:** Simplify runs automatically as part of `/sk:review` — users do not need to run it separately.
+
 ### 1. Read Project Context
 
 ```
@@ -326,6 +343,20 @@ If the user wants to fix nitpicks, loop back to `/sk:debug` + `/sk:smart-commit`
 
 If the review is **completely clean**:
 > "Review complete — no issues found. Run `/sk:finish-feature` to finalize the branch and create a PR."
+
+### Fix & Retest Protocol
+
+When applying a fix from this review, classify it before committing:
+
+**a. Style/naming/comment change** (rename variable, add doc comment, reorder imports, extract constant) → commit and re-run `/sk:review`. No test update needed.
+
+**b. Logic change** (fix incorrect condition, add missing null check, change data flow, refactor algorithm, fix async bug) → trigger protocol:
+1. Update or add failing unit tests for the corrected behavior
+2. Re-run `/sk:test` — must pass at 100% coverage
+3. Commit (tests + fix together in one commit)
+4. Re-run `/sk:review` from scratch
+
+**Why:** Review catches logic bugs. Fixing a logic bug without updating tests leaves the test suite asserting on the old (wrong) behavior.
 
 ---
 

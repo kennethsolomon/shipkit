@@ -2,11 +2,11 @@
 
 # Finish Feature Command
 
-**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → **Finalize** → Release
+**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → **Finish** → Sync Features
 
 Finalize a feature/bug-fix branch: changelog, arch log, security gate, verification, and PR creation.
 
-This is the **last step before `/release`**. It auto-commits documentation changes (changelog, arch log) so you don't need to loop back to `/commit` for docs-only work.
+This is the **last step before `/sk:release`**. It auto-commits documentation changes (changelog, arch log) so you don't need to loop back to `/sk:smart-commit` for docs-only work.
 
 ## Before You Start
 
@@ -16,7 +16,7 @@ before marking the feature done. This is the last gate before merge — catch re
 mistakes here rather than in review.
 
 If `tasks/security-findings.md` exists, read it. Check that any Critical or High
-severity findings from the most recent `/security-check` audit have been addressed.
+severity findings from the most recent `/sk:security-check` audit have been addressed.
 If unresolved Critical/High findings remain, warn the user before proceeding.
 
 ## Steps
@@ -69,7 +69,7 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
         - Migration/Compatibility: Any breaking changes?
       - Verify the auto-filled sections (Summary, Type, What Changed, Impact)
 
-   c) **Auto-commit the arch log** (no need to go back to `/commit`):
+   c) **Auto-commit the arch log** (no need to go back to `/sk:smart-commit`):
       ```bash
       git add .claude/docs/architectural_change_log/
       git commit -m "docs: add architectural changelog entry"
@@ -79,7 +79,7 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
 
 5. **Verification** (with Test Checklist for Reviewers)
 
-   Tests should have been created during `/execute-plan`. Verify:
+   Tests should have been created during `/sk:execute-plan`. Verify:
 
    a) **Automated Tests**
       - Execute: `[TEST_COMMAND]`
@@ -108,7 +108,7 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
       - Follows [LANGUAGE] conventions and style guide (see `CLAUDE.md`)
 
 6. **Security Gate**
-   - Read `tasks/security-findings.md`. If it doesn't exist or has no audit for this branch, recommend: "Run `/security-check` before creating a PR."
+   - Read `tasks/security-findings.md`. If it doesn't exist or has no audit for this branch, recommend: "Run `/sk:security-check` before creating a PR."
    - If the most recent audit has unresolved Critical or High findings, list them and ask the user to confirm they've been addressed before proceeding.
 
 7. **Create Pull Request**
@@ -126,7 +126,7 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
 
    c) **Generate PR title and body:**
       - Title: Short, imperative, under 70 characters
-      - Body: Summary of changes, review findings (if any from `/review`), test status
+      - Body: Summary of changes, review findings (if any from `/sk:review`), test status
 
    d) **Create PR:**
    ```bash
@@ -152,4 +152,4 @@ EOF
 
 ## When Done
 
-> "Feature finalized and PR created! Run `/release` when ready to tag and publish."
+> "Feature finalized and PR created! Run `/sk:release` when ready to tag and publish."

@@ -102,6 +102,19 @@ if [[ ${skills_skipped} -gt 0 || ${commands_skipped} -gt 0 ]]; then
   echo "Skipped ${skills_skipped} skills, ${commands_skipped} commands (real dirs/files)"
 fi
 echo ""
+
+# ── Install agent-browser (E2E testing) ──────
+echo "Installing agent-browser for E2E testing (~100MB Chrome download on first run)..."
+if command -v npm &>/dev/null; then
+  npm install -g agent-browser
+  agent-browser install
+  echo "  agent-browser installed."
+else
+  echo "  WARN: npm not found. Install Node.js and then run:"
+  echo "        npm install -g agent-browser && agent-browser install"
+fi
+echo ""
+
 echo "Installation complete."
 echo ""
 echo "Run /sk:help to see all commands."

@@ -171,6 +171,27 @@ If there are no critical or high findings:
 
 ---
 
+## Fix & Retest Protocol
+
+When applying a performance fix, classify it before committing:
+
+**a. Config/infrastructure change** (adding cache headers, enabling compression, changing CDN config, adjusting connection pool size) → commit and re-run `/sk:perf`. No test update needed.
+
+**b. Logic change** (fixing N+1 query by changing data-fetching logic, refactoring algorithm, modifying data structure, changing pagination logic) → trigger protocol:
+1. Update or add failing unit tests for the new optimized behavior
+2. Re-run `/sk:test` — must pass at 100% coverage
+3. Commit (tests + fix together in one commit)
+4. Re-run `/sk:perf` to verify the fix resolved the finding
+
+**Common logic-change performance fixes:**
+- N+1 fix: changes how related data is fetched → update tests that assert on query count or data shape
+- Algorithm change: O(n²) → O(n log n) → update tests that assert on output correctness
+- Pagination: adding LIMIT/offset → update tests that assert on result set size
+
+**Why:** Performance fixes often change how data is fetched or processed. Tests must verify the optimized path produces correct results.
+
+---
+
 ## Model Routing
 
 Read `.shipkit/config.json` from the project root if it exists.

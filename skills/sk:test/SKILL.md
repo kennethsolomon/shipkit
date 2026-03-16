@@ -154,6 +154,23 @@ All detected suites pass with 100% coverage on new code. Both lines of the repor
 
 ---
 
+## Fix & Retest Protocol
+
+When a test failure requires an implementation fix, classify the fix before committing:
+
+**a. Bug fix — same behavior contract** (the code was wrong, the test expectation was right) → fix the implementation, re-run `/sk:test`. No test update needed.
+
+**b. Logic change** (new behavior, changed data contract, modified function signature, new code path) → trigger protocol:
+1. Update or add failing unit tests to reflect the new behavior (RED first)
+2. Fix the implementation to make the updated tests pass (GREEN)
+3. Re-run `/sk:test` — must pass at 100% coverage
+4. Commit (tests + fix together in one commit)
+5. Re-run the gate that triggered this fix (Security, Performance, Review, or E2E)
+
+**Why this matters:** quality gates (Security, Performance, Review, E2E) run after tests pass. If those gates require logic fixes, tests can become stale. This protocol ensures tests always reflect the actual implementation.
+
+---
+
 ## Model Routing
 
 Read `.shipkit/config.json` from the project root if it exists.

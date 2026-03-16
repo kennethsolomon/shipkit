@@ -8,6 +8,24 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-03-16
+
+### Added
+- `sk:e2e` — new hard gate E2E skill using agent-browser for behavioral verification after Review
+- Fix & Retest Protocol — applies to all code-producing gates (Lint, Test, Security, Performance, Review, E2E): logic changes require updating unit tests before committing the fix
+- Sync Features step (step 26) — runs `/sk:features` after Finalize to keep feature specs in sync with shipped code
+- Requirement Change Flow section — documents `/sk:change` for mid-workflow requirement changes
+- Dependency audit in `/sk:lint` — runs `composer audit` / `npm audit` / `pip-audit` alongside code linters
+- agent-browser mandatory install in `install.sh` (~100MB Chrome download on first run)
+
+### Changed
+- Workflow expanded from 24 → 27 steps (new steps: 22 E2E Tests, 23 conditional commit, 26 Sync Features)
+- Hard gates updated: 4 → 5 (added step 22 E2E Tests)
+- Step 12 renamed: "Lint" → "Lint + Dep Audit"
+- Step 20 renamed: "Review" → "Review + Simplify" (sk:review now runs simplify pre-pass automatically)
+- All command references standardized to `/sk:` prefix across CLAUDE.md, templates, README, and DOCUMENTATION.md
+- `/sk:review` now runs built-in `simplify` as a pre-pass before the full multi-dimensional review
+
 ## [3.0.7] - 2026-03-16
 
 ### Fixed
