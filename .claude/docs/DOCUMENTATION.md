@@ -4,11 +4,12 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## ✨ What's New (March 2026)
 
-**Workflow expanded to 24 steps** — Four new skills added to the core workflow:
-- `/api-design` (Step 4) — Design REST/GraphQL API contracts before implementation; mirrors `/frontend-design` but for APIs
-- `/accessibility` (Step 5) — WCAG 2.1 AA audit after design; writes `tasks/accessibility-findings.md`
-- `/perf` (Step 18) — Performance audit (bundle size, N+1 queries, Core Web Vitals); optional gate before review
-- `/hotfix` — Emergency fix workflow; skips design/TDD, all 4 quality gates still enforced
+**Workflow expanded to 27 steps (v3.1.0)** — New skills and protocols:
+- `/sk:e2e` (Step 22) — E2E behavioral verification using agent-browser; hard gate after Review
+- **Fix & Retest Protocol** — applies to all code-producing gates (Lint, Test, Security, Performance, Review, E2E): logic changes require updating unit tests before committing
+- **Sync Features step** (Step 26) — `/sk:features` runs after Finalize to keep feature specs in sync with shipped code
+- **Dependency audit** folded into `/sk:lint` — runs `composer audit` / `npm audit` / `pip-audit` alongside code linters
+- All commands standardized to `/sk:` prefix throughout docs and templates
 
 **Pencil MCP Integration** — `/frontend-design` now optionally creates visual `.pen` mockups:
 - After the text design summary, prompts: "Would you like me to create a Pencil visual mockup? (y/n)"
@@ -48,6 +49,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/debug`](#debug) — Structured debugging
   - [`/perf`](#perf) — Performance audit (bundle, N+1, Core Web Vitals)
   - [`/review`](#review) — Self-review across 7 dimensions (report-only)
+  - [`/sk:e2e`](#ske2e) — E2E behavioral verification using agent-browser — final quality gate
   - [`/hotfix`](#hotfix) — Emergency fix workflow
   - [`/finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
   - [`/release`](#release) — Release automation + mobile store audits
@@ -82,7 +84,7 @@ This generates **per-project commands** (like `/finish-feature`, `/write-plan`, 
 
 | Type | Available after | Scope | Commands |
 |------|----------------|-------|----------|
-| **Global skills** | Step 1 (clone + link) | Every project | `/brainstorm`, `/frontend-design`, `/api-design`, `/accessibility`, `/write-tests`, `/execute-plan`, `/smart-commit`, `/lint`, `/test`, `/debug`, `/security-check`, `/perf`, `/review`, `/hotfix`, `/update-task`, `/finish-feature`, `/release`, `/schema-migrate`, `/setup-claude`, `/setup-optimizer` |
+| **Global skills** | Step 1 (clone + link) | Every project | `/sk:brainstorm`, `/sk:frontend-design`, `/sk:api-design`, `/sk:accessibility`, `/sk:write-tests`, `/sk:execute-plan`, `/sk:smart-commit`, `/sk:lint`, `/sk:test`, `/sk:debug`, `/sk:security-check`, `/sk:perf`, `/sk:review`, `/sk:e2e`, `/sk:hotfix`, `/sk:update-task`, `/sk:finish-feature`, `/sk:features`, `/sk:release`, `/sk:schema-migrate`, `/setup-claude`, `/setup-optimizer` |
 | **Per-project commands** | Step 2 (`/setup-claude`) | That project only | `/finish-feature`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/re-setup` |
 
 ### Updating
@@ -100,7 +102,7 @@ git pull
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         CLAUDE SKILLS WORKFLOW (24 STEPS)                   │
+│                         CLAUDE SKILLS WORKFLOW (27 STEPS)                   │
 │                        (Auto-context & Bug Prevention)                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 
@@ -154,37 +156,43 @@ PHASE 5: IMPLEMENT (Code Time)
                               ↓
 PHASE 6: QUALITY GATES (all are HARD GATES — cannot be skipped)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 12 — /lint  ★ HARD GATE                                            │
+│ Step 12 — /sk:lint  ★ HARD GATE (Lint + Dep Audit)                     │
 │ • All linting tools must pass. Fix and re-run until clean.              │
-│ Step 13 — /smart-commit  (conditional — skip if lint was clean)         │
+│ Step 13 — /sk:smart-commit  (conditional — skip if lint was clean)     │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 14 — /test  ★ HARD GATE — 100% coverage on new code               │
+│ Step 14 — /sk:test  ★ HARD GATE — 100% coverage on new code            │
 │ • All test suites must pass. Fix and re-run until clean.                │
-│ Step 15 — /smart-commit  (conditional)                                  │
+│ Step 15 — /sk:smart-commit  (conditional)                              │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 16 — /security-check  ★ HARD GATE — 0 issues across all severities│
+│ Step 16 — /sk:security-check  ★ HARD GATE — 0 issues all severities   │
 │ • Reads: tasks/security-findings.md (prior audits), tasks/lessons.md   │
 │ • OWASP Top 10, CWE references, stack-specific checks                  │
 │ • Writes: tasks/security-findings.md (severity-rated findings)          │
-│ Step 17 — /smart-commit  (conditional)                                  │
+│ Step 17 — /sk:smart-commit  (conditional)                              │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 18 — /perf  (OPTIONAL GATE — loop until critical/high = 0)        │
+│ Step 18 — /sk:perf  (OPTIONAL GATE — loop until critical/high = 0)    │
 │ • Frontend: bundle size, render perf, Core Web Vitals (LCP, CLS, INP) │
 │ • Backend: N+1 queries, missing indexes, unbounded queries, caching    │
 │ • Writes: tasks/perf-findings.md (append-only)                         │
-│ Step 19 — /smart-commit  (conditional)                                  │
+│ Step 19 — /sk:smart-commit  (conditional)                              │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 20 — /review  ★ HARD GATE — 0 issues including nitpicks           │
+│ Step 20 — /sk:review  ★ HARD GATE — 0 issues including nitpicks        │
 │ • 7 dimensions: Correctness, Security, Performance, Reliability,       │
 │   Design, Best Practices, Testing                                       │
 │ • Reads: tasks/lessons.md, tasks/security-findings.md                  │
-│ Step 21 — /smart-commit  (conditional)                                  │
+│ Step 21 — /sk:smart-commit  (conditional)                              │
+├──────────────────────────────────────────────────────────────────────────┤
+│ Step 22 — /sk:e2e  ★ HARD GATE — E2E behavioral verification           │
+│ • Agent-browser end-to-end tests — final quality gate                  │
+│ • Verifies full user flows, not just unit behavior                     │
+│ Step 23 — /sk:smart-commit  (conditional)                              │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 PHASE 7: FINISH
-  Step 22 — /update-task     Mark task done in tasks/todo.md
-  Step 23 — /finish-feature  Changelog + arch log (auto-committed) + PR
-  Step 24 — /release         (OPTIONAL) Version bump + tag + store audits
+  Step 24 — /sk:update-task     Mark task done in tasks/todo.md
+  Step 25 — /sk:finish-feature  Changelog + arch log (auto-committed) + PR
+  Step 26 — /sk:features        Sync Features
+  Step 27 — /sk:release         (OPTIONAL) Version bump + tag + store audits
 
 PERSISTENT CONTEXT FILES (Never Cleared)
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -198,8 +206,8 @@ PERSISTENT CONTEXT FILES (Never Cleared)
 └──────────────────────────────────────────────────────────────────────────┘
 
 KEY PRINCIPLES
-✓ Hard gates (12, 14, 16, 20) BLOCK all forward progress until clean
-✓ Optional steps (4, 5, 7, 18, 24) require explicit confirmation to skip
+✓ Hard gates: steps 12 (Lint+Dep Audit), 14 (Verify Tests), 16 (Security), 20 (Review+Simplify), 22 (E2E Tests) BLOCK all forward progress until clean
+✓ Optional steps (4, 5, 7, 18, 27) require explicit confirmation to skip
 ✓ Every skill that makes decisions reads lessons.md
 ✓ Every skill that accepts handoff reads findings.md
 ✓ No context reset = no repeated mistakes
@@ -226,7 +234,7 @@ AI-assisted development without structure produces more bugs, not fewer. The rea
 **Architectural Changes Without Manual Guessing:**
 → `/finish-feature` step 4 now auto-detects architectural changes using intelligent script analysis. No more "did I need an arch log?" questions. The script analyzes your diff, generates a markdown draft (80% complete), and you edit the final 20%.
 
-**The opinionated rule:** Follow all steps in order. Optional steps (design, accessibility, performance) can be skipped with confirmation. Hard gates (lint, tests, security, review) can never be skipped. A "quick fix" that bypasses brainstorm and planning is the source of most production bugs in AI-assisted codebases.
+**The opinionated rule:** Follow all steps in order. Optional steps (design, accessibility, performance) can be skipped with confirmation. Hard gates (lint, tests, security, review, e2e) can never be skipped. A "quick fix" that bypasses brainstorm and planning is the source of most production bugs in AI-assisted codebases.
 
 This is an opinionated workflow. It will feel slower at first. It is faster over the lifetime of a project because rework is the most expensive operation in software development.
 
@@ -315,44 +323,47 @@ After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` plann
 
 ### Daily Workflow
 
-During normal development, follow the 24-step workflow: read the task and lessons → brainstorm → design (frontend or API, optional) → accessibility audit (optional) → plan → branch → migrate (optional) → write failing tests → implement → commit → lint → test → security → performance (optional) → review → finalize. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
+During normal development, follow the 27-step workflow: Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
 
 ---
 
 ## Recommended Workflow
 
-The complete 24-step workflow from idea to merge with **automatic context threading and bug prevention**:
+The complete 27-step workflow from idea to merge with **automatic context threading and bug prevention**:
 
 | # | Step | Command | Notes |
 |---|------|---------|-------|
 | 1 | Read Todo | read `tasks/todo.md` | Pick the next incomplete task |
 | 2 | Read Lessons | read `tasks/lessons.md` | Review past corrections |
-| 3 | Explore | `/brainstorm` | Clarify requirements — no code |
-| 4 | Design | `/frontend-design` or `/api-design` | Optional — skip if pure backend |
-| 5 | Accessibility | `/accessibility` | Optional — skip if no frontend |
-| 6 | Plan | `/write-plan` | Decision-complete plan — no code |
-| 7 | Branch | `/branch` | Auto-named from current task |
-| 8 | Migrate | `/schema-migrate` | Optional — skip if no schema changes |
-| 9 | Write Tests | `/write-tests` | TDD red: failing tests first |
-| 10 | Implement | `/execute-plan` | TDD green: make tests pass |
-| 11 | Commit | `/smart-commit` | Commit tests + implementation |
-| 12 | **Lint** | `/lint` | **HARD GATE** — all tools must pass |
-| 13 | Commit | `/smart-commit` | Conditional — skip if lint was clean |
-| 14 | **Verify Tests** | `/test` | **HARD GATE** — 100% coverage |
-| 15 | Commit | `/smart-commit` | Conditional |
-| 16 | **Security** | `/security-check` | **HARD GATE** — 0 issues |
-| 17 | Commit | `/smart-commit` | Conditional |
-| 18 | Performance | `/perf` | Optional gate — critical/high must reach 0 |
-| 19 | Commit | `/smart-commit` | Conditional |
-| 20 | **Review** | `/review` | **HARD GATE** — 0 issues including nitpicks |
-| 21 | Commit | `/smart-commit` | Conditional |
-| 22 | Update | `/update-task` | Mark done, log completion |
-| 23 | Finalize | `/finish-feature` | Changelog + PR |
-| 24 | Release | `/release` | Optional — version bump + tag |
+| 3 | Explore | `/sk:brainstorm` | Clarify requirements — no code |
+| 4 | Design | `/sk:frontend-design` or `/sk:api-design` | Optional — skip if pure backend |
+| 5 | Accessibility | `/sk:accessibility` | Optional — skip if no frontend |
+| 6 | Plan | `/sk:write-plan` | Decision-complete plan — no code |
+| 7 | Branch | `/sk:branch` | Auto-named from current task |
+| 8 | Migrate | `/sk:schema-migrate` | Optional — skip if no schema changes |
+| 9 | Write Tests | `/sk:write-tests` | TDD red: failing tests first |
+| 10 | Implement | `/sk:execute-plan` | TDD green: make tests pass |
+| 11 | Commit | `/sk:smart-commit` | Commit tests + implementation |
+| 12 | **Lint + Dep Audit** | `/sk:lint` | **HARD GATE** — all tools must pass |
+| 13 | Commit | `/sk:smart-commit` | Conditional — skip if lint was clean |
+| 14 | **Verify Tests** | `/sk:test` | **HARD GATE** — 100% coverage |
+| 15 | Commit | `/sk:smart-commit` | Conditional |
+| 16 | **Security** | `/sk:security-check` | **HARD GATE** — 0 issues |
+| 17 | Commit | `/sk:smart-commit` | Conditional |
+| 18 | Performance | `/sk:perf` | Optional gate — critical/high must reach 0 |
+| 19 | Commit | `/sk:smart-commit` | Conditional |
+| 20 | **Review + Simplify** | `/sk:review` | **HARD GATE** — 0 issues including nitpicks |
+| 21 | Commit | `/sk:smart-commit` | Conditional |
+| 22 | **E2E Tests** | `/sk:e2e` | **HARD GATE** — E2E behavioral verification |
+| 23 | Commit | `/sk:smart-commit` | Conditional |
+| 24 | Update | `/sk:update-task` | Mark done, log completion |
+| 25 | Finalize | `/sk:finish-feature` | Changelog + PR |
+| 26 | Sync Features | `/sk:features` | Sync Features |
+| 27 | Release | `/sk:release` | Optional — version bump + tag |
 
 ### Key Features
 
-✅ **4 Hard Gates** — Lint (12), Tests (14), Security (16), Review (20) block all forward progress until clean
+✅ **5 Hard Gates** — Lint+Dep Audit (12), Tests (14), Security (16), Review+Simplify (20), E2E Tests (22) block all forward progress until clean
 ✅ **TDD Enforced** — Tests written before implementation (step 9), verified after (step 14)
 ✅ **Context Threading** — findings.md flows brainstorm → design → plan; never re-ask decisions
 ✅ **Compounding Lessons** — One bug debugged = one lesson written = 8+ skills apply it next time
@@ -657,14 +668,16 @@ Bootstrap or repair Claude Code infrastructure on any project.
 9. Run `/write-tests` to write failing tests first (TDD red phase).
 10. Run `/execute-plan` to implement in small batches (TDD green phase).
 11. Run `/smart-commit` to commit tests + implementation.
-12. Run `/lint` — **hard gate**, fix and re-run until clean.
-13. Run `/test` — **hard gate**, 100% coverage on new code.
-14. Run `/security-check` — **hard gate**, 0 issues across all severities.
-15. *(Optional)* Run `/perf` for performance audit.
-16. Run `/review` — **hard gate**, 0 issues including nitpicks.
-17. Run `/update-task` to mark the task done.
-18. Run `/finish-feature` to finalize (changelog, arch log, security gate, create PR).
-19. Run `/release` to tag and push (add `--android` or `--ios` for store audits).
+12. Run `/sk:lint` — **hard gate** (Lint + Dep Audit), fix and re-run until clean.
+13. Run `/sk:test` — **hard gate**, 100% coverage on new code.
+14. Run `/sk:security-check` — **hard gate**, 0 issues across all severities.
+15. *(Optional)* Run `/sk:perf` for performance audit.
+16. Run `/sk:review` — **hard gate** (Review + Simplify), 0 issues including nitpicks.
+17. Run `/sk:e2e` — **hard gate**, E2E behavioral verification.
+18. Run `/sk:update-task` to mark the task done.
+19. Run `/sk:finish-feature` to finalize (changelog, arch log, security gate, create PR).
+20. Run `/sk:features` to sync features.
+21. Run `/sk:release` to tag and push (add `--android` or `--ios` for store audits).
 
 #### Deterministic Bootstrap Script
 
@@ -1121,7 +1134,7 @@ Emergency fix workflow for production incidents — skips design and TDD, qualit
 **What it does:**
 - 15-step flow: investigate → branch → fix → lint → test → security → review → finish
 - Skips: brainstorm, design, accessibility, write-tests phases
-- All 4 quality gates still enforced (lint, test, security, review cannot be skipped)
+- All 5 quality gates still enforced (lint, test, security, review, e2e cannot be skipped)
 - After merging: prompts to add a regression test and a lessons.md entry
 
 **Usage:** Production emergency only:

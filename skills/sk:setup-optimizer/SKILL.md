@@ -43,7 +43,7 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/sk:lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
-- **Outdated workflow** — checks if the workflow matches the current 24-step TDD flow with hard gates
+- **Outdated workflow** — checks if the workflow matches the current 27-step TDD flow with hard gates
 
 Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
@@ -51,15 +51,15 @@ Reports findings before proceeding. If issues are found, they inform subsequent 
 
 If the workflow section is outdated or missing, replace it with the latest version:
 
-**Current workflow (24 steps, TDD with hard gates):**
+**Current workflow (27 steps, TDD with hard gates):**
 ```
-Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → Finish
+Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features
 ```
 
 **What gets updated:**
-- Workflow table (24 steps with correct commands: `/sk:write-tests`, `/sk:lint`, `/sk:test`, `/sk:accessibility`, `/sk:perf`)
+- Workflow table (27 steps with correct commands: `/sk:write-tests`, `/sk:lint`, `/sk:test`, `/sk:accessibility`, `/sk:perf`, `/sk:e2e`)
 - Step details (TDD red/green/verify descriptions)
-- Tracker rules (hard gates at 12, 14, 16, 20; optional steps 4, 5, 7, 18, 24)
+- Tracker rules (hard gates at 12, 14, 16, 20, 22; optional steps 4, 5, 8, 18, 27)
 - Step completion summary rule (NON-NEGOTIABLE)
 - Bug fix flow section
 - Sub-Agent Patterns section (if missing)
@@ -67,6 +67,8 @@ Read → Explore → Design → Accessibility → Plan → Branch → Migrate �
 - Lessons Capture section (if missing)
 - Testing TDD section (if missing)
 - 3-Strike Protocol (if missing)
+- Fix & Retest Protocol section (if missing)
+- Requirement Change Flow section (if missing)
 
 **What gets preserved:**
 - Everything marked with `<!-- LOCK -->` is never touched

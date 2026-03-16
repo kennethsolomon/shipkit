@@ -171,6 +171,20 @@ If there are Critical or High findings:
 
 **Do not auto-fix.** The user decides what to address.
 
+### Fix & Retest Protocol
+
+When applying a fix, classify it before committing:
+
+**a. Config/hardening change** (adding security header, fixing CORS config, adding rate limit, sanitizing output without changing logic) → commit and re-run `/sk:security-check`. No test update needed.
+
+**b. Logic change** (new input validation branch, modified query parameterization, changed auth check, refactored data handling) → trigger protocol:
+1. Update or add failing unit tests for the new secure behavior
+2. Re-run `/sk:test` — must pass at 100% coverage
+3. Commit (tests + fix together in one commit)
+4. Re-run `/sk:security-check` from scratch
+
+**Why:** Security fixes often change logic (e.g., adding parameterized queries, sanitizing inputs). Tests must cover the new secure behavior, not just the old vulnerable path.
+
 ---
 
 ## Model Routing

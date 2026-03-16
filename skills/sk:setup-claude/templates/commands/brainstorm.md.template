@@ -6,14 +6,14 @@ description: "Start with design questions before writing code."
 
 # /brainstorm
 
-**Workflow:** Read → **Explore** → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → Finalize → Release
+**Workflow:** Read → **Explore** → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features
 
 Explore design and clarify requirements **before** any code is written.
 
 ## Hard Rules
 
 - **DO NOT write, edit, or generate any code.** No files, no snippets, no pseudo-implementations.
-- **DO NOT create a plan.** That is `/write-plan`'s job.
+- **DO NOT create a plan.** That is `/sk:write-plan`'s job.
 - **DO NOT run build/test/lint commands.** You are in design mode only.
 - You may **read** existing code to understand the current state, but nothing more.
 
@@ -65,10 +65,10 @@ Explore design and clarify requirements **before** any code is written.
 
 ## When Done
 
-1. Update `tasks/workflow-status.md`: set step 1 (`/brainstorm`) to `done`, move `>> next <<` to the next pending step.
+1. Update `tasks/workflow-status.md`: set step 1 (`/sk:brainstorm`) to `done`, move `>> next <<` to the next pending step.
 2. Print the full workflow status dashboard table.
 3. Tell the user:
    > "Brainstorming complete. Findings saved to `tasks/findings.md`."
-4. If step 2 (`/frontend-design`) is next, ask: "Step 2 is `/frontend-design` (optional). Run it or skip?"
+4. If step 2 (`/sk:frontend-design`) is next, ask: "Step 2 is `/sk:frontend-design` (optional). Run it or skip?"
 
 **Do not proceed to planning or implementation yourself.** The user must explicitly invoke the next step.

@@ -66,15 +66,38 @@ Agent 2: "Run vendor/bin/rector --dry-run. Report all suggested changes with fil
 Agent 3: "Run npx eslint . Report all errors with file:line."
 ```
 
-### 5. Fix and Re-run
+### 5. Run Dependency Audit
 
-If any analyzer reports errors:
+Run dependency vulnerability checks for detected stacks:
+
+| Stack | Command | Block on |
+|-------|---------|----------|
+| PHP (composer.json) | `composer audit` | any severity with fix available (`composer audit` has no severity filter) |
+| Node (package.json) | `npm audit --audit-level=high` | high or critical |
+| Node (yarn.lock) | `yarn audit --level high` | high or critical |
+| Node (pnpm-lock.yaml) | `pnpm audit --audit-level high` | high or critical |
+| Python (pyproject.toml / requirements.txt) | `pip-audit` | high or critical |
+
+For each detected package manager, run the audit command and capture output.
+
+**Block (fail this gate):**
+- PHP: any vulnerability that has a fix available (`composer audit` exits non-zero for all severities — no filtering option exists)
+- Node/Python: critical or high severity vulnerabilities that have a fix available
+
+**Warn (pass with note):** medium/low severity for Node/Python, or any severity with no available fix — note in report but do not block.
+
+Skip stacks not present in the project.
+
+### 6. Fix and Re-run
+
+If any analyzer reports errors or the dep audit blocks:
 1. Fix all reported issues
 2. Re-run formatters (fixes may need formatting)
 3. Re-launch all analyzers in parallel
-4. Loop until every tool exits clean
+4. Re-run dep audit if any dependency was fixed
+5. Loop until every tool exits clean
 
-### 6. Report Results
+### 7. Report Results
 
 Print one line per tool:
 
@@ -90,9 +113,31 @@ ESLint:        X errors fixed / clean
 ruff check:    X issues fixed / clean
 golangci-lint: X issues fixed / clean
 cargo clippy:  X warnings fixed / clean
+composer audit: clean / X vulns blocked
+npm audit:     clean / X vulns blocked
 ```
 
 Only include lines for detected tools. All must show "clean" before this skill passes.
+
+---
+
+## Fix & Retest Protocol
+
+When this gate requires a fix, classify it before committing:
+
+**a. Formatter auto-fix** (Pint, Prettier, gofmt, cargo fmt changed whitespace/style) → commit and re-run `/sk:lint`. Never a logic change — bypass protocol.
+
+**b. Analyzer fix** (PHPStan type error, Rector suggestion, ESLint error, ruff violation) → classify each fix:
+  - Type annotation, import order, unused var, style rule → **style fix** → commit and re-run
+  - New guard clause, changed condition, extracted function, modified data flow → **logic change** → trigger protocol:
+    1. Update or add failing unit tests for the new behavior
+    2. Re-run `/sk:test` — must pass at 100% coverage
+    3. Commit (tests + fix together in one commit)
+    4. Re-run `/sk:lint` from scratch
+
+**c. Dependency vulnerability fix** (composer audit / npm audit finding) → classify:
+  - Version bump with no API change → **style fix** → commit and re-run
+  - Version bump with API/behavior change → **logic change** → trigger protocol
 
 ---
 

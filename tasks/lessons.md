@@ -38,3 +38,30 @@ Accumulated patterns from past bugs and corrections. Read this file at the **sta
 13. `skills/setup-claude/templates/commands/release.md.template` — has a `**Workflow:**` breadcrumb line
 14. `.claude/docs/DOCUMENTATION.md` — internal docs with full workflow diagram, recommended workflow table, skills list, and scenario tables
 
+
+
+### [2026-03-16] All commands must use /sk: prefix
+**Bug:** CLAUDE.md and all workflow templates documented commands without the /sk: prefix (e.g. `/brainstorm`, `/lint`, `/review`) even though the actual skills use `sk:` in their directory names. This caused ambiguity about whether commands come from this plugin or Claude Code builtins.
+**Root cause:** The /sk: prefix convention was not established when the workflow was first documented.
+**Prevention:** All user-facing commands from this plugin must use the `/sk:` prefix. When adding new commands, always document them as `/sk:<name>`. When updating workflow files, ensure all command references use `/sk:` prefix. This applies to: CLAUDE.md, CLAUDE.md.template, README.md, DOCUMENTATION.md, all SKILL.md files, all command templates.
+
+### [2026-03-16] Update ALL 14+ files when the workflow changes (expanded list)
+**Bug:** The previous "Update ALL 6 files" lesson was incomplete — it missed the sk:e2e skill file and the /sk: prefix convention. As of the 27-step workflow, more files are involved.
+**Root cause:** The file list in the lesson was not kept up to date as the project grew.
+**Prevention:** The complete list of files to update when the workflow changes (step count, flow line, step names, commands list) is now:
+1. `CLAUDE.md`
+2. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+3. `skills/sk:setup-claude/templates/tasks/workflow-status.md.template`
+4. `README.md`
+5. `skills/sk:setup-optimizer/SKILL.md`
+6. `CHANGELOG.md`
+7. `install.sh` (if new commands added)
+8. `skills/sk:setup-claude/templates/commands/brainstorm.md.template`
+9. `skills/sk:setup-claude/templates/commands/write-plan.md.template`
+10. `skills/sk:setup-claude/templates/commands/execute-plan.md.template`
+11. `skills/sk:setup-claude/templates/commands/security-check.md.template`
+12. `skills/sk:setup-claude/templates/commands/finish-feature.md.template`
+13. `.claude/docs/DOCUMENTATION.md`
+Additionally, if new gate skills are added (like sk:e2e):
+14. Add Fix & Retest Protocol to the new skill's SKILL.md
+15. Reference the new skill in `tasks/lessons.md` (this file)
