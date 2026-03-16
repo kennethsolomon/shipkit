@@ -108,3 +108,51 @@ None.
 | Medium   | 1 |
 | Low      | 2 |
 | **Total** | **3** |
+
+---
+
+# Security Audit — 2026-03-16 (branch: feature/sk-seo-audit-checklist-format)
+
+**Scope:** Changed files on branch `feature/sk-seo-audit-checklist-format`
+**Stack:** Shell/Bash, Markdown
+**Files audited:** 14
+
+## Critical (must fix before deploy)
+
+None.
+
+## High (fix before production)
+
+None.
+
+## Medium (should fix)
+
+None.
+
+## Low / Informational
+
+None.
+
+## Passed Checks
+
+- **A01 Broken Access Control** — No auth logic. All changed files are static markdown docs and a test script.
+- **A02 Cryptographic Failures** — No cryptographic operations introduced.
+- **A03 Injection** — `tests/verify-workflow.sh` additions use `grep -q` on controlled paths from `$REPO` (derived from `BASH_SOURCE[0]`). No user input flows into any shell command.
+- **A04 Insecure Design** — No new design surface. `sk:seo-audit/SKILL.md` instructs probing localhost ports only (hardcoded: 3000, 5173, 8000, 8080, 4321, 4000, 8888) with `--max-time 2` timeout.
+- **A05 Security Misconfiguration** — `install.sh` change is a single static `echo` line. No new config surface.
+- **A06 Vulnerable Components** — No new dependencies introduced.
+- **A08 Data Integrity** — No new deserialization or binary downloads.
+- **A10 SSRF** — `sk:seo-audit` curl probes are localhost-only with hardcoded ports. No user-controlled URL construction.
+- **Shell injection** — All variable expansions in new `verify-workflow.sh` assertions are double-quoted. No dynamic exec.
+- **Prior LOW resolved** — `tests/verify-workflow.sh:6` now correctly uses `set -euo pipefail` (includes `-e`). Low finding from 2026-03-16 prior audit is resolved.
+- **Markdown/SKILL.md files** — Static documentation only. No executable code, no secrets, no PII.
+
+## Summary
+
+| Severity | Open | Resolved this run |
+|----------|------|-------------------|
+| Critical | 0    | 0                 |
+| High     | 0    | 0                 |
+| Medium   | 0    | 0                 |
+| Low      | 0    | 1                 |
+| **Total** | **0** | **1** |

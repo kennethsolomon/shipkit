@@ -204,17 +204,17 @@ bash tests/verify-workflow.sh
 
 ## Acceptance Criteria
 
-- [ ] `skills/sk:seo-audit/SKILL.md` exists with all required sections: Purpose, Hard Rules, Mode Detection, Phase 1–3, Mechanical Fixes Reference, Generate Report (checkbox format), When Done, Fix & Retest Protocol, Model Routing
-- [ ] Dual-mode documented: source template scan + optional dev server probe (ports 3000/5173/8000/8080/4321)
-- [ ] Ask-before-fix: prompt shows grouped list, applies only on `y`
-- [ ] Output uses `- [ ]` / `- [x]` checkboxes, appends to `tasks/seo-findings.md`
-- [ ] Content Strategy section in report (advisory, `- [ ]` only)
-- [ ] Checklist format rolled out to sk:perf, sk:accessibility, sk:security-check SKILL.md files
-- [ ] `sk:seo-audit` present in CLAUDE.md commands table, README.md, DOCUMENTATION.md, install.sh
-- [ ] Fix & Retest Protocol present in sk:seo-audit SKILL.md
-- [ ] Model routing section present in sk:seo-audit SKILL.md
-- [ ] `tasks/lessons.md` updated (appended, not overwritten)
-- [ ] All tests in `tests/verify-workflow.sh` pass
+- [x] `skills/sk:seo-audit/SKILL.md` exists with all required sections: Purpose, Hard Rules, Mode Detection, Phase 1–3, Mechanical Fixes Reference, Generate Report (checkbox format), When Done, Fix & Retest Protocol, Model Routing
+- [x] Dual-mode documented: source template scan + optional dev server probe (ports 3000/5173/8000/8080/4321)
+- [x] Ask-before-fix: prompt shows grouped list, applies only on `y`
+- [x] Output uses `- [ ]` / `- [x]` checkboxes, appends to `tasks/seo-findings.md`
+- [x] Content Strategy section in report (advisory, `- [ ]` only)
+- [x] Checklist format rolled out to sk:perf, sk:accessibility, sk:security-check SKILL.md files
+- [x] `sk:seo-audit` present in CLAUDE.md commands table, README.md, DOCUMENTATION.md, install.sh
+- [x] Fix & Retest Protocol present in sk:seo-audit SKILL.md
+- [x] Model routing section present in sk:seo-audit SKILL.md
+- [x] `tasks/lessons.md` updated (appended, not overwritten)
+- [x] All tests in `tests/verify-workflow.sh` pass (74/74)
 
 ## Risks/Unknowns
 

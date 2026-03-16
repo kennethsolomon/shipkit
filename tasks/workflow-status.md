@@ -25,10 +25,10 @@
 | 18 | Performance (`/sk:perf`) | skipped | docs/skills-only change, no runtime code |
 | 19 | Commit (`/sk:smart-commit`) | skipped | perf skipped |
 | 20 | **Review + Simplify** (`/sk:review`) | done | simplify pre-pass: 5 fixes (curl Content-Type, install.sh guard, parallel probing, noindex CANNOT list, Phase 3 clarity); review: 0 critical/0 warning after fixes |
-| 21 | Commit (`/sk:smart-commit`) | >> next << | conditional — simplify made changes |
-| 22 | **E2E** (`/sk:e2e`) | not yet | HARD GATE — all scenarios must pass |
-| 23 | Commit (`/sk:smart-commit`) | not yet | conditional |
-| 24 | Update (`/sk:update-task`) | not yet | |
-| 25 | Finalize (`/sk:finish-feature`) | not yet | |
+| 21 | Commit (`/sk:smart-commit`) | done | e4751e7 — review fixes committed |
+| 22 | **E2E** (`/sk:e2e`) | skipped | docs/skills-only change — no UI or server to test |
+| 23 | Commit (`/sk:smart-commit`) | skipped | E2E skipped |
+| 24 | Update (`/sk:update-task`) | done | acceptance criteria marked; completion logged to progress.md |
+| 25 | Finalize (`/sk:finish-feature`) | >> next << | |
 | 26 | Sync Features (`/sk:features`) | not yet | required — sync feature specs after ship |
 | 27 | Release (`/sk:release`) | not yet | optional |

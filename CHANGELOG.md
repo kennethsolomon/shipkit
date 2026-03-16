@@ -8,6 +8,21 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-03-16
+
+### Added
+- `sk:seo-audit` — new standalone SEO audit skill: dual-mode (source template scan + optional dev server probe), ask-before-fix mechanical fixes, checklist output to `tasks/seo-findings.md`
+  - Phase 1: technical SEO (robots.txt, sitemap, canonical, noindex, lang), on-page SEO (title, description, h1, alt, link text, image filenames), content signals (OG tags, Twitter Card, JSON-LD)
+  - Phase 2 (optional): dev server probe via parallel `curl -s -I` HEAD requests with Content-Type: text/html filter to avoid false positives from non-web services
+  - Phase 3: ask-before-fix — shows grouped list of auto-fixable issues, applies only on `y`, continues on individual fix failure
+  - Checklist output: `- [ ]` (open) / `- [x]` (auto-fixed), append-only with date headers
+  - Content Strategy section for advisory-only items (JSON-LD, og:image, Search Console)
+  - Fix & Retest Protocol: template/config fixes bypass; logic fixes require test update
+
+### Changed
+- Checklist format rolled out to all audit skills for consistency: `sk:perf`, `sk:accessibility`, `sk:security-check` reports now use `- [ ]` / `- [x]` checkbox format with `Open | Resolved this run` summary columns
+- `install.sh`: added idempotency guard for `agent-browser` — skips reinstall if already present
+
 ## [3.1.0] - 2026-03-16
 
 ### Added

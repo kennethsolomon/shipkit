@@ -90,6 +90,11 @@
 |-------|--------|
 | tests/verify-workflow.sh | 74/74 PASS |
 
+### 2026-03-16 — sk:seo-audit + Checklist Format Rollout — COMPLETED
+- Branch: `feature/sk-seo-audit-checklist-format`
+- Commits: f75f608 (feat), e4751e7 (review fixes)
+- All acceptance criteria met; 74/74 tests pass
+
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|
