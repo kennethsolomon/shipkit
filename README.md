@@ -256,6 +256,7 @@ ShipKit routes each skill to the right model automatically. Set it once per proj
 |-------------|-----------|---------|----------|--------|
 | brainstorm, write-plan, debug, execute-plan, review | opus | opus | sonnet | sonnet |
 | write-tests, frontend-design, api-design, security-check | opus | sonnet | sonnet | sonnet |
+| change | opus | sonnet | sonnet | sonnet |
 | perf, schema-migrate, accessibility | opus | sonnet | sonnet | haiku |
 | lint, test | sonnet | sonnet | haiku | haiku |
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |

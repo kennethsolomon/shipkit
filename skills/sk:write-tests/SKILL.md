@@ -9,6 +9,8 @@ description: "TDD: Auto-detect BE + FE testing stacks, write failing tests befor
 
 Auto-detect the project's backend AND frontend testing frameworks, read the plan from `tasks/todo.md`, and write comprehensive failing tests BEFORE implementation. Tests define the expected behavior — implementation makes them pass.
 
+> **Requirements changed mid-workflow?** Run `/sk:change` first. It will classify the scope and tell you whether to update tests (Tier 1), revise the plan (Tier 2), or re-brainstorm (Tier 3). Never update tests based on a changed requirement without going through `/sk:change` first.
+
 ## Allowed Tools
 
 Bash, Read, Write, Edit, Glob, Grep

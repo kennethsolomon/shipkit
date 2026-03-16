@@ -52,6 +52,12 @@ Execute the plan in `tasks/todo.md` in small batches with clear checkpoints.
 - Do not repeat the same failing action; change approach.
 - After 3 failed attempts, stop and ask the user with details.
 
+## Requirement Changes Mid-Execution
+
+If the user indicates that requirements have changed during execution, **stop immediately** — do not continue implementing the old behavior.
+
+Run `/sk:change` to assess the scope and re-enter at the correct step.
+
 ## On User Correction
 
 If the user corrects your approach during execution, immediately append to
