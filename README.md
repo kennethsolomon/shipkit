@@ -84,7 +84,7 @@ Brainstorm → Plan → Branch → [Schema] → Write Tests → Implement → Co
 | 1 | read `tasks/todo.md` | Pick the next task |
 | 2 | read `tasks/lessons.md` | Review past corrections |
 | 3 | `/sk:brainstorm` | Clarify requirements — no code |
-| 4 | `/sk:frontend-design` | UI design spec *(skip if backend-only)* |
+| 4 | `/sk:frontend-design` | UI design spec *(skip if backend-only)*. Add `--pencil` to also generate a Pencil visual mockup |
 | 5 | `/sk:api-design` | API contracts *(skip if no new endpoints)* |
 | 6 | `/sk:accessibility` | WCAG 2.1 AA audit on design *(skip if no frontend)* |
 | 7 | `/sk:write-plan` | Write plan to `tasks/todo.md` |
@@ -170,7 +170,7 @@ Requirement changes → /sk:change → re-enter at correct step
 | Command | Description |
 |---------|-------------|
 | `/sk:brainstorm` | Explore requirements and design before writing any code |
-| `/sk:frontend-design` | Create UI design specs and mockups |
+| `/sk:frontend-design` | Create UI design specs and mockups. After the design summary, it asks if you want a Pencil visual mockup. Use `--pencil` flag to jump directly to the Pencil phase *(requires Pencil app + MCP)* |
 | `/sk:api-design` | Design REST or GraphQL API contracts |
 | `/sk:accessibility` | WCAG 2.1 AA audit on design or existing frontend |
 | `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |

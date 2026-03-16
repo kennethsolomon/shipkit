@@ -1,6 +1,6 @@
 ---
 name: sk:frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Produces design direction, mockups, and visual specifications — NOT code.
+description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Produces design direction, mockups, and visual specifications — NOT code. Use --pencil flag to also generate a Pencil visual mockup (requires Pencil app + MCP).
 license: Complete terms in LICENSE.txt
 ---
 
@@ -95,15 +95,21 @@ End every `/sk:frontend-design` session with a structured summary:
 [Specific Tailwind classes, CSS patterns, or gotchas for /sk:execute-plan]
 ```
 
-After presenting the design summary, ask the user:
+After presenting the design summary, you **MUST** stop and ask — do not continue or summarize further:
 
-**"Would you like me to create a Pencil visual mockup? (y/n)"**
+> **"Would you like me to create a Pencil visual mockup? (Requires Pencil app open + Pencil MCP connected) (y/n)"**
+
+Wait for the user's response before doing anything else.
+
+You can also trigger the Pencil phase directly by running `/sk:frontend-design --pencil`.
 
 ---
 
 ## Pencil Visual Mockup Phase
 
-Only run this phase if the user answers **y** or **yes**.
+Only run this phase if:
+- The user answers **y** or **yes** to the prompt above, OR
+- The user invoked the skill with `--pencil`
 
 ### Step 1 — Find or create the .pen file
 

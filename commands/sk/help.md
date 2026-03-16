@@ -72,7 +72,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:execute-plan` | Implement plan in batches |
 | `/sk:features` | Sync docs/sk:features/ specs with codebase |
 | `/sk:finish-feature` | Changelog + PR creation |
-| `/sk:frontend-design` | UI mockup + design spec before implementation |
+| `/sk:frontend-design` | UI mockup + design spec before implementation. Add `--pencil` to also generate a Pencil visual mockup (requires Pencil app + MCP) |
 | `/sk:hotfix` | Emergency fix workflow (skips design/TDD) |
 | `/sk:laravel-init` | Configure existing Laravel project |
 | `/sk:laravel-new` | Scaffold new Laravel project |
