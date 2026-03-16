@@ -70,6 +70,26 @@
 - Tests: 52/52 assertions passing (tests/verify-workflow.sh)
 - Files changed: 22 (2 commits: 4bb3c36 feat, b0a097c fix)
 
+## Session: 2026-03-16 — sk:seo-audit + Checklist Rollout
+- Branch: feature/sk-seo-audit-checklist-format
+
+## Work Log (2026-03-16 — sk:seo-audit)
+- Fixed test path: security-check lives at `commands/sk/security-check.md`, not `skills/sk:security-check/SKILL.md`
+- Created `skills/sk:seo-audit/SKILL.md` — dual-mode audit, ask-before-fix, checklist output
+- Updated `skills/sk:perf/SKILL.md` — checkbox format + resolved column in report
+- Updated `skills/sk:accessibility/SKILL.md` — checkbox format + resolved column in report
+- Updated `commands/sk/security-check.md` — checkbox format + Passed Checks + resolved column
+- Updated `CLAUDE.md` — added sk:seo-audit to commands table
+- Updated `README.md` — added sk:seo-audit to commands section
+- Updated `.claude/docs/DOCUMENTATION.md` — added sk:seo-audit to skills section
+- Updated `install.sh` — added sk:seo-audit echo line
+- Appended `tasks/lessons.md` — sk:seo-audit update-all-files lesson
+
+## Test Results (2026-03-16 — sk:seo-audit)
+| Suite | Result |
+|-------|--------|
+| tests/verify-workflow.sh | 74/74 PASS |
+
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|

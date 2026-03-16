@@ -117,5 +117,7 @@ echo ""
 
 echo "Installation complete."
 echo ""
+echo "  /sk:seo-audit       — SEO audit (standalone, source + dev server, ask-before-fix)"
+echo ""
 echo "Run /sk:help to see all commands."
 echo ""

@@ -204,6 +204,7 @@ Requirement changes → /sk:change → re-enter at correct step
 | `/sk:test` | Auto-detect and run all test suites, verify 100% coverage on new code |
 | `/sk:security-check` | OWASP security audit across changed code |
 | `/sk:perf` | Performance audit: bundle size, N+1 queries, Core Web Vitals |
+| `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
 | `/sk:review` | Rigorous self-review across 7 dimensions |
 
 ### Shipping

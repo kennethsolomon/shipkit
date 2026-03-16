@@ -1127,6 +1127,14 @@ Performance audit — auto-detects stack and checks both frontend and backend.
 
 ---
 
+### /sk:seo-audit
+
+SEO audit for web projects. Dual-mode: scans source templates (`.blade.php`, `.jsx`, `.tsx`, `.vue`, `.html`, etc.) and optionally fetches from a running dev server to validate rendered output. Ask-before-fix for mechanical issues. Outputs checklist findings (with `- [ ]` / `- [x]` items) to `tasks/seo-findings.md`, appended per run.
+
+Run at any point after implementation — not a numbered workflow step.
+
+---
+
 ### `/hotfix`
 
 Emergency fix workflow for production incidents — skips design and TDD, quality gates still enforced.

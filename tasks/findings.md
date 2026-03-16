@@ -1,185 +1,110 @@
-# Findings — 2026-03-16 — Workflow Enhancement: E2E, Fix & Retest, sk:features, Simplify, Dep Audit, sk:change
+# Findings — 2026-03-16 — New Skill: sk:seo-audit
 
 ## Problem Statement
 
-The 24-step workflow has 6 gaps:
-1. No E2E testing step — behavioral regressions pass all quality gates
-2. `sk:features` exists but is not wired into the workflow
-3. `/simplify` (built-in Claude Code skill) is not wired into the workflow
-4. No dependency audit — vulnerable 3rd-party packages pass all quality gates
-5. `sk:change` is buried with no dedicated documentation section
-6. No protocol for logic changes made during quality gates — tests become stale silently
+Freelance developers need a way to audit and fix common SEO issues across client projects, regardless of framework. No current skill in the workflow addresses SEO. Missing meta tags, broken robots.txt, duplicate title tags, and missing alt text are objective, measurable issues that directly impact search rankings and are fully automatable — but they go undetected without a dedicated tool.
 
-## Chosen Approach: Approach B (Smart Absorption) — 27 steps
+## Key Decisions Made
 
-### What changes
+- **Skill type:** Standalone optional command (not a numbered workflow step). Like `/sk:debug` — invokable at any time, not tied to step order. No workflow renumbering required.
+- **Audit mode:** Dual-mode — primary pass reads source template files (`.blade.php`, `.jsx`, `.tsx`, `.vue`, `.html`, etc.), secondary pass fetches from running dev server if detected. Degrades gracefully if no server is running.
+- **Fix mode:** Ask-before-fix — audit first, present grouped mechanical fixes, ask once "Apply N fixes?", then apply. Never auto-applies without confirmation.
+- **Findings output:** `tasks/seo-findings.md` — consistent with sk:perf, sk:accessibility. Never overwrite; append with date header.
+- **Content strategy:** Included as a clearly labeled "Content Strategy — Manual Action" section at the bottom of the same `tasks/seo-findings.md` file. These are advisory notes, not code fixes.
 
-| Item | How integrated |
-|------|---------------|
-| Dep audit | Folded into `/lint` step (runs `npm audit --audit-level=high` / `composer audit` alongside analyzers) |
-| E2E Tests | New hard gate step **after Review** (step 22) — tests final, fully-reviewed code |
-| Simplify | Folded into `/review` step (review calls simplify first, then full review) |
-| sk:features | New step **after Finalize** (step 26) — syncs specs with what was actually shipped |
-| sk:change | Dedicated "Requirement Change Flow" section in CLAUDE.md (no new numbered step) |
-| agent-browser | Mandatory prereq added to `install.sh` |
-| Fix & Retest Protocol | New named protocol covering steps 12, 14, 16, 18, 20, 22 |
+## Chosen Approach: Approach B — Dual-Mode (Source + Dev Server)
 
-### New 27-step workflow table
+### What it does
 
-| # | Step | Command | Type | Loop? |
-|---|------|---------|------|-------|
-| 1 | Read Todo | read `tasks/todo.md` | required | no |
-| 2 | Read Lessons | read `tasks/lessons.md` | required | no |
-| 3 | Explore | `/brainstorm` | required | no |
-| 4 | Design | `/frontend-design` or `/api-design` | optional | no |
-| 5 | Accessibility | `/accessibility` | optional | no |
-| 6 | Plan | `/write-plan` | required | no |
-| 7 | Branch | `/branch` | required | no |
-| 8 | Migrate | `/schema-migrate` | optional | no |
-| 9 | Write Tests | `/write-tests` | required | no |
-| 10 | Implement | `/execute-plan` | required | no |
-| 11 | Commit | `/smart-commit` | required | no |
-| 12 | Lint + Dep Audit | `/lint` | HARD GATE | yes |
-| 13 | Commit | `/smart-commit` | conditional | no |
-| 14 | Verify Tests | `/test` | HARD GATE | yes |
-| 15 | Commit | `/smart-commit` | conditional | no |
-| 16 | Security | `/security-check` | HARD GATE | yes |
-| 17 | Commit | `/smart-commit` | conditional | no |
-| 18 | Performance | `/perf` | optional gate | yes |
-| 19 | Commit | `/smart-commit` | conditional | no |
-| 20 | Review + Simplify | `/review` | HARD GATE | yes |
-| 21 | Commit | `/smart-commit` | conditional | no |
-| 22 | E2E Tests | `/e2e` | HARD GATE | yes |
-| 23 | Commit | `/smart-commit` | conditional | no |
-| 24 | Update Task | `/update-task` | required | no |
-| 25 | Finalize | `/finish-feature` | required | no |
-| 26 | Sync Features | `/features` | required | no |
-| 27 | Release | `/release` | optional | no |
+**Phase 1 — Source Audit**
+- Detect template files: `.blade.php`, `.jsx`, `.tsx`, `.vue`, `.html`, `.ejs`, `.njk`, `.twig`
+- Audit Technical SEO: robots.txt (exists, not blocking all), sitemap.xml (exists, referenced in robots.txt), HTTPS signals (mixed content in templates), canonical tags
+- Audit On-Page SEO: title tags (present, unique, 50-60 chars), meta descriptions (present, unique, 150-160 chars), H1 structure (exactly one per page), alt text on images, internal link anchors
+- Audit Content Signals: schema/structured data presence (JSON-LD), Open Graph tags, Twitter Card tags
 
-### New flow line
+**Phase 2 — Server Audit (optional, degrades gracefully)**
+- Detect running dev server on common ports: 3000, 5173, 8000, 8080, 4321
+- Fetch key pages (/, /about, any pages found in sitemap or nav) via curl/fetch
+- Cross-reference: do rendered pages match what source templates declare?
+- Flag mismatches (e.g., framework overriding meta tags at runtime)
+- Note what can't be checked without external tools (Google Rich Results Test for structured data validation)
 
-`Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features`
+**Phase 3 — Ask Before Fix**
+- Group all mechanical fixes with descriptions
+- Show list: "Found N auto-fixable issues. Apply mechanical fixes? [y/N]"
+- On yes: apply fixes to source files, log each fix
+- On no: include fixes in findings as manual action items
 
-### Hard gates (5 total, up from 4)
-- Step 12: Lint + Dep Audit
-- Step 14: Verify Tests (100% coverage)
-- Step 16: Security (0 issues)
-- Step 20: Review + Simplify (0 issues)
-- Step 22: E2E Tests (all scenarios pass)
+**Phase 4 — Report**
+- Write to `tasks/seo-findings.md` — append with date header, never overwrite
+- Every finding is a **checkbox** (`- [ ]` or `- [x]`)
+- Items auto-fixed this run → pre-checked `- [x]` with *(auto-fixed)* label
+- Items still failing → unchecked `- [ ]` (user checks off as they manually fix)
+- Items from previous run that now pass → moved to "Passed Checks" in new section
+- Content strategy items → always `- [ ]` (user decides when done)
+- Sections:
+  - Critical / High / Medium / Low (technical + on-page findings, all as checkboxes)
+  - Content Strategy — Manual Action (advisory checkboxes, not code fixes)
+  - Passed Checks (resolved since last run)
+  - Summary table (counts of checked vs unchecked per severity)
 
-### Fix & Retest Protocol
+### Mechanical fixes the skill can apply
+- Add/fix `<title>` tags in templates
+- Add/fix `<meta name="description">` tags
+- Add missing `alt` attributes on `<img>` tags (with placeholder text for user to fill)
+- Add `<link rel="canonical">` when missing
+- Create/scaffold `robots.txt` if missing
+- Create/scaffold `sitemap.xml` if missing
+- Fix heading hierarchy (multiple H1s → demote extras to H2)
+- Add Open Graph basic tags (`og:title`, `og:description`, `og:url`) if missing
+- Add `<html lang="">` attribute if missing
 
-Applies to steps 12, 14, 16, 18, 20, 22 — any step that can produce code changes.
+### Manual-only items (content strategy section)
+- Keyword targeting per page
+- Content depth and E-E-A-T signals
+- Backlink profile
+- Google Search Console submission
+- Schema markup validation (requires Google Rich Results Test)
+- Competitor gap analysis
 
-```
-When any step requires a fix:
+### Audit depth
+- Technical SEO: crawlability, robots.txt, sitemap, HTTPS signals, canonical, redirects
+- On-Page SEO: titles, meta descriptions, headings, alt text, internal links, image filenames
+- Content signals: structured data presence (JSON-LD), OG tags, Twitter Cards, page language
 
-1. Classify the fix:
-   a. Format/style/config/wording change → commit and re-run the gate (no test update needed)
-   b. Logic change (new branch, modified condition, new data path,
-      query change, new function, API change) → trigger protocol:
+## Scope Expansion: Checklist Format for All Audit Skills
 
-      i.  Update or add failing unit tests for the new behavior
-      ii. Re-run /test → must pass at 100% coverage
-      iii.Commit (tests + fix together in one commit)
-      iv. Re-run the current gate from scratch
+The checkbox/actionable checklist pattern (`- [ ]` / `- [x]`) applies to ALL audit skill findings files for consistency:
 
-Applies to: Lint (12), Verify Tests (14), Security (16),
-            Performance (18), Review (20), E2E (22)
-```
+| Skill | Findings file | Notes |
+|-------|--------------|-------|
+| sk:seo-audit | `tasks/seo-findings.md` | new skill — built with checkboxes from the start |
+| sk:perf | `tasks/perf-findings.md` | update report format section in SKILL.md |
+| sk:accessibility | `tasks/accessibility-findings.md` | update report format section in SKILL.md |
+| sk:security-check | `tasks/security-findings.md` | append-only rule preserved; checkboxes per dated section; old run checkboxes stay as-is (audit trail) |
 
-Exception: Lint formatter auto-fixes (Prettier, Pint, gofmt) are never logic changes — bypass protocol automatically.
+**Logic for all audit skills:**
+- Items auto-fixed / resolved this run → `- [x]` with *(auto-fixed)* or *(resolved)* label
+- Items still failing → `- [ ]`
+- Items from previous run that now pass → moved to "Passed Checks" in the new section
+- Advisory/manual items → `- [ ]` (user marks done when handled)
 
-## Files to Update (from lessons.md — all in one commit)
+## Files to Create/Update
 
-1. `CLAUDE.md` — live workflow reference
-2. `skills/sk:setup-claude/templates/CLAUDE.md.template` — template for new projects
-3. `skills/sk:setup-claude/templates/tasks/workflow-status.md.template` — tracker template
-4. `README.md` — workflow table in docs
-5. `skills/sk:setup-optimizer/SKILL.md` — embeds step count, flow line, hard gate numbers
-6. `CHANGELOG.md` — document what changed
-7. `install.sh` — add agent-browser install + new `/e2e` command to echo block
-8. `skills/sk:setup-claude/templates/commands/brainstorm.md.template` — Workflow breadcrumb
-9. `skills/sk:setup-claude/templates/commands/write-plan.md.template` — Workflow breadcrumb
-10. `skills/sk:setup-claude/templates/commands/execute-plan.md.template` — Workflow breadcrumb
-11. `skills/sk:setup-claude/templates/commands/security-check.md.template` — Workflow breadcrumb
-12. `skills/sk:setup-claude/templates/commands/finish-feature.md.template` — Workflow breadcrumb
-13. `skills/sk:setup-claude/templates/commands/release.md.template` — Workflow breadcrumb
-14. `.claude/docs/DOCUMENTATION.md` — full workflow diagram, step tables, skills list
+### New file
+- `skills/sk:seo-audit/SKILL.md` — full standalone skill
 
-### Additional skill files to update
-- `skills/sk:lint/SKILL.md` — add dep audit step + Fix & Retest Protocol classification
-- `skills/sk:test/SKILL.md` — add Fix & Retest Protocol classification
-- `skills/sk:security-check/SKILL.md` — add Fix & Retest Protocol classification
-- `skills/sk:perf/SKILL.md` — add Fix & Retest Protocol classification
-- `skills/sk:review/SKILL.md` — add simplify pre-step + Fix & Retest Protocol classification
+### Files to update (standalone command, no renumbering)
+- `CLAUDE.md` — add to commands table
+- `README.md` — add to commands section
+- `.claude/docs/DOCUMENTATION.md` — add to skills section
+- `install.sh` — add `sk:seo-audit` to workflow commands echo block
+- `tasks/lessons.md` — append: update the "update ALL files" list to include seo-audit docs
 
-### New files to create
-- `skills/sk:e2e/SKILL.md` — new E2E skill using agent-browser (hard gate, all scenarios must pass)
-
-## New Skill: sk:e2e
-
-### Purpose
-Run E2E behavioral verification using agent-browser as the final quality gate before finalize. Tests the complete, reviewed, secure implementation from a user's perspective.
-
-### Key behaviors
-- Uses agent-browser (`agent-browser` CLI) for browser automation
-- Reads `tasks/todo.md` and `tasks/findings.md` to understand acceptance criteria
-- Runs existing E2E test files (written in step 9 `/write-tests`)
-- Hard gate: all scenarios must pass
-- Fix & Retest Protocol: logic fixes require unit test updates + /test re-run before re-running E2E
-- Token-efficient: uses agent-browser's ref-based snapshot system
-
-### agent-browser integration
-- Install: `npm install -g agent-browser && agent-browser install` (added to `install.sh`)
-- Core flow: `open → snapshot -i → interact via @refs → assert`
-- Semantic locators: `find role button`, `find text "Sign In"` (not CSS selectors)
-
-## sk:change Section
-
-Add as dedicated section in CLAUDE.md alongside Bug Fix Flow and Hotfix Flow:
-
-```
-### Requirement Change Flow
-When requirements change mid-workflow, run `/sk:change` to:
-1. Assess the scope of the change
-2. Determine which completed steps are invalidated
-3. Re-enter the workflow at the correct step
-4. Reset workflow-status.md to reflect the new entry point
-```
-
-## Command Naming Convention
-
-All user-facing commands from this plugin must use the `/sk:` prefix so the origin is unambiguous. CLAUDE.md currently documents commands without the prefix (`/brainstorm`, `/lint`, `/test` etc.) — this must be corrected across all files.
-
-When updating CLAUDE.md and all template files, replace all command references:
-- `/brainstorm` → `/sk:brainstorm`
-- `/frontend-design` → `/sk:frontend-design`
-- `/api-design` → `/sk:api-design`
-- `/accessibility` → `/sk:accessibility`
-- `/write-plan` → `/sk:write-plan`
-- `/branch` → `/sk:branch`
-- `/schema-migrate` → `/sk:schema-migrate`
-- `/write-tests` → `/sk:write-tests`
-- `/execute-plan` → `/sk:execute-plan`
-- `/smart-commit` → `/sk:smart-commit`
-- `/lint` → `/sk:lint`
-- `/test` → `/sk:test`
-- `/security-check` → `/sk:security-check`
-- `/perf` → `/sk:perf`
-- `/review` → `/sk:review`
-- `/debug` → `/sk:debug`
-- `/hotfix` → `/sk:hotfix`
-- `/update-task` → `/sk:update-task`
-- `/finish-feature` → `/sk:finish-feature`
-- `/features` → `/sk:features`
-- `/e2e` → `/sk:e2e`
-- `/change` → `/sk:change`
-- `/release` → `/sk:release`
-- `/status` → `/sk:status`
-- `/setup-optimizer` → `/sk:setup-optimizer`
-
-This applies to: CLAUDE.md, all template files, README.md, DOCUMENTATION.md, all SKILL.md files, workflow-status.md.template.
+### Files to update (checklist format rollout to existing audit skills)
+- `skills/sk:perf/SKILL.md` — update "Generate Report" section to use checkbox format
+- `skills/sk:accessibility/SKILL.md` — update "Generate Report" section to use checkbox format
+- `skills/sk:security-check/SKILL.md` — update report format to use checkbox format (preserve append-only rule)
 
 ## Open Questions
 - None — design is locked

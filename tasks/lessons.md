@@ -65,3 +65,13 @@ Accumulated patterns from past bugs and corrections. Read this file at the **sta
 Additionally, if new gate skills are added (like sk:e2e):
 14. Add Fix & Retest Protocol to the new skill's SKILL.md
 15. Reference the new skill in `tasks/lessons.md` (this file)
+
+### [2026-03-16] sk:seo-audit — update its docs when the skill changes
+**Bug:** New standalone skill added (sk:seo-audit) without updating the "update ALL files" lesson to include it.
+**Root cause:** The lesson list wasn't updated when the new skill was created.
+**Prevention:** When sk:seo-audit changes (skill behavior, output format, phases), update ALL 5 of these files in the same commit:
+1. `skills/sk:seo-audit/SKILL.md` — the skill itself
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `install.sh` — commands echo block

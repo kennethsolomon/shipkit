@@ -267,6 +267,7 @@ Never retry the same failing approach.
 | `/sk:debug` | Investigate and debug issues (bug fix entry point) |
 | `/sk:security-check` | OWASP security audit on changed files |
 | `/sk:perf` | Performance audit — bundle, N+1, Core Web Vitals, memory |
+| `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
 | `/sk:review` | Self-review with simplify pre-pass + multi-dimensional review |
 | `/sk:e2e` | E2E behavioral verification using agent-browser (final quality gate) |
 | `/sk:hotfix` | Emergency fix workflow — skip design/TDD, quality gates enforced |
