@@ -41,43 +41,30 @@ Works on Mac, Linux, and Windows.
 
 ---
 
-## How It Works
+## Quick Start
 
-ShipKit installs a set of slash commands and skills into your Claude Code config (`~/.claude/`). Each command is a focused instruction set that Claude follows — no magic, just structured prompts that enforce quality gates.
+```bash
+# 1. Install ShipKit globally
+npm install -g @kennethsolomon/shipkit && shipkit
 
-The workflow is linear: **Explore → Design → Plan → Branch → Test → Implement → Lint → Verify → Security → Review → Ship.**
+# 2. Bootstrap your project (run inside your project directory)
+/sk:setup-claude
 
-Every gate must pass before the next step. If lint fails, you fix it. If tests don't cover new code, you write them. Security issues block the PR. This isn't optional — it's the whole point.
+# 3. Start your first feature
+/sk:brainstorm
+```
+
+`/sk:setup-claude` creates `tasks/todo.md`, `tasks/lessons.md`, and a project-specific `CLAUDE.md` with the full workflow baked in. Run it once per project.
 
 ---
 
-## Installation
+## How It Works
 
-```bash
-npm install -g @kennethsolomon/shipkit && shipkit
-```
+ShipKit installs slash commands and skills into `~/.claude/`. Each command is a focused instruction set that Claude follows — no magic, just structured prompts that enforce quality gates.
 
-Or clone and install locally (symlinks — changes reflect immediately):
+The workflow is linear: **Brainstorm → Plan → Branch → Test → Implement → Lint → Security → Review → Ship.**
 
-```bash
-git clone https://github.com/kennethsolomon/shipkit.git
-cd shipkit
-./install.sh
-```
-
-### Update
-
-```bash
-npm install -g @kennethsolomon/shipkit && shipkit
-```
-
-Re-running always installs the latest version.
-
-### Uninstall
-
-```bash
-shipkit --uninstall
-```
+Every gate must pass before the next step. If lint fails, fix it. If tests don't cover new code, write them. Security issues block the PR. This isn't optional — it's the whole point.
 
 ---
 
@@ -230,8 +217,14 @@ After merging: add a regression test and a lesson to `tasks/lessons.md`.
 
 ## Model Routing Profiles
 
-ShipKit routes each skill to the right model automatically based on your project profile.
-Set it once with `/sk:set-profile <name>` — config is saved to `.shipkit/config.json`.
+ShipKit routes each skill to the right model automatically. Set it once per project:
+
+```bash
+/sk:set-profile balanced   # default
+/sk:set-profile quality    # most projects
+/sk:set-profile full-sail  # high-stakes / client work
+/sk:set-profile budget     # side projects / exploration
+```
 
 | Profile | Philosophy | Best for |
 |---------|-----------|---------|
@@ -248,9 +241,9 @@ Set it once with `/sk:set-profile <name>` — config is saved to `.shipkit/confi
 | lint, test | sonnet | sonnet | haiku | haiku |
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
 
-`opus` = inherit (uses your current session model).
+`opus` = inherit (uses your current session model). Config lives in `.shipkit/config.json` — per project, gitignored by default.
 
-### Other config settings
+### Config Reference
 
 ```json
 {
@@ -288,26 +281,41 @@ ShipKit auto-detects your stack — no configuration needed.
 
 ---
 
-## Project Setup
+## Security
 
-To wire ShipKit into a new project:
+ShipKit instructs Claude to audit your code — but Claude also has access to your filesystem. Protect sensitive files by adding a deny list to `.claude/settings.json` in your project:
 
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.p12)",
+      "Read(**/credentials*)"
+    ]
+  }
+}
 ```
-/sk:setup-claude
-```
 
-This creates `tasks/todo.md`, `tasks/lessons.md`, and a project-specific `CLAUDE.md` with the full workflow baked in.
+This prevents Claude from reading secrets even if a prompt tries to access them. Pair this with your `.gitignore` — never commit `.env` files.
 
----
-
-## Why ShipKit
-
-Claude Code is powerful but context degrades as the window fills. Unstructured sessions lead to skipped tests, no lint, missing security review, and PRs that broke things in ways nobody caught.
-
-ShipKit fixes that with a repeatable system: every feature goes through the same gates in the same order. Quality isn't optional — it's structural.
+If you discover a security issue in ShipKit itself, please open a [GitHub issue](https://github.com/kennethsolomon/shipkit/issues) or email directly rather than posting publicly.
 
 ---
 
 ## License
 
-MIT — by [Kenneth Solomon](https://github.com/kennethsolomon)
+MIT — see [LICENSE](LICENSE) for details.
+
+Built by [Kenneth Solomon](https://github.com/kennethsolomon).
+
+---
+
+<div align="center">
+
+**Claude Code is powerful. ShipKit makes it reliable.**
+
+</div>
