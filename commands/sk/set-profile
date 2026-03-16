@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Switch ShipKit model routing profile."""
+
+import json
+import sys
+from pathlib import Path
+
+VALID_PROFILES = ["full-sail", "quality", "balanced", "budget"]
+
+def get_defaults():
+    return {
+        "profile": "balanced",
+        "auto_commit": True,
+        "skip_gates": [],
+        "coverage_threshold": 100,
+        "branch_pattern": "feature/{slug}",
+        "model_overrides": {}
+    }
+
+def get_config():
+    """Read current config or return defaults."""
+    config_file = Path(".shipkit/config.json")
+    if config_file.exists():
+        try:
+            with open(config_file) as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return get_defaults()
+    return get_defaults()
+
+def get_models_for_profile(profile):
+    """Get model assignments for a profile."""
+    models = {
+        "full-sail": {"planning": "opus", "implementation": "opus", "audits": "opus", "gates": "sonnet"},
+        "quality": {"planning": "opus", "implementation": "sonnet", "audits": "sonnet", "gates": "sonnet"},
+        "balanced": {"planning": "sonnet", "implementation": "sonnet", "audits": "sonnet", "gates": "haiku"},
+        "budget": {"planning": "sonnet", "implementation": "sonnet", "audits": "haiku", "gates": "haiku"}
+    }
+    return models.get(profile, models["balanced"])
+
+def get_profile_description(profile):
+    """Get profile philosophy and use case."""
+    descriptions = {
+        "full-sail": ("Opus on everything that matters", "High-stakes work, client projects, production features"),
+        "quality": ("Opus for planning + review, Sonnet for implementation", "Most professional projects"),
+        "balanced": ("Sonnet across the board", "Day-to-day development (default)"),
+        "budget": ("Haiku where possible, Sonnet for gates", "Side projects, exploration, prototyping")
+    }
+    return descriptions.get(profile, ("", ""))
+
+def save_config(config):
+    """Save config to .shipkit/config.json."""
+    Path(".shipkit").mkdir(exist_ok=True)
+    config_file = Path(".shipkit/config.json")
+
+    with open(config_file, "w") as f:
+        json.dump(config, f, indent=2)
+
+    # Add to .gitignore
+    gitignore = Path(".gitignore")
+    if gitignore.exists():
+        content = gitignore.read_text()
+        if ".shipkit/config.json" not in content:
+            with open(gitignore, "a") as f:
+                f.write("\n.shipkit/config.json\n")
+    else:
+        gitignore.write_text(".shipkit/config.json\n")
+
+def main():
+    # Get profile argument
+    profile = None
+    if len(sys.argv) > 1:
+        profile = sys.argv[1].lower()
+
+    # Validate profile
+    if profile and profile not in VALID_PROFILES:
+        print(f"❌ Invalid profile: `{profile}`")
+        print(f"\nValid profiles: {' · '.join(VALID_PROFILES)}")
+        sys.exit(1)
+
+    # If no profile provided, show options
+    if not profile:
+        print("## Available Profiles\n")
+        print("| Profile | Philosophy | Best for |")
+        print("|---------|-----------|---------|")
+        for p in VALID_PROFILES:
+            philosophy, use_case = get_profile_description(p)
+            default = " *(default)*" if p == "balanced" else ""
+            print(f"| `{p}` | {philosophy}{default} | {use_case} |")
+        print("\nUsage: `/sk:set-profile <profile>`")
+        sys.exit(0)
+
+    # Read current config
+    config = get_config()
+    old_profile = config['profile']
+
+    # Update profile
+    config['profile'] = profile
+    save_config(config)
+
+    # Confirm and display new assignments
+    models = get_models_for_profile(profile)
+    print(f"\n✅ Profile set to: `{profile}` (was `{old_profile}`)\n")
+    print("## Model assignments for this project:\n")
+    print(f"  brainstorm, write-plan, debug, execute-plan, review → `{models['planning']}`")
+    print(f"  write-tests, frontend-design, api-design, security-check → `{models['implementation']}`")
+    print(f"  perf, schema-migrate, accessibility → `{models['audits']}`")
+    print(f"  lint, test → `{models['gates']}`")
+    print(f"  smart-commit, branch, update-task → `haiku`\n")
+    print("Run `/sk:config` to see all settings or make further changes.")
+
+if __name__ == "__main__":
+    main()

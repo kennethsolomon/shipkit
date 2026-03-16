@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""Manage ShipKit project configuration."""
+
+import json
+import os
+import sys
+from pathlib import Path
+
+def get_defaults():
+    return {
+        "profile": "balanced",
+        "auto_commit": True,
+        "skip_gates": [],
+        "coverage_threshold": 100,
+        "branch_pattern": "feature/{slug}",
+        "model_overrides": {}
+    }
+
+def get_config():
+    """Read current config or return defaults."""
+    config_file = Path(".shipkit/config.json")
+    if config_file.exists():
+        try:
+            with open(config_file) as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return get_defaults()
+    return get_defaults()
+
+def get_models_for_profile(profile):
+    """Get model assignments for a profile."""
+    models = {
+        "full-sail": {"planning": "opus", "implementation": "opus", "audits": "opus", "gates": "sonnet"},
+        "quality": {"planning": "opus", "implementation": "sonnet", "audits": "sonnet", "gates": "sonnet"},
+        "balanced": {"planning": "sonnet", "implementation": "sonnet", "audits": "sonnet", "gates": "haiku"},
+        "budget": {"planning": "sonnet", "implementation": "sonnet", "audits": "haiku", "gates": "haiku"}
+    }
+    return models.get(profile, models["balanced"])
+
+def display_config(config):
+    """Display current configuration in a table."""
+    print("\n## Current Configuration\n")
+    print("| Setting | Value | Description |")
+    print("|---------|-------|-------------|")
+    print(f"| `profile` | `{config['profile']}` | Model routing profile (full-sail / quality / balanced / budget) |")
+    print(f"| `auto_commit` | `{str(config['auto_commit']).lower()}` | Auto-run `/sk:smart-commit` after each gate passes |")
+    skip_gates_str = ", ".join(config['skip_gates']) if config['skip_gates'] else "(none)"
+    print(f"| `skip_gates` | `{skip_gates_str}` | Gates to skip |")
+    print(f"| `coverage_threshold` | `{config['coverage_threshold']}%` | Minimum test coverage on new code |")
+    print(f"| `branch_pattern` | `{config['branch_pattern']}` | Branch naming pattern |")
+    print(f"| `model_overrides` | `{json.dumps(config['model_overrides'])}` | Per-skill model overrides |")
+
+    profile = config['profile']
+    models = get_models_for_profile(profile)
+    print(f"\n## Model Assignments — `{profile}` profile\n")
+    print("| Skill group | Model |")
+    print("|-------------|-------|")
+    print(f"| brainstorm, write-plan, debug, execute-plan, review | `{models['planning']}` |")
+    print(f"| write-tests, frontend-design, api-design, security-check | `{models['implementation']}` |")
+    print(f"| perf, schema-migrate, accessibility | `{models['audits']}` |")
+    print(f"| lint, test | `{models['gates']}` |")
+    print(f"| smart-commit, branch, update-task | `haiku` |")
+
+def save_config(config):
+    """Save config to .shipkit/config.json."""
+    Path(".shipkit").mkdir(exist_ok=True)
+    config_file = Path(".shipkit/config.json")
+
+    with open(config_file, "w") as f:
+        json.dump(config, f, indent=2)
+
+    # Add to .gitignore
+    gitignore = Path(".gitignore")
+    if gitignore.exists():
+        content = gitignore.read_text()
+        if ".shipkit/config.json" not in content:
+            with open(gitignore, "a") as f:
+                f.write("\n.shipkit/config.json\n")
+    else:
+        gitignore.write_text(".shipkit/config.json\n")
+
+    print(f"\n✅ Config saved to `.shipkit/config.json`")
+
+def main():
+    config = get_config()
+    display_config(config)
+
+    print("\n---\n")
+    print("To change a setting, run: `/sk:set-profile <profile>` or edit `.shipkit/config.json` directly")
+
+if __name__ == "__main__":
+    main()

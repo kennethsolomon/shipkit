@@ -2,6 +2,16 @@
 description: "Show all ShipKit commands and workflow overview."
 ---
 
+# Meta
+
+| Command | Description |
+|---------|-------------|
+| `/sk:help` | Show all commands and workflow overview |
+| `/sk:status` | Show workflow and task status at a glance |
+| `/sk:skill-creator` | Create or improve ShipKit skills |
+
+---
+
 # /sk:help — ShipKit
 
 A structured workflow toolkit for Claude Code.
@@ -19,7 +29,6 @@ Run these commands in order for a complete, quality-gated feature build.
 | `/sk:schema-migrate` | Analyze schema changes *(skip if no DB changes)* |
 | `/sk:write-tests` | TDD red: write failing tests first |
 | `/sk:execute-plan` | TDD green: implement until tests pass |
-| `/sk:change` | Requirements changed? Re-enter at the right step |
 | `/sk:smart-commit` | Conventional commit with approval |
 | `/sk:lint` | **GATE** — all linters must pass |
 | `/sk:test` | **GATE** — 100% coverage on new code |
@@ -70,7 +79,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:lint` | Auto-detect and run all linters |
 | `/sk:perf` | Performance audit |
 | `/sk:plan` | Create/refresh task planning files |
-| `/sk:release` | Version bump + changelog + tag |
+| `/sk:release` | Automate releases: bump version, update CHANGELOG, create tag, push to GitHub. Use --android and/or --ios flags for App Store / Play Store readiness audit |
 | `/sk:review` | Self-review of branch changes |
 | `/sk:schema-migrate` | Multi-ORM schema change analysis |
 | `/sk:security-check` | OWASP security audit |
@@ -113,4 +122,4 @@ Config lives in `.shipkit/config.json` — per project, gitignored by default.
 
 ---
 
-**ShipKit** by Kenneth Solomon · `npm install -g @kennethsolomon/shipkit` to install/update
+**ShipKit** by Kenneth Solomon · `npx @kennethsolomon/shipkit` to install/update
