@@ -27,6 +27,16 @@ Run these commands in order for a complete, quality-gated feature build.
 | `/sk:update-task` | Mark task done, log completion |
 | `/sk:finish-feature` | Changelog + PR creation |
 
+## Requirement Change Flow
+
+Requirements change mid-workflow? Run `/sk:change` — it classifies the scope and routes you back to the right step.
+
+| Tier | Scope | Re-entry |
+|------|-------|---------|
+| Tier 1 | Behavior tweak *(logic changes, plan stays)* | `/sk:write-tests` |
+| Tier 2 | New requirements *(new scope or constraints)* | `/sk:write-plan` |
+| Tier 3 | Scope shift *(rethinking the approach)* | `/sk:brainstorm` |
+
 ## Bug Fix Workflow
 
 | Command | Purpose |
@@ -47,6 +57,7 @@ Run these commands in order for a complete, quality-gated feature build.
 | `/sk:api-design` | Design REST/GraphQL contracts before implementation |
 | `/sk:brainstorm` | Explore requirements, no code |
 | `/sk:branch` | Create branch from current task |
+| `/sk:change` | Handle mid-workflow requirement change — re-enter at the right step |
 | `/sk:debug` | Structured bug investigation |
 | `/sk:execute-plan` | Implement plan in batches |
 | `/sk:features` | Sync docs/sk:features/ specs with codebase |

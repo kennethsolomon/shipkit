@@ -66,6 +66,8 @@ The workflow is linear: **Brainstorm → Plan → Branch → Test → Implement 
 
 Every gate must pass before the next step. If lint fails, fix it. If tests don't cover new code, write them. Security issues block the PR. This isn't optional — it's the whole point.
 
+**Requirements change mid-workflow?** Run `/sk:change`. It assesses the scope and tells you exactly where to re-enter — no guessing, no skipping steps.
+
 ---
 
 ## Workflow
@@ -143,6 +145,22 @@ Debug → Branch → Fix → Smoke Test → Lint ✓ → Test ✓ → Security �
 
 After merging: add a regression test and a lesson to `tasks/lessons.md`.
 
+### Requirement Change Flow
+
+Requirements change mid-workflow all the time. Run `/sk:change` whenever something shifts — it classifies the scope and routes you back to the right step automatically.
+
+```
+Requirement changes → /sk:change → re-enter at correct step
+```
+
+| Tier | What changed | Re-entry point |
+|------|-------------|----------------|
+| **Tier 1** — Behavior Tweak | Logic changes, scope stays the same *(e.g. delete all → delete users only)* | `/sk:write-tests` |
+| **Tier 2** — New Requirements | New scope, new constraints, new acceptance criteria | `/sk:write-plan` |
+| **Tier 3** — Scope Shift | Fundamental rethinking of approach or architecture | `/sk:brainstorm` |
+
+`/sk:change` logs the change to `tasks/todo.md` and `tasks/progress.md`, marks invalidated tasks, and tells you exactly what to carry forward.
+
 ---
 
 ## Commands
@@ -168,6 +186,7 @@ After merging: add a regression test and a lesson to `tasks/lessons.md`.
 | `/sk:schema-migrate` | Analyze pending schema changes (Prisma, Drizzle, Eloquent, SQLAlchemy, ActiveRecord) |
 | `/sk:write-tests` | TDD: write failing tests before implementation |
 | `/sk:execute-plan` | Implement the plan in small batches |
+| `/sk:change` | Handle a mid-workflow requirement change — assess scope and re-enter at the right step |
 | `/sk:debug` | Structured bug investigation: reproduce → isolate → fix |
 | `/sk:hotfix` | Emergency fix workflow — skips design and TDD |
 
