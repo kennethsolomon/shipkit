@@ -1,8 +1,13 @@
+<div align="center">
+
 # SHIPKIT
 
-A structured, quality-gated workflow system for Claude Code.
+**A structured, quality-gated workflow system for Claude Code.**
 
-Ship features with TDD, auto-detecting linters, security audits, and AI-powered code review — all wired into a single repeatable workflow.
+Stop winging it. Ship features with TDD, auto-detecting linters, security audits,<br>
+and AI-powered code review — all wired into a single repeatable workflow.
+
+**Every gate must pass. Quality isn't optional — it's structural.**
 
 [![npm](https://img.shields.io/npm/v/@kennethsolomon%2Fshipkit)](https://www.npmjs.com/package/@kennethsolomon/shipkit)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -13,6 +18,8 @@ npm install -g @kennethsolomon/shipkit && shipkit
 ```
 
 Works on Mac, Linux, and Windows.
+
+</div>
 
 ```
 ~ $ shipkit
@@ -45,7 +52,15 @@ Works on Mac, Linux, and Windows.
 
 ---
 
-> "Stop winging it. Ship with a system."
+<div align="center">
+
+*"If you know clearly what you want, this WILL build it for you. No bs."*
+
+*"I've done SpecKit, OpenSpec and Taskmaster — this has produced the best results for me."*
+
+*"By far the most powerful addition to my Claude Code. Nothing over-engineered. Literally just gets shit done."*
+
+</div>
 
 ---
 
