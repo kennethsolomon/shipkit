@@ -8,6 +8,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.4.0] - 2026-03-19
+
 ### Changed
 - `sk:review` — Step 2 rewritten with **blast-radius analysis**: extracts changed symbols from git hunk headers (`@@`), classifies them as modified/removed vs. new, finds dependent files via import-chain narrowing with `rg`, and reads only the minimal context set (changed files in full + caller call sites + tests). Replaces the old "read every changed file" approach with focused, dependency-aware context collection.
   - New `[Blast Radius]` review dimension for cross-file findings (broken callers, removed exports, stale tests)
