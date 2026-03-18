@@ -100,7 +100,7 @@ Brainstorm → Plan → Branch → [Schema] → Write Tests → Implement → Co
 | 17 | `/sk:smart-commit` | Auto-skip if already clean |
 | 18 | **`/sk:perf`** | **GATE** *(optional)* — critical/high findings = 0 |
 | 19 | `/sk:smart-commit` | Auto-skip if already clean |
-| 20 | **`/sk:review`** | **GATE** — Review + Simplify — 0 issues including nitpicks |
+| 20 | **`/sk:review`** | **GATE** — Review + Simplify + Blast Radius — 0 issues including nitpicks |
 | 21 | `/sk:smart-commit` | Auto-skip if already clean |
 | 22 | **`/sk:e2e`** | **GATE** — E2E Tests — prefers Playwright CLI when config detected, falls back to agent-browser; all scenarios must pass |
 | 23 | `/sk:smart-commit` | Auto-skip if already clean |
@@ -211,7 +211,7 @@ Requirement changes → /sk:change → re-enter at correct step
 | `/sk:security-check` | OWASP security audit across changed code |
 | `/sk:perf` | Performance audit: bundle size, N+1 queries, Core Web Vitals |
 | `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
-| `/sk:review` | Rigorous self-review across 7 dimensions |
+| `/sk:review` | Blast-radius-aware self-review across 7 dimensions + cross-file impact analysis |
 
 ### Shipping
 

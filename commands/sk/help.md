@@ -33,7 +33,7 @@ Run these commands in order for a complete, quality-gated feature build.
 | `/sk:lint` | **GATE** — all linters must pass |
 | `/sk:test` | **GATE** — 100% coverage on new code |
 | `/sk:security-check` | **GATE** — 0 security issues |
-| `/sk:review` | **GATE** — self-review across 7 dimensions |
+| `/sk:review` | **GATE** — blast-radius-aware self-review across 7 dimensions + cross-file impact |
 | `/sk:update-task` | Mark task done, log completion |
 | `/sk:finish-feature` | Changelog + PR creation |
 
@@ -80,7 +80,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:perf` | Performance audit |
 | `/sk:plan` | Create/refresh task planning files |
 | `/sk:release` | Automate releases: bump version, update CHANGELOG, create tag, push to GitHub. Use --android and/or --ios flags for App Store / Play Store readiness audit |
-| `/sk:review` | Self-review of branch changes |
+| `/sk:review` | Blast-radius-aware self-review of branch changes |
 | `/sk:schema-migrate` | Multi-ORM schema change analysis |
 | `/sk:security-check` | OWASP security audit |
 | `/sk:setup-claude` | Bootstrap project scaffolding |

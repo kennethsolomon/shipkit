@@ -58,16 +58,23 @@ If `tasks/security-findings.md` exists, read the most recent audit. Use any unre
 Critical/High findings as additional targeted checks — verify the current diff doesn't
 reintroduce previously flagged vulnerabilities.
 
-### 2. Collect All Changes
+### 2. Collect Changes + Blast Radius
+
+Instead of reading the entire codebase or only the diff, build a **blast radius** — the minimal set of files that could be affected by the changes. This produces focused, high-signal context that leads to better review quality.
+
+**2a — Baseline git info:**
 
 ```bash
 # Determine base branch
-git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main"
+BASE=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
 
-# All changes on this branch
-git diff main..HEAD
-git diff main..HEAD --stat
-git log main..HEAD --oneline
+# Changed files and stats
+CHANGED_FILES=$(git diff $BASE..HEAD --name-only)
+git diff $BASE..HEAD --stat
+git log $BASE..HEAD --oneline
+
+# Full diff for reference
+git diff $BASE..HEAD
 
 # Check for uncommitted changes
 git status --short
@@ -76,11 +83,102 @@ git status --short
 If there are uncommitted changes, warn:
 > **Warning:** You have uncommitted changes. These will NOT be included in the review. Commit or stash them first.
 
-Read the full content of every changed file (not just the diff hunks) to understand context around the changes.
+**2b — Extract changed symbols:**
+
+Use **git hunk headers** as the primary extraction method. Git already parses the enclosing function/class name into every `@@` header — this is more reliable than regex or AST tools:
+
+```bash
+# Phase 1: Enclosing scope names from hunk headers (free from git, no parsing needed)
+git diff $BASE..HEAD -U0 | grep '^@@' | sed 's/.*@@\s*//' | \
+  grep -oE '[A-Za-z_][A-Za-z0-9_]*\s*\(' | sed 's/\s*(//' | sort -u
+```
+
+Then supplement with **new/modified definitions** from added lines using language-specific patterns. Only match definition keywords — not `const`, `export`, `type`, or other high-noise terms:
+
+```bash
+# Phase 2: Definitions from added lines (supplement, not replace)
+# JS/TS:   function foo(, class Foo, interface Foo
+# Python:  def foo(, class Foo
+# Go:      func foo(, func (r *T) foo(
+# PHP:     function foo(, class Foo
+# Rust:    fn foo(, struct Foo, impl Foo, trait Foo
+git diff $BASE..HEAD | grep '^+' | grep -v '^+++' | \
+  grep -oE '(function|class|interface|def|fn|func|struct|trait|impl)\s+[A-Za-z_][A-Za-z0-9_]+' | \
+  awk '{print $2}' | sort -u
+```
+
+Combine both phases. Filter out symbols shorter than 3 characters (too generic for blast-radius search).
+
+Classify each symbol:
+- **Modified/removed** — existed before the branch, changed or deleted now. These can break callers. **Run blast radius on these.**
+- **New** — added in this branch, no prior callers exist. **Skip blast radius** (nothing to break).
+
+To classify, check if the symbol appears in the base branch:
+```bash
+# If symbol exists in base branch files, it's modified/removed → needs blast radius
+git show $BASE:$FILE 2>/dev/null | grep -q "\b$SYMBOL\b"
+```
+
+**2c — Find blast radius (modified/removed symbols only):**
+
+For each modified/removed symbol, use **import-chain narrowing** to find dependents with minimal false positives:
+
+```bash
+# Step 1: Find files that import the module containing the changed symbol
+CHANGED_MODULE_PATHS=$(echo "$CHANGED_FILES" | sed 's/\.[^.]*$//' | sed 's/\/index$//')
+for module_path in $CHANGED_MODULE_PATHS; do
+  rg -l "(import|require|from|use)\s.*$(basename $module_path)" \
+    --glob '!node_modules/**' --glob '!vendor/**' --glob '!dist/**' \
+    --glob '!build/**' --glob '!*.lock' --glob '!*.md' \
+    2>/dev/null
+done | sort -u > /tmp/importers.txt
+
+# Step 2: Within importers, find which ones reference the specific changed symbols
+for symbol in $MODIFIED_SYMBOLS; do
+  rg -wl "$symbol" $(cat /tmp/importers.txt) 2>/dev/null
+done | sort -u > /tmp/dependents.txt
+
+# Remove files already in the changed set
+comm -23 /tmp/dependents.txt <(echo "$CHANGED_FILES" | sort) > /tmp/blast_radius.txt
+```
+
+**Noise guard:** If a symbol produces >100 matches, it's too generic for grep-based analysis. Note it in the review as "unable to determine blast radius for `symbol` — manual verification recommended."
+
+Log the blast radius before reading:
+```
+Blast Radius Summary
+──────────────────────────────────
+Changed files:           X
+Blast-radius dependents: Y  (files importing changed symbols)
+Total review scope:      X+Y files
+Symbols analyzed:        N modified, M new (skipped)
+
+Symbol → Dependents:
+  processOrder  → src/checkout/cart.ts, src/api/orders.ts
+  validateInput → src/middleware/auth.ts
+──────────────────────────────────
+```
+
+**2d — Read context (focused, not exhaustive):**
+
+Read in this priority order:
+1. **Changed files in full** — not just the diff. The full file provides surrounding context (imports, related functions, class-level state) needed to judge whether the change is correct. For files >500 lines, read the changed function + 30 lines of surrounding context instead.
+2. **The diff** — for precise change tracking (already collected above).
+3. **Blast-radius dependent files** — read only the call sites that reference changed symbols. Use `rg -B5 -A10 "\bsymbol\b" dependent_file` to get the call site with surrounding context, not the entire file.
+4. **Test files** for changed symbols — verify existing tests still cover the changed behavior.
+
+Do **not** read unchanged files outside the blast radius.
+
+Carry the blast-radius mapping (symbol → dependents) forward into Steps 3-9. When analyzing a changed function, always cross-reference its dependents.
 
 ### 3. Analyze — Correctness & Bugs
 
 The most important dimension. A bug that ships is worse than ugly code that works.
+
+**Blast-radius check (mandatory):** For every modified/removed symbol, verify its dependents (from Step 2c) are still compatible:
+- Do callers pass arguments the changed function still accepts?
+- Do callers depend on return values whose shape/type changed?
+- Do callers rely on side effects the changed code no longer produces?
 
 **Logic errors:**
 - Wrong operator (`&&` vs `||`, `==` vs `===`, `<` vs `<=`)
@@ -114,7 +212,11 @@ The most important dimension. A bug that ships is worse than ugly code that work
 
 ### 4. Analyze — Security
 
-Load `references/security-checklist.md` and apply its grep patterns systematically. Check for:
+Load `references/security-checklist.md` and apply its grep patterns against the **diff and blast-radius files** (not the entire codebase). Only flag patterns **newly introduced** in the diff — pre-existing issues are out of scope unless they interact with the changed code.
+
+**Blast-radius check:** If a validation or auth function was modified, check all its callers (from Step 2c) — a weakened check affects every endpoint that depends on it.
+
+Check for:
 
 **Injection (OWASP A03):**
 - SQL, NoSQL, OS command, LDAP, template injection
@@ -184,6 +286,8 @@ Think about what happens at 10x, 100x current scale. Performance bugs are often 
 
 Production code must handle failure gracefully. The question isn't "does it work?" but "what happens when things go wrong?"
 
+**Blast-radius check:** If error handling changed (e.g., function now throws instead of returning null, or error type changed), check all callers from Step 2c — they may not have matching try/catch or null checks.
+
 **Error handling quality:**
 - Swallowed errors (empty catch blocks, `.catch(() => {})`)
 - Generic catch blocks that hide the actual error type
@@ -217,8 +321,9 @@ Think about the next engineer who reads this code. Is the intent clear? Does the
 - Components doing too many things (should be split)
 - Side effects in pure functions or constructors
 
-**API design (if endpoints changed):**
+**API design (if endpoints or function signatures changed):**
 - Breaking changes to existing API contracts without versioning
+- **Blast-radius check:** If a function signature changed, the blast radius from Step 2c is the definitive answer to whether it's a breaking change — every dependent file that calls the old signature will break
 - Inconsistent response format across endpoints
 - Missing or inconsistent HTTP status codes
 - Unclear or missing error response schema
@@ -294,7 +399,8 @@ Format findings with severity levels and review dimensions:
 
 **Changes:** X files changed, +Y/-Z lines
 **Commits:** N commits
-**Review dimensions:** Correctness, Security, Performance, Reliability, Design, Best Practices, Testing
+**Blast radius:** X changed files + Y dependents = Z total review scope
+**Review dimensions:** Correctness, Security, Performance, Reliability, Design, Best Practices, Testing, Blast Radius
 
 ### Critical (must fix before merge)
 - **[Correctness]** [FILE:LINE] Description of critical issue
@@ -323,7 +429,8 @@ Format findings with severity levels and review dimensions:
 
 **Rules:**
 - Maximum 20 items total (prioritize by severity, then by category)
-- Every item must tag its review dimension: `[Correctness]`, `[Security]`, `[Performance]`, `[Reliability]`, `[Design]`, `[Best Practices]`, `[Testing]`
+- Every item must tag its review dimension: `[Correctness]`, `[Security]`, `[Performance]`, `[Reliability]`, `[Design]`, `[Best Practices]`, `[Testing]`, `[Blast Radius]`
+- Use `[Blast Radius]` for issues found in dependent files — callers broken by changed signatures, importers affected by removed exports, tests that no longer cover the changed behavior
 - Every item must reference a specific file and line
 - Every item must explain **why** it matters — the impact, not just the symptom
 - Include a brief "What Looks Good" section (2-3 items) — acknowledge strong patterns so they're reinforced. This isn't cheerleading — it's calibrating signal.

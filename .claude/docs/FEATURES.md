@@ -126,21 +126,26 @@ A comprehensive overview of all features in the claude-skills system, with empha
 ### 8. Code Review: `/review`
 
 **What it does:**
-- Rigorous multi-dimensional review across **7 dimensions:**
-  - Correctness, Security, Performance, Reliability, Design, Best Practices, Testing
+- Rigorous multi-dimensional review across **7 dimensions + blast radius:**
+  - Correctness, Security, Performance, Reliability, Design, Best Practices, Testing, Blast Radius
+- **Blast-radius analysis** — extracts changed symbols from git hunk headers, classifies as modified/removed vs. new, finds dependent files via import-chain narrowing, reads only the minimal context set
+  - Only modified/removed symbols get blast-radius search (new symbols have no callers to break)
+  - Import-chain narrowing: finds importers first, then symbol usage within those files — eliminates false positives
+  - Noise guard: symbols with >100 matches flagged as too generic; symbols <3 chars filtered out
 - Every finding tagged with dimension, file:line, and impact explanation
 - Framework-specific deep checks (React, Python, Go, Node.js)
-- Performance analysis: N+1 queries, memory leaks, O(n²), unnecessary re-renders
-- Reliability checks: error handling quality, graceful degradation, timeout handling
+- Steps 3 (Correctness), 4 (Security), 6 (Reliability), 7 (Design) include mandatory blast-radius cross-checks
+- Security checklist scoped to diff + blast-radius files only — pre-existing issues not flagged unless they interact with changed code
 - Report-only — flags issues by severity (Critical, Warning, Nitpick)
 - User loops `/debug` + `/commit` + `/review` until clean
 
 **Context Threading:**
-- ✅ Reads `tasks/lessons.md` (Bug patterns as targeted checks across all 7 dimensions)
+- ✅ Reads `tasks/lessons.md` (Bug patterns as targeted checks across all dimensions)
 - ✅ Reads `tasks/security-findings.md` (verify prior findings addressed)
+- ✅ Builds blast-radius mapping (symbol → dependent files) carried through Steps 3-9
 - Uses lesson Bug field as automated checklist
 
-**Key feature:** Reviews at the quality bar of a senior engineer at a top-tier tech company — thorough, specific, and honest. Thinks about what could go wrong in production at scale.
+**Key feature:** Blast-radius-aware review that catches cross-file breakage (callers broken by changed signatures, importers affected by removed exports, tests that no longer cover changed behavior) — the class of bugs that diff-only reviews miss entirely.
 
 ### 9. Security Audit: `/security-check`
 
@@ -344,7 +349,7 @@ Result:
 | **Design Decisions** | Re-explained each time | Read from findings.md |
 | **Bug Prevention** | Random fixes | Lessons applied as constraints |
 | **Test Patterns** | Ad-hoc | Follow lesson patterns |
-| **Code Review** | Generic checks | 7-dimension review with lesson + security patterns |
+| **Code Review** | Generic checks | 7-dimension review with blast-radius analysis + lesson + security patterns |
 | **Security** | Ad-hoc or skipped | OWASP + stack-specific audit with security gate |
 | **Arch Logs** | 0% drafted, tedious | 80% auto-generated |
 | **System Knowledge** | Resets | Compounds over time |
@@ -462,5 +467,5 @@ Result:
 
 ---
 
-**Last Updated:** March 18, 2026
-**Version:** 3.2.x (MVP Generator + Playwright-first E2E + SEO Audit + Checklist Format)
+**Last Updated:** March 19, 2026
+**Version:** 3.3.x (MVP Generator + Playwright-first E2E + SEO Audit + Blast-Radius Review)
