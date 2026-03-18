@@ -145,16 +145,54 @@ If a frontend stack was detected, generate FE test files:
 
 Skip this step if no FE stack was detected.
 
-### 8b. Playwright-Specific (conditional)
+### 8b. Write E2E Spec Files (conditional)
 
-**Only if `@playwright/sk:test` is detected:**
+**Only if `playwright.config.ts` or `playwright.config.js` is detected in the project root:**
+
+Write `e2e/<feature>.spec.ts` files covering the acceptance criteria from `tasks/todo.md`. Follow these rules:
+
+- Use `test.describe` / `test` blocks — not `describe`/`it`
+- Use role-based locators: `getByRole`, `getByLabel`, `getByText`, `getByPlaceholder` — never CSS selectors
+- Use `test.beforeEach` for shared setup (auth, navigation)
+- Use `test.skip(!email, 'ENV_VAR not set — skipping')` guards for credential-dependent tests
+- Auth credentials from env vars via `e2e/helpers/auth.ts` — never hardcode credentials
+- Soft assertions (`expect.soft`) for non-critical checks; hard `expect` for gate conditions
+
+E2E spec example structure:
+```ts
+import { test, expect } from '@playwright/test'
+import { signIn, TEST_USERS } from './helpers/auth'
+
+test.describe('[Feature] — [scenario]', () => {
+  test.beforeEach(async ({ page }) => {
+    const { email, password } = TEST_USERS.regular
+    test.skip(!email, 'E2E_USER_EMAIL not set — skipping')
+    await signIn(page, email, password)
+  })
+
+  test('[behavior description]', async ({ page }) => {
+    await page.goto('/dashboard/feature')
+    await expect(page.getByRole('heading', { name: /title/i })).toBeVisible()
+  })
+})
+```
+
+Create `e2e/helpers/auth.ts` if it doesn't exist (see `/sk:e2e` Playwright Setup Reference).
+
+**Run the E2E spec to confirm tests fail or skip** (they should fail until implementation, or skip if env vars aren't set — both are acceptable for the RED phase):
+```bash
+npx playwright test e2e/<feature>.spec.ts --reporter=list
+```
+
+### 8c. Playwright MCP Inspection (optional)
+
+**Only if the Playwright MCP plugin is active in the session AND live selectors are needed:**
 
 Use the Playwright MCP plugin to inspect live page state for more accurate selectors:
 
 1. Navigate to target URL
 2. Capture accessibility snapshot for role-based selectors
 3. Screenshot for visual reference
-4. Optionally run inline assertions for complex interactions
 
 ### 9. Verify Tests Fail (Red Phase)
 
@@ -170,6 +208,7 @@ Output:
 ```
 BE tests written: X tests in Y files ([framework])
 FE tests written: X tests in Y files ([framework])  ← omit if no FE stack
+E2E specs written: X tests in Y files (Playwright)  ← omit if no playwright.config.ts
 Existing tests updated: X files
 Status: RED (tests fail as expected — ready for implementation)
 ```
