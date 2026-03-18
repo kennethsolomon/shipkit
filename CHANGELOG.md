@@ -8,6 +8,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-03-18
+
 ### Added
 - `sk:mvp` — MVP Validation App Generator: generates a complete, polished MVP from a single idea prompt. Outputs a landing page with waitlist email collection + a working app with fake data. Supports 4 preset stacks (Next.js, Nuxt, Laravel, React+Vite), optional Pencil MCP visual design phase, and Playwright MCP visual validation after code generation. All code is generated locally — no deployments, no real databases, no third-party API integrations.
 
