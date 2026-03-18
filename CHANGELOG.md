@@ -8,6 +8,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+### Added
+- `sk:mvp` — MVP Validation App Generator: generates a complete, polished MVP from a single idea prompt. Outputs a landing page with waitlist email collection + a working app with fake data. Supports 4 preset stacks (Next.js, Nuxt, Laravel, React+Vite), optional Pencil MCP visual design phase, and Playwright MCP visual validation after code generation. All code is generated locally — no deployments, no real databases, no third-party API integrations.
+
+### Changed
+- `sk:e2e` — now prefers Playwright CLI when `playwright.config.ts` / `playwright.config.js` is detected; falls back to `agent-browser` only when no config exists. Adds a Playwright setup reference (`headless: true`, `channel: undefined`) to avoid system Chrome conflicts. Includes a minimal `playwright.config.ts` template and `e2e/helpers/` auth helper pattern.
+
 ## [3.2.0] - 2026-03-16
 
 ### Added

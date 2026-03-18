@@ -102,7 +102,7 @@ Brainstorm → Plan → Branch → [Schema] → Write Tests → Implement → Co
 | 19 | `/sk:smart-commit` | Auto-skip if already clean |
 | 20 | **`/sk:review`** | **GATE** — Review + Simplify — 0 issues including nitpicks |
 | 21 | `/sk:smart-commit` | Auto-skip if already clean |
-| 22 | **`/sk:e2e`** | **GATE** — E2E Tests — all end-to-end tests must pass |
+| 22 | **`/sk:e2e`** | **GATE** — E2E Tests — prefers Playwright CLI when config detected, falls back to agent-browser; all scenarios must pass |
 | 23 | `/sk:smart-commit` | Auto-skip if already clean |
 | 24 | `/sk:update-task` | Mark done, log completion |
 | 25 | `/sk:finish-feature` | Changelog + PR |
@@ -195,6 +195,12 @@ Requirement changes → /sk:change → re-enter at correct step
 | `/sk:change` | Handle a mid-workflow requirement change — assess scope and re-enter at the right step |
 | `/sk:debug` | Structured bug investigation: reproduce → isolate → fix |
 | `/sk:hotfix` | Emergency fix workflow — skips design and TDD |
+
+### Prototyping
+
+| Command | Description |
+|---------|-------------|
+| `/sk:mvp` | Generate a complete MVP from a single idea prompt — landing page with waitlist + working app with fake data. Supports Next.js, Nuxt, Laravel, React+Vite. Optional Pencil MCP design phase and Playwright MCP visual validation. |
 
 ### Quality Gates
 

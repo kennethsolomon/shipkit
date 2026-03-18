@@ -408,6 +408,50 @@ Result:
 
 ---
 
+## New Features (March 2026 — v3.2.x)
+
+### Feature: MVP Validation App Generator (`/sk:mvp`)
+
+**What it does:**
+- Generates a complete, polished MVP from a single product idea prompt
+- Outputs two deliverables: a landing page with waitlist + a working app with fake data
+- Supports 4 preset stacks: Next.js, Nuxt, Laravel, React+Vite
+- Optional Pencil MCP design phase (visual mockup before code)
+- Optional Playwright MCP visual validation (screenshot each page at desktop + mobile)
+- Quality loop: if visual validation finds issues, fixes and re-validates (max 3 iterations)
+
+**Key rules:**
+- ALL code is generated locally — never deploys, pushes, or publishes
+- Landing page is MANDATORY — always includes hero, features, pricing, waitlist, testimonials
+- FAKE data only — no real databases, auth systems, or third-party API integrations
+- Every page must be functional: buttons navigate, forms submit, modals open/close
+- Design must be distinctive — never default Tailwind colors or generic layouts
+
+**Model routing:** `balanced` → sonnet, `full-sail` / `quality` → opus
+
+### Feature: Playwright CLI preferred in `/sk:e2e`
+
+**What changed:**
+- `sk:e2e` now detects `playwright.config.ts` / `playwright.config.js` first
+- If config exists → runs `npx playwright test --reporter=list` (Playwright CLI path)
+- Falls back to `agent-browser` only when no config is present
+- If neither is available, provides setup instructions for both options
+
+**Why Playwright CLI is preferred:**
+- Uses headless Chromium — no conflict with system Chrome
+- No additional global install required (`@playwright/test` in devDeps)
+- `webServer` in config auto-starts the dev server
+- Full trace + retry support out of the box
+
+**Config requirements enforced:**
+- `headless: true` — avoids system browser conflicts
+- `channel: undefined` — must NOT be `'chrome'` or `'msedge'`
+- `webServer.reuseExistingServer: true` — avoids double-starting the server
+
+**Includes:** minimal `playwright.config.ts` template + `e2e/helpers/auth.ts` auth helper pattern
+
+---
+
 ## Future Possibilities
 
 - Lessons.md auto-pruning (remove lessons that never match)
@@ -418,5 +462,5 @@ Result:
 
 ---
 
-**Last Updated:** March 7, 2026
-**Version:** 2.1.0 (Context Threading + Auto-Architecture Detection + Security Audit Gate)
+**Last Updated:** March 18, 2026
+**Version:** 3.2.x (MVP Generator + Playwright-first E2E + SEO Audit + Checklist Format)
