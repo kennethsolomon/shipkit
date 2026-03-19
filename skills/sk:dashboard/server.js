@@ -90,7 +90,8 @@ function parseTodo(worktreePath) {
     let done = 0;
     let total = 0;
     let section = "";
-    let collecting = true;
+    let inMilestones = false;
+    let pastMilestones = false;
     const todoItems = [];
 
     for (const line of lines) {
@@ -100,25 +101,26 @@ function parseTodo(worktreePath) {
         else taskName = line.replace(/^#\s*TODO\s*/, "").trim();
       }
 
-      if (collecting && line.startsWith("## ")) {
+      if (line.startsWith("## ")) {
         const header = line.slice(3).trim();
-        if (STOP_HEADERS.has(header)) {
-          collecting = false;
-        } else if (line.startsWith("## Milestone")) {
-          section = line.slice(3).trim();
+        if (header.startsWith("Milestone")) {
+          inMilestones = true;
+          section = header;
+        } else if (inMilestones && STOP_HEADERS.has(header)) {
+          pastMilestones = true;
         }
       }
 
       if (/^\s*-\s*\[x\]/i.test(line)) {
         done++;
         total++;
-        if (collecting) {
-          todoItems.push({ text: line.replace(/^\s*-\s*\[x\]\s*/i, "").replace(/`/g, "").trim(), done: true, section });
+        if (inMilestones && !pastMilestones) {
+          todoItems.push({ text: stripMd(line.replace(/^\s*-\s*\[x\]\s*/i, "")), done: true, section });
         }
       } else if (/^\s*-\s*\[\s\]/.test(line)) {
         total++;
-        if (collecting) {
-          todoItems.push({ text: line.replace(/^\s*-\s*\[\s\]\s*/, "").replace(/`/g, "").trim(), done: false, section });
+        if (inMilestones && !pastMilestones) {
+          todoItems.push({ text: stripMd(line.replace(/^\s*-\s*\[\s\]\s*/, "")), done: false, section });
         }
       }
     }
