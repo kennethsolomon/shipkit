@@ -31,4 +31,4 @@
 | 24 | Update (`/sk:update-task`) | done | todo.md acceptance criteria all marked [x]; progress.md logged |
 | 25 | Finalize (`/sk:finish-feature`) | done | CHANGELOG + arch log committed; PR #7 created |
 | 26 | Sync Features (`/sk:features`) | done | created docs/FEATURES.md + _template.md + sk-dashboard.md spec |
-| 27 | Release (`/sk:release`) | >> next << | |
+| 27 | Release (`/sk:release`) | done | v3.5.0 tagged + pushed |
