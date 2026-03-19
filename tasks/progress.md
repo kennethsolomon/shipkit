@@ -1,5 +1,17 @@
 # Progress Log
 
+## Session: 2026-03-19 — todoItems implementation
+- server.js: extended parseTodo() with todoItems [{text, done, section}]; STOP_HEADERS set; Milestone header tracking
+- dashboard.html: added renderTodoItems() + TASKS panel in renderWorktree(); ✓/→/○ state icons; graceful empty fallback
+- tests: 96/96 pass (6 new Milestone 6 assertions all green, first try)
+
+## Requirement Change — 2026-03-19
+- What changed: Dashboard to show individual todo checklist items (text + done/pending state) instead of just aggregate counts
+- Trigger: User feedback after E2E — wants to see which specific phase/task the AI is currently on
+- Scope tier: 2 — New Requirements
+- Re-entry point: /sk:write-plan
+- Invalidated tasks: none (all existing tasks still valid; this adds new scope on top)
+
 ## Session: 2026-03-08
 - Started: workflow tracker enhancement
 - Summary: Implementing 14-step workflow tracker with strict enforcement

@@ -561,6 +561,62 @@ assert_contains \
 
 echo ""
 
+# ── Milestone 6: sk:dashboard Todo Item Display ───────────────────────────────
+
+echo "── Milestone 6: sk:dashboard todoItems ──"
+
+assert_api_field() {
+  local desc="$1" port="$2" field="$3"
+  local pid response
+  node "$REPO/skills/sk:dashboard/server.js" --port "$port" > /dev/null 2>&1 &
+  pid=$!
+  sleep 1
+  response=$(curl -s "http://localhost:${port}/api/status" 2>/dev/null || echo "")
+  kill "$pid" 2>/dev/null
+  wait "$pid" 2>/dev/null || true
+  if echo "$response" | grep -q "\"${field}\""; then
+    echo -e "${green}PASS${reset} $desc"
+    PASS=$((PASS + 1))
+  else
+    echo -e "${red}FAIL${reset} $desc"
+    echo "       Expected field '${field}' in /api/status response"
+    FAIL=$((FAIL + 1))
+    FAILURES+=("$desc")
+  fi
+}
+
+assert_contains \
+  "sk:dashboard server.js exposes todoItems field" \
+  "$DASH_SERVER" \
+  "todoItems"
+
+assert_contains \
+  "sk:dashboard server.js tracks section label per item" \
+  "$DASH_SERVER" \
+  "section"
+
+assert_contains \
+  "sk:dashboard dashboard.html reads todoItems from API" \
+  "$DASH_HTML" \
+  "todoItems"
+
+assert_contains \
+  "sk:dashboard dashboard.html renders TASKS section heading" \
+  "$DASH_HTML" \
+  "TASKS"
+
+assert_contains \
+  "sk:dashboard dashboard.html has todo-item CSS class" \
+  "$DASH_HTML" \
+  "todo-item"
+
+assert_api_field \
+  "sk:dashboard /api/status response includes todoItems array" \
+  "3334" \
+  "todoItems"
+
+echo ""
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 echo "=== Results: $PASS passed, $FAIL failed ==="

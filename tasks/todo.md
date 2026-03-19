@@ -1,5 +1,8 @@
 # TODO — 2026-03-19 — New Skill: sk:dashboard (Read-Only Kanban Board)
 
+## Change Log
+- [2026-03-19] Add individual todo item display to dashboard — re-entered at /sk:write-plan
+
 ## Goal
 
 Create `/sk:dashboard` — a zero-dependency Node.js server that serves a read-only Kanban board showing workflow status across all git worktrees. Markdown files are the source of truth; the UI polls and displays.
@@ -102,6 +105,47 @@ Create `/sk:dashboard` — a zero-dependency Node.js server that serves a read-o
 
 ---
 
+## Milestone 4: Tests — Todo Item Display (TDD red phase)
+
+#### Wave 4a (parallel — all are independent test additions)
+
+- [x] Update `tests/verify-workflow.sh` — add assertions for todoItems feature
+  - `assert_contains` — `server.js` contains `"todoItems"` (new API field)
+  - `assert_contains` — `server.js` contains `"section"` (section label per item)
+  - `assert_contains` — `dashboard.html` contains `"todoItems"` (reads new field)
+  - `assert_contains` — `dashboard.html` contains `"TASKS"` (section heading in UI)
+  - `assert_contains` — `dashboard.html` contains `"todo-item"` (CSS class for items)
+  - API smoke test: start server, hit `/api/status`, verify `todoItems` is an array in the JSON response
+
+---
+
+## Milestone 5: Implementation — Todo Item Display (TDD green phase)
+
+#### Wave 5a (parallel — server.js and dashboard.html are independent)
+
+- [x] Update `skills/sk:dashboard/server.js` — extend `parseTodo()`
+  - New return shape: `{ taskName, todosDone, todosTotal, todoItems }`
+  - `todoItems`: array of `{ text: string, done: boolean, section: string }`
+  - Parse `## Milestone N:` headers → set current `section` label
+  - `- [x] ...` lines → `{ text, done: true, section }`
+  - `- [ ] ...` lines → `{ text, done: false, section }`
+  - Stop collecting items at `## Verification`, `## Acceptance Criteria`, `## Risks`, `## Change Log` headers
+  - Strip backtick formatting from item text
+  - Empty `todoItems: []` on ENOENT (same graceful-fallback pattern as existing code)
+
+- [x] Update `skills/sk:dashboard/dashboard.html` — add Tasks panel to each swimlane
+  - New "TASKS" section rendered below the step-columns area within each swimlane body
+  - Items grouped by `section` label (milestone name as a divider heading)
+  - Three item states — use icon prefix:
+    - `✓` done: muted green text, no highlight
+    - `→` current (first item where `done === false`): blue text, subtle left-border highlight
+    - `○` pending: gray text
+  - Section divider: small uppercase label between milestone groups
+  - If `todoItems` is empty or missing → render nothing (graceful fallback)
+  - Change detection already covers this (existing `JSON.stringify` comparison)
+
+---
+
 ## Verification
 
 ```bash
@@ -115,6 +159,11 @@ grep "require('http')" skills/sk:dashboard/server.js
 grep "worktree" skills/sk:dashboard/server.js
 grep "/api/status" skills/sk:dashboard/server.js
 
+# Confirm todoItems in server + dashboard
+grep "todoItems" skills/sk:dashboard/server.js
+grep "todoItems" skills/sk:dashboard/dashboard.html
+grep "TASKS" skills/sk:dashboard/dashboard.html
+
 # Confirm dashboard has key UI elements
 grep "SHIPKIT" skills/sk:dashboard/dashboard.html
 grep "fetch" skills/sk:dashboard/dashboard.html
@@ -125,15 +174,11 @@ grep "sk:dashboard" README.md
 grep "sk:dashboard" .claude/docs/DOCUMENTATION.md
 grep "sk:dashboard" install.sh
 
-# Confirm /sk: prefix used (no bare /dashboard reference)
-grep -r '`/dashboard`' CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
-
-# Server smoke test
+# Server smoke test — verify todoItems in API response
 node skills/sk:dashboard/server.js &
 SERVER_PID=$!
 sleep 1
-curl -s http://localhost:3333/api/status | head -c 200
-curl -s http://localhost:3333/ | head -c 200
+curl -s http://localhost:3333/api/status | python3 -c "import sys,json; d=json.load(sys.stdin); print('todoItems ok' if isinstance(d[0]['todoItems'], list) else 'FAIL')"
 kill $SERVER_PID
 
 # Run full test suite
@@ -149,6 +194,10 @@ bash tests/verify-workflow.sh
 - [ ] Server discovers worktrees via `git worktree list`
 - [ ] Server parses `tasks/workflow-status.md` table into step objects
 - [ ] Server parses `tasks/todo.md` for task name and checkbox counts
+- [ ] **[NEW]** `/api/status` response includes `todoItems: [{ text, done, section }]` per worktree
+- [ ] **[NEW]** `todoItems` grouped by `## Milestone` sections from `todo.md`
+- [ ] **[NEW]** Dashboard renders a TASKS panel per swimlane showing individual checklist items
+- [ ] **[NEW]** Current item (first undone) highlighted in blue; done items muted; pending items gray
 - [ ] Dashboard renders swimlanes per worktree with phase timeline
 - [ ] Dashboard auto-polls every 3 seconds without page reload
 - [ ] Hard gate steps (12, 14, 16, 20, 22) visually distinguished

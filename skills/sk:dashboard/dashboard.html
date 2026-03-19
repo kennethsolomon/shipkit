@@ -488,6 +488,69 @@
     line-height: 1.7;
   }
 
+  /* ── Tasks Panel ── */
+
+  .tasks-panel {
+    border-top: 1px solid var(--color-border);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tasks-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tasks-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    margin-bottom: 2px;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.6;
+    padding: 1px 0;
+  }
+
+  .todo-item.todo-done {
+    color: rgba(16, 185, 129, 0.65);
+  }
+
+  .todo-item.todo-current {
+    color: #3B82F6;
+    background: rgba(59, 130, 246, 0.08);
+    border-left: 2px solid #3B82F6;
+    padding-left: 6px;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .todo-item.todo-pending {
+    color: #6B7280;
+  }
+
+  .todo-item-icon {
+    flex-shrink: 0;
+    font-style: normal;
+  }
+
   /* ── Footer ── */
 
   .footer {
@@ -620,6 +683,43 @@
     return h;
   }
 
+  function renderTodoItems(todoItems) {
+    if (!todoItems || todoItems.length === 0) return '';
+
+    // Find first undone item index
+    var currentIdx = -1;
+    for (var i = 0; i < todoItems.length; i++) {
+      if (!todoItems[i].done) { currentIdx = i; break; }
+    }
+
+    var h = '<div class="tasks-panel">';
+    h += '<div class="tasks-panel-header">TASKS</div>';
+
+    var lastSection = null;
+    for (var j = 0; j < todoItems.length; j++) {
+      var item = todoItems[j];
+      if (item.section && item.section !== lastSection) {
+        h += '<div class="tasks-section-label">' + esc(item.section) + '</div>';
+        lastSection = item.section;
+      }
+      var cls, icon;
+      if (item.done) {
+        cls = 'todo-done'; icon = '\u2713';
+      } else if (j === currentIdx) {
+        cls = 'todo-current'; icon = '\u2192';
+      } else {
+        cls = 'todo-pending'; icon = '\u25CB';
+      }
+      h += '<div class="todo-item ' + cls + '">';
+      h += '<span class="todo-item-icon">' + icon + '</span>';
+      h += '<span>' + esc(item.text) + '</span>';
+      h += '</div>';
+    }
+
+    h += '</div>';
+    return h;
+  }
+
   // ── Render one worktree swimlane ──
 
   function renderWorktree(wt, index, total) {
@@ -738,6 +838,7 @@
     h += statusCol('Skipped', 'sc-skipped', skippedSteps);
     h += statusCol('Not Yet', 'sc-pending', pendingSteps);
     h += '</div>'; // status-columns
+    h += renderTodoItems(wt.todoItems);
     h += '</div></div>'; // swimlane-body-inner, swimlane-body
     h += '</div>'; // swimlane
 

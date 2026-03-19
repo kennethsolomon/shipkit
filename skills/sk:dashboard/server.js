@@ -79,6 +79,8 @@ function parseWorkflowStatus(worktreePath) {
   }
 }
 
+const STOP_HEADERS = new Set(["Verification", "Acceptance Criteria", "Risks", "Change Log", "Summary"]);
+
 function parseTodo(worktreePath) {
   const filePath = path.join(worktreePath, "tasks", "todo.md");
   try {
@@ -87,6 +89,9 @@ function parseTodo(worktreePath) {
     let taskName = "";
     let done = 0;
     let total = 0;
+    let section = "";
+    let collecting = true;
+    const todoItems = [];
 
     for (const line of lines) {
       if (!taskName && line.startsWith("# TODO")) {
@@ -94,14 +99,34 @@ function parseTodo(worktreePath) {
         if (dashIdx !== -1) taskName = line.slice(dashIdx + 1).trim();
         else taskName = line.replace(/^#\s*TODO\s*/, "").trim();
       }
-      if (/^\s*-\s*\[x\]/i.test(line)) { done++; total++; }
-      else if (/^\s*-\s*\[\s\]/.test(line)) total++;
+
+      if (collecting && line.startsWith("## ")) {
+        const header = line.slice(3).trim();
+        if (STOP_HEADERS.has(header)) {
+          collecting = false;
+        } else if (line.startsWith("## Milestone")) {
+          section = line.slice(3).trim();
+        }
+      }
+
+      if (/^\s*-\s*\[x\]/i.test(line)) {
+        done++;
+        total++;
+        if (collecting) {
+          todoItems.push({ text: line.replace(/^\s*-\s*\[x\]\s*/i, "").replace(/`/g, "").trim(), done: true, section });
+        }
+      } else if (/^\s*-\s*\[\s\]/.test(line)) {
+        total++;
+        if (collecting) {
+          todoItems.push({ text: line.replace(/^\s*-\s*\[\s\]\s*/, "").replace(/`/g, "").trim(), done: false, section });
+        }
+      }
     }
-    return { taskName, todosDone: done, todosTotal: total };
+    return { taskName, todosDone: done, todosTotal: total, todoItems };
   } catch (err) {
-    if (err.code === "ENOENT") return { taskName: "", todosDone: 0, todosTotal: 0 };
+    if (err.code === "ENOENT") return { taskName: "", todosDone: 0, todosTotal: 0, todoItems: [] };
     process.stderr.write(`Error parsing todo.md: ${err.message}\n`);
-    return { taskName: "", todosDone: 0, todosTotal: 0 };
+    return { taskName: "", todosDone: 0, todosTotal: 0, todoItems: [] };
   }
 }
 
@@ -126,6 +151,7 @@ function buildStatus() {
       taskName: todo.taskName,
       todosDone: todo.todosDone,
       todosTotal: todo.todosTotal,
+      todoItems: todo.todoItems,
       currentStep,
       totalDone,
       totalSkipped,

@@ -50,6 +50,13 @@ Worktree {
   totalDone: number      // count of "done" steps
   totalSkipped: number   // count of "skipped" steps
   steps: Step[]          // all 27 steps
+  todoItems: TodoItem[]  // individual checklist items from todo.md [NEW]
+}
+
+TodoItem {
+  text: string           // item text (backtick-stripped)
+  done: boolean          // true = [x], false = [ ]
+  section: string        // nearest ## Milestone N: header above this item
 }
 
 Step {
