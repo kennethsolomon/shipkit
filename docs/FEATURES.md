@@ -53,6 +53,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | Command | Purpose | Spec |
 |---------|---------|------|
 | `/sk:dashboard` | Live Kanban board — workflow status across all worktrees | [sk-dashboard.md](sk:features/sk-dashboard.md) |
+| `/sk:context` | Session initializer — load context files + output SESSION BRIEF | [sk-context.md](sk:features/sk-context.md) |
 | `/sk:debug` | Structured bug investigation: reproduce → isolate → fix | — |
 | `/sk:hotfix` | Emergency fix workflow (skip TDD, enforce quality gates) | — |
 | `/sk:change` | Handle mid-workflow requirement change; re-enter at correct step | — |
@@ -77,3 +78,4 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | Spec | Last Updated | Version |
 |------|-------------|---------|
 | [sk-dashboard.md](sk:features/sk-dashboard.md) | 2026-03-19 | v3.5.0 |
+| [sk-context.md](sk:features/sk-context.md) | 2026-03-20 | v3.6.0 |
