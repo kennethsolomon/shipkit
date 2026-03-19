@@ -7,28 +7,28 @@
 |---|------|--------|-------|
 | 1 | Read Todo | done | tasks/findings.md and lessons.md read |
 | 2 | Read Lessons | done | all active lessons applied |
-| 3 | Explore (`/sk:brainstorm`) | done | Approach B selected — dual-mode source+server, ask-before-fix, standalone command |
-| 4 | Design (`/sk:frontend-design` or `/sk:api-design`) | skipped | skill-only change, no UI or new API |
-| 5 | Accessibility (`/sk:accessibility`) | skipped | no frontend |
-| 6 | Plan (`/sk:write-plan`) | done | tasks/todo.md written and approved |
-| 7 | Branch (`/sk:branch`) | done | feature/sk-seo-audit-checklist-format |
-| 8 | Migrate (`/sk:schema-migrate`) | skipped | no schema changes |
-| 9 | Write Tests (`/sk:write-tests`) | done | 20 failing assertions in tests/verify-workflow.sh (red phase) |
-| 10 | Implement (`/sk:execute-plan`) | done | 9 files created/updated; 74/74 tests pass |
-| 11 | Commit (`/sk:smart-commit`) | done | f75f608 |
-| 12 | **Lint + Dep Audit** (`/sk:lint`) | done | no linters detected (markdown/shell only); npm audit clean |
-| 13 | Commit (`/sk:smart-commit`) | skipped | lint was clean |
-| 14 | **Verify Tests** (`/sk:test`) | done | 74/74 pass, clean first try |
-| 15 | Commit (`/sk:smart-commit`) | skipped | tests passed first try |
-| 16 | **Security** (`/sk:security-check`) | done | 0 critical/high/medium/low; 1 prior LOW resolved |
-| 17 | Commit (`/sk:smart-commit`) | skipped | security was clean |
-| 18 | Performance (`/sk:perf`) | skipped | docs/skills-only change, no runtime code |
-| 19 | Commit (`/sk:smart-commit`) | skipped | perf skipped |
-| 20 | **Review + Simplify** (`/sk:review`) | done | simplify pre-pass: 5 fixes (curl Content-Type, install.sh guard, parallel probing, noindex CANNOT list, Phase 3 clarity); review: 0 critical/0 warning after fixes |
-| 21 | Commit (`/sk:smart-commit`) | done | e4751e7 — review fixes committed |
-| 22 | **E2E** (`/sk:e2e`) | skipped | docs/skills-only change — no UI or server to test |
-| 23 | Commit (`/sk:smart-commit`) | skipped | E2E skipped |
-| 24 | Update (`/sk:update-task`) | done | acceptance criteria marked; completion logged to progress.md |
-| 25 | Finalize (`/sk:finish-feature`) | >> next << | |
-| 26 | Sync Features (`/sk:features`) | not yet | required — sync feature specs after ship |
-| 27 | Release (`/sk:release`) | not yet | optional |
+| 3 | Explore (`/sk:brainstorm`) | done | Approach A selected — zero-dep Node server + single HTML Kanban |
+| 4 | Design (`/sk:frontend-design` or `/sk:api-design`) | done | Mission Control aesthetic; Pencil mockup at docs/design/mission-control-dashboard.pen |
+| 5 | Accessibility (`/sk:accessibility`) | skipped | developer-only read-only dashboard, no public-facing UI |
+| 6 | Plan (`/sk:write-plan`) | done | 3 milestones, 3 waves; plan approved |
+| 7 | Branch (`/sk:branch`) | done | feature/sk-dashboard |
+| 8 | Migrate (`/sk:schema-migrate`) | skipped | no database, pure frontend/server skill |
+| 9 | Write Tests (`/sk:write-tests`) | done | 16 failing assertions in verify-workflow.sh (red phase) |
+| 10 | Implement (`/sk:execute-plan`) | done | 3 core files + 5 docs; 90/90 tests pass; server smoke tested |
+| 11 | Commit (`/sk:smart-commit`) | >> next << | |
+| 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | |
+| 13 | Commit (`/sk:smart-commit`) | not yet | |
+| 14 | **Verify Tests** (`/sk:test`) | not yet | |
+| 15 | Commit (`/sk:smart-commit`) | not yet | |
+| 16 | **Security** (`/sk:security-check`) | not yet | |
+| 17 | Commit (`/sk:smart-commit`) | not yet | |
+| 18 | Performance (`/sk:perf`) | not yet | |
+| 19 | Commit (`/sk:smart-commit`) | not yet | |
+| 20 | **Review + Simplify** (`/sk:review`) | not yet | |
+| 21 | Commit (`/sk:smart-commit`) | not yet | |
+| 22 | **E2E** (`/sk:e2e`) | not yet | |
+| 23 | Commit (`/sk:smart-commit`) | not yet | |
+| 24 | Update (`/sk:update-task`) | not yet | |
+| 25 | Finalize (`/sk:finish-feature`) | not yet | |
+| 26 | Sync Features (`/sk:features`) | not yet | |
+| 27 | Release (`/sk:release`) | not yet | |

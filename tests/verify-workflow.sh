@@ -474,6 +474,91 @@ assert_contains \
   "$REPO/commands/sk/security-check.md" \
   "Passed Checks"
 
+# ── Milestone 5: sk:dashboard Skill ──────────────────────────────────────────
+
+echo "── Milestone 5: sk:dashboard Skill ──"
+
+DASH_SKILL="$REPO/skills/sk:dashboard/SKILL.md"
+DASH_SERVER="$REPO/skills/sk:dashboard/server.js"
+DASH_HTML="$REPO/skills/sk:dashboard/dashboard.html"
+
+assert_file_exists \
+  "sk:dashboard SKILL.md exists" \
+  "$DASH_SKILL"
+
+assert_file_exists \
+  "sk:dashboard server.js exists" \
+  "$DASH_SERVER"
+
+assert_file_exists \
+  "sk:dashboard dashboard.html exists" \
+  "$DASH_HTML"
+
+assert_contains \
+  "sk:dashboard server uses built-in http module" \
+  "$DASH_SERVER" \
+  "http"
+
+assert_contains \
+  "sk:dashboard server discovers git worktrees" \
+  "$DASH_SERVER" \
+  "worktree"
+
+assert_contains \
+  "sk:dashboard server reads workflow-status.md" \
+  "$DASH_SERVER" \
+  "workflow-status.md"
+
+assert_contains \
+  "sk:dashboard server exposes /api/status endpoint" \
+  "$DASH_SERVER" \
+  "/api/status"
+
+assert_contains \
+  "sk:dashboard HTML has SHIPKIT header" \
+  "$DASH_HTML" \
+  "SHIPKIT"
+
+assert_contains \
+  "sk:dashboard HTML uses fetch for polling" \
+  "$DASH_HTML" \
+  "fetch"
+
+assert_contains \
+  "sk:dashboard HTML uses design font" \
+  "$DASH_HTML" \
+  "JetBrains Mono"
+
+assert_contains \
+  "sk:dashboard SKILL.md references skill name" \
+  "$DASH_SKILL" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard SKILL.md references server.js" \
+  "$DASH_SKILL" \
+  "server.js"
+
+assert_contains \
+  "sk:dashboard in CLAUDE.md commands table" \
+  "$CLAUDE" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard in README.md" \
+  "$REPO/README.md" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard in DOCUMENTATION.md" \
+  "$REPO/.claude/docs/DOCUMENTATION.md" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard in install.sh" \
+  "$REPO/install.sh" \
+  "sk:dashboard"
+
 echo ""
 
 # ── Summary ──────────────────────────────────────────────────────────────────

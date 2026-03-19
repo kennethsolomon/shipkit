@@ -1,8 +1,8 @@
-# TODO — 2026-03-16 — New Skill: sk:seo-audit + Checklist Format Rollout
+# TODO — 2026-03-19 — New Skill: sk:dashboard (Read-Only Kanban Board)
 
 ## Goal
 
-Create `sk:seo-audit` as a standalone optional skill: dual-mode SEO audit (source templates + running dev server), ask-before-fix for mechanical issues, checklist output format in `tasks/seo-findings.md`. Also roll out the checkbox findings format to the three existing audit skills (sk:perf, sk:accessibility, sk:security-check) for consistency.
+Create `/sk:dashboard` — a zero-dependency Node.js server that serves a read-only Kanban board showing workflow status across all git worktrees. Markdown files are the source of truth; the UI polls and displays.
 
 ## Constraints (from lessons.md)
 
@@ -10,7 +10,7 @@ Create `sk:seo-audit` as a standalone optional skill: dual-mode SEO audit (sourc
 - Never overwrite `tasks/lessons.md` — append only
 - Any new skill added to install.sh echo block
 - New skill docs must be added to: CLAUDE.md commands table, README.md, DOCUMENTATION.md
-- `tasks/lessons.md` must be updated to include seo-audit in the "update ALL files" list
+- `tasks/lessons.md` must be updated to include sk:dashboard in the "update ALL files" list
 
 ---
 
@@ -18,185 +18,123 @@ Create `sk:seo-audit` as a standalone optional skill: dual-mode SEO audit (sourc
 
 #### Wave 1 (first — tests must exist before implementation)
 
-- [x] Update `tests/verify-workflow.sh` — add assertions for sk:seo-audit and checklist format
-  - `assert_file_exists` — `skills/sk:seo-audit/SKILL.md` exists
-  - `assert_contains` — SKILL.md contains `"running dev server"` (dual-mode)
-  - `assert_contains` — SKILL.md contains `"Apply"` and `"fixes"` (ask-before-fix prompt)
-  - `assert_contains` — SKILL.md contains `"- [ ]"` (checklist format)
-  - `assert_contains` — SKILL.md contains `"seo-findings.md"` (output file)
-  - `assert_contains` — SKILL.md contains `"Fix & Retest Protocol"` (gate protocol)
-  - `assert_contains` — SKILL.md contains `"sk:seo-audit"` in model routing section
-  - `assert_contains` — `CLAUDE.md` contains `"sk:seo-audit"` (in commands table)
-  - `assert_contains` — `README.md` contains `"sk:seo-audit"`
-  - `assert_contains` — `.claude/docs/DOCUMENTATION.md` contains `"sk:seo-audit"`
-  - `assert_contains` — `install.sh` contains `"sk:seo-audit"`
-  - `assert_contains` — `skills/sk:perf/SKILL.md` contains `"- [ ]"` (checklist rollout)
-  - `assert_contains` — `skills/sk:accessibility/SKILL.md` contains `"- [ ]"`
-  - `assert_contains` — `skills/sk:security-check/SKILL.md` contains `"- [ ]"`
+- [x] Update `tests/verify-workflow.sh` — add assertions for sk:dashboard
+  - `assert_file_exists` — `skills/sk:dashboard/SKILL.md` exists
+  - `assert_file_exists` — `skills/sk:dashboard/server.js` exists
+  - `assert_file_exists` — `skills/sk:dashboard/dashboard.html` exists
+  - `assert_contains` — `server.js` contains `"http"` (built-in module)
+  - `assert_contains` — `server.js` contains `"worktree"` (git worktree discovery)
+  - `assert_contains` — `server.js` contains `"workflow-status.md"` (reads status file)
+  - `assert_contains` — `server.js` contains `"/api/status"` (JSON API endpoint)
+  - `assert_contains` — `dashboard.html` contains `"SHIPKIT"` (header title)
+  - `assert_contains` — `dashboard.html` contains `"fetch"` (polling mechanism)
+  - `assert_contains` — `dashboard.html` contains `"JetBrains Mono"` or `"Orbitron"` (design fonts)
+  - `assert_contains` — `SKILL.md` contains `"sk:dashboard"` (skill name)
+  - `assert_contains` — `SKILL.md` contains `"server.js"` (references server)
+  - `assert_contains` — `CLAUDE.md` contains `"sk:dashboard"` (commands table)
+  - `assert_contains` — `README.md` contains `"sk:dashboard"`
+  - `assert_contains` — `.claude/docs/DOCUMENTATION.md` contains `"sk:dashboard"`
+  - `assert_contains` — `install.sh` contains `"sk:dashboard"`
 
 ---
 
-## Milestone 2: New Skill + Checklist Rollout (all independent — run in parallel)
+## Milestone 2: Core Implementation (server + UI + skill definition)
 
-#### Wave 2 (parallel — all skill SKILL.md files, independent of each other)
+#### Wave 2a (parallel — all three files are independent)
 
-- [x] Create `skills/sk:seo-audit/SKILL.md` — full standalone skill
-  - **Frontmatter:** `name: sk:seo-audit`, description: SEO audit for web projects — dual-mode (source + dev server), ask-before-fix, checklist output
-  - **Purpose:** Standalone optional command — audits any web project for SEO issues regardless of framework. Run at any point after implementation. Not a numbered workflow step.
-  - **Hard Rules:**
-    - Never auto-apply fixes without asking
-    - Every finding must cite file:line
-    - Every finding is a checkbox `- [ ]` or `- [x]`
-    - Append to `tasks/seo-findings.md`, never overwrite
-    - Degrade gracefully if no server is running (skip Phase 2, note it)
-  - **Before You Start:** read `tasks/findings.md` (site context), read `tasks/lessons.md`, check if prior `tasks/seo-findings.md` exists (read last section for resolved items)
-  - **Mode Detection:**
-    - Source mode (always): scan for template files — `.blade.php`, `.jsx`, `.tsx`, `.vue`, `.html`, `.ejs`, `.njk`, `.twig`
-    - Server mode (optional): probe ports 3000, 5173, 8000, 8080, 4321 with a HEAD request; if any responds, run Phase 2
-  - **Phase 1 — Source Audit:**
-    - *Technical SEO:* robots.txt exists + not blocking all crawlers; sitemap.xml exists + referenced in robots.txt; `<html lang="">` present; canonical tags present on key pages; no `<meta name="robots" content="noindex">` on public pages; HTTPS — no `http://` hardcoded asset URLs in templates
-    - *On-Page SEO:* `<title>` present, unique across pages, 50–60 chars; `<meta name="description">` present, unique, 150–160 chars; exactly one `<h1>` per page; `<h2>`–`<h6>` hierarchy not skipped; all `<img>` have `alt` attribute; internal `<a>` anchors are descriptive (not "click here"); image filenames are descriptive (not `img001.jpg`)
-    - *Content Signals:* Open Graph tags (`og:title`, `og:description`, `og:url`, `og:image`); Twitter Card tags; JSON-LD structured data block present (type not validated — note external tool needed)
-  - **Phase 2 — Server Audit (optional):**
-    - Fetch `/` and up to 4 other key pages (from sitemap or nav links)
-    - Cross-reference rendered `<title>`, `<meta description>`, `<h1>` vs source templates
-    - Flag mismatches: "Source says X but rendered output shows Y"
-    - Note: structured data validation requires Google Rich Results Test (external)
-    - If no server detected: note "Server audit skipped — no dev server found on ports 3000/5173/8000/8080/4321. Start your dev server and re-run for full audit."
-  - **Phase 3 — Ask Before Fix:**
-    - Group all auto-fixable findings into a numbered list with descriptions
-    - Output: "Found N auto-fixable issues: [list]. Apply mechanical fixes? [y/N]"
-    - On `y`: apply each fix, log "Fixed: [description] in [file:line]"
-    - On `n`: mark all as `- [ ]` in findings report (user applies manually)
-    - On `y` with partial failures: apply what works, log failures, mark remaining as `- [ ]`
-  - **Mechanical Fixes Reference** (what the skill CAN auto-apply):
-    - Missing `<title>` → add `<title>TODO: page title</title>` in `<head>`
-    - Missing `<meta name="description">` → add with placeholder
-    - Missing `alt` on `<img>` → add `alt="TODO: describe this image"`
-    - Missing `<link rel="canonical">` → add with current page URL pattern
-    - Missing `robots.txt` → scaffold with `User-agent: *\nAllow: /\nSitemap: /sitemap.xml`
-    - Missing `sitemap.xml` → scaffold with XML structure and homepage entry
-    - Multiple `<h1>` tags → demote 2nd+ to `<h2>`
-    - Missing OG tags → add `og:title`, `og:description`, `og:url` block in `<head>`
-    - Missing `<html lang="">` → add `lang="en"` (note: user should verify correct language)
-  - **Generate Report** — write to `tasks/seo-findings.md` (append, date header):
-    ```
-    # SEO Audit — YYYY-MM-DD
-    **Mode:** Source only | Source + Server (http://localhost:PORT)
-    **Templates scanned:** N files
-    **Pages fetched:** N (or "none — server not detected")
+- [x] Create `skills/sk:dashboard/server.js` — Node.js HTTP server
+  - Uses only built-in modules: `http`, `fs`, `path`, `child_process`
+  - `git worktree list` to discover all worktrees
+  - Parse `tasks/workflow-status.md` from each worktree (table → JSON)
+  - Parse `tasks/todo.md` from each worktree (goal + checkbox counts)
+  - `GET /api/status` — returns JSON array of worktree status objects
+  - `GET /` — serves `dashboard.html` from same directory
+  - Default port 3333, configurable via `--port` flag or `PORT` env var
+  - CORS headers for local development
+  - Graceful error handling: missing files → empty/default state, not crash
 
-    ## Critical
-    - [x] `file:line` — description *(auto-fixed)*
-    - [ ] `file:line` — description
-      **Impact:** ...
-      **Fix:** ...
+- [x] Create `skills/sk:dashboard/dashboard.html` — single-file Kanban UI
+  - All CSS in `<style>`, all JS in `<script>` — no external files except Google Fonts CDN
+  - Mission Control aesthetic per design (dark theme, JetBrains Mono + Orbitron)
+  - Color palette: `#080C14` bg, `#111827` surface, `#10B981` done, `#3B82F6` active, `#334155` pending, `#F59E0B` skipped, `#EF4444` hard gate accent
+  - Layout: header bar → scrollable content area → footer bar
+  - Each worktree = collapsible swimlane section
+  - Swimlane header: branch name, task name, progress fraction + percentage
+  - Phase timeline: 27 cells, color-coded by status, hard gates with red bottom border, active step with blue glow
+  - Active step card: prominent display with blue left border
+  - Status columns: Done / Skipped / Not Yet with step lists
+  - Progress bar per swimlane (gradient fill)
+  - Legend row: done / next / hard gate / skipped / not yet
+  - Auto-polls `/api/status` every 3 seconds, DOM updates in place (no reload)
+  - Collapsed state: header + progress bar only; expanded shows full timeline + columns
+  - Footer: worktree count, last refresh timestamp, port number
+  - Responsive at >=768px (half-screen beside terminal)
 
-    ## High / Medium / Low  (same format)
-
-    ## Content Strategy — Manual Action
-    - [ ] No structured data detected — consider adding JSON-LD (Article / Product / LocalBusiness)
-    - [ ] Submit sitemap to Google Search Console
-    - [ ] [other advisory items]
-
-    ## Passed Checks
-    - Items from previous run that now pass (or "First run — no prior baseline")
-
-    ## Applied Fixes
-    - Fixed: [description] in `file:line`
-    (or "No fixes applied this run")
-
-    ## Summary
-    | Severity | Open | Fixed this run |
-    |----------|------|----------------|
-    | Critical | N    | N              |
-    | High     | N    | N              |
-    | Medium   | N    | N              |
-    | Low      | N    | N              |
-    | Content Strategy | N | — |
-    ```
-  - **When Done:** conditional message:
-    - If Critical/High open: "SEO audit complete. N critical/high issues need attention before this site will rank well. Findings in `tasks/seo-findings.md`."
-    - If only Medium/Low/Content: "Technical SEO is solid. N medium/low polish items and N content strategy items noted in `tasks/seo-findings.md`."
-    - If all clean: "SEO audit passed — no issues found. `tasks/seo-findings.md` updated."
-  - **Fix & Retest Protocol** (same pattern as all gate skills):
-    - Template/config change (adding a meta tag, fixing alt text, scaffolding robots.txt) → commit and re-run `/sk:seo-audit`. No test update needed.
-    - Logic change (changing how a framework generates meta tags, modifying a layout component's data flow) → trigger protocol: update/add tests → `/sk:test` clean → commit → re-run `/sk:seo-audit`
-  - **Model Routing:** `.shipkit/config.json` → `model_overrides["sk:seo-audit"]` takes precedence; otherwise profile table: `full-sail` → sonnet, `quality` → sonnet, `balanced` → sonnet, `budget` → haiku
-
-- [x] Update `skills/sk:perf/SKILL.md` — rollout checklist format to "Generate Report" section
-  - Change all `- **[FILE:LINE]**` finding lines to `- [ ] **[FILE:LINE]**`
-  - Add `- [x] **[FILE:LINE]** ... *(resolved)*` pattern description for re-runs
-  - Add "Passed Checks" section to report template (items from previous run now passing)
-  - Update Summary table to include "Open" and "Fixed/Resolved this run" columns
-  - Note: "Never overwrite `tasks/perf-findings.md` — append with date header" (already present, keep it)
-
-- [x] Update `skills/sk:accessibility/SKILL.md` — rollout checklist format to "Generate Report" section
-  - Change Failures/Warnings lines to `- [ ]` format
-  - Add `- [x]` pattern for auto-resolved items
-  - Add "Passed Checks" section to report template
-  - Update Summary table to include "Open" and "Resolved this run" columns
-
-- [x] Update `commands/sk/security-check.md` — rollout checklist format (read file first to understand current format)
-  - Change finding lines to `- [ ]` format
-  - Add `- [x]` pattern for resolved items
-  - Preserve append-only rule — old run checkboxes stay as-is (audit trail)
-  - Add "Passed Checks" section to report template
-  - Update Summary table
+- [x] Create `skills/sk:dashboard/SKILL.md` — skill definition
+  - Frontmatter: `name: sk:dashboard`, description
+  - Purpose: Read-only workflow dashboard served on localhost
+  - Instructions: how to start (`node server.js`), what it shows, how to stop
+  - Notes: does not modify any files, read-only, auto-refreshes
+  - Model Routing section (sonnet for all profiles — lightweight skill)
 
 ---
 
-## Milestone 3: Documentation Updates (parallel — depends on Milestone 2 being clear on what sk:seo-audit does)
+## Milestone 3: Documentation Updates (parallel — all independent)
 
 #### Wave 3 (parallel — all documentation files)
 
-- [x] Update `CLAUDE.md` — add `sk:seo-audit` to commands table
-  - Add row in Commands table: `| \`/sk:seo-audit\` | SEO audit — dual-mode (source + dev server), ask-before-fix, checklist output |`
-  - Place under the quality/audit group (near sk:perf, sk:accessibility)
+- [x] Update `CLAUDE.md` — add `/sk:dashboard` to commands table
+  - Add row: `| \`/sk:dashboard\` | Read-only workflow Kanban board — localhost server, multi-worktree |`
+  - Place in the commands table near other utility commands
 
-- [x] Update `README.md` — add `sk:seo-audit` to commands section
-  - Same row as CLAUDE.md in the equivalent commands/skills table
-  - Place near sk:perf and sk:accessibility
+- [x] Update `README.md` — add `sk:dashboard` to commands section
+  - Same row as CLAUDE.md in the commands/skills table
 
-- [x] Update `.claude/docs/DOCUMENTATION.md` — add `sk:seo-audit` to skills section
-  - Add subsection entry describing the skill: purpose, when to run, output file, modes
-  - Place in the audit/quality group with sk:perf, sk:accessibility, sk:security-check
+- [x] Update `.claude/docs/DOCUMENTATION.md` — add `sk:dashboard` to skills section
+  - Add subsection entry: purpose, how to start, what it shows
 
-- [x] Update `install.sh` — add `sk:seo-audit` to workflow commands echo block
-  - Add `echo "  /sk:seo-audit    — SEO audit (standalone, any time after implementation)"` in the commands listing section
+- [x] Update `install.sh` — add `sk:dashboard` to workflow commands echo block
+  - Add `echo "  /sk:dashboard    — Read-only workflow Kanban board (localhost)"` in the commands listing
 
-- [x] Append `tasks/lessons.md` — update "Update ALL files" list
-  - Append new entry: "[2026-03-16] sk:seo-audit added — update its docs when skill changes"
-  - Note the 5 files that reference sk:seo-audit: CLAUDE.md, README.md, DOCUMENTATION.md, install.sh, and its own SKILL.md
+- [x] Append `tasks/lessons.md` — update "update ALL files" list
+  - Append new entry: "[2026-03-19] sk:dashboard — update its docs when the skill changes"
+  - Note the 5 files: SKILL.md, CLAUDE.md, README.md, DOCUMENTATION.md, install.sh
 
 ---
 
 ## Verification
 
 ```bash
-# Confirm new skill file exists
-ls skills/sk:seo-audit/SKILL.md
+# Confirm new skill files exist
+ls skills/sk:dashboard/SKILL.md
+ls skills/sk:dashboard/server.js
+ls skills/sk:dashboard/dashboard.html
 
-# Confirm dual-mode and ask-before-fix documented
-grep -i "running dev server" skills/sk:seo-audit/SKILL.md
-grep -i "Apply.*fixes" skills/sk:seo-audit/SKILL.md
+# Confirm server uses built-in modules only
+grep "require('http')" skills/sk:dashboard/server.js
+grep "worktree" skills/sk:dashboard/server.js
+grep "/api/status" skills/sk:dashboard/server.js
 
-# Confirm checklist format in new skill
-grep "\- \[ \]" skills/sk:seo-audit/SKILL.md
+# Confirm dashboard has key UI elements
+grep "SHIPKIT" skills/sk:dashboard/dashboard.html
+grep "fetch" skills/sk:dashboard/dashboard.html
 
-# Confirm checklist format rolled out to existing audit skills
-grep "\- \[ \]" skills/sk:perf/SKILL.md
-grep "\- \[ \]" skills/sk:accessibility/SKILL.md
-grep "\- \[ \]" skills/sk:security-check/SKILL.md
+# Confirm sk:dashboard in all documentation files
+grep "sk:dashboard" CLAUDE.md
+grep "sk:dashboard" README.md
+grep "sk:dashboard" .claude/docs/DOCUMENTATION.md
+grep "sk:dashboard" install.sh
 
-# Confirm sk:seo-audit in all documentation files
-grep "sk:seo-audit" CLAUDE.md
-grep "sk:seo-audit" README.md
-grep "sk:seo-audit" .claude/docs/DOCUMENTATION.md
-grep "sk:seo-audit" install.sh
+# Confirm /sk: prefix used (no bare /dashboard reference)
+grep -r '`/dashboard`' CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
 
-# Confirm /sk: prefix used (no bare /seo-audit reference)
-grep -r '`/seo-audit`' CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
+# Server smoke test
+node skills/sk:dashboard/server.js &
+SERVER_PID=$!
+sleep 1
+curl -s http://localhost:3333/api/status | head -c 200
+curl -s http://localhost:3333/ | head -c 200
+kill $SERVER_PID
 
 # Run full test suite
 bash tests/verify-workflow.sh
@@ -204,20 +142,24 @@ bash tests/verify-workflow.sh
 
 ## Acceptance Criteria
 
-- [x] `skills/sk:seo-audit/SKILL.md` exists with all required sections: Purpose, Hard Rules, Mode Detection, Phase 1–3, Mechanical Fixes Reference, Generate Report (checkbox format), When Done, Fix & Retest Protocol, Model Routing
-- [x] Dual-mode documented: source template scan + optional dev server probe (ports 3000/5173/8000/8080/4321)
-- [x] Ask-before-fix: prompt shows grouped list, applies only on `y`
-- [x] Output uses `- [ ]` / `- [x]` checkboxes, appends to `tasks/seo-findings.md`
-- [x] Content Strategy section in report (advisory, `- [ ]` only)
-- [x] Checklist format rolled out to sk:perf, sk:accessibility, sk:security-check SKILL.md files
-- [x] `sk:seo-audit` present in CLAUDE.md commands table, README.md, DOCUMENTATION.md, install.sh
-- [x] Fix & Retest Protocol present in sk:seo-audit SKILL.md
-- [x] Model routing section present in sk:seo-audit SKILL.md
-- [x] `tasks/lessons.md` updated (appended, not overwritten)
-- [x] All tests in `tests/verify-workflow.sh` pass (74/74)
+- [ ] `skills/sk:dashboard/server.js` exists, uses only Node.js built-in modules
+- [ ] `skills/sk:dashboard/dashboard.html` exists with Mission Control UI
+- [ ] `skills/sk:dashboard/SKILL.md` exists with skill definition
+- [ ] Server starts on port 3333 and responds to `/api/status` with valid JSON
+- [ ] Server discovers worktrees via `git worktree list`
+- [ ] Server parses `tasks/workflow-status.md` table into step objects
+- [ ] Server parses `tasks/todo.md` for task name and checkbox counts
+- [ ] Dashboard renders swimlanes per worktree with phase timeline
+- [ ] Dashboard auto-polls every 3 seconds without page reload
+- [ ] Hard gate steps (12, 14, 16, 20, 22) visually distinguished
+- [ ] Active step (`>> next <<`) highlighted with blue glow
+- [ ] Collapsed/expanded swimlane toggle works
+- [ ] `sk:dashboard` present in CLAUDE.md, README.md, DOCUMENTATION.md, install.sh
+- [ ] `tasks/lessons.md` updated (appended, not overwritten)
+- [ ] All tests in `tests/verify-workflow.sh` pass
 
 ## Risks/Unknowns
 
-- `skills/sk:security-check/SKILL.md` current report format unknown — read before editing to avoid breaking its structure
-- Checklist format on security findings has an edge case: security is a hard gate (must fix all), so `- [ ]` items block progress. Make sure the report wording still conveys urgency.
-- Server port detection via HEAD request may produce false positives on some machines — note in SKILL.md that user should confirm the detected URL is correct before trusting Phase 2 results
+- Worktree paths may contain spaces — ensure server handles quoted paths from `git worktree list`
+- If no `tasks/workflow-status.md` exists in a worktree, server should return empty/default state (not crash)
+- Google Fonts CDN requires internet connection — dashboard degrades to system monospace font if offline (acceptable)

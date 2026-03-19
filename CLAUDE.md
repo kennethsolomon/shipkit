@@ -277,6 +277,7 @@ Never retry the same failing approach.
 | `/sk:features` | Sync feature specs with shipped implementation |
 | `/sk:release` | Version bump + changelog + tag |
 | `/sk:status` | Show workflow + task status |
+| `/sk:dashboard` | Read-only workflow Kanban board — localhost server, multi-worktree |
 | `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 
 ## Architectural Change Log

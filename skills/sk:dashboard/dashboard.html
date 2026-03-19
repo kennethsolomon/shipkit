@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShipKit Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600&display=swap" rel="stylesheet">
+<style>
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --color-bg: #080C14;
+    --color-surface: #111827;
+    --color-surface-alt: #1A2234;
+    --color-border: #1E2D4A;
+    --color-text: #E2E8F0;
+    --color-text-muted: #64748B;
+    --color-done: #10B981;
+    --color-active: #3B82F6;
+    --color-pending: #334155;
+    --color-skipped: #F59E0B;
+    --color-gate: #EF4444;
+    --color-partial: #8B5CF6;
+    --font-display: 'Orbitron', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Header ── */
+
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-left svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--color-active);
+  }
+
+  .header-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--color-text);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  .live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-done);
+    animation: pulse-live 2s infinite ease-in-out;
+  }
+
+  @keyframes pulse-live {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .live-label {
+    font-weight: 600;
+    color: var(--color-done);
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  /* ── Content ── */
+
+  .content {
+    padding: 80px 24px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 100vh;
+  }
+
+  /* ── Empty State ── */
+
+  .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    color: var(--color-text-muted);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  /* ── Swimlane ── */
+
+  .swimlane {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .swimlane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .swimlane-header:hover {
+    background: var(--color-surface-alt);
+  }
+
+  .swimlane-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .swimlane-header-left svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    stroke: var(--color-text-muted);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .branch-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-dot {
+    color: var(--color-text-muted);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .task-name {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .swimlane-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .progress-fraction {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .progress-pct {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  .chevron {
+    width: 16px;
+    height: 16px;
+    stroke: var(--color-text-muted);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .swimlane.expanded .chevron {
+    transform: rotate(90deg);
+  }
+
+  /* ── Progress Bar ── */
+
+  .progress-bar-track {
+    height: 4px;
+    background: var(--color-pending);
+    margin: 0 16px 14px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--color-active), var(--color-done));
+    transition: width 0.5s ease;
+  }
+
+  /* ── Expanded Body ── */
+
+  .swimlane-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .swimlane.expanded .swimlane-body {
+    max-height: 1200px;
+  }
+
+  .swimlane-body-inner {
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* ── Phase Timeline ── */
+
+  .phase-timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  .phase-cell {
+    width: 44px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    position: relative;
+    cursor: default;
+    transition: background 0.15s;
+  }
+
+  .phase-cell.status-done {
+    background: var(--color-done);
+    color: #064E3B;
+  }
+
+  .phase-cell.status-active {
+    background: var(--color-active);
+    color: #FFFFFF;
+    animation: glow-active 2s infinite ease-in-out;
+  }
+
+  @keyframes glow-active {
+    0%, 100% { box-shadow: 0 0 6px rgba(59, 130, 246, 0.4); }
+    50% { box-shadow: 0 0 16px rgba(59, 130, 246, 0.7); }
+  }
+
+  .phase-cell.status-pending {
+    background: var(--color-pending);
+    color: var(--color-text-muted);
+  }
+
+  .phase-cell.status-skipped {
+    background: transparent;
+    outline: 1.5px solid var(--color-skipped);
+    color: var(--color-skipped);
+  }
+
+  .phase-cell.status-partial {
+    background: var(--color-partial);
+    color: #FFFFFF;
+  }
+
+  .phase-cell.hard-gate {
+    border-bottom: 2px solid var(--color-gate);
+  }
+
+  /* ── Tooltip ── */
+
+  .phase-cell .tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--color-text);
+    z-index: 50;
+    pointer-events: none;
+    line-height: 1.5;
+  }
+
+  .phase-cell .tooltip .tt-name {
+    font-weight: 600;
+  }
+
+  .phase-cell .tooltip .tt-cmd {
+    color: var(--color-active);
+  }
+
+  .phase-cell .tooltip .tt-notes {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .phase-cell:hover .tooltip {
+    display: block;
+  }
+
+  /* ── Legend ── */
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .legend-dot.ld-done { background: var(--color-done); }
+  .legend-dot.ld-active { background: var(--color-active); }
+  .legend-dot.ld-gate { background: var(--color-gate); }
+  .legend-dot.ld-skipped { background: transparent; outline: 1.5px solid var(--color-skipped); }
+  .legend-dot.ld-pending { background: var(--color-pending); }
+  .legend-dot.ld-partial { background: var(--color-partial); }
+
+  /* ── Active Step Card ── */
+
+  .active-step-card {
+    background: var(--color-surface-alt);
+    border-left: 3px solid var(--color-active);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .active-step-num {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-active);
+    min-width: 28px;
+  }
+
+  .active-step-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .active-step-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .active-step-cmd {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-active);
+  }
+
+  /* ── Status Columns ── */
+
+  .status-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .status-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .status-col-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .status-col-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-col-dot.sc-done { background: var(--color-done); }
+  .status-col-dot.sc-skipped { background: var(--color-skipped); }
+  .status-col-dot.sc-pending { background: var(--color-pending); }
+
+  .status-col-count {
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+
+  .status-col-list {
+    list-style: none;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  /* ── Footer ── */
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--color-text-muted);
+    z-index: 100;
+  }
+
+  /* ── Responsive ── */
+
+  @media (max-width: 768px) {
+    .phase-timeline {
+      flex-wrap: wrap;
+    }
+
+    .status-columns {
+      grid-template-columns: 1fr;
+    }
+
+    .header-title {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+    }
+
+    .task-name {
+      display: none;
+    }
+
+    .header-dot {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="header">
+  <div class="header-left">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2 L22 12 L12 22 L2 12 Z"/>
+    </svg>
+    <span class="header-title">SHIPKIT MISSION CONTROL</span>
+  </div>
+  <div class="header-right">
+    <div class="live-indicator">
+      <span class="live-dot"></span>
+      <span class="live-label">LIVE</span>
+    </div>
+    <span class="refresh-interval">&#8635; 3s</span>
+    <span class="clock" id="clock">--:--</span>
+  </div>
+</header>
+
+<!-- ── Content ── -->
+<main class="content" id="content">
+  <div class="empty-state">No active workflows detected.</div>
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer" id="footer">
+  0 worktrees &middot; Last refresh: --s ago &middot; Port 3333
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var HARD_GATES = [12, 14, 16, 20, 22];
+  var HARD_GATE_SET = {};
+  for (var g = 0; g < HARD_GATES.length; g++) HARD_GATE_SET[HARD_GATES[g]] = true;
+
+  var lastRefreshTime = Date.now();
+  var expandedWorktrees = {};
+  var initialized = false;
+  var lastWorktreeCount = 0;
+
+  var contentEl = document.getElementById('content');
+  var footerEl = document.getElementById('footer');
+  var clockEl = document.getElementById('clock');
+
+  // ── SVG helpers ──
+
+  function svgBranch() {
+    return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+      '<line x1="6" y1="3" x2="6" y2="15"/>' +
+      '<circle cx="18" cy="6" r="3"/>' +
+      '<circle cx="6" cy="18" r="3"/>' +
+      '<path d="M18 9a9 9 0 0 1-9 9"/>' +
+      '</svg>';
+  }
+
+  function svgChevron() {
+    return '<svg class="chevron" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+      '<polyline points="9 6 15 12 9 18"/>' +
+      '</svg>';
+  }
+
+  // ── Helpers ──
+
+  function esc(str) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(str || ''));
+    return d.innerHTML;
+  }
+
+  function classifyStatus(raw) {
+    if (!raw) return 'pending';
+    var s = raw.toLowerCase().trim();
+    if (s === 'done') return 'done';
+    if (s === 'skipped') return 'skipped';
+    if (s === 'partial') return 'partial';
+    if (s.indexOf('>> next <<') !== -1) return 'active';
+    if (s === 'not yet' || s === '') return 'pending';
+    return 'pending';
+  }
+
+  // ── Render one worktree swimlane ──
+
+  function renderWorktree(wt, index, total) {
+    var steps = wt.steps || [];
+    var branch = wt.branch || 'unknown';
+    var taskName = wt.taskName || '';
+    var wtId = wt.path || branch;
+
+    // Set initial expand state
+    if (!initialized) {
+      expandedWorktrees[wtId] = (total === 1) || (index === 0);
+    }
+    var isExpanded = !!expandedWorktrees[wtId];
+
+    // Classify all 27 steps
+    var doneSteps = [];
+    var skippedSteps = [];
+    var pendingSteps = [];
+    var activeStep = null;
+
+    for (var i = 0; i < steps.length; i++) {
+      var step = steps[i];
+      var st = classifyStatus(step.status);
+      var label = step.name || ('Step ' + step.number);
+
+      if (st === 'done') {
+        doneSteps.push(label);
+      } else if (st === 'partial') {
+        doneSteps.push(label + ' (partial)');
+      } else if (st === 'skipped') {
+        skippedSteps.push(label);
+      } else if (st === 'active') {
+        activeStep = step;
+        pendingSteps.push(label);
+      } else {
+        pendingSteps.push(label);
+      }
+    }
+
+    var completed = doneSteps.length + skippedSteps.length;
+    var totalSteps = steps.length || 27;
+    var pct = Math.round((completed / totalSteps) * 100);
+
+    var h = '';
+    h += '<div class="swimlane' + (isExpanded ? ' expanded' : '') + '" data-wt="' + esc(wtId) + '">';
+
+    // ── Header row ──
+    h += '<div class="swimlane-header" data-wt-toggle="' + esc(wtId) + '">';
+    h += '<div class="swimlane-header-left">';
+    h += svgBranch();
+    h += '<span class="branch-name">' + esc(branch) + '</span>';
+    if (taskName) {
+      h += '<span class="header-dot">&bull;</span>';
+      h += '<span class="task-name">' + esc(taskName) + '</span>';
+    }
+    h += '</div>';
+    h += '<div class="swimlane-header-right">';
+    h += '<span class="progress-fraction">' + completed + '/' + totalSteps + '</span>';
+    h += '<span class="progress-pct">' + pct + '%</span>';
+    h += svgChevron();
+    h += '</div>';
+    h += '</div>';
+
+    // ── Progress bar ──
+    h += '<div class="progress-bar-track">';
+    h += '<div class="progress-bar-fill" style="width:' + pct + '%"></div>';
+    h += '</div>';
+
+    // ── Expanded body ──
+    h += '<div class="swimlane-body"><div class="swimlane-body-inner">';
+
+    // Phase timeline
+    h += '<div class="phase-timeline">';
+    for (var j = 0; j < steps.length; j++) {
+      var sd = steps[j];
+      var cls = classifyStatus(sd.status);
+      var isGate = !!HARD_GATE_SET[sd.number];
+      var cellCls = 'phase-cell status-' + cls + (isGate ? ' hard-gate' : '');
+
+      h += '<div class="' + cellCls + '">';
+      h += sd.number;
+      h += '<div class="tooltip">';
+      h += '<div class="tt-name">' + esc(sd.name) + '</div>';
+      if (sd.command) h += '<div class="tt-cmd">' + esc(sd.command) + '</div>';
+      if (sd.notes) h += '<div class="tt-notes">' + esc(sd.notes) + '</div>';
+      h += '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+
+    // Legend
+    h += '<div class="legend">';
+    h += '<div class="legend-item"><div class="legend-dot ld-done"></div>Done</div>';
+    h += '<div class="legend-item"><div class="legend-dot ld-active"></div>Next</div>';
+    h += '<div class="legend-item"><div class="legend-dot ld-gate"></div>Hard Gate</div>';
+    h += '<div class="legend-item"><div class="legend-dot ld-skipped"></div>Skipped</div>';
+    h += '<div class="legend-item"><div class="legend-dot ld-partial"></div>Partial</div>';
+    h += '<div class="legend-item"><div class="legend-dot ld-pending"></div>Not Yet</div>';
+    h += '</div>';
+
+    // Active step card
+    if (activeStep) {
+      h += '<div class="active-step-card">';
+      h += '<span class="active-step-num">' + activeStep.number + '</span>';
+      h += '<div class="active-step-info">';
+      h += '<span class="active-step-name">' + esc(activeStep.name) + '</span>';
+      if (activeStep.command) {
+        h += '<span class="active-step-cmd">' + esc(activeStep.command) + '</span>';
+      }
+      h += '</div>';
+      h += '</div>';
+    }
+
+    // Status columns
+    h += '<div class="status-columns">';
+
+    h += '<div class="status-col">';
+    h += '<div class="status-col-header"><span class="status-col-dot sc-done"></span>Done <span class="status-col-count">(' + doneSteps.length + ')</span></div>';
+    h += '<ul class="status-col-list">';
+    for (var d = 0; d < doneSteps.length; d++) h += '<li>' + esc(doneSteps[d]) + '</li>';
+    h += '</ul></div>';
+
+    h += '<div class="status-col">';
+    h += '<div class="status-col-header"><span class="status-col-dot sc-skipped"></span>Skipped <span class="status-col-count">(' + skippedSteps.length + ')</span></div>';
+    h += '<ul class="status-col-list">';
+    for (var k = 0; k < skippedSteps.length; k++) h += '<li>' + esc(skippedSteps[k]) + '</li>';
+    h += '</ul></div>';
+
+    h += '<div class="status-col">';
+    h += '<div class="status-col-header"><span class="status-col-dot sc-pending"></span>Not Yet <span class="status-col-count">(' + pendingSteps.length + ')</span></div>';
+    h += '<ul class="status-col-list">';
+    for (var p = 0; p < pendingSteps.length; p++) h += '<li>' + esc(pendingSteps[p]) + '</li>';
+    h += '</ul></div>';
+
+    h += '</div>'; // status-columns
+    h += '</div></div>'; // swimlane-body-inner, swimlane-body
+    h += '</div>'; // swimlane
+
+    return h;
+  }
+
+  // ── Render all worktrees ──
+
+  function render(worktrees) {
+    if (!worktrees || worktrees.length === 0) {
+      contentEl.innerHTML = '<div class="empty-state">No active workflows detected.</div>';
+      document.title = 'ShipKit Mission Control';
+      return;
+    }
+
+    // Count active worktrees
+    var activeCount = 0;
+    for (var a = 0; a < worktrees.length; a++) {
+      if (worktrees[a].currentStep > 0) activeCount++;
+    }
+    document.title = 'ShipKit \u2014 ' + activeCount + ' active';
+
+    var html = '';
+    for (var i = 0; i < worktrees.length; i++) {
+      html += renderWorktree(worktrees[i], i, worktrees.length);
+    }
+    contentEl.innerHTML = html;
+    initialized = true;
+
+    // Bind toggle click handlers
+    var toggles = contentEl.querySelectorAll('[data-wt-toggle]');
+    for (var t = 0; t < toggles.length; t++) {
+      toggles[t].addEventListener('click', handleToggle);
+    }
+  }
+
+  function handleToggle(e) {
+    var el = e.currentTarget;
+    var wtId = el.getAttribute('data-wt-toggle');
+    expandedWorktrees[wtId] = !expandedWorktrees[wtId];
+    var swimlane = el.closest('.swimlane');
+    if (swimlane) swimlane.classList.toggle('expanded');
+  }
+
+  // ── Clock ──
+
+  function updateClock() {
+    var now = new Date();
+    var hh = String(now.getHours()).padStart(2, '0');
+    var mm = String(now.getMinutes()).padStart(2, '0');
+    clockEl.textContent = hh + ':' + mm;
+  }
+
+  // ── Footer ──
+
+  function updateFooter() {
+    var ago = Math.round((Date.now() - lastRefreshTime) / 1000);
+    footerEl.textContent = lastWorktreeCount + ' worktree' + (lastWorktreeCount !== 1 ? 's' : '') +
+      ' \u00B7 Last refresh: ' + ago + 's ago \u00B7 Port 3333';
+  }
+
+  // ── Polling ──
+
+  function fetchStatus() {
+    fetch('/api/status')
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        lastRefreshTime = Date.now();
+        var worktrees = Array.isArray(data) ? data : (data.worktrees || []);
+        lastWorktreeCount = worktrees.length;
+        render(worktrees);
+        updateFooter();
+      })
+      .catch(function () {
+        // Silent retry on next poll cycle
+      });
+  }
+
+  // ── Init ──
+
+  updateClock();
+  fetchStatus();
+
+  setInterval(fetchStatus, 3000);
+  setInterval(updateClock, 1000);
+  setInterval(updateFooter, 1000);
+})();
+</script>
+
+</body>
+</html>
