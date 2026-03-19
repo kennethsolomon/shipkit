@@ -243,6 +243,7 @@ Requirement changes → /sk:change → re-enter at correct step
 |---------|-------------|
 | `/sk:help` | Show all commands and workflow overview |
 | `/sk:status` | Show workflow and task status at a glance |
+| `/sk:dashboard` | Read-only workflow Kanban board — localhost server, multi-worktree |
 | `/sk:skill-creator` | Create or improve ShipKit skills |
 
 ---

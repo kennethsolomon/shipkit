@@ -8,6 +8,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.5.0] - 2026-03-19
+
+### Added
+- `sk:dashboard` — Read-only workflow Kanban board served by a zero-dependency Node.js server. Shows live workflow status across all git worktrees: phase timeline, step Kanban (Done/Next/Skipped/Not Yet), progress bar, and a **TASKS panel** displaying individual todo checklist items grouped by milestone. Items show current progress state (✓ done, → current, ○ pending). Auto-polls every 3 seconds. Start with `node skills/sk:dashboard/server.js` → `http://localhost:3333`.
+
 ## [3.4.0] - 2026-03-19
 
 ### Changed

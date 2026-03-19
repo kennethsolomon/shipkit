@@ -71,6 +71,30 @@ assert_count_gte() {
   fi
 }
 
+assert_api_field() {
+  local desc="$1" port="$2" field="$3"
+  local pid response attempt
+  node "$REPO/skills/sk:dashboard/server.js" --port "$port" > /dev/null 2>&1 &
+  pid=$!
+  response=""
+  for attempt in 1 2 3 4 5; do
+    sleep 0.4
+    response=$(curl -s "http://localhost:${port}/api/status" 2>/dev/null || echo "")
+    [[ -n "$response" ]] && break
+  done
+  kill "$pid" 2>/dev/null
+  wait "$pid" 2>/dev/null || true
+  if echo "$response" | grep -q "\"${field}\""; then
+    echo -e "${green}PASS${reset} $desc"
+    PASS=$((PASS + 1))
+  else
+    echo -e "${red}FAIL${reset} $desc"
+    echo "       Expected field '${field}' in /api/status response"
+    FAIL=$((FAIL + 1))
+    FAILURES+=("$desc")
+  fi
+}
+
 echo ""
 echo "=== Workflow Enhancement Verification ==="
 echo ""
@@ -473,6 +497,127 @@ assert_contains \
   "sk:security-check report has Passed Checks section" \
   "$REPO/commands/sk/security-check.md" \
   "Passed Checks"
+
+# ── Milestone 5: sk:dashboard Skill ──────────────────────────────────────────
+
+echo "── Milestone 5: sk:dashboard Skill ──"
+
+DASH_SKILL="$REPO/skills/sk:dashboard/SKILL.md"
+DASH_SERVER="$REPO/skills/sk:dashboard/server.js"
+DASH_HTML="$REPO/skills/sk:dashboard/dashboard.html"
+
+assert_file_exists \
+  "sk:dashboard SKILL.md exists" \
+  "$DASH_SKILL"
+
+assert_file_exists \
+  "sk:dashboard server.js exists" \
+  "$DASH_SERVER"
+
+assert_file_exists \
+  "sk:dashboard dashboard.html exists" \
+  "$DASH_HTML"
+
+assert_contains \
+  "sk:dashboard server uses built-in http module" \
+  "$DASH_SERVER" \
+  "http"
+
+assert_contains \
+  "sk:dashboard server discovers git worktrees" \
+  "$DASH_SERVER" \
+  "worktree"
+
+assert_contains \
+  "sk:dashboard server reads workflow-status.md" \
+  "$DASH_SERVER" \
+  "workflow-status.md"
+
+assert_contains \
+  "sk:dashboard server exposes /api/status endpoint" \
+  "$DASH_SERVER" \
+  "/api/status"
+
+assert_contains \
+  "sk:dashboard HTML has SHIPKIT header" \
+  "$DASH_HTML" \
+  "SHIPKIT"
+
+assert_contains \
+  "sk:dashboard HTML uses fetch for polling" \
+  "$DASH_HTML" \
+  "fetch"
+
+assert_contains \
+  "sk:dashboard HTML uses design font" \
+  "$DASH_HTML" \
+  "JetBrains Mono"
+
+assert_contains \
+  "sk:dashboard SKILL.md references skill name" \
+  "$DASH_SKILL" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard SKILL.md references server.js" \
+  "$DASH_SKILL" \
+  "server.js"
+
+assert_contains \
+  "sk:dashboard in CLAUDE.md commands table" \
+  "$CLAUDE" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard in README.md" \
+  "$REPO/README.md" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard in DOCUMENTATION.md" \
+  "$REPO/.claude/docs/DOCUMENTATION.md" \
+  "sk:dashboard"
+
+assert_contains \
+  "sk:dashboard in install.sh" \
+  "$REPO/install.sh" \
+  "sk:dashboard"
+
+echo ""
+
+# ── Milestone 6: sk:dashboard Todo Item Display ───────────────────────────────
+
+echo "── Milestone 6: sk:dashboard todoItems ──"
+
+assert_contains \
+  "sk:dashboard server.js exposes todoItems field" \
+  "$DASH_SERVER" \
+  "todoItems"
+
+assert_contains \
+  "sk:dashboard server.js tracks section label per item" \
+  "$DASH_SERVER" \
+  "section"
+
+assert_contains \
+  "sk:dashboard dashboard.html reads todoItems from API" \
+  "$DASH_HTML" \
+  "todoItems"
+
+assert_contains \
+  "sk:dashboard dashboard.html renders TASKS section heading" \
+  "$DASH_HTML" \
+  "TASKS"
+
+assert_contains \
+  "sk:dashboard dashboard.html has todo-item CSS class" \
+  "$DASH_HTML" \
+  "todo-item"
+
+assert_api_field \
+  "sk:dashboard /api/status response includes todoItems array" \
+  "3334" \
+  "todoItems"
 
 echo ""
 

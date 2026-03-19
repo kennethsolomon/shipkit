@@ -1135,6 +1135,24 @@ Run at any point after implementation — not a numbered workflow step.
 
 ---
 
+### /sk:dashboard
+
+Read-only workflow Kanban board served on localhost. Shows workflow status across all git worktrees as a visual dashboard.
+
+**What it does:**
+- Serves a browser-based Kanban board displaying workflow step status for the current project
+- Scans all git worktrees and reads each `tasks/workflow-status.md` to build the board
+- Read-only — no mutations, no side effects
+- Standalone optional command, not a numbered workflow step
+
+**Usage:**
+```bash
+node skills/sk:dashboard/server.js
+```
+Starts a local server on port 3333 by default. Open `http://localhost:3333` in your browser.
+
+---
+
 ### `/hotfix`
 
 Emergency fix workflow for production incidents — skips design and TDD, quality gates still enforced.

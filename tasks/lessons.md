@@ -75,3 +75,15 @@ Additionally, if new gate skills are added (like sk:e2e):
 3. `README.md` — commands section
 4. `.claude/docs/DOCUMENTATION.md` — skills section
 5. `install.sh` — commands echo block
+
+### [2026-03-19] sk:dashboard — update its docs when the skill changes
+**Bug:** New standalone skill added (sk:dashboard) without updating the "update ALL files" lesson to include it.
+**Root cause:** The lesson list wasn't updated when the new skill was created.
+**Prevention:** When sk:dashboard changes (skill behavior, server.js, dashboard.html), update ALL 5 of these files in the same commit:
+1. `skills/sk:dashboard/SKILL.md` — the skill itself
+2. `skills/sk:dashboard/server.js` — the server
+3. `skills/sk:dashboard/dashboard.html` — the UI
+4. `CLAUDE.md` — commands table
+5. `README.md` — commands section
+6. `.claude/docs/DOCUMENTATION.md` — skills section
+7. `install.sh` — commands echo block

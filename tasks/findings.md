@@ -1,110 +1,125 @@
-# Findings — 2026-03-16 — New Skill: sk:seo-audit
+# Findings — 2026-03-19 — sk:dashboard: Read-Only Kanban Board
 
 ## Problem Statement
 
-Freelance developers need a way to audit and fix common SEO issues across client projects, regardless of framework. No current skill in the workflow addresses SEO. Missing meta tags, broken robots.txt, duplicate title tags, and missing alt text are objective, measurable issues that directly impact search rankings and are fully automatable — but they go undetected without a dedicated tool.
+When working on multiple features in parallel (especially with git worktrees), there's no way to visualize the workflow status across all active branches. The `tasks/workflow-status.md` file only shows one task's progress, and you have to manually read each worktree's file to understand overall state. A read-only Kanban board served on localhost would provide at-a-glance visibility into all active workflows.
 
 ## Key Decisions Made
 
-- **Skill type:** Standalone optional command (not a numbered workflow step). Like `/sk:debug` — invokable at any time, not tied to step order. No workflow renumbering required.
-- **Audit mode:** Dual-mode — primary pass reads source template files (`.blade.php`, `.jsx`, `.tsx`, `.vue`, `.html`, etc.), secondary pass fetches from running dev server if detected. Degrades gracefully if no server is running.
-- **Fix mode:** Ask-before-fix — audit first, present grouped mechanical fixes, ask once "Apply N fixes?", then apply. Never auto-applies without confirmation.
-- **Findings output:** `tasks/seo-findings.md` — consistent with sk:perf, sk:accessibility. Never overwrite; append with date header.
-- **Content strategy:** Included as a clearly labeled "Content Strategy — Manual Action" section at the bottom of the same `tasks/seo-findings.md` file. These are advisory notes, not code fixes.
+- **Type:** Standalone optional command (`/sk:dashboard`) — not a numbered workflow step. Invokable at any time.
+- **Architecture:** Zero-dependency Node.js server using built-in `http` + `fs` modules. No Express, no framework.
+- **Frontend:** Single self-contained HTML file with embedded CSS/JS. Vanilla — no React/Vue/Svelte.
+- **Data source:** Reads `tasks/workflow-status.md` and `tasks/todo.md` from main repo + all git worktrees. Markdown is the source of truth.
+- **Interaction:** Read-only. No editing, no drag-and-drop. Claude updates the markdown; the UI just displays it.
+- **Live updates:** Auto-refresh via polling (every 3-5 seconds).
+- **Worktree support:** Uses `git worktree list` to discover all worktrees, reads `tasks/` from each.
+- **Precedent:** Follows the pattern set by `skills/sk:skill-creator/eval-viewer/viewer.html` — embedded HTML viewer in a skill directory.
 
-## Chosen Approach: Approach B — Dual-Mode (Source + Dev Server)
+## Chosen Approach: Approach A — Zero-Dep Node Server + Single HTML File
 
 ### What it does
 
-**Phase 1 — Source Audit**
-- Detect template files: `.blade.php`, `.jsx`, `.tsx`, `.vue`, `.html`, `.ejs`, `.njk`, `.twig`
-- Audit Technical SEO: robots.txt (exists, not blocking all), sitemap.xml (exists, referenced in robots.txt), HTTPS signals (mixed content in templates), canonical tags
-- Audit On-Page SEO: title tags (present, unique, 50-60 chars), meta descriptions (present, unique, 150-160 chars), H1 structure (exactly one per page), alt text on images, internal link anchors
-- Audit Content Signals: schema/structured data presence (JSON-LD), Open Graph tags, Twitter Card tags
+**Server (Node.js built-in `http` + `fs`):**
+- Runs `git worktree list` to discover all active worktrees
+- For each worktree, reads and parses:
+  - `tasks/workflow-status.md` — 27-step table → step statuses
+  - `tasks/todo.md` — task name, milestones, checkbox completion
+- Exposes a JSON API endpoint (`/api/status`) returning parsed data for all worktrees
+- Serves the single HTML dashboard file
+- Listens on a configurable port (default: 3333)
 
-**Phase 2 — Server Audit (optional, degrades gracefully)**
-- Detect running dev server on common ports: 3000, 5173, 8000, 8080, 4321
-- Fetch key pages (/, /about, any pages found in sitemap or nav) via curl/fetch
-- Cross-reference: do rendered pages match what source templates declare?
-- Flag mismatches (e.g., framework overriding meta tags at runtime)
-- Note what can't be checked without external tools (Google Rich Results Test for structured data validation)
+**Dashboard (single HTML file, embedded CSS/JS):**
+- Kanban board layout with columns: **Not Started** | **In Progress** | **Done** | **Skipped**
+- Each worktree/branch is a **swimlane** (horizontal row across columns)
+- Swimlane header shows: branch name, task name (from todo.md Goal), overall progress (e.g., "18/27 steps")
+- Each workflow step is a **card** in the appropriate column
+- Cards show: step number, step name, command, notes
+- Hard gate steps (12, 14, 16, 20, 22) visually distinguished (border/badge)
+- `>> next <<` step highlighted prominently
+- Auto-polls `/api/status` every 3-5 seconds for live updates
+- No page reload needed — DOM updates in place
 
-**Phase 3 — Ask Before Fix**
-- Group all mechanical fixes with descriptions
-- Show list: "Found N auto-fixable issues. Apply mechanical fixes? [y/N]"
-- On yes: apply fixes to source files, log each fix
-- On no: include fixes in findings as manual action items
+### Data model
 
-**Phase 4 — Report**
-- Write to `tasks/seo-findings.md` — append with date header, never overwrite
-- Every finding is a **checkbox** (`- [ ]` or `- [x]`)
-- Items auto-fixed this run → pre-checked `- [x]` with *(auto-fixed)* label
-- Items still failing → unchecked `- [ ]` (user checks off as they manually fix)
-- Items from previous run that now pass → moved to "Passed Checks" in new section
-- Content strategy items → always `- [ ]` (user decides when done)
-- Sections:
-  - Critical / High / Medium / Low (technical + on-page findings, all as checkboxes)
-  - Content Strategy — Manual Action (advisory checkboxes, not code fixes)
-  - Passed Checks (resolved since last run)
-  - Summary table (counts of checked vs unchecked per severity)
+```
+Worktree {
+  path: string           // filesystem path
+  branch: string         // git branch name
+  taskName: string       // from todo.md ## Goal
+  currentStep: number    // step with >> next <<
+  totalDone: number      // count of "done" steps
+  totalSkipped: number   // count of "skipped" steps
+  steps: Step[]          // all 27 steps
+  todoItems: TodoItem[]  // individual checklist items from todo.md [NEW]
+}
 
-### Mechanical fixes the skill can apply
-- Add/fix `<title>` tags in templates
-- Add/fix `<meta name="description">` tags
-- Add missing `alt` attributes on `<img>` tags (with placeholder text for user to fill)
-- Add `<link rel="canonical">` when missing
-- Create/scaffold `robots.txt` if missing
-- Create/scaffold `sitemap.xml` if missing
-- Fix heading hierarchy (multiple H1s → demote extras to H2)
-- Add Open Graph basic tags (`og:title`, `og:description`, `og:url`) if missing
-- Add `<html lang="">` attribute if missing
+TodoItem {
+  text: string           // item text (backtick-stripped)
+  done: boolean          // true = [x], false = [ ]
+  section: string        // nearest ## Milestone N: header above this item
+}
 
-### Manual-only items (content strategy section)
-- Keyword targeting per page
-- Content depth and E-E-A-T signals
-- Backlink profile
-- Google Search Console submission
-- Schema markup validation (requires Google Rich Results Test)
-- Competitor gap analysis
+Step {
+  number: number         // 1-27
+  name: string           // "Lint + Dep Audit"
+  command: string        // "/sk:lint"
+  status: string         // "not yet" | ">> next <<" | "done" | "skipped" | "partial"
+  notes: string          // free text
+  isHardGate: boolean    // steps 12, 14, 16, 20, 22
+  isOptional: boolean    // steps 4, 5, 8, 18, 27
+}
+```
 
-### Audit depth
-- Technical SEO: crawlability, robots.txt, sitemap, HTTPS signals, canonical, redirects
-- On-Page SEO: titles, meta descriptions, headings, alt text, internal links, image filenames
-- Content signals: structured data presence (JSON-LD), OG tags, Twitter Cards, page language
+### Markdown parsing rules
 
-## Scope Expansion: Checklist Format for All Audit Skills
+**workflow-status.md:**
+- Skip lines until `| # |` header row
+- Skip separator row (`|---|`)
+- Each subsequent `|`-delimited row → split into 4 columns
+- Strip whitespace, bold markers (`**`), backtick markers
+- Extract command from parentheses in Step column
 
-The checkbox/actionable checklist pattern (`- [ ]` / `- [x]`) applies to ALL audit skill findings files for consistency:
+**todo.md:**
+- Task name: first `# TODO —` line, take everything after the last `—`
+- Checkboxes: count `- [x]` (done) vs `- [ ]` (pending)
+- Milestones: `## Milestone N:` headers
 
-| Skill | Findings file | Notes |
-|-------|--------------|-------|
-| sk:seo-audit | `tasks/seo-findings.md` | new skill — built with checkboxes from the start |
-| sk:perf | `tasks/perf-findings.md` | update report format section in SKILL.md |
-| sk:accessibility | `tasks/accessibility-findings.md` | update report format section in SKILL.md |
-| sk:security-check | `tasks/security-findings.md` | append-only rule preserved; checkboxes per dated section; old run checkboxes stay as-is (audit trail) |
+### File structure
 
-**Logic for all audit skills:**
-- Items auto-fixed / resolved this run → `- [x]` with *(auto-fixed)* or *(resolved)* label
-- Items still failing → `- [ ]`
-- Items from previous run that now pass → moved to "Passed Checks" in the new section
-- Advisory/manual items → `- [ ]` (user marks done when handled)
+```
+skills/sk:dashboard/
+├── SKILL.md          # Skill definition (instructions for Claude)
+├── server.js         # Node.js HTTP server (~100-150 lines)
+└── dashboard.html    # Single-file UI (HTML + embedded CSS + JS)
+```
+
+### Visual design direction
+
+- Dark theme (developer-friendly, matches terminal aesthetic)
+- Compact cards — step number + name + status icon
+- Color coding: green (done), blue (in progress/next), gray (not yet), yellow (skipped), red border (hard gate)
+- Progress bar per swimlane
+- Responsive — works in a half-screen browser window beside the terminal
+
+## Scope
+
+- **In scope:** Server, HTML dashboard, SKILL.md, install.sh update, docs updates
+- **Out of scope:** Authentication, persistent storage, WebSocket (polling is sufficient), editing/interaction, mobile layout
 
 ## Files to Create/Update
 
-### New file
-- `skills/sk:seo-audit/SKILL.md` — full standalone skill
+### New files
+- `skills/sk:dashboard/SKILL.md` — skill definition
+- `skills/sk:dashboard/server.js` — Node.js HTTP server
+- `skills/sk:dashboard/dashboard.html` — single-file Kanban UI
 
-### Files to update (standalone command, no renumbering)
-- `CLAUDE.md` — add to commands table
+### Files to update
+- `CLAUDE.md` — add `/sk:dashboard` to commands table
 - `README.md` — add to commands section
 - `.claude/docs/DOCUMENTATION.md` — add to skills section
-- `install.sh` — add `sk:seo-audit` to workflow commands echo block
-- `tasks/lessons.md` — append: update the "update ALL files" list to include seo-audit docs
-
-### Files to update (checklist format rollout to existing audit skills)
-- `skills/sk:perf/SKILL.md` — update "Generate Report" section to use checkbox format
-- `skills/sk:accessibility/SKILL.md` — update "Generate Report" section to use checkbox format
-- `skills/sk:security-check/SKILL.md` — update report format to use checkbox format (preserve append-only rule)
+- `install.sh` — add `sk:dashboard` to workflow commands echo block
+- `tasks/lessons.md` — append: update "update ALL files" list to include dashboard docs
 
 ## Open Questions
+
 - None — design is locked

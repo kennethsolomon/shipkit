@@ -1,5 +1,17 @@
 # Progress Log
 
+## Session: 2026-03-19 — todoItems implementation
+- server.js: extended parseTodo() with todoItems [{text, done, section}]; STOP_HEADERS set; Milestone header tracking
+- dashboard.html: added renderTodoItems() + TASKS panel in renderWorktree(); ✓/→/○ state icons; graceful empty fallback
+- tests: 96/96 pass (6 new Milestone 6 assertions all green, first try)
+
+## Requirement Change — 2026-03-19
+- What changed: Dashboard to show individual todo checklist items (text + done/pending state) instead of just aggregate counts
+- Trigger: User feedback after E2E — wants to see which specific phase/task the AI is currently on
+- Scope tier: 2 — New Requirements
+- Re-entry point: /sk:write-plan
+- Invalidated tasks: none (all existing tasks still valid; this adds new scope on top)
+
 ## Session: 2026-03-08
 - Started: workflow tracker enhancement
 - Summary: Implementing 14-step workflow tracker with strict enforcement
@@ -94,6 +106,30 @@
 - Branch: `feature/sk-seo-audit-checklist-format`
 - Commits: f75f608 (feat), e4751e7 (review fixes)
 - All acceptance criteria met; 74/74 tests pass
+
+## Session: 2026-03-19 — sk:dashboard + todoItems TASKS Panel
+
+## Work Log (2026-03-19)
+- Created `skills/sk:dashboard/server.js` — zero-dep Node.js HTTP server, `git worktree list` discovery, workflow-status + todo parsing, `/api/status` JSON endpoint
+- Created `skills/sk:dashboard/dashboard.html` — Mission Control Kanban UI, swimlanes per worktree, phase timeline, 3s polling
+- Created `skills/sk:dashboard/SKILL.md` — skill definition
+- Updated `CLAUDE.md`, `README.md`, `.claude/docs/DOCUMENTATION.md`, `install.sh` — added sk:dashboard
+- Appended `tasks/lessons.md` — sk:dashboard update-all-files lesson
+- Extended `parseTodo()` — added `todoItems: [{text, done, section}]` (Milestone 4+5)
+- Fixed critical bug in `parseTodo()` — replaced `collecting=true` flag with `inMilestones`/`pastMilestones` (## Change Log appeared before ## Milestone in todo.md)
+- Review fixes: detached HEAD in `discoverWorktrees`, `indexOf` for em dash, swimlane `max-height` 1200→4000px, `assert_api_field` retry loop replacing `sleep 1`
+
+## Test Results (2026-03-19 — sk:dashboard)
+| Suite | Result |
+|-------|--------|
+| tests/verify-workflow.sh | 96/96 PASS |
+| E2E (Playwright MCP) | 10/10 PASS |
+
+### 2026-03-19 — sk:dashboard (Read-Only Kanban Board + TASKS Panel) — COMPLETED
+- Branch: `feature/sk-dashboard`
+- Changes: New `sk:dashboard` skill — zero-dep Node server + single-file HTML Kanban; TASKS panel per swimlane showing individual todo checklist items grouped by milestone; parseTodo bug fix; review fixes for detached HEAD, em dash, max-height, test retry
+- Tests: 96/96 assertions passing (tests/verify-workflow.sh); 10/10 E2E scenarios (Playwright MCP)
+- Files changed: 13 (5 commits: f07db5f, 03c6e24, 1eb13cc, 99f8d7c, d3637fd)
 
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
