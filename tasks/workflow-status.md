@@ -11,10 +11,10 @@
 | 4 | Design (`/sk:frontend-design` or `/sk:api-design`) | skipped | Pure skill/doc updates — no UI, no API |
 | 5 | Accessibility (`/sk:accessibility`) | skipped | No frontend changes |
 | 6 | Plan (`/sk:write-plan`) | done | 3 milestones, 3 waves; plan approved |
-| 7 | Branch (`/sk:branch`) | >> next << | |
-| 8 | Migrate (`/sk:schema-migrate`) | not yet | |
-| 9 | Write Tests (`/sk:write-tests`) | not yet | |
-| 10 | Implement (`/sk:execute-plan`) | not yet | |
+| 7 | Branch (`/sk:branch`) | done | feature/context-mvp-docs-decisions |
+| 8 | Migrate (`/sk:schema-migrate`) | skipped | No DB — pure skill/doc changes |
+| 9 | Write Tests (`/sk:write-tests`) | done | 21 new failing assertions (M7: 3, M8: 15, M9: 3); 97 existing pass |
+| 10 | Implement (`/sk:execute-plan`) | done | M2: 3 approaches parallel (mvp+context+brainstorm); M3: 7 doc files; 118/118 tests pass |
 | 11 | Commit (`/sk:smart-commit`) | not yet | |
 | 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | |
 | 13 | Commit (`/sk:smart-commit`) | not yet | |

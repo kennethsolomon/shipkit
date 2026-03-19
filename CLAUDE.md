@@ -278,6 +278,7 @@ Never retry the same failing approach.
 | `/sk:release` | Version bump + changelog + tag |
 | `/sk:status` | Show workflow + task status |
 | `/sk:dashboard` | Read-only workflow Kanban board — localhost server, multi-worktree |
+| `/sk:context` | Load all context files + output session brief for fast session start |
 | `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 
 ## Architectural Change Log
