@@ -187,25 +187,25 @@ bash tests/verify-workflow.sh
 
 ## Acceptance Criteria
 
-- [ ] `skills/sk:dashboard/server.js` exists, uses only Node.js built-in modules
-- [ ] `skills/sk:dashboard/dashboard.html` exists with Mission Control UI
-- [ ] `skills/sk:dashboard/SKILL.md` exists with skill definition
-- [ ] Server starts on port 3333 and responds to `/api/status` with valid JSON
-- [ ] Server discovers worktrees via `git worktree list`
-- [ ] Server parses `tasks/workflow-status.md` table into step objects
-- [ ] Server parses `tasks/todo.md` for task name and checkbox counts
-- [ ] **[NEW]** `/api/status` response includes `todoItems: [{ text, done, section }]` per worktree
-- [ ] **[NEW]** `todoItems` grouped by `## Milestone` sections from `todo.md`
-- [ ] **[NEW]** Dashboard renders a TASKS panel per swimlane showing individual checklist items
-- [ ] **[NEW]** Current item (first undone) highlighted in blue; done items muted; pending items gray
-- [ ] Dashboard renders swimlanes per worktree with phase timeline
-- [ ] Dashboard auto-polls every 3 seconds without page reload
-- [ ] Hard gate steps (12, 14, 16, 20, 22) visually distinguished
-- [ ] Active step (`>> next <<`) highlighted with blue glow
-- [ ] Collapsed/expanded swimlane toggle works
-- [ ] `sk:dashboard` present in CLAUDE.md, README.md, DOCUMENTATION.md, install.sh
-- [ ] `tasks/lessons.md` updated (appended, not overwritten)
-- [ ] All tests in `tests/verify-workflow.sh` pass
+- [x] `skills/sk:dashboard/server.js` exists, uses only Node.js built-in modules
+- [x] `skills/sk:dashboard/dashboard.html` exists with Mission Control UI
+- [x] `skills/sk:dashboard/SKILL.md` exists with skill definition
+- [x] Server starts on port 3333 and responds to `/api/status` with valid JSON
+- [x] Server discovers worktrees via `git worktree list`
+- [x] Server parses `tasks/workflow-status.md` table into step objects
+- [x] Server parses `tasks/todo.md` for task name and checkbox counts
+- [x] **[NEW]** `/api/status` response includes `todoItems: [{ text, done, section }]` per worktree
+- [x] **[NEW]** `todoItems` grouped by `## Milestone` sections from `todo.md`
+- [x] **[NEW]** Dashboard renders a TASKS panel per swimlane showing individual checklist items
+- [x] **[NEW]** Current item (first undone) highlighted in blue; done items muted; pending items gray
+- [x] Dashboard renders swimlanes per worktree with phase timeline
+- [x] Dashboard auto-polls every 3 seconds without page reload
+- [x] Hard gate steps (12, 14, 16, 20, 22) visually distinguished
+- [x] Active step (`>> next <<`) highlighted with blue glow
+- [x] Collapsed/expanded swimlane toggle works
+- [x] `sk:dashboard` present in CLAUDE.md, README.md, DOCUMENTATION.md, install.sh
+- [x] `tasks/lessons.md` updated (appended, not overwritten)
+- [x] All tests in `tests/verify-workflow.sh` pass
 
 ## Risks/Unknowns
 
