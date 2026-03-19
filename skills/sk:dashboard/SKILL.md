@@ -41,7 +41,7 @@ Zero-dependency Node.js server. Uses only built-in modules (`http`, `fs`, `path`
 - `server.js` serves the dashboard HTML and exposes `/api/status`
 - `/api/status` reads `tasks/workflow-status.md` and `tasks/todo.md` from each worktree, parses step statuses, and returns JSON
 - `dashboard.html` is a single-file UI (HTML + embedded CSS + JS) that polls `/api/status` every 3 seconds
-- Worktree discovery via `git worktree list --porcelain`
+- Worktree discovery via `git worktree list`
 
 ## Key Details
 

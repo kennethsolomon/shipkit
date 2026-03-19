@@ -567,14 +567,11 @@
 (function () {
   'use strict';
 
-  var HARD_GATES = [12, 14, 16, 20, 22];
-  var HARD_GATE_SET = {};
-  for (var g = 0; g < HARD_GATES.length; g++) HARD_GATE_SET[HARD_GATES[g]] = true;
-
   var lastRefreshTime = Date.now();
   var expandedWorktrees = {};
   var initialized = false;
   var lastWorktreeCount = 0;
+  var lastResponseJson = '';
 
   var contentEl = document.getElementById('content');
   var footerEl = document.getElementById('footer');
@@ -600,9 +597,7 @@
   // ── Helpers ──
 
   function esc(str) {
-    var d = document.createElement('div');
-    d.appendChild(document.createTextNode(str || ''));
-    return d.innerHTML;
+    return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function classifyStatus(raw) {
@@ -614,6 +609,15 @@
     if (s.indexOf('>> next <<') !== -1) return 'active';
     if (s === 'not yet' || s === '') return 'pending';
     return 'pending';
+  }
+
+  function statusCol(label, dotCls, items) {
+    var h = '<div class="status-col">';
+    h += '<div class="status-col-header"><span class="status-col-dot ' + dotCls + '"></span>' + label + ' <span class="status-col-count">(' + items.length + ')</span></div>';
+    h += '<ul class="status-col-list">';
+    for (var i = 0; i < items.length; i++) h += '<li>' + esc(items[i]) + '</li>';
+    h += '</ul></div>';
+    return h;
   }
 
   // ── Render one worktree swimlane ──
@@ -692,8 +696,7 @@
     for (var j = 0; j < steps.length; j++) {
       var sd = steps[j];
       var cls = classifyStatus(sd.status);
-      var isGate = !!HARD_GATE_SET[sd.number];
-      var cellCls = 'phase-cell status-' + cls + (isGate ? ' hard-gate' : '');
+      var cellCls = 'phase-cell status-' + cls + (sd.isHardGate ? ' hard-gate' : '');
 
       h += '<div class="' + cellCls + '">';
       h += sd.number;
@@ -731,25 +734,9 @@
 
     // Status columns
     h += '<div class="status-columns">';
-
-    h += '<div class="status-col">';
-    h += '<div class="status-col-header"><span class="status-col-dot sc-done"></span>Done <span class="status-col-count">(' + doneSteps.length + ')</span></div>';
-    h += '<ul class="status-col-list">';
-    for (var d = 0; d < doneSteps.length; d++) h += '<li>' + esc(doneSteps[d]) + '</li>';
-    h += '</ul></div>';
-
-    h += '<div class="status-col">';
-    h += '<div class="status-col-header"><span class="status-col-dot sc-skipped"></span>Skipped <span class="status-col-count">(' + skippedSteps.length + ')</span></div>';
-    h += '<ul class="status-col-list">';
-    for (var k = 0; k < skippedSteps.length; k++) h += '<li>' + esc(skippedSteps[k]) + '</li>';
-    h += '</ul></div>';
-
-    h += '<div class="status-col">';
-    h += '<div class="status-col-header"><span class="status-col-dot sc-pending"></span>Not Yet <span class="status-col-count">(' + pendingSteps.length + ')</span></div>';
-    h += '<ul class="status-col-list">';
-    for (var p = 0; p < pendingSteps.length; p++) h += '<li>' + esc(pendingSteps[p]) + '</li>';
-    h += '</ul></div>';
-
+    h += statusCol('Done', 'sc-done', doneSteps);
+    h += statusCol('Skipped', 'sc-skipped', skippedSteps);
+    h += statusCol('Not Yet', 'sc-pending', pendingSteps);
     h += '</div>'; // status-columns
     h += '</div></div>'; // swimlane-body-inner, swimlane-body
     h += '</div>'; // swimlane
@@ -824,11 +811,15 @@
         lastRefreshTime = Date.now();
         var worktrees = Array.isArray(data) ? data : (data.worktrees || []);
         lastWorktreeCount = worktrees.length;
-        render(worktrees);
+        var json = JSON.stringify(data);
+        if (json !== lastResponseJson) {
+          lastResponseJson = json;
+          render(worktrees);
+        }
         updateFooter();
       })
-      .catch(function () {
-        // Silent retry on next poll cycle
+      .catch(function (err) {
+        console.warn('Dashboard fetch failed:', err.message || err);
       });
   }
 
