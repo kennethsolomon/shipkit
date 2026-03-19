@@ -71,6 +71,30 @@ assert_count_gte() {
   fi
 }
 
+assert_api_field() {
+  local desc="$1" port="$2" field="$3"
+  local pid response attempt
+  node "$REPO/skills/sk:dashboard/server.js" --port "$port" > /dev/null 2>&1 &
+  pid=$!
+  response=""
+  for attempt in 1 2 3 4 5; do
+    sleep 0.4
+    response=$(curl -s "http://localhost:${port}/api/status" 2>/dev/null || echo "")
+    [[ -n "$response" ]] && break
+  done
+  kill "$pid" 2>/dev/null
+  wait "$pid" 2>/dev/null || true
+  if echo "$response" | grep -q "\"${field}\""; then
+    echo -e "${green}PASS${reset} $desc"
+    PASS=$((PASS + 1))
+  else
+    echo -e "${red}FAIL${reset} $desc"
+    echo "       Expected field '${field}' in /api/status response"
+    FAIL=$((FAIL + 1))
+    FAILURES+=("$desc")
+  fi
+}
+
 echo ""
 echo "=== Workflow Enhancement Verification ==="
 echo ""
@@ -564,26 +588,6 @@ echo ""
 # ── Milestone 6: sk:dashboard Todo Item Display ───────────────────────────────
 
 echo "── Milestone 6: sk:dashboard todoItems ──"
-
-assert_api_field() {
-  local desc="$1" port="$2" field="$3"
-  local pid response
-  node "$REPO/skills/sk:dashboard/server.js" --port "$port" > /dev/null 2>&1 &
-  pid=$!
-  sleep 1
-  response=$(curl -s "http://localhost:${port}/api/status" 2>/dev/null || echo "")
-  kill "$pid" 2>/dev/null
-  wait "$pid" 2>/dev/null || true
-  if echo "$response" | grep -q "\"${field}\""; then
-    echo -e "${green}PASS${reset} $desc"
-    PASS=$((PASS + 1))
-  else
-    echo -e "${red}FAIL${reset} $desc"
-    echo "       Expected field '${field}' in /api/status response"
-    FAIL=$((FAIL + 1))
-    FAILURES+=("$desc")
-  fi
-}
 
 assert_contains \
   "sk:dashboard server.js exposes todoItems field" \

@@ -22,9 +22,11 @@ function discoverWorktrees() {
       .split("\n")
       .filter(Boolean)
       .map((line) => {
-        const match = line.match(/^(.+?)\s+[0-9a-f]+\s+\[(.+?)\]$/);
-        if (!match) return null;
-        return { path: match[1].trim(), branch: match[2].trim() };
+        const branchMatch = line.match(/^(.+?)\s+[0-9a-f]+\s+\[(.+?)\]$/);
+        if (branchMatch) return { path: branchMatch[1].trim(), branch: branchMatch[2].trim() };
+        const detachedMatch = line.match(/^(.+?)\s+[0-9a-f]+\s+\((.+?)\)$/);
+        if (detachedMatch) return { path: detachedMatch[1].trim(), branch: detachedMatch[2].trim() };
+        return null;
       })
       .filter(Boolean);
   } catch {
@@ -96,7 +98,7 @@ function parseTodo(worktreePath) {
 
     for (const line of lines) {
       if (!taskName && line.startsWith("# TODO")) {
-        const dashIdx = line.lastIndexOf("—");
+        const dashIdx = line.indexOf("—");
         if (dashIdx !== -1) taskName = line.slice(dashIdx + 1).trim();
         else taskName = line.replace(/^#\s*TODO\s*/, "").trim();
       }
