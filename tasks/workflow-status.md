@@ -29,6 +29,6 @@
 | 22 | **E2E** (`/sk:e2e`) | done | 10/10 scenarios pass; Playwright MCP; favicon 404 benign |
 | 23 | Commit (`/sk:smart-commit`) | skipped | E2E clean — no fixes needed |
 | 24 | Update (`/sk:update-task`) | done | todo.md acceptance criteria all marked [x]; progress.md logged |
-| 25 | Finalize (`/sk:finish-feature`) | >> next << | |
-| 26 | Sync Features (`/sk:features`) | not yet | |
+| 25 | Finalize (`/sk:finish-feature`) | done | CHANGELOG + arch log committed; PR #7 created |
+| 26 | Sync Features (`/sk:features`) | >> next << | |
 | 27 | Release (`/sk:release`) | not yet | |
