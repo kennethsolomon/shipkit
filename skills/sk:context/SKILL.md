@@ -68,8 +68,8 @@ Product:    [value prop from vision.md, or "no vision.md found"]
 - **Task:** Extract from the first `# TODO —` line in `tasks/todo.md`. If the file doesn't exist or all checkboxes are done, show "No active task — ready to start fresh".
 - **Step:** Find the row containing `>> next <<` in `tasks/workflow-status.md`. Extract step number, name, and command. If no `>> next <<` found, show "Workflow complete" or "Not started".
 - **Last done:** The most recent entry from `tasks/progress.md`. Summarize in one line.
-- **Pending:** Count `- [ ]` lines in `tasks/todo.md` (excluding the Acceptance Criteria and Verification sections).
-- **Lessons:** Count entries under `## Active Lessons` in `tasks/lessons.md`. Show the count + the prevention rule from the most recent lesson.
+- **Pending:** Count `- [ ]` lines in `tasks/todo.md`. Stop counting at the first `## Verification`, `## Acceptance Criteria`, or `## Risks` heading (these are meta-sections, not tasks).
+- **Lessons:** Count `### [` headings in `tasks/lessons.md` (each lesson starts with `### [YYYY-MM-DD]`). Show the count + the **Prevention:** line from the most recent lesson.
 - **Open Qs:** Check for an "## Open Questions" section in `tasks/findings.md`. List them or say "none".
 - **Product:** From `docs/vision.md`, extract the value proposition. If file doesn't exist, say "no vision.md found".
 

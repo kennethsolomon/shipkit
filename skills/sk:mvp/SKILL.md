@@ -288,7 +288,7 @@ Generate 3 lightweight documentation files in `docs/` from information already g
 
 After generating the docs, output:
 > **Context docs generated:** `docs/vision.md`, `docs/prd.md`, `docs/tech-design.md`
-> These persist context for future sessions. Run `/sk:context` to load them.
+> These persist context for future sessions. Run `/sk:context` to load `docs/vision.md` into the session brief, or read the others directly.
 
 ---
 
