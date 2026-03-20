@@ -23,6 +23,6 @@
 | 16 | **Review + Simplify** (`/sk:review`) | done | 0 issues; 3 fixes (e2e/review tech-debt format, DOCUMENTATION.md table) |
 | 17 | **E2E** (`/sk:e2e`) | done | 143/143 pass — clean first attempt |
 | 18 | Update (`/sk:update-task`) | done | all tasks checked; completion logged |
-| 19 | Finalize (`/sk:finish-feature`) | not yet | >> next << |
-| 20 | Sync Features (`/sk:features`) | not yet | |
-| 21 | Release (`/sk:release`) | not yet | |
+| 19 | Finalize (`/sk:finish-feature`) | done | PR #9 created |
+| 20 | Sync Features (`/sk:features`) | done | sk-context.md updated with tech-debt.md integration |
+| 21 | Release (`/sk:release`) | not yet | >> next << |
