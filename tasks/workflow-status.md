@@ -29,6 +29,6 @@
 | 22 | **E2E** (`/sk:e2e`) | skipped | No app/UI/API — pure Markdown skill definitions; 118 bash assertions sufficient |
 | 23 | Commit (`/sk:smart-commit`) | skipped | E2E skipped |
 | 24 | Update (`/sk:update-task`) | done | All 13 checkboxes + 10 acceptance criteria marked [x]; progress.md logged |
-| 25 | Finalize (`/sk:finish-feature`) | not yet | |
-| 26 | Sync Features (`/sk:features`) | not yet | |
-| 27 | Release (`/sk:release`) | not yet | |
+| 25 | Finalize (`/sk:finish-feature`) | done | Arch log + PR #8 created |
+| 26 | Sync Features (`/sk:features`) | done | Created sk-context.md spec; updated FEATURES.md index |
+| 27 | Release (`/sk:release`) | done | v3.6.0 tagged + pushed |

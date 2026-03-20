@@ -8,6 +8,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.6.0] - 2026-03-20
+
 ### Added
 - `sk:context` — Session initializer that loads all project context files (`tasks/todo.md`, `tasks/workflow-status.md`, `tasks/progress.md`, `tasks/findings.md`, `tasks/lessons.md`, `docs/decisions.md`, `docs/vision.md`) and outputs a formatted SESSION BRIEF. Run at the start of every session for instant orientation.
 
