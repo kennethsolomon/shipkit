@@ -1,6 +1,6 @@
 # /sk:context
 
-> **Status:** Shipped (v3.6.0 — 2026-03-20)
+> **Status:** Shipped (v3.7.0 — 2026-03-20)
 > **Type:** Developer Tool (standalone — not a numbered workflow step)
 > **Command:** `/sk:context`
 > **Skill file:** `skills/sk:context/SKILL.md`
@@ -24,6 +24,7 @@ Session initializer that loads all project context files into the conversation a
 | `tasks/lessons.md` | Past corrections (read in full) | No — shows "0 active" if missing |
 | `docs/decisions.md` | ADR log (last 3 entries) | No — shows "no decisions log yet" if missing |
 | `docs/vision.md` | Product context (name + value prop) | No — shows "no vision.md found" if missing |
+| `tasks/tech-debt.md` | Pre-existing issues from gates | No — shows "none logged" if missing |
 | `git branch --show-current` | Git CLI | Yes — always available |
 
 ---
@@ -49,6 +50,7 @@ Last done:  Last progress.md entry summary
 Pending:    5 checkboxes remaining in todo.md
 Lessons:    7 active — most critical 1-liner
 Open Qs:    none
+Tech Debt:  3 unresolved — highest: high (src/auth.ts:42)
 Product:    value prop from vision.md
 ════════════════════════════════════════════
 ```
@@ -67,6 +69,7 @@ Product:    value prop from vision.md
    - **Pending:** Count `- [ ]` lines in todo.md; stop at `## Verification`, `## Acceptance Criteria`, or `## Risks` headings
    - **Lessons:** Count `### [` headings in lessons.md; show count + **Prevention:** line from most recent
    - **Open Qs:** `## Open Questions` section in findings.md, or "none"
+   - **Tech Debt:** Count entries in tech-debt.md with no `Resolved:` line; report count + highest severity + file. "none logged" if file missing, "none" if 0 unresolved.
    - **Product:** Value proposition from vision.md, or "no vision.md found"
 4. **Output SESSION BRIEF** in the box format.
 5. **State active lessons** as bulleted prevention rules — these become standing constraints.
@@ -95,6 +98,8 @@ Product:    value prop from vision.md
 | No `tasks/lessons.md` | Shows "0 active" for Lessons |
 | No `docs/decisions.md` | Shows "no decisions log yet" — no error |
 | No `docs/vision.md` | Shows "no vision.md found" — no error |
+| No `tasks/tech-debt.md` | Shows "none logged" for Tech Debt |
+| `tasks/tech-debt.md` exists, 0 unresolved | Shows "none" for Tech Debt |
 | All checkboxes done in todo.md | Shows "Task complete — 0 pending" |
 | No `>> next <<` in workflow-status.md | Shows "Workflow complete" or "Not started" |
 
