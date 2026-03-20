@@ -7,7 +7,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 **Workflow expanded to 21 steps (v3.7.0)** — New skills and protocols:
 - `/sk:e2e` (Step 17) — E2E behavioral verification using agent-browser; hard gate after Review
 - **Fix & Retest Protocol** — applies to all code-producing gates (Lint, Test, Security, Performance, Review, E2E): logic changes require updating unit tests before committing
-- **Sync Features step** (Step 26) — `/sk:features` runs after Finalize to keep feature specs in sync with shipped code
+- **Sync Features step** (Step 20) — `/sk:features` runs after Finalize to keep feature specs in sync with shipped code
 - **Dependency audit** folded into `/sk:lint` — runs `composer audit` / `npm audit` / `pip-audit` alongside code linters
 - All commands standardized to `/sk:` prefix throughout docs and templates
 
@@ -341,26 +341,20 @@ The complete 27-step workflow from idea to merge with **automatic context thread
 | 9 | Write Tests | `/sk:write-tests` | TDD red: failing tests first |
 | 10 | Implement | `/sk:execute-plan` | TDD green: make tests pass |
 | 11 | Commit | `/sk:smart-commit` | Commit tests + implementation |
-| 12 | **Lint + Dep Audit** | `/sk:lint` | **HARD GATE** — all tools must pass |
-| 13 | Commit | `/sk:smart-commit` | Conditional — skip if lint was clean |
-| 14 | **Verify Tests** | `/sk:test` | **HARD GATE** — 100% coverage |
-| 15 | Commit | `/sk:smart-commit` | Conditional |
-| 16 | **Security** | `/sk:security-check` | **HARD GATE** — 0 issues |
-| 17 | Commit | `/sk:smart-commit` | Conditional |
-| 18 | Performance | `/sk:perf` | Optional gate — critical/high must reach 0 |
-| 19 | Commit | `/sk:smart-commit` | Conditional |
-| 20 | **Review + Simplify** | `/sk:review` | **HARD GATE** — 0 issues including nitpicks |
-| 21 | Commit | `/sk:smart-commit` | Conditional |
-| 22 | **E2E Tests** | `/sk:e2e` | **HARD GATE** — E2E behavioral verification |
-| 23 | Commit | `/sk:smart-commit` | Conditional |
-| 24 | Update | `/sk:update-task` | Mark done, log completion |
-| 25 | Finalize | `/sk:finish-feature` | Changelog + PR |
-| 26 | Sync Features | `/sk:features` | Sync Features |
-| 27 | Release | `/sk:release` | Optional — version bump + tag |
+| 12 | **Lint + Dep Audit** | `/sk:lint` | **HARD GATE** — gates own commits; fix-commit-rerun internally |
+| 13 | **Verify Tests** | `/sk:test` | **HARD GATE** — gates own commits; 100% coverage |
+| 14 | **Security** | `/sk:security-check` | **HARD GATE** — gates own commits; 0 issues |
+| 15 | Performance | `/sk:perf` | Optional gate — critical/high must reach 0 |
+| 16 | **Review + Simplify** | `/sk:review` | **HARD GATE** — gates own commits; 0 issues |
+| 17 | **E2E Tests** | `/sk:e2e` | **HARD GATE** — gates own commits; all scenarios pass |
+| 18 | Update | `/sk:update-task` | Mark done, log completion |
+| 19 | Finalize | `/sk:finish-feature` | Changelog + PR |
+| 20 | Sync Features | `/sk:features` | Sync feature specs with shipped code |
+| 21 | Release | `/sk:release` | Optional — version bump + tag |
 
 ### Key Features
 
-✅ **5 Hard Gates** — Lint+Dep Audit (12), Tests (14), Security (16), Review+Simplify (20), E2E Tests (22) block all forward progress until clean
+✅ **5 Hard Gates** — Lint+Dep Audit (12), Tests (13), Security (14), Review+Simplify (16), E2E Tests (17) block all forward progress until clean
 ✅ **TDD Enforced** — Tests written before implementation (step 9), verified after (step 14)
 ✅ **Context Threading** — findings.md flows brainstorm → design → plan; never re-ask decisions
 ✅ **Compounding Lessons** — One bug debugged = one lesson written = 8+ skills apply it next time
