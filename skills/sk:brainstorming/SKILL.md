@@ -32,6 +32,7 @@ You MUST create a task for each of these items and complete them in order:
    - Key decisions made
    - Chosen approach + rationale
    - Open questions (if any remain)
+   Additionally, **append** an ADR entry to `docs/decisions.md` (see "Decisions Log" section below).
    (Optionally also write a full design doc to docs/plans/YYYY-MM-DD-<topic>-design.md)
 6. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
@@ -89,12 +90,48 @@ digraph brainstorming {
 
 **Documentation:**
 - Write the findings to `tasks/findings.md` (required — captures problem, decisions, approach, rationale)
+- Append an ADR entry to `docs/decisions.md` (required — see "Decisions Log" section below)
 - Optionally: Create a full design doc at `docs/plans/YYYY-MM-DD-<topic>-design.md` for complex projects
-- Commit the findings and any design document to git
+- Commit the findings, decisions log entry, and any design document to git
 
 **Implementation:**
 - Invoke the writing-plans skill to create a detailed implementation plan
 - Do NOT invoke any other skill. writing-plans is the next step.
+
+## Decisions Log
+
+After writing findings to `tasks/findings.md`, also **append** an Architecture Decision Record (ADR) entry to `docs/decisions.md`. This file is **cumulative and append-only** — never overwrite or remove existing entries.
+
+### If `docs/decisions.md` does not exist
+
+Create it with this header before the first entry:
+
+```markdown
+# Architecture Decision Records
+
+A cumulative log of key design decisions made across features. Append-only — never overwrite.
+```
+
+### ADR Entry Format
+
+Append this template for each brainstorm decision:
+
+```markdown
+## [YYYY-MM-DD] [Feature/Task Name]
+
+**Context:** [problem being solved — 1-2 sentences]
+**Decision:** [chosen approach — 1 sentence]
+**Rationale:** [why this approach over alternatives]
+**Consequences:** [trade-offs accepted]
+**Status:** accepted
+```
+
+### Rules
+
+- **Append-only** — never edit or delete existing entries in `docs/decisions.md`
+- **One entry per brainstorm** — each completed brainstorm adds exactly one ADR entry
+- **Use absolute dates** — always `YYYY-MM-DD`, never relative dates
+- Entries accumulate across features — this is a project-level historical record
 
 ## Key Principles
 

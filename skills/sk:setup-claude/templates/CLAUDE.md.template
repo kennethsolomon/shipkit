@@ -363,4 +363,5 @@ Create entries in: `[ARCH_CHANGELOG_DIR]`
 | `/sk:features` | Sync feature specs with shipped implementation |
 | `/sk:release` | Version bump + changelog + tag |
 | `/sk:status` | Show workflow + task status |
+| `/sk:context` | Load all context files + output session brief for fast session start |
 | `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |

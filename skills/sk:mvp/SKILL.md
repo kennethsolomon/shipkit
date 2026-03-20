@@ -215,7 +215,84 @@ Maximum 3 loop iterations. If issues persist after 3 loops, present remaining is
 
 ---
 
-## Step 9 — Present the Output
+## Step 9 — Generate Project Context Docs
+
+Generate 3 lightweight documentation files in `docs/` from information already gathered in Steps 1-2. No new questions — use the product name, value prop, audience, features, and tech stack already captured.
+
+### Files to Generate
+
+**`docs/vision.md`**
+```markdown
+# [Product Name]
+
+## Value Proposition
+[One-line value prop from Step 1]
+
+## Target Audience
+[Target audience from Step 1]
+
+## Key Features
+[Bullet list of 3-5 features from Step 1]
+
+## North Star Metric
+[Suggest one metric that measures core value — e.g., "weekly active waitlist signups" or "daily feature usage"]
+```
+
+**`docs/prd.md`**
+```markdown
+# PRD — [Product Name]
+
+## Overview
+[1-2 sentence product description]
+
+## User Stories
+[For each key feature from Step 1, write a user story: "As a [audience], I want to [feature] so that [benefit]"]
+
+## Feature Acceptance Criteria
+[For each feature, list 2-3 concrete acceptance criteria]
+
+## Out of Scope (MVP)
+- Real authentication
+- Real database
+- Third-party integrations
+- Deployment
+```
+
+**`docs/tech-design.md`**
+```markdown
+# Tech Design — [Product Name]
+
+## Stack
+- **Framework:** [chosen stack from Step 2]
+- **Styling:** Tailwind CSS
+- **Fonts:** [chosen fonts]
+
+## Project Structure
+[List the key directories and files generated during scaffolding]
+
+## Component Map
+### Landing Page
+[List all 9 sections and their components]
+
+### App Pages
+[List each page and its key components]
+
+## Data Model
+### Waitlist
+- email: string (validated)
+- timestamp: ISO 8601 string
+
+### Fake Data Entities
+[List the fake data structures used in the app]
+```
+
+After generating the docs, output:
+> **Context docs generated:** `docs/vision.md`, `docs/prd.md`, `docs/tech-design.md`
+> These persist context for future sessions. Run `/sk:context` to load `docs/vision.md` into the session brief, or read the others directly.
+
+---
+
+## Step 10 — Present the Output
 
 Summarize what was generated:
 

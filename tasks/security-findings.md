@@ -156,3 +156,50 @@ None.
 | Medium   | 0    | 0                 |
 | Low      | 0    | 1                 |
 | **Total** | **0** | **1** |
+
+---
+
+# Security Audit — 2026-03-19 (branch: feature/context-mvp-docs-decisions)
+
+**Scope:** Changed files on branch `feature/context-mvp-docs-decisions`
+**Stack:** Shell/Bash, Markdown
+**Files audited:** 12
+
+## Critical (must fix before deploy)
+
+None.
+
+## High (fix before production)
+
+None.
+
+## Medium (should fix)
+
+None.
+
+## Low / Informational
+
+None.
+
+## Passed Checks
+
+- **A01 Broken Access Control** — No auth logic. All 12 files are Markdown skill definitions or documentation.
+- **A02 Cryptographic Failures** — No cryptographic operations introduced.
+- **A03 Injection** — `install.sh` change is a static `echo` line. `tests/verify-workflow.sh` additions use `grep -q` on controlled paths via existing `assert_contains` helper. No user input in any shell command.
+- **A04 Insecure Design** — `sk:context/SKILL.md` reads local filesystem files only (tasks/, docs/). No network access, no external data.
+- **A05 Security Misconfiguration** — No servers, no network listeners, no credentials introduced.
+- **A06 Vulnerable Components** — No new dependencies.
+- **A08 Data Integrity** — `sk:brainstorming` ADR append uses file write, not deserialization. No integrity risk.
+- **A10 SSRF** — No URL construction from user input. No network requests.
+- **Shell injection** — All variable expansions in new test assertions are double-quoted. No dynamic exec.
+- **Markdown/SKILL.md files** — Static documentation and skill instructions only. No executable code, no secrets, no PII.
+
+## Summary
+
+| Severity | Open | Resolved this run |
+|----------|------|-------------------|
+| Critical | 0    | 0                 |
+| High     | 0    | 0                 |
+| Medium   | 0    | 0                 |
+| Low      | 0    | 0                 |
+| **Total** | **0** | **0**            |

@@ -1,185 +1,167 @@
-# TODO — 2026-03-19 — New Skill: sk:dashboard (Read-Only Kanban Board)
-
-## Change Log
-- [2026-03-19] Add individual todo item display to dashboard — re-entered at /sk:write-plan
+# TODO — 2026-03-19 — Three Improvements: sk:context + sk:mvp docs + decisions log
 
 ## Goal
 
-Create `/sk:dashboard` — a zero-dependency Node.js server that serves a read-only Kanban board showing workflow status across all git worktrees. Markdown files are the source of truth; the UI polls and displays.
+Three targeted improvements inspired by vibe-coding-starter-kit's session continuity patterns:
+- **A)** `sk:mvp` auto-generates project context docs after scaffolding (vision, PRD, tech-design)
+- **B)** New `sk:context` skill — session brief reader that auto-loads context files + outputs a readable summary
+- **C)** `sk:brainstorming` appends ADR entries to a persistent `docs/decisions.md`
 
 ## Constraints (from lessons.md)
 
-- All commands must use `/sk:` prefix
+- All commands use `/sk:` prefix
 - Never overwrite `tasks/lessons.md` — append only
-- Any new skill added to install.sh echo block
-- New skill docs must be added to: CLAUDE.md commands table, README.md, DOCUMENTATION.md
-- `tasks/lessons.md` must be updated to include sk:dashboard in the "update ALL files" list
+- New skill (sk:context) requires updating: CLAUDE.md, README.md, DOCUMENTATION.md, install.sh, CLAUDE.md.template, CHANGELOG.md, lessons.md
+- All 3 approaches are independent — can be parallelized
 
 ---
 
-## Milestone 1: Tests (write failing tests first — TDD red phase)
+## Milestone 1: Tests (TDD Red Phase)
 
-#### Wave 1 (first — tests must exist before implementation)
+#### Wave 1 (parallel — all independent)
 
-- [x] Update `tests/verify-workflow.sh` — add assertions for sk:dashboard
-  - `assert_file_exists` — `skills/sk:dashboard/SKILL.md` exists
-  - `assert_file_exists` — `skills/sk:dashboard/server.js` exists
-  - `assert_file_exists` — `skills/sk:dashboard/dashboard.html` exists
-  - `assert_contains` — `server.js` contains `"http"` (built-in module)
-  - `assert_contains` — `server.js` contains `"worktree"` (git worktree discovery)
-  - `assert_contains` — `server.js` contains `"workflow-status.md"` (reads status file)
-  - `assert_contains` — `server.js` contains `"/api/status"` (JSON API endpoint)
-  - `assert_contains` — `dashboard.html` contains `"SHIPKIT"` (header title)
-  - `assert_contains` — `dashboard.html` contains `"fetch"` (polling mechanism)
-  - `assert_contains` — `dashboard.html` contains `"JetBrains Mono"` or `"Orbitron"` (design fonts)
-  - `assert_contains` — `SKILL.md` contains `"sk:dashboard"` (skill name)
-  - `assert_contains` — `SKILL.md` contains `"server.js"` (references server)
-  - `assert_contains` — `CLAUDE.md` contains `"sk:dashboard"` (commands table)
-  - `assert_contains` — `README.md` contains `"sk:dashboard"`
-  - `assert_contains` — `.claude/docs/DOCUMENTATION.md` contains `"sk:dashboard"`
-  - `assert_contains` — `install.sh` contains `"sk:dashboard"`
+- [x] Update `tests/verify-workflow.sh` — add assertions for Approach A (sk:mvp docs)
+  - `assert_contains` — `skills/sk:mvp/SKILL.md` contains `"vision.md"`
+  - `assert_contains` — `skills/sk:mvp/SKILL.md` contains `"prd.md"`
+  - `assert_contains` — `skills/sk:mvp/SKILL.md` contains `"tech-design.md"`
+  - `assert_contains` — `skills/sk:mvp/SKILL.md` contains `"docs/"` (new phase generates docs)
 
----
+- [x] Update `tests/verify-workflow.sh` — add assertions for Approach B (sk:context)
+  - `assert_file_exists` — `skills/sk:context/SKILL.md` exists
+  - `assert_contains` — `skills/sk:context/SKILL.md` contains `"SESSION BRIEF"`
+  - `assert_contains` — `skills/sk:context/SKILL.md` contains `"tasks/todo.md"`
+  - `assert_contains` — `skills/sk:context/SKILL.md` contains `"tasks/workflow-status.md"`
+  - `assert_contains` — `skills/sk:context/SKILL.md` contains `"tasks/lessons.md"`
+  - `assert_contains` — `CLAUDE.md` contains `"sk:context"`
+  - `assert_contains` — `README.md` contains `"sk:context"`
+  - `assert_contains` — `.claude/docs/DOCUMENTATION.md` contains `"sk:context"`
+  - `assert_contains` — `install.sh` contains `"sk:context"`
 
-## Milestone 2: Core Implementation (server + UI + skill definition)
-
-#### Wave 2a (parallel — all three files are independent)
-
-- [x] Create `skills/sk:dashboard/server.js` — Node.js HTTP server
-  - Uses only built-in modules: `http`, `fs`, `path`, `child_process`
-  - `git worktree list` to discover all worktrees
-  - Parse `tasks/workflow-status.md` from each worktree (table → JSON)
-  - Parse `tasks/todo.md` from each worktree (goal + checkbox counts)
-  - `GET /api/status` — returns JSON array of worktree status objects
-  - `GET /` — serves `dashboard.html` from same directory
-  - Default port 3333, configurable via `--port` flag or `PORT` env var
-  - CORS headers for local development
-  - Graceful error handling: missing files → empty/default state, not crash
-
-- [x] Create `skills/sk:dashboard/dashboard.html` — single-file Kanban UI
-  - All CSS in `<style>`, all JS in `<script>` — no external files except Google Fonts CDN
-  - Mission Control aesthetic per design (dark theme, JetBrains Mono + Orbitron)
-  - Color palette: `#080C14` bg, `#111827` surface, `#10B981` done, `#3B82F6` active, `#334155` pending, `#F59E0B` skipped, `#EF4444` hard gate accent
-  - Layout: header bar → scrollable content area → footer bar
-  - Each worktree = collapsible swimlane section
-  - Swimlane header: branch name, task name, progress fraction + percentage
-  - Phase timeline: 27 cells, color-coded by status, hard gates with red bottom border, active step with blue glow
-  - Active step card: prominent display with blue left border
-  - Status columns: Done / Skipped / Not Yet with step lists
-  - Progress bar per swimlane (gradient fill)
-  - Legend row: done / next / hard gate / skipped / not yet
-  - Auto-polls `/api/status` every 3 seconds, DOM updates in place (no reload)
-  - Collapsed state: header + progress bar only; expanded shows full timeline + columns
-  - Footer: worktree count, last refresh timestamp, port number
-  - Responsive at >=768px (half-screen beside terminal)
-
-- [x] Create `skills/sk:dashboard/SKILL.md` — skill definition
-  - Frontmatter: `name: sk:dashboard`, description
-  - Purpose: Read-only workflow dashboard served on localhost
-  - Instructions: how to start (`node server.js`), what it shows, how to stop
-  - Notes: does not modify any files, read-only, auto-refreshes
-  - Model Routing section (sonnet for all profiles — lightweight skill)
+- [x] Update `tests/verify-workflow.sh` — add assertions for Approach C (decisions log)
+  - `assert_contains` — `skills/sk:brainstorming/SKILL.md` contains `"docs/decisions.md"`
+  - `assert_contains` — `skills/sk:brainstorming/SKILL.md` contains `"decisions.md"`
 
 ---
 
-## Milestone 3: Documentation Updates (parallel — all independent)
+## Milestone 2: Implementation
 
-#### Wave 3 (parallel — all documentation files)
+#### Wave 2 (parallel — all three approaches are independent)
 
-- [x] Update `CLAUDE.md` — add `/sk:dashboard` to commands table
-  - Add row: `| \`/sk:dashboard\` | Read-only workflow Kanban board — localhost server, multi-worktree |`
-  - Place in the commands table near other utility commands
+- [x] **Approach A** — Update `skills/sk:mvp/SKILL.md`
+  - Rename existing "Step 9 — Present the Output" to "Step 10 — Present the Output"
+  - Insert new "Step 9 — Generate Project Context Docs" between Step 8 and Step 10
+  - Step 9 generates 3 files in `docs/` using info already gathered in Step 1 + Step 2:
+    - `docs/vision.md` — product name, value prop, target audience, key features, north star metric
+    - `docs/prd.md` — feature list with acceptance criteria, user stories derived from Step 1 features
+    - `docs/tech-design.md` — tech stack, scaffold structure, component map (landing + app pages), data model (waitlist schema or key entities)
+  - These docs are generated from Step 1 + Step 2 data — no new user questions needed
+  - Add note: "These docs persist context for future sessions. Run `/sk:context` to load them."
 
-- [x] Update `README.md` — add `sk:dashboard` to commands section
-  - Same row as CLAUDE.md in the commands/skills table
+- [x] **Approach B** — Create `skills/sk:context/SKILL.md`
+  - Purpose: Session initializer — reads all context files AND outputs a formatted session brief
+  - Files it reads (in order):
+    1. `tasks/todo.md` — current task name, milestone progress, pending checkboxes count
+    2. `tasks/workflow-status.md` — current step status, `>> next <<` step + command
+    3. `tasks/progress.md` — last 5 entries (most recent work done)
+    4. `tasks/findings.md` — current decisions and open questions
+    5. `tasks/lessons.md` — all active lessons (apply as constraints for this session)
+    6. `docs/decisions.md` — if exists, last 3 ADR entries
+    7. `docs/vision.md` — if exists, product name + value prop
+  - Output format (session brief):
+    ```
+    ╔══════════════════════════════╗
+    ║       SESSION BRIEF          ║
+    ╚══════════════════════════════╝
+    Branch:     feature/xxx (or main)
+    Task:       [task name from todo.md]
+    Step:       [current step #] [step name] → next: [command]
+    Last done:  [last progress.md entry, 1 line]
+    Pending:    [N] checkboxes remaining
+    Lessons:    [count] active — [most critical 1-liner]
+    Open Qs:    [any open questions from findings.md, or "none"]
+    Product:    [value prop from vision.md, or "no vision.md found"]
+    ════════════════════════════════
+    ```
+  - After outputting the brief: apply all lessons from lessons.md as active constraints for the session
+  - If `tasks/todo.md` is missing or task is complete: show "No active task — ready to start fresh"
+  - Model Routing section: sonnet for all profiles (lightweight read-only skill)
 
-- [x] Update `.claude/docs/DOCUMENTATION.md` — add `sk:dashboard` to skills section
-  - Add subsection entry: purpose, how to start, what it shows
+- [x] **Approach C** — Update `skills/sk:brainstorming/SKILL.md`
+  - In "Step 5 — Write findings" section, add a second write target after `tasks/findings.md`:
+  - **Append** an ADR entry to `docs/decisions.md` (create if not exists, never overwrite)
+  - ADR entry format:
+    ```markdown
+    ## [YYYY-MM-DD] [Feature/Task Name]
 
-- [x] Update `install.sh` — add `sk:dashboard` to workflow commands echo block
-  - Add `echo "  /sk:dashboard    — Read-only workflow Kanban board (localhost)"` in the commands listing
+    **Context:** [problem being solved — 1-2 sentences]
+    **Decision:** [chosen approach — 1 sentence]
+    **Rationale:** [why this approach over alternatives]
+    **Consequences:** [trade-offs accepted]
+    **Status:** accepted
+    ```
+  - Rule note: `docs/decisions.md` is append-only — never overwrite existing entries
+  - If `docs/decisions.md` does not exist, create it with a header before the first entry:
+    ```markdown
+    # Architecture Decision Records
 
-- [x] Append `tasks/lessons.md` — update "update ALL files" list
-  - Append new entry: "[2026-03-19] sk:dashboard — update its docs when the skill changes"
-  - Note the 5 files: SKILL.md, CLAUDE.md, README.md, DOCUMENTATION.md, install.sh
+    A cumulative log of key design decisions made across features. Append-only — never overwrite.
+    ```
 
 ---
 
-## Milestone 4: Tests — Todo Item Display (TDD red phase)
+## Milestone 3: Documentation Updates (for new sk:context command)
 
-#### Wave 4a (parallel — all are independent test additions)
+#### Wave 3 (parallel — all independent)
 
-- [x] Update `tests/verify-workflow.sh` — add assertions for todoItems feature
-  - `assert_contains` — `server.js` contains `"todoItems"` (new API field)
-  - `assert_contains` — `server.js` contains `"section"` (section label per item)
-  - `assert_contains` — `dashboard.html` contains `"todoItems"` (reads new field)
-  - `assert_contains` — `dashboard.html` contains `"TASKS"` (section heading in UI)
-  - `assert_contains` — `dashboard.html` contains `"todo-item"` (CSS class for items)
-  - API smoke test: start server, hit `/api/status`, verify `todoItems` is an array in the JSON response
+- [x] Update `CLAUDE.md` — add `sk:context` to commands table
+  - Add row: `| \`/sk:context\` | Load all context files + output session brief for fast session start |`
+  - Place near `/sk:status` and `/sk:dashboard` (utility commands section)
 
----
+- [x] Update `README.md` — add `sk:context` to commands section
+  - Same row format as CLAUDE.md
 
-## Milestone 5: Implementation — Todo Item Display (TDD green phase)
+- [x] Update `.claude/docs/DOCUMENTATION.md` — add `sk:context` to skills section
+  - Add entry: purpose, when to use (start of every session), what files it reads, brief output format
 
-#### Wave 5a (parallel — server.js and dashboard.html are independent)
+- [x] Update `install.sh` — add `sk:context` to workflow commands echo block
+  - Add line: `echo "  /sk:context      — Load context + session brief (run at session start)"`
 
-- [x] Update `skills/sk:dashboard/server.js` — extend `parseTodo()`
-  - New return shape: `{ taskName, todosDone, todosTotal, todoItems }`
-  - `todoItems`: array of `{ text: string, done: boolean, section: string }`
-  - Parse `## Milestone N:` headers → set current `section` label
-  - `- [x] ...` lines → `{ text, done: true, section }`
-  - `- [ ] ...` lines → `{ text, done: false, section }`
-  - Stop collecting items at `## Verification`, `## Acceptance Criteria`, `## Risks`, `## Change Log` headers
-  - Strip backtick formatting from item text
-  - Empty `todoItems: []` on ENOENT (same graceful-fallback pattern as existing code)
+- [x] Update `skills/sk:setup-claude/templates/CLAUDE.md.template` — add `sk:context`
+  - Add same row as CLAUDE.md in the commands table section of the template
 
-- [x] Update `skills/sk:dashboard/dashboard.html` — add Tasks panel to each swimlane
-  - New "TASKS" section rendered below the step-columns area within each swimlane body
-  - Items grouped by `section` label (milestone name as a divider heading)
-  - Three item states — use icon prefix:
-    - `✓` done: muted green text, no highlight
-    - `→` current (first item where `done === false`): blue text, subtle left-border highlight
-    - `○` pending: gray text
-  - Section divider: small uppercase label between milestone groups
-  - If `todoItems` is empty or missing → render nothing (graceful fallback)
-  - Change detection already covers this (existing `JSON.stringify` comparison)
+- [x] Update `CHANGELOG.md` — document all 3 improvements
+  - New section for v3.6.0 (or next version)
+  - Three bullet points: A (sk:mvp docs), B (sk:context), C (decisions log)
+
+- [x] Append `tasks/lessons.md` — add sk:context tracking entry
+  - New entry: "[2026-03-19] sk:context — update its docs when the skill changes"
+  - Note the files: SKILL.md, CLAUDE.md, README.md, DOCUMENTATION.md, install.sh, CLAUDE.md.template
 
 ---
 
 ## Verification
 
 ```bash
-# Confirm new skill files exist
-ls skills/sk:dashboard/SKILL.md
-ls skills/sk:dashboard/server.js
-ls skills/sk:dashboard/dashboard.html
+# Approach A: sk:mvp has new doc generation step
+grep -n "vision.md" skills/sk:mvp/SKILL.md
+grep -n "prd.md" skills/sk:mvp/SKILL.md
+grep -n "tech-design.md" skills/sk:mvp/SKILL.md
 
-# Confirm server uses built-in modules only
-grep "require('http')" skills/sk:dashboard/server.js
-grep "worktree" skills/sk:dashboard/server.js
-grep "/api/status" skills/sk:dashboard/server.js
+# Approach B: sk:context skill exists with correct content
+ls skills/sk:context/SKILL.md
+grep "SESSION BRIEF" skills/sk:context/SKILL.md
+grep "tasks/todo.md" skills/sk:context/SKILL.md
+grep "tasks/lessons.md" skills/sk:context/SKILL.md
 
-# Confirm todoItems in server + dashboard
-grep "todoItems" skills/sk:dashboard/server.js
-grep "todoItems" skills/sk:dashboard/dashboard.html
-grep "TASKS" skills/sk:dashboard/dashboard.html
+# Approach B: sk:context documented everywhere
+grep "sk:context" CLAUDE.md
+grep "sk:context" README.md
+grep "sk:context" .claude/docs/DOCUMENTATION.md
+grep "sk:context" install.sh
+grep "sk:context" skills/sk:setup-claude/templates/CLAUDE.md.template
 
-# Confirm dashboard has key UI elements
-grep "SHIPKIT" skills/sk:dashboard/dashboard.html
-grep "fetch" skills/sk:dashboard/dashboard.html
-
-# Confirm sk:dashboard in all documentation files
-grep "sk:dashboard" CLAUDE.md
-grep "sk:dashboard" README.md
-grep "sk:dashboard" .claude/docs/DOCUMENTATION.md
-grep "sk:dashboard" install.sh
-
-# Server smoke test — verify todoItems in API response
-node skills/sk:dashboard/server.js &
-SERVER_PID=$!
-sleep 1
-curl -s http://localhost:3333/api/status | python3 -c "import sys,json; d=json.load(sys.stdin); print('todoItems ok' if isinstance(d[0]['todoItems'], list) else 'FAIL')"
-kill $SERVER_PID
+# Approach C: sk:brainstorming writes decisions.md
+grep "docs/decisions.md" skills/sk:brainstorming/SKILL.md
 
 # Run full test suite
 bash tests/verify-workflow.sh
@@ -187,28 +169,19 @@ bash tests/verify-workflow.sh
 
 ## Acceptance Criteria
 
-- [x] `skills/sk:dashboard/server.js` exists, uses only Node.js built-in modules
-- [x] `skills/sk:dashboard/dashboard.html` exists with Mission Control UI
-- [x] `skills/sk:dashboard/SKILL.md` exists with skill definition
-- [x] Server starts on port 3333 and responds to `/api/status` with valid JSON
-- [x] Server discovers worktrees via `git worktree list`
-- [x] Server parses `tasks/workflow-status.md` table into step objects
-- [x] Server parses `tasks/todo.md` for task name and checkbox counts
-- [x] **[NEW]** `/api/status` response includes `todoItems: [{ text, done, section }]` per worktree
-- [x] **[NEW]** `todoItems` grouped by `## Milestone` sections from `todo.md`
-- [x] **[NEW]** Dashboard renders a TASKS panel per swimlane showing individual checklist items
-- [x] **[NEW]** Current item (first undone) highlighted in blue; done items muted; pending items gray
-- [x] Dashboard renders swimlanes per worktree with phase timeline
-- [x] Dashboard auto-polls every 3 seconds without page reload
-- [x] Hard gate steps (12, 14, 16, 20, 22) visually distinguished
-- [x] Active step (`>> next <<`) highlighted with blue glow
-- [x] Collapsed/expanded swimlane toggle works
-- [x] `sk:dashboard` present in CLAUDE.md, README.md, DOCUMENTATION.md, install.sh
-- [x] `tasks/lessons.md` updated (appended, not overwritten)
+- [x] `skills/sk:mvp/SKILL.md` Step 9 generates `docs/vision.md`, `docs/prd.md`, `docs/tech-design.md`
+- [x] `skills/sk:context/SKILL.md` exists with SESSION BRIEF output format
+- [x] `sk:context` reads 7 context files and applies lessons as constraints
+- [x] `sk:context` handles missing files gracefully (no active task, no vision.md, etc.)
+- [x] `sk:brainstorming/SKILL.md` appends ADR entries to `docs/decisions.md`
+- [x] `docs/decisions.md` is append-only — rule documented in sk:brainstorming
+- [x] `sk:context` present in CLAUDE.md, README.md, DOCUMENTATION.md, install.sh, CLAUDE.md.template
+- [x] `CHANGELOG.md` documents all 3 improvements
+- [x] `tasks/lessons.md` updated with sk:context tracking entry
 - [x] All tests in `tests/verify-workflow.sh` pass
 
 ## Risks/Unknowns
 
-- Worktree paths may contain spaces — ensure server handles quoted paths from `git worktree list`
-- If no `tasks/workflow-status.md` exists in a worktree, server should return empty/default state (not crash)
-- Google Fonts CDN requires internet connection — dashboard degrades to system monospace font if offline (acceptable)
+- `tasks/progress.md` may be very long — sk:context should read only the last 5 entries, not the full file
+- `docs/decisions.md` may not exist for existing projects — sk:brainstorming must create it gracefully
+- sk:setup-claude templates: check if CLAUDE.md.template has the same commands table format before updating

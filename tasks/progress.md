@@ -1,5 +1,15 @@
 # Progress Log
 
+### [2026-03-20] sk:context + sk:mvp docs + decisions log — COMPLETED
+- Branch: `feature/context-mvp-docs-decisions`
+- Changes: 3 improvements inspired by vibe-coding-starter-kit
+  - A) sk:mvp: new Step 9 generates docs/vision.md, docs/prd.md, docs/tech-design.md
+  - B) sk:context: new session initializer skill — reads 7 context files, outputs SESSION BRIEF
+  - C) sk:brainstorming: appends ADR entries to docs/decisions.md (cumulative, append-only)
+- Tests: 118/118 pass (21 new assertions)
+- Files changed: 12 (1 new, 11 modified)
+- Review: 0 critical, 0 warning, 3 nitpicks fixed
+
 ## Session: 2026-03-19 — todoItems implementation
 - server.js: extended parseTodo() with todoItems [{text, done, section}]; STOP_HEADERS set; Milestone header tracking
 - dashboard.html: added renderTodoItems() + TASKS panel in renderWorktree(); ✓/→/○ state icons; graceful empty fallback

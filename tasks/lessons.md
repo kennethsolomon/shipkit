@@ -76,6 +76,17 @@ Additionally, if new gate skills are added (like sk:e2e):
 4. `.claude/docs/DOCUMENTATION.md` — skills section
 5. `install.sh` — commands echo block
 
+### [2026-03-19] sk:context — update its docs when the skill changes
+**Bug:** New standalone skill added (sk:context) without tracking which files need updating.
+**Root cause:** The lesson list wasn't updated when the new skill was created.
+**Prevention:** When sk:context changes (skill behavior, output format, files read), update ALL of these files in the same commit:
+1. `skills/sk:context/SKILL.md` — the skill itself
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `install.sh` — commands echo block
+6. `skills/sk:setup-claude/templates/CLAUDE.md.template` — template for new projects
+
 ### [2026-03-19] sk:dashboard — update its docs when the skill changes
 **Bug:** New standalone skill added (sk:dashboard) without updating the "update ALL files" lesson to include it.
 **Root cause:** The lesson list wasn't updated when the new skill was created.

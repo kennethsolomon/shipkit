@@ -1135,6 +1135,20 @@ Run at any point after implementation — not a numbered workflow step.
 
 ---
 
+### /sk:context
+
+Session initializer — loads all project context files and outputs a formatted session brief. Run at the start of every conversation.
+
+**What it does:**
+- Reads 7 context files: `tasks/todo.md`, `tasks/workflow-status.md`, `tasks/progress.md`, `tasks/findings.md`, `tasks/lessons.md`, `docs/decisions.md`, `docs/vision.md`
+- Outputs a formatted SESSION BRIEF with branch, task, step, pending items, lessons, and open questions
+- Applies all active lessons from `tasks/lessons.md` as standing constraints for the session
+- Graceful fallback for missing files — notes them in the brief instead of erroring
+
+**When to use:** Start of every new conversation. Gives instant orientation without manually reading 5+ files.
+
+---
+
 ### /sk:dashboard
 
 Read-only workflow Kanban board served on localhost. Shows workflow status across all git worktrees as a visual dashboard.

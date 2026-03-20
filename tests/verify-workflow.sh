@@ -619,6 +619,137 @@ assert_api_field \
   "3334" \
   "todoItems"
 
+# ── Milestone 7: sk:mvp Project Context Docs (Approach A) ─────────────────────
+
+echo "── Milestone 7: sk:mvp Project Context Docs ──"
+
+MVP_SKILL="$REPO/skills/sk:mvp/SKILL.md"
+
+assert_contains \
+  "sk:mvp generates docs/vision.md" \
+  "$MVP_SKILL" \
+  "vision.md"
+
+assert_contains \
+  "sk:mvp generates docs/prd.md" \
+  "$MVP_SKILL" \
+  "prd.md"
+
+assert_contains \
+  "sk:mvp generates docs/tech-design.md" \
+  "$MVP_SKILL" \
+  "tech-design.md"
+
+assert_contains \
+  "sk:mvp references docs/ directory for generated docs" \
+  "$MVP_SKILL" \
+  "docs/"
+
+echo ""
+
+# ── Milestone 8: sk:context Session Initializer (Approach B) ──────────────────
+
+echo "── Milestone 8: sk:context Session Initializer ──"
+
+CTX_SKILL="$REPO/skills/sk:context/SKILL.md"
+
+assert_file_exists \
+  "sk:context SKILL.md exists" \
+  "$CTX_SKILL"
+
+assert_contains \
+  "sk:context outputs SESSION BRIEF format" \
+  "$CTX_SKILL" \
+  "SESSION BRIEF"
+
+assert_contains \
+  "sk:context reads tasks/todo.md" \
+  "$CTX_SKILL" \
+  "tasks/todo.md"
+
+assert_contains \
+  "sk:context reads tasks/workflow-status.md" \
+  "$CTX_SKILL" \
+  "tasks/workflow-status.md"
+
+assert_contains \
+  "sk:context reads tasks/lessons.md" \
+  "$CTX_SKILL" \
+  "tasks/lessons.md"
+
+assert_contains \
+  "sk:context reads tasks/progress.md" \
+  "$CTX_SKILL" \
+  "tasks/progress.md"
+
+assert_contains \
+  "sk:context reads tasks/findings.md" \
+  "$CTX_SKILL" \
+  "tasks/findings.md"
+
+assert_contains \
+  "sk:context reads docs/decisions.md" \
+  "$CTX_SKILL" \
+  "docs/decisions.md"
+
+assert_contains \
+  "sk:context reads docs/vision.md" \
+  "$CTX_SKILL" \
+  "docs/vision.md"
+
+assert_contains \
+  "sk:context has model routing section" \
+  "$CTX_SKILL" \
+  "Model Routing"
+
+assert_contains \
+  "sk:context in CLAUDE.md commands table" \
+  "$CLAUDE" \
+  "sk:context"
+
+assert_contains \
+  "sk:context in README.md" \
+  "$REPO/README.md" \
+  "sk:context"
+
+assert_contains \
+  "sk:context in DOCUMENTATION.md" \
+  "$REPO/.claude/docs/DOCUMENTATION.md" \
+  "sk:context"
+
+assert_contains \
+  "sk:context in install.sh" \
+  "$REPO/install.sh" \
+  "sk:context"
+
+assert_contains \
+  "sk:context in CLAUDE.md.template" \
+  "$TEMPLATE" \
+  "sk:context"
+
+echo ""
+
+# ── Milestone 9: Persistent Decisions Log (Approach C) ────────────────────────
+
+echo "── Milestone 9: Persistent Decisions Log ──"
+
+BRAIN_SKILL="$REPO/skills/sk:brainstorming/SKILL.md"
+
+assert_contains \
+  "sk:brainstorming appends to docs/decisions.md" \
+  "$BRAIN_SKILL" \
+  "docs/decisions.md"
+
+assert_contains \
+  "sk:brainstorming uses ADR format" \
+  "$BRAIN_SKILL" \
+  "Decision"
+
+assert_contains \
+  "sk:brainstorming marks decisions.md as append-only" \
+  "$BRAIN_SKILL" \
+  "append"
+
 echo ""
 
 # ── Summary ──────────────────────────────────────────────────────────────────
