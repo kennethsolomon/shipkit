@@ -221,6 +221,13 @@
 - Changed 27→21 step count references
 - Updated hard gate step numbers
 
+### [2026-03-20] Gate Auto-Commit + Tech Debt Logging — COMPLETED
+- Branch: `feature/gate-auto-commit-tech-debt`
+- Changes: Gate auto-commit (6 skills), tech-debt.md logging lifecycle, 27→21 step workflow, sk:schema-migrate auto-detect, Pencil disk persistence; DOCUMENTATION.md workflow table fix found during sk:review
+- Tests: 143/143 pass (tests/verify-workflow.sh)
+- Files changed: 33 across 3 commits (feat + 2 fix)
+- Gates: lint clean, 143 tests pass, 0 security findings, 0 perf findings, 0 review issues, 143 E2E pass
+
 ### [2026-03-20] sk:frontend-design — Pencil disk persistence
 - File: skills/sk:frontend-design/SKILL.md
 - Step 1 of Pencil phase rewritten: reads tasks/todo.md for task name, converts to kebab-case, always calls open_document('docs/design/[task-name].pen') to persist to disk

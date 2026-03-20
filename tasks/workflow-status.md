@@ -20,9 +20,9 @@
 | 13 | **Verify Tests** (`/sk:test`) | done | 143/143 pass — clean first attempt |
 | 14 | **Security** (`/sk:security-check`) | done | 0 findings — pure markdown/bash, npm audit clean |
 | 15 | **Performance** (`/sk:perf`) | done | 0 findings — no frontend/backend/DB in scope |
-| 16 | **Review + Simplify** (`/sk:review`) | not yet | >> next << |
-| 17 | **E2E** (`/sk:e2e`) | not yet | |
-| 18 | Update (`/sk:update-task`) | not yet | |
-| 19 | Finalize (`/sk:finish-feature`) | not yet | |
+| 16 | **Review + Simplify** (`/sk:review`) | done | 0 issues; 3 fixes (e2e/review tech-debt format, DOCUMENTATION.md table) |
+| 17 | **E2E** (`/sk:e2e`) | done | 143/143 pass — clean first attempt |
+| 18 | Update (`/sk:update-task`) | done | all tasks checked; completion logged |
+| 19 | Finalize (`/sk:finish-feature`) | not yet | >> next << |
 | 20 | Sync Features (`/sk:features`) | not yet | |
 | 21 | Release (`/sk:release`) | not yet | |

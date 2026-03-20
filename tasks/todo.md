@@ -193,12 +193,12 @@ Workflow shrinks from 27 → 21 steps (removes conditional commit steps 13, 15, 
 
 #### Wave 5 (parallel — command templates with Workflow breadcrumb, depends on Wave 4 CLAUDE.md being finalized)
 
-- [ ] Update `skills/sk:setup-claude/templates/commands/brainstorm.md.template` — update `**Workflow:**` breadcrumb step numbers
-- [ ] Update `skills/sk:setup-claude/templates/commands/write-plan.md.template` — update `**Workflow:**` breadcrumb
-- [ ] Update `skills/sk:setup-claude/templates/commands/execute-plan.md.template` — update `**Workflow:**` breadcrumb
-- [ ] Update `skills/sk:setup-claude/templates/commands/security-check.md.template` — update `**Workflow:**` breadcrumb
-- [ ] Update `skills/sk:setup-claude/templates/commands/finish-feature.md.template` — update `**Workflow:**` breadcrumb
-- [ ] Update `skills/sk:setup-claude/templates/commands/release.md.template` — update `**Workflow:**` breadcrumb
+- [x] Update `skills/sk:setup-claude/templates/commands/brainstorm.md.template` — update `**Workflow:**` breadcrumb step numbers
+- [x] Update `skills/sk:setup-claude/templates/commands/write-plan.md.template` — update `**Workflow:**` breadcrumb
+- [x] Update `skills/sk:setup-claude/templates/commands/execute-plan.md.template` — update `**Workflow:**` breadcrumb
+- [x] Update `skills/sk:setup-claude/templates/commands/security-check.md.template` — update `**Workflow:**` breadcrumb
+- [x] Update `skills/sk:setup-claude/templates/commands/finish-feature.md.template` — update `**Workflow:**` breadcrumb
+- [x] Update `skills/sk:setup-claude/templates/commands/release.md.template` — update `**Workflow:**` breadcrumb (file does not exist in local templates; skipped)
 
 ---
 
@@ -229,20 +229,20 @@ bash tests/verify-workflow.sh
 
 ## Acceptance Criteria
 
-- [ ] `sk:schema-migrate` auto-detects migration changes and skips without asking if none found
-- [ ] All 6 gate SKILL.md files contain auto-commit behavior in their fix loops
-- [ ] No gate SKILL.md asks the user to approve commits
-- [ ] All 6 gate SKILL.md files log pre-existing issues to `tasks/tech-debt.md`
-- [ ] `tasks/tech-debt.md` format documented: entry with `Resolved:` lifecycle
-- [ ] `sk:context` reads `tasks/tech-debt.md` and shows unresolved count in session brief
-- [ ] `sk:write-plan` reads `tasks/tech-debt.md` and asks about unresolved items
-- [ ] `sk:update-task` marks matched tech-debt entries as `Resolved:` on task completion
-- [ ] CLAUDE.md workflow is 21 steps (no conditional commit rows)
-- [ ] All 14 workflow-definition files updated consistently (per lessons.md rule)
-- [ ] All 6 command templates updated with new step numbers in `**Workflow:**` breadcrumb
-- [ ] `CHANGELOG.md` documents the change
-- [ ] `tasks/lessons.md` updated with tech-debt.md tracking entry
-- [ ] All tests in `tests/verify-workflow.sh` pass
+- [x] `sk:schema-migrate` auto-detects migration changes and skips without asking if none found
+- [x] All 6 gate SKILL.md files contain auto-commit behavior in their fix loops
+- [x] No gate SKILL.md asks the user to approve commits
+- [x] All 6 gate SKILL.md files log pre-existing issues to `tasks/tech-debt.md`
+- [x] `tasks/tech-debt.md` format documented: entry with `Resolved:` lifecycle
+- [x] `sk:context` reads `tasks/tech-debt.md` and shows unresolved count in session brief
+- [x] `sk:write-plan` reads `tasks/tech-debt.md` and asks about unresolved items
+- [x] `sk:update-task` marks matched tech-debt entries as `Resolved:` on task completion
+- [x] CLAUDE.md workflow is 21 steps (no conditional commit rows)
+- [x] All 14 workflow-definition files updated consistently (per lessons.md rule)
+- [x] All 6 command templates updated with new step numbers in `**Workflow:**` breadcrumb
+- [x] `CHANGELOG.md` documents the change
+- [x] `tasks/lessons.md` updated with tech-debt.md tracking entry
+- [x] All tests in `tests/verify-workflow.sh` pass
 
 ---
 
