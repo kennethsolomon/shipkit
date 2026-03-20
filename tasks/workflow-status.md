@@ -15,12 +15,12 @@
 | 8 | Migrate (`/sk:schema-migrate`) | skipped | No DB changes — pure skill/workflow updates |
 | 9 | Write Tests (`/sk:write-tests`) | done | 22 new failing assertions in Milestone 10; 117 existing pass; RED phase confirmed |
 | 10 | Implement (`/sk:execute-plan`) | done | 143/143 tests pass; all milestones complete (incl. Milestone 5 Pencil disk persistence) |
-| 11 | Commit (`/sk:smart-commit`) | not yet | >> next << |
-| 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | |
-| 13 | **Verify Tests** (`/sk:test`) | not yet | |
-| 14 | **Security** (`/sk:security-check`) | not yet | |
-| 15 | **Performance** (`/sk:perf`) | not yet | |
-| 16 | **Review + Simplify** (`/sk:review`) | not yet | |
+| 11 | Commit (`/sk:smart-commit`) | done | f9429f4 — 30 files, 143/143 tests pass |
+| 12 | **Lint + Dep Audit** (`/sk:lint`) | done | no linters detected; npm audit 0 vulns |
+| 13 | **Verify Tests** (`/sk:test`) | done | 143/143 pass — clean first attempt |
+| 14 | **Security** (`/sk:security-check`) | done | 0 findings — pure markdown/bash, npm audit clean |
+| 15 | **Performance** (`/sk:perf`) | done | 0 findings — no frontend/backend/DB in scope |
+| 16 | **Review + Simplify** (`/sk:review`) | not yet | >> next << |
 | 17 | **E2E** (`/sk:e2e`) | not yet | |
 | 18 | Update (`/sk:update-task`) | not yet | |
 | 19 | Finalize (`/sk:finish-feature`) | not yet | |

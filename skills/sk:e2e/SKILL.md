@@ -204,7 +204,7 @@ If during E2E testing a bug is found in functionality **outside** the current fe
 
 ```
 ### [YYYY-MM-DD] Found during: sk:e2e
-File: path/to/file.ext (or: feature area)
+File: path/to/file.ext:line
 Issue: description of the pre-existing bug
 Severity: critical | high | medium | low
 ```

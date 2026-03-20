@@ -122,9 +122,7 @@ Before opening any Pencil document:
 
 2. Target path: `docs/design/[task-name].pen`
 
-3. Check if `docs/design/[task-name].pen` already exists:
-   - **Existing file found**: call `open_document('docs/design/[task-name].pen')` to open it, then skip to Step 3.
-   - **No file found**: call `open_document('docs/design/[task-name].pen')` to create it on disk at that path.
+3. Call `open_document('docs/design/[task-name].pen')` — use the full path whether the file exists or not. The tool auto-detects existence: opens the file if it's already there, creates it on disk if not.
 
 The `.pen` file is created at `docs/design/[task-name].pen` before any design work begins, ensuring the design is saved to disk and committable.
 

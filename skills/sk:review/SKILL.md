@@ -447,7 +447,7 @@ After presenting the review report, fix **all** findings regardless of severity 
   ### [YYYY-MM-DD] Found during: sk:review
   File: path/to/file.ext:line
   Issue: description of the problem
-  Severity: critical | warning | nitpick
+  Severity: critical | high | medium | low
   ```
 
 After all in-scope fixes are applied: auto-commit with `fix(review): address review findings`. Do not ask the user. Re-run `/sk:review` from scratch.
