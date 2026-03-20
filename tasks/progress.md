@@ -1,5 +1,49 @@
 # Progress Log
 
+### [2026-03-20] Templates — updated to 21-step workflow
+- File: skills/sk:setup-claude/templates/CLAUDE.md.template
+- File: skills/sk:setup-claude/templates/tasks/workflow-status.md.template
+- Removed 6 conditional commit rows, renumbered to 21 steps
+
+### [2026-03-20] README + DOCUMENTATION + CHANGELOG + lessons — updated for 21-step workflow
+- README.md: removed 6 conditional commit rows (old steps 13, 15, 17, 19, 21, 23), renumbered to 21 steps
+- .claude/docs/DOCUMENTATION.md: updated step count references (27→21), updated gate step numbers, added tech-debt.md to persistent context files
+- CHANGELOG.md: added v3.7.0 section
+- tasks/lessons.md: appended tech-debt.md tracking lesson
+
+### [2026-03-20] CLAUDE.md — updated to 21-step workflow
+- Removed 6 conditional commit steps (old 13,15,17,19,21,23)
+- Renumbered steps: gates now 12-17, Release=21
+- Added "Gates own their commits" rule (tracker rule 4)
+- Updated Step 22→Step 17 in tracker rules; hard gates now listed as 12,13,14,16,17
+- Added tech-debt.md to Project Memory (read list + Never overwrite)
+- Updated Bug Fix Flow and Hotfix Flow tables (removed conditional commit rows, added gates-own-commits note)
+- Updated Fix & Retest Protocol step list to 12,13,14,15,16,17
+- Updated optional steps list to (4,5,8,15,21)
+
+### [2026-03-20] sk:perf — changed to fix+auto-commit+tech-debt
+- File: skills/sk:perf/SKILL.md
+- Removed "DO NOT fix code" rule
+- Added fix+auto-commit+tech-debt logging behavior
+- Kept perf-findings.md report generation
+
+### [2026-03-20] sk:e2e — added auto-commit + tech-debt logging
+- File: skills/sk:e2e/SKILL.md
+- Fix & Retest Protocol: changed to auto-commit
+- Added pre-existing issues → tech-debt.md section
+
+### [2026-03-20] sk:review — added auto-commit + tech-debt logging
+- File: skills/sk:review/SKILL.md
+- Step 0: changed /sk:smart-commit to auto-commit with message `fix(review): simplify pre-pass`
+- Step 11: replaced "ask to fix nitpicks" with auto-fix-all + tech-debt logging for out-of-scope files
+- Fix & Retest Protocol: auto-commit instead of manual commit (`fix(review): [description]`)
+
+### [2026-03-20] sk:security-check — changed to fix+auto-commit+tech-debt
+- File: commands/sk/security-check.md
+- Removed "DO NOT fix code" rule
+- Added fix+auto-commit+tech-debt logging behavior
+- Kept security-findings.md report generation
+
 ### [2026-03-20] sk:context + sk:mvp docs + decisions log — COMPLETED
 - Branch: `feature/context-mvp-docs-decisions`
 - Changes: 3 improvements inspired by vibe-coding-starter-kit
@@ -140,6 +184,59 @@
 - Changes: New `sk:dashboard` skill — zero-dep Node server + single-file HTML Kanban; TASKS panel per swimlane showing individual todo checklist items grouped by milestone; parseTodo bug fix; review fixes for detached HEAD, em dash, max-height, test retry
 - Tests: 96/96 assertions passing (tests/verify-workflow.sh); 10/10 E2E scenarios (Playwright MCP)
 - Files changed: 13 (5 commits: f07db5f, 03c6e24, 1eb13cc, 99f8d7c, d3637fd)
+
+### [2026-03-20] sk:lint — added auto-commit + tech-debt logging
+- File: skills/sk:lint/SKILL.md
+- Added auto-commit in Step 6 fix loop
+- Added tech-debt.md logging for pre-existing issues (files outside `git diff main..HEAD --name-only`)
+- Removed manual commit approval language; all commits in gate are now automatic
+
+### [2026-03-20] sk:test — added auto-commit to fix loop
+- File: skills/sk:test/SKILL.md
+- Added auto-commit in Step 4 fix loop
+- Removed "confirm with user" clause
+
+### [2026-03-20] sk:schema-migrate — added Phase 0 auto-detect
+- File: skills/sk:schema-migrate/SKILL.md
+- Added Phase 0 that auto-skips when no migration files in branch diff
+- No user prompt needed for skip decision
+
+### [2026-03-20] sk:write-plan — added tech-debt.md check
+- File: commands/sk/write-plan.md
+- Added tasks/tech-debt.md to Step 2 read list
+- Added ask logic for unresolved debt items before plan approval
+
+### [2026-03-20] sk:update-task — added Resolved: marking for tech-debt
+- File: commands/sk/update-task.md
+- Added Step 2.5 to mark matched tech-debt entries as Resolved: on task completion
+
+### [2026-03-20] sk:context — added tech-debt.md integration
+- File: skills/sk:context/SKILL.md
+- Added tasks/tech-debt.md as file #8 in read table
+- Added Tech Debt field to session brief output
+- Added edge case and field rule for tech-debt.md
+
+### [2026-03-20] sk:setup-optimizer — updated to 21-step workflow
+- File: skills/sk:setup-optimizer/SKILL.md
+- Changed 27→21 step count references
+- Updated hard gate step numbers
+
+### [2026-03-20] Gate Auto-Commit + Tech Debt Logging — COMPLETED
+- Branch: `feature/gate-auto-commit-tech-debt`
+- Changes: Gate auto-commit (6 skills), tech-debt.md logging lifecycle, 27→21 step workflow, sk:schema-migrate auto-detect, Pencil disk persistence; DOCUMENTATION.md workflow table fix found during sk:review
+- Tests: 143/143 pass (tests/verify-workflow.sh)
+- Files changed: 33 across 3 commits (feat + 2 fix)
+- Gates: lint clean, 143 tests pass, 0 security findings, 0 perf findings, 0 review issues, 143 E2E pass
+
+### [2026-03-20] sk:frontend-design — Pencil disk persistence
+- File: skills/sk:frontend-design/SKILL.md
+- Step 1 of Pencil phase rewritten: reads tasks/todo.md for task name, converts to kebab-case, always calls open_document('docs/design/[task-name].pen') to persist to disk
+- Removed open_document('new') — file is now always written to docs/design/ from the start
+- Tests: 2 new assertions in tests/verify-workflow.sh — 143/143 pass
+
+### [2026-03-20] Command templates — updated workflow breadcrumbs to 21 steps
+- Updated Workflow: breadcrumb in all 6 command templates
+- Note: release.md.template does not exist in skills/sk:setup-claude/templates/commands/ (only in node_modules); 5 local templates updated
 
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |

@@ -111,13 +111,20 @@ Only run this phase if:
 - The user answers **y** or **yes** to the prompt above, OR
 - The user invoked the skill with `--pencil`
 
-### Step 1 — Find or create the .pen file
+### Step 1 — Derive the filename and open the .pen file
 
-Check `docs/design/` for an existing `.pen` file that matches this design (by name or topic).
+Before opening any Pencil document:
 
-- **Existing file found**: call `open_document(filePath)` to open it, then skip to Step 3.
-- **No file found**: call `open_document('new')` to create a fresh canvas.
-  - The file will be saved to `docs/design/{design-name}.pen` — use a slug derived from the design subject (e.g., `docs/design/dashboard-analytics.pen`).
+1. Read `tasks/todo.md` and extract the task name from the first `# TODO` heading:
+   - Pattern: `# TODO — YYYY-MM-DD — <task-name>`
+   - Convert to kebab-case (e.g., `"Gate Auto-Commit + Tech Debt"` → `gate-auto-commit-tech-debt`)
+   - If no `# TODO` heading exists, derive a slug from the design subject instead (e.g., `dashboard-analytics`)
+
+2. Target path: `docs/design/[task-name].pen`
+
+3. Call `open_document('docs/design/[task-name].pen')` — use the full path whether the file exists or not. The tool auto-detects existence: opens the file if it's already there, creates it on disk if not.
+
+The `.pen` file is created at `docs/design/[task-name].pen` before any design work begins, ensuring the design is saved to disk and committable.
 
 ### Step 2 — Load design context
 

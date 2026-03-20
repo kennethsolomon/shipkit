@@ -8,6 +8,20 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.7.0] — 2026-03-20
+
+### Changed
+- Gate loops now auto-fix + auto-commit internally — no separate commit step after each gate
+- Workflow reduced from 27 → 21 steps (removed conditional commit steps 13, 15, 17, 19, 21, 23)
+- Pre-existing issues found during gates are logged to `tasks/tech-debt.md` instead of fixed inline or silently skipped
+- `sk:schema-migrate` auto-detects migration changes and skips automatically if none found
+
+### Added
+- `tasks/tech-debt.md` — append-only log of pre-existing issues found during gates
+- `sk:context` now surfaces unresolved tech debt count in session brief
+- `sk:write-plan` checks `tasks/tech-debt.md` and asks if items should be included in the current task
+- `sk:update-task` marks tech-debt entries as `Resolved:` when related tasks complete
+
 ## [3.6.0] - 2026-03-20
 
 ### Added

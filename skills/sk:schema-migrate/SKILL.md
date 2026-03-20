@@ -24,6 +24,28 @@ guidance. Auto-detects the ORM from project files — no configuration needed.
 
 ---
 
+## Phase 0: Auto-Detect Migration Changes
+
+Before doing anything else, check whether the current branch has any migration-related changes:
+
+```bash
+git diff main..HEAD --name-only
+```
+
+Scan the output for migration-related files:
+- Files under `migrations/`, `database/migrations/`, `prisma/migrations/`, `alembic/versions/`, `db/migrate/`
+- Schema definition files: `prisma/schema.prisma`, `drizzle.config.ts`, `drizzle.config.js`, `alembic.ini`
+- Any `*.sql` files in migration-related directories
+
+**If NO migration-related files are found in the diff:**
+> auto-skip: No migration changes detected in this branch — skipping `/sk:schema-migrate`.
+
+Exit cleanly. Do not ask the user. Do not proceed to Phase 1.
+
+**If migration-related files ARE found:** proceed to Phase 1 (ORM Detection) below.
+
+---
+
 ## Phase 1: ORM Detection
 
 ### Step 1 — Read in Parallel

@@ -91,11 +91,30 @@ Skip stacks not present in the project.
 ### 6. Fix and Re-run
 
 If any analyzer reports errors or the dep audit blocks:
-1. Fix all reported issues
+
+**Before fixing, classify each issue by scope:**
+
+- Run `git diff main..HEAD --name-only` to get the current branch diff.
+- If the issue is in a file **not** in that list (pre-existing issue outside the current branch), do **not** fix it inline. Log it to `tasks/tech-debt.md` in this format and move on:
+
+  ```
+  ### [YYYY-MM-DD] Found during: sk:lint
+  File: path/to/file.ext:line
+  Issue: description of the problem
+  Severity: high | medium | low
+  ```
+
+- If the issue is in a file **in** the branch diff (in-scope), fix it.
+
+**Fix loop (in-scope issues only):**
+1. Fix all in-scope issues
 2. Re-run formatters (fixes may need formatting)
 3. Re-launch all analyzers in parallel
 4. Re-run dep audit if any dependency was fixed
-5. Loop until every tool exits clean
+5. Auto-commit with message `fix(lint): resolve lint and dep audit issues` — do NOT ask the user
+6. Re-run from step 3 until every tool exits clean
+
+> Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
 
 ### 7. Report Results
 
@@ -125,19 +144,21 @@ Only include lines for detected tools. All must show "clean" before this skill p
 
 When this gate requires a fix, classify it before committing:
 
-**a. Formatter auto-fix** (Pint, Prettier, gofmt, cargo fmt changed whitespace/style) → commit and re-run `/sk:lint`. Never a logic change — bypass protocol.
+**a. Formatter auto-fix** (Pint, Prettier, gofmt, cargo fmt changed whitespace/style) → auto-commit and re-run `/sk:lint`. Never a logic change — bypass protocol.
 
 **b. Analyzer fix** (PHPStan type error, Rector suggestion, ESLint error, ruff violation) → classify each fix:
-  - Type annotation, import order, unused var, style rule → **style fix** → commit and re-run
+  - Type annotation, import order, unused var, style rule → **style fix** → auto-commit and re-run
   - New guard clause, changed condition, extracted function, modified data flow → **logic change** → trigger protocol:
     1. Update or add failing unit tests for the new behavior
     2. Re-run `/sk:test` — must pass at 100% coverage
-    3. Commit (tests + fix together in one commit)
+    3. Auto-commit (tests + fix together in one commit)
     4. Re-run `/sk:lint` from scratch
 
 **c. Dependency vulnerability fix** (composer audit / npm audit finding) → classify:
-  - Version bump with no API change → **style fix** → commit and re-run
+  - Version bump with no API change → **style fix** → auto-commit and re-run
   - Version bump with API/behavior change → **logic change** → trigger protocol
+
+All commits in this protocol are automatic — do not prompt the user for commit approval.
 
 ---
 

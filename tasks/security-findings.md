@@ -3,6 +3,54 @@
 > Populated by `/security-check`. Never overwritten — new audits append below.
 > Referenced by `/review`, `/finish-feature`, and `/brainstorm` for security context.
 
+---
+
+# Security Audit — 2026-03-20
+
+**Scope:** Changed files on branch `feature/gate-auto-commit-tech-debt`
+**Stack:** Node.js (bin only) / Bash / Markdown
+**Files audited:** 29 (28 markdown/template + 1 shell script)
+
+## Critical (must fix before deploy)
+
+*None*
+
+## High (fix before production)
+
+*None*
+
+## Medium (should fix)
+
+*None*
+
+## Low / Informational
+
+*None*
+
+## Passed Checks
+
+- A01 Broken Access Control — N/A (no auth layer in changed files)
+- A02 Cryptographic Failures — N/A (no crypto operations)
+- A03 Injection — `tests/verify-workflow.sh`: all grep patterns and file paths are hardcoded, not user-supplied; shell variables are double-quoted throughout
+- A04 Insecure Design — N/A
+- A05 Security Misconfiguration — `.gitignore` correctly excludes `.shipkit/` (config with profile settings)
+- A06 Vulnerable Components — `npm audit`: 0 vulnerabilities (verified in Step 12)
+- A07 Auth Failures — N/A
+- A08 Data Integrity Failures — N/A
+- A09 Logging Failures — N/A
+- A10 SSRF — `tests/verify-workflow.sh:82`: `curl` targets `http://localhost:${port}` only — no external URLs, no user-controlled hostname
+- Shell safety — `set -euo pipefail` on line 6; `BASH_SOURCE[0]` path construction is properly quoted; process substitution `$()` used safely with fixed args
+
+## Summary
+
+| Severity | Open | Resolved this run |
+|----------|------|-------------------|
+| Critical | 0    | 0                 |
+| High     | 0    | 0                 |
+| Medium   | 0    | 0                 |
+| Low      | 0    | 0                 |
+| **Total** | **0** | **0**           |
+
 # Security Audit — 2026-03-08
 
 **Scope:** Changed files on branch `feat/workflow-tracker`

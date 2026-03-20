@@ -16,6 +16,15 @@ Mark the current task as complete and log progress.
 - In `tasks/todo.md`, change the task's checkbox from `[ ]` to `[x]`
 - If the task has subtasks, verify all subtasks are also checked
 
+### 2.5. Mark Resolved Tech Debt
+
+- Read `tasks/tech-debt.md` if it exists
+- Find any unresolved entries (entries with no `Resolved:` line) whose `File:` or `Issue:` description relates to files or features changed in the current task (cross-reference with `tasks/todo.md` plan and current branch diff via `git diff main..HEAD --name-only`)
+- For each matched entry, append this line directly after the entry's `Severity:` line:
+  `Resolved: [YYYY-MM-DD] — [current branch name]`
+- Never delete entries — only append the `Resolved:` line
+- If `tasks/tech-debt.md` doesn't exist or no matches found: skip silently
+
 ### 3. Log Completion
 - Append a completion entry to `tasks/progress.md`:
 

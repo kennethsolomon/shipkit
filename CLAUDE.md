@@ -15,7 +15,7 @@ Custom Claude Code skills and commands for bootstrapping and maintaining project
 ## Workflow — Follow This Order
 <!-- LOCK -->
 
-**Flow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features
+**Flow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Commit → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Update → Finalize → Sync Features → Release
 
 Progress is tracked in `tasks/workflow-status.md`. This file persists across conversations.
 
@@ -33,21 +33,15 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 | 10 | Implement | `/sk:execute-plan` | required | no |
 | 11 | Commit | `/sk:smart-commit` | required | no |
 | 12 | Lint + Dep Audit | `/sk:lint` | required | yes — must be clean |
-| 13 | Commit | `/sk:smart-commit` | conditional (skip if lint was clean) | no |
-| 14 | Verify Tests | `/sk:test` | required | yes — 100% coverage required |
-| 15 | Commit | `/sk:smart-commit` | conditional (skip if tests passed clean) | no |
-| 16 | Security | `/sk:security-check` | required | yes — must reach 0 issues |
-| 17 | Commit | `/sk:smart-commit` | conditional (skip if security was clean) | no |
-| 18 | Performance | `/sk:perf` | optional (confirm to skip) | yes — loop until critical/high = 0 |
-| 19 | Commit | `/sk:smart-commit` | conditional (skip if perf was clean) | no |
-| 20 | Review + Simplify | `/sk:review` | required | yes — must reach 0 issues |
-| 21 | Commit | `/sk:smart-commit` | conditional (skip if review was clean) | no |
-| 22 | E2E Tests | `/sk:e2e` | required | yes — all scenarios must pass |
-| 23 | Commit | `/sk:smart-commit` | conditional (skip if E2E was clean) | no |
-| 24 | Update | `/sk:update-task` | required | no |
-| 25 | Finalize | `/sk:finish-feature` | required | no |
-| 26 | Sync Features | `/sk:features` | required | no |
-| 27 | Release | `/sk:release` | optional (confirm to skip) | no |
+| 13 | Verify Tests | `/sk:test` | required | yes — 100% coverage required |
+| 14 | Security | `/sk:security-check` | required | yes — must reach 0 issues |
+| 15 | Performance | `/sk:perf` | optional (confirm to skip) | yes — loop until critical/high = 0 |
+| 16 | Review + Simplify | `/sk:review` | required | yes — must reach 0 issues |
+| 17 | E2E Tests | `/sk:e2e` | required | yes — all scenarios must pass |
+| 18 | Update | `/sk:update-task` | required | no |
+| 19 | Finalize | `/sk:finish-feature` | required | no |
+| 20 | Sync Features | `/sk:features` | required | no |
+| 21 | Release | `/sk:release` | optional (confirm to skip) | no |
 
 ### Step Details
 
@@ -62,22 +56,16 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 9.  **Write Tests** — run `/sk:write-tests` (TDD red phase). Write failing tests for all planned code. If modifying existing behavior, update existing tests first. Tests SHOULD fail — no implementation yet.
 10. **Implement** — run `/sk:execute-plan` to execute `tasks/todo.md` checkboxes in small batches, making the failing tests pass (TDD green phase). Log progress to `tasks/progress.md`.
 11. **Commit** — run `/sk:smart-commit` to commit tests + implementation
-12. **Lint + Dep Audit** — run `/sk:lint` — auto-detects and runs all project linters plus dependency vulnerability audits. Fix all issues immediately, then re-run until clean. Do not ask to re-run — fix and re-run automatically.
-13. **Commit** — run `/sk:smart-commit` if lint required fixes. Auto-skip if lint was clean.
-14. **Verify Tests** — run `/sk:test` — auto-detects and runs all project test suites. **100% test coverage required.** Fix failures immediately, then re-run. Do not ask to re-run — fix and re-run automatically.
-15. **Commit** — run `/sk:smart-commit` if test fixes were needed. Auto-skip if tests passed first try.
-16. **Security** — run `/sk:security-check`. Must reach 0 issues across all severities. Fix issues immediately, commit, then re-run. Loop until clean.
-17. **Commit** — run `/sk:smart-commit` if security required fixes. Auto-skip if clean.
-18. **Performance** — run `/sk:perf` to audit for performance issues. Produces `tasks/perf-findings.md`. Fix critical/high findings, commit, then re-run. Loop until critical/high = 0. Skip if confirmed with user.
-19. **Commit** — run `/sk:smart-commit` if perf required fixes. Auto-skip if clean.
-20. **Review + Simplify** — run `/sk:review`. First runs a simplify pre-pass on changed files, then performs full multi-dimensional review. Must reach 0 issues including nitpicks. Fix issues immediately, commit, then re-run. Loop until clean.
-21. **Commit** — run `/sk:smart-commit` if review required fixes. Auto-skip if clean.
-22. **E2E Tests** — run `/sk:e2e`. Verifies the complete, reviewed, secure implementation works end-to-end from a user's perspective using agent-browser. All scenarios must pass. Cannot be skipped.
-23. **Commit** — run `/sk:smart-commit` if E2E required fixes. Auto-skip if E2E was clean.
-24. **Update** — run `/sk:update-task` to mark the task done in `tasks/todo.md` and log completion to `tasks/progress.md`.
-25. **Finalize** — run `/sk:finish-feature` for changelog + PR
-26. **Sync Features** — run `/sk:features` to sync `docs/sk:features/` specs with what was actually shipped. Ensures feature documentation reflects the final implementation.
-27. **Release** — run `/sk:release` if deploying. Skip if not ready.
+12. **Lint + Dep Audit** — run `/sk:lint` — auto-detects and runs all project linters plus dependency vulnerability audits. Fix all issues immediately, then re-run until clean. Do not ask to re-run — fix and re-run automatically. Gates own their commits — each fix-commit-rerun loop is fully internal to the gate.
+13. **Verify Tests** — run `/sk:test` — auto-detects and runs all project test suites. **100% test coverage required.** Fix failures immediately, then re-run. Do not ask to re-run — fix and re-run automatically. Gates own their commits — each fix-commit-rerun loop is fully internal to the gate.
+14. **Security** — run `/sk:security-check`. Must reach 0 issues across all severities. Fix issues immediately, commit, then re-run. Loop until clean. Gates own their commits — each fix-commit-rerun loop is fully internal to the gate.
+15. **Performance** — run `/sk:perf` to audit for performance issues. Produces `tasks/perf-findings.md`. Fix critical/high findings, commit, then re-run. Loop until critical/high = 0. Skip if confirmed with user. Gates own their commits — each fix-commit-rerun loop is fully internal to the gate.
+16. **Review + Simplify** — run `/sk:review`. First runs a simplify pre-pass on changed files, then performs full multi-dimensional review. Must reach 0 issues including nitpicks. Fix issues immediately, commit, then re-run. Loop until clean. Gates own their commits — each fix-commit-rerun loop is fully internal to the gate.
+17. **E2E Tests** — run `/sk:e2e`. Verifies the complete, reviewed, secure implementation works end-to-end from a user's perspective using agent-browser. All scenarios must pass. Cannot be skipped. Gates own their commits — each fix-commit-rerun loop is fully internal to the gate.
+18. **Update** — run `/sk:update-task` to mark the task done in `tasks/todo.md` and log completion to `tasks/progress.md`.
+19. **Finalize** — run `/sk:finish-feature` for changelog + PR
+20. **Sync Features** — run `/sk:features` to sync `docs/sk:features/` specs with what was actually shipped. Ensures feature documentation reflects the final implementation.
+21. **Release** — run `/sk:release` if deploying. Skip if not ready.
 
 ### Workflow Tracker Rules
 
@@ -90,20 +78,20 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
    - Add relevant Notes (e.g., "clean on attempt 2", "backend-only, no UI")
    - Move `>> next <<` to the next pending step
 
-3. **Optional steps** (4, 5, 8, 18, 27): Ask the user "Skip [step]?" and require explicit confirmation. Record the reason in Notes.
+3. **Optional steps** (4, 5, 8, 15, 21): Ask the user "Skip [step]?" and require explicit confirmation. Record the reason in Notes.
 
-4. **Conditional commits** (13, 15, 17, 19, 21, 23): Auto-skip if no changes were made. Record reason (e.g., "lint was clean", "tests passed first try").
+4. **Gates own their commits.** Each gate's fix-commit-rerun loop is fully internal. No separate commit step follows a gate. When a gate requires fixes, commit inside the gate loop, then re-run the gate from scratch.
 
-5. **Loop steps are HARD GATES** (12, 14, 16, 20, 22): These steps BLOCK all forward progress until they pass clean. Fix issues immediately and re-run. Do NOT ask the user to re-run — fix and re-run automatically. Track attempt number in Notes (e.g., "clean on attempt 3").
+5. **Loop steps are HARD GATES** (12, 13, 14, 16, 17): These steps BLOCK all forward progress until they pass clean. Fix issues immediately and re-run. Do NOT ask the user to re-run — fix and re-run automatically. Track attempt number in Notes (e.g., "clean on attempt 3").
    - **Step 12 (Lint + Dep Audit)**: All detected linting tools AND dependency audits must pass — every single one.
-   - **Step 14 (Verify Tests)**: All detected test suites (BE + FE) must pass with 100% coverage on new code.
-   - **Step 16 (Security)**: 0 issues across all severities.
-   - **Step 20 (Review + Simplify)**: 0 issues including nitpicks. Simplify pre-pass runs automatically.
-   - **Step 22 (E2E Tests)**: All scenarios must pass. 0 failures allowed.
-   - **Step 18 (Performance)**: Optional gate — if run, loop until critical/high findings = 0. Can be skipped with explicit confirmation.
+   - **Step 13 (Verify Tests)**: All detected test suites (BE + FE) must pass with 100% coverage on new code.
+   - **Step 14 (Security)**: 0 issues across all severities.
+   - **Step 16 (Review + Simplify)**: 0 issues including nitpicks. Simplify pre-pass runs automatically.
+   - **Step 17 (E2E Tests)**: All scenarios must pass. 0 failures allowed.
+   - **Step 15 (Performance)**: Optional gate — if run, loop until critical/high findings = 0. Can be skipped with explicit confirmation.
    - **DO NOT mark these steps as `done` until every check passes.** If even one tool fails, the step is NOT done. Never proceed to the next step with errors remaining.
 
-6. **Never skip steps without confirmation.** Steps cannot run out of order. Hard gate steps (12, 14, 16, 20, 22) can NEVER be skipped. Optional gate step (18) requires explicit confirmation to skip.
+6. **Never skip steps without confirmation.** Steps cannot run out of order. Hard gate steps (12, 13, 14, 16, 17) can NEVER be skipped. Optional gate step (15) requires explicit confirmation to skip.
 
 7. **Never auto-advance.** When one step completes, stop and tell the user which step is next. Do not proceed automatically.
 
@@ -121,7 +109,7 @@ This tells the user exactly what happened and what to do next. Never finish a st
 
 ### Fix & Retest Protocol
 
-**Applies to steps 12, 14, 16, 18, 20, 22 — any step that can produce code changes.**
+**Applies to steps 12, 13, 14, 15, 16, 17 — any step that can produce code changes.**
 
 When any of these steps require a fix, classify the fix before committing:
 
@@ -154,15 +142,13 @@ When fixing a bug (not building a feature), use `/sk:debug` as the entry point. 
 | 4 | Fix | implement the fix |
 | 5 | Commit | `/sk:smart-commit` |
 | 6 | Lint | `/sk:lint` |
-| 7 | Commit | `/sk:smart-commit` (skip if clean) |
-| 8 | Verify Tests | `/sk:test` |
-| 9 | Commit | `/sk:smart-commit` (skip if clean) |
-| 10 | Security | `/sk:security-check` |
-| 11 | Commit | `/sk:smart-commit` (skip if clean) |
-| 12 | Review | `/sk:review` |
-| 13 | Commit | `/sk:smart-commit` (skip if clean) |
-| 14 | Update | `/sk:update-task` |
-| 15 | Finalize | `/sk:finish-feature` |
+| 7 | Verify Tests | `/sk:test` |
+| 8 | Security | `/sk:security-check` |
+| 9 | Review | `/sk:review` |
+| 10 | Update | `/sk:update-task` |
+| 11 | Finalize | `/sk:finish-feature` |
+
+Gates own their commits — Lint, Verify Tests, Security, and Review each handle their own fix-commit-rerun loops internally.
 
 Start with `/sk:debug` to investigate, then follow the abbreviated flow.
 
@@ -178,15 +164,13 @@ For production emergencies that need to ship immediately, use `/sk:hotfix`. Skip
 | 4 | Smoke Test | run existing tests |
 | 5 | Commit | `/sk:smart-commit` |
 | 6 | Lint | `/sk:lint` |
-| 7 | Commit | `/sk:smart-commit` (skip if clean) |
-| 8 | Verify Tests | `/sk:test` |
-| 9 | Commit | `/sk:smart-commit` (skip if clean) |
-| 10 | Security | `/sk:security-check` |
-| 11 | Commit | `/sk:smart-commit` (skip if clean) |
-| 12 | Review | `/sk:review` |
-| 13 | Commit | `/sk:smart-commit` (skip if clean) |
-| 14 | Update | `/sk:update-task` |
-| 15 | Finalize | `/sk:finish-feature` |
+| 7 | Verify Tests | `/sk:test` |
+| 8 | Security | `/sk:security-check` |
+| 9 | Review | `/sk:review` |
+| 10 | Update | `/sk:update-task` |
+| 11 | Finalize | `/sk:finish-feature` |
+
+Gates own their commits — Lint, Verify Tests, Security, and Review each handle their own fix-commit-rerun loops internally.
 
 After merging: add a regression test and a lessons.md entry.
 
@@ -221,12 +205,13 @@ Read these files at the start of every task:
 - `tasks/findings.md` — key decisions and project constraints
 - `tasks/lessons.md` — past mistakes and how to avoid them
 - `tasks/todo.md` — current plan
+- `tasks/tech-debt.md` — unresolved pre-existing issues found by gates (append-only, never overwrite)
 
 Write to these files continuously:
 - `tasks/progress.md` — every attempt, error, and resolution
 - `tasks/findings.md` — anything important discovered mid-task
 
-**Never overwrite** `tasks/lessons.md` or `tasks/security-findings.md`.
+**Never overwrite** `tasks/lessons.md`, `tasks/security-findings.md`, or `tasks/tech-debt.md`.
 
 ## Lessons Capture
 

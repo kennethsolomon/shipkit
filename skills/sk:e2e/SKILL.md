@@ -184,22 +184,39 @@ If any fail → apply Fix & Retest Protocol.
 
 When this gate requires a fix, classify it before committing:
 
-**a. Style/config/wording change** (CSS tweak, copy change, selector fix) → commit and re-run `/sk:e2e` (no unit test update needed)
+**a. Style/config/wording change** (CSS tweak, copy change, selector fix) → auto-commit with `fix(e2e): resolve failing E2E scenarios` and re-run `/sk:e2e`. Do not ask the user.
 
 **b. Logic change** (new branch, modified condition, new data path, query change, new function, API change) → trigger protocol:
 1. Update or add failing unit tests for the new behavior
 2. Re-run `/sk:test` — must pass at 100% coverage
-3. Commit (tests + fix together in one commit)
+3. Auto-commit tests + fix together with `fix(e2e): [description]`.
 4. Re-run `/sk:e2e` from scratch
 
 **Exception:** Formatter auto-fixes are never logic changes — bypass protocol automatically.
 
+Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
+
 **This gate cannot be skipped.** All scenarios must pass before proceeding to `/sk:update-task`.
+
+### Pre-existing Issues
+
+If during E2E testing a bug is found in functionality **outside** the current feature being tested (pre-existing issue unrelated to this branch), do NOT fix it inline. Log it to `tasks/tech-debt.md`:
+
+```
+### [YYYY-MM-DD] Found during: sk:e2e
+File: path/to/file.ext:line
+Issue: description of the pre-existing bug
+Severity: critical | high | medium | low
+```
+
+Continue testing the current feature. Pre-existing bugs do not block this gate unless they affect the current feature's scenarios.
 
 ## Next Steps
 
 If all scenarios pass:
 > "E2E gate clean. Run `/sk:update-task` to mark the task done."
+>
+> No manual commit is needed — any fixes made during this gate were auto-committed.
 
 If failures remain after fixes:
 > "Re-running /sk:e2e — [N] scenarios still failing."

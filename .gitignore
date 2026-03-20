@@ -9,3 +9,4 @@ skills/web-design-guidelines/
 __pycache__/
 *.pyc
 release-workspace/
+.shipkit/

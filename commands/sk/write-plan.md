@@ -19,6 +19,11 @@ Create a decision-complete plan **before** writing code.
      constraints, and open questions explicitly into the plan
    - `tasks/lessons.md` — if it exists, apply all active lessons as constraints
      before writing any plan steps
+   - `tasks/tech-debt.md` — if it exists, filter to entries with no `Resolved:` line (unresolved only).
+     If any unresolved items exist, after presenting the draft plan ask:
+     > "There are N unresolved tech debt items in `tasks/tech-debt.md`. Should any be included in this task?"
+     List the unresolved items (file, issue, severity). If the user says yes, add them as tasks in the plan before final approval.
+     If the file doesn't exist or has 0 unresolved entries, skip silently.
 3. Update `tasks/todo.md` with:
    - **Goal** (1–2 lines)
    - **Milestones** — group tasks under milestone headers for multi-phase projects

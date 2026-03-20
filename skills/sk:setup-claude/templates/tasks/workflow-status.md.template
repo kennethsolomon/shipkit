@@ -16,19 +16,13 @@
 | 9 | Write Tests (`/sk:write-tests`) | not yet | |
 | 10 | Implement (`/sk:execute-plan`) | not yet | |
 | 11 | Commit (`/sk:smart-commit`) | not yet | |
-| 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | HARD GATE — loop until clean |
-| 13 | Commit (`/sk:smart-commit`) | not yet | conditional |
-| 14 | **Verify Tests** (`/sk:test`) | not yet | HARD GATE — 100% coverage |
-| 15 | Commit (`/sk:smart-commit`) | not yet | conditional |
-| 16 | **Security** (`/sk:security-check`) | not yet | HARD GATE — 0 issues |
-| 17 | Commit (`/sk:smart-commit`) | not yet | conditional |
-| 18 | Performance (`/sk:perf`) | not yet | optional gate |
-| 19 | Commit (`/sk:smart-commit`) | not yet | conditional |
-| 20 | **Review + Simplify** (`/sk:review`) | not yet | HARD GATE — 0 issues |
-| 21 | Commit (`/sk:smart-commit`) | not yet | conditional |
-| 22 | **E2E** (`/sk:e2e`) | not yet | HARD GATE — all E2E scenarios must pass |
-| 23 | Commit (`/sk:smart-commit`) | not yet | conditional — skip if E2E was clean |
-| 24 | Update (`/sk:update-task`) | not yet | |
-| 25 | Finalize (`/sk:finish-feature`) | not yet | |
-| 26 | Sync Features (`/sk:features`) | not yet | required — sync feature specs after ship |
-| 27 | Release (`/sk:release`) | not yet | optional |
+| 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | HARD GATE — loop until clean, gates own their commits |
+| 13 | **Verify Tests** (`/sk:test`) | not yet | HARD GATE — 100% coverage, gates own their commits |
+| 14 | **Security** (`/sk:security-check`) | not yet | HARD GATE — 0 issues, gates own their commits |
+| 15 | Performance (`/sk:perf`) | not yet | optional gate, gates own their commits |
+| 16 | **Review + Simplify** (`/sk:review`) | not yet | HARD GATE — 0 issues, gates own their commits |
+| 17 | **E2E** (`/sk:e2e`) | not yet | HARD GATE — all E2E scenarios must pass, gates own their commits |
+| 18 | Update (`/sk:update-task`) | not yet | |
+| 19 | Finalize (`/sk:finish-feature`) | not yet | |
+| 20 | Sync Features (`/sk:features`) | not yet | required — sync feature specs after ship |
+| 21 | Release (`/sk:release`) | not yet | optional |

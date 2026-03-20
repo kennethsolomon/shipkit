@@ -1,3 +1,46 @@
+# Performance Audit — 2026-03-20
+
+**Scope:** Changed files on branch `feature/gate-auto-commit-tech-debt`
+**Stack:** Bash / Markdown (no frontend bundle, no backend server, no ORM)
+**Files audited:** 29 (28 markdown/templates + 1 bash script)
+
+## Critical
+
+*None*
+
+## High
+
+*None*
+
+## Medium
+
+*None*
+
+## Low
+
+*None*
+
+## Passed Checks
+
+- Frontend bundle performance — N/A (no frontend bundle)
+- Render performance / Core Web Vitals — N/A
+- Database / N+1 queries — N/A (no ORM or database)
+- Node.js backend performance — N/A (no server handlers changed)
+- Memory leaks — N/A
+- `tests/verify-workflow.sh`: retry loop bounded at 5 attempts × 0.4s, single subprocess, all file I/O local — no issues
+
+## Summary
+
+| Severity | Open | Resolved this run |
+|----------|------|-------------------|
+| Critical | 0    | 0                 |
+| High     | 0    | 0                 |
+| Medium   | 0    | 0                 |
+| Low      | 0    | 0                 |
+| **Total** | **0** | **0**           |
+
+---
+
 # Performance Audit — 2026-03-19
 
 **Scope:** Changed files on branch `feature/sk-dashboard`
