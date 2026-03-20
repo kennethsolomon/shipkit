@@ -4,8 +4,8 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## ✨ What's New (March 2026)
 
-**Workflow expanded to 27 steps (v3.1.0)** — New skills and protocols:
-- `/sk:e2e` (Step 22) — E2E behavioral verification using agent-browser; hard gate after Review
+**Workflow expanded to 21 steps (v3.7.0)** — New skills and protocols:
+- `/sk:e2e` (Step 17) — E2E behavioral verification using agent-browser; hard gate after Review
 - **Fix & Retest Protocol** — applies to all code-producing gates (Lint, Test, Security, Performance, Review, E2E): logic changes require updating unit tests before committing
 - **Sync Features step** (Step 26) — `/sk:features` runs after Finalize to keep feature specs in sync with shipped code
 - **Dependency audit** folded into `/sk:lint` — runs `composer audit` / `npm audit` / `pip-audit` alongside code linters
@@ -102,7 +102,7 @@ git pull
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         CLAUDE SKILLS WORKFLOW (27 STEPS)                   │
+│                         CLAUDE SKILLS WORKFLOW (21 STEPS)                   │
 │                        (Auto-context & Bug Prevention)                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 
@@ -157,42 +157,38 @@ PHASE 5: IMPLEMENT (Code Time)
 PHASE 6: QUALITY GATES (all are HARD GATES — cannot be skipped)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ Step 12 — /sk:lint  ★ HARD GATE (Lint + Dep Audit)                     │
-│ • All linting tools must pass. Fix and re-run until clean.              │
-│ Step 13 — /sk:smart-commit  (conditional — skip if lint was clean)     │
+│ • All linting tools must pass. Fix, auto-commit, and re-run until clean.│
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 14 — /sk:test  ★ HARD GATE — 100% coverage on new code            │
-│ • All test suites must pass. Fix and re-run until clean.                │
-│ Step 15 — /sk:smart-commit  (conditional)                              │
+│ Step 13 — /sk:test  ★ HARD GATE — 100% coverage on new code            │
+│ • All test suites must pass. Fix, auto-commit, and re-run until clean.  │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 16 — /sk:security-check  ★ HARD GATE — 0 issues all severities   │
+│ Step 14 — /sk:security-check  ★ HARD GATE — 0 issues all severities   │
 │ • Reads: tasks/security-findings.md (prior audits), tasks/lessons.md   │
 │ • OWASP Top 10, CWE references, stack-specific checks                  │
 │ • Writes: tasks/security-findings.md (severity-rated findings)          │
-│ Step 17 — /sk:smart-commit  (conditional)                              │
+│ • Pre-existing issues logged to tasks/tech-debt.md                     │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 18 — /sk:perf  (OPTIONAL GATE — loop until critical/high = 0)    │
+│ Step 15 — /sk:perf  (OPTIONAL GATE — loop until critical/high = 0)    │
 │ • Frontend: bundle size, render perf, Core Web Vitals (LCP, CLS, INP) │
 │ • Backend: N+1 queries, missing indexes, unbounded queries, caching    │
 │ • Writes: tasks/perf-findings.md (append-only)                         │
-│ Step 19 — /sk:smart-commit  (conditional)                              │
+│ • Pre-existing issues logged to tasks/tech-debt.md                     │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 20 — /sk:review  ★ HARD GATE — 0 issues including nitpicks        │
+│ Step 16 — /sk:review  ★ HARD GATE — 0 issues including nitpicks        │
 │ • 7 dimensions: Correctness, Security, Performance, Reliability,       │
 │   Design, Best Practices, Testing                                       │
 │ • Reads: tasks/lessons.md, tasks/security-findings.md                  │
-│ Step 21 — /sk:smart-commit  (conditional)                              │
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Step 22 — /sk:e2e  ★ HARD GATE — E2E behavioral verification           │
+│ Step 17 — /sk:e2e  ★ HARD GATE — E2E behavioral verification           │
 │ • Agent-browser end-to-end tests — final quality gate                  │
 │ • Verifies full user flows, not just unit behavior                     │
-│ Step 23 — /sk:smart-commit  (conditional)                              │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 PHASE 7: FINISH
-  Step 24 — /sk:update-task     Mark task done in tasks/todo.md
-  Step 25 — /sk:finish-feature  Changelog + arch log (auto-committed) + PR
-  Step 26 — /sk:features        Sync Features
-  Step 27 — /sk:release         (OPTIONAL) Version bump + tag + store audits
+  Step 18 — /sk:update-task     Mark task done in tasks/todo.md
+  Step 19 — /sk:finish-feature  Changelog + arch log (auto-committed) + PR
+  Step 20 — /sk:features        Sync Features
+  Step 21 — /sk:release         (OPTIONAL) Version bump + tag + store audits
 
 PERSISTENT CONTEXT FILES (Never Cleared)
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -201,13 +197,14 @@ PERSISTENT CONTEXT FILES (Never Cleared)
 │ tasks/security-findings.md     ← Security audit results                 │
 │ tasks/accessibility-findings.md← WCAG audit results                     │
 │ tasks/perf-findings.md         ← Performance audit results              │
+│ tasks/tech-debt.md             ← Pre-existing issues found during gates │
 │ tasks/todo.md                  ← Current plan (checkboxes)              │
 │ tasks/progress.md              ← Session work log + error log           │
 └──────────────────────────────────────────────────────────────────────────┘
 
 KEY PRINCIPLES
-✓ Hard gates: steps 12 (Lint+Dep Audit), 14 (Verify Tests), 16 (Security), 20 (Review+Simplify), 22 (E2E Tests) BLOCK all forward progress until clean
-✓ Optional steps (4, 5, 7, 18, 27) require explicit confirmation to skip
+✓ Hard gates: steps 12 (Lint+Dep Audit), 13 (Verify Tests), 14 (Security), 16 (Review+Simplify), 17 (E2E Tests) BLOCK all forward progress until clean
+✓ Optional steps (4, 5, 8, 15, 21) require explicit confirmation to skip
 ✓ Every skill that makes decisions reads lessons.md
 ✓ Every skill that accepts handoff reads findings.md
 ✓ No context reset = no repeated mistakes

@@ -12,7 +12,15 @@ By default, this checks only files changed on the current branch. Use `--all` to
 
 ## Hard Rules
 
-- **DO NOT fix code.** This is an audit — report only. The user decides what to fix.
+- **Fix all in-scope findings** (files in `git diff main..HEAD --name-only`) immediately after the audit. auto-commit with `fix(security): resolve [severity] security findings`. Re-run the audit until 0 findings remain.
+- **Pre-existing findings** (files outside the current branch diff): log to `tasks/tech-debt.md` using this format — do NOT fix inline:
+  ```
+  ### [YYYY-MM-DD] Found during: sk:security-check
+  File: path/to/file.ext:line
+  Issue: description of the vulnerability
+  Severity: critical | high | medium | low
+  ```
+- **Gates own their commits** — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
 - **DO NOT skip checks** because the project is small or simple. Production is production.
 - **Every finding must cite a specific file and line number.**
 - **Every finding must reference the standard it violates** (OWASP, CWE, NIST, etc.).
@@ -165,12 +173,10 @@ Tell the user:
 > "Security audit complete. Findings saved to `tasks/security-findings.md`.
 > - **Critical:** N open (N resolved) | **High:** N open (N resolved) | **Medium:** N open | **Low:** N open
 >
-> Review the findings, then run `/sk:finish-feature` when ready to finalize."
+> All in-scope findings have been fixed and committed. Pre-existing issues logged to `tasks/tech-debt.md`."
 
 If there are Critical or High findings:
 > "There are critical/high findings that MUST be fixed before merging. These are HARD GATE items — `- [ ]` findings block all forward progress. Fix them, then re-run `/sk:security-check` to verify."
-
-**Do not auto-fix.** The user decides what to address.
 
 ### Fix & Retest Protocol
 

@@ -33,7 +33,7 @@ Use `git diff main..HEAD --name-only` to identify the changed files, then run si
 
 If simplify makes any changes:
 1. Verify the changes are correct
-2. Commit them with `/sk:smart-commit` before continuing the review
+2. Auto-commit them with message `fix(review): simplify pre-pass` before continuing the review. Do not ask the user.
 3. Note in the review report: "Simplify pre-pass: X files updated"
 
 If simplify makes no changes, proceed directly to step 1.
@@ -436,20 +436,28 @@ Format findings with severity levels and review dimensions:
 - Include a brief "What Looks Good" section (2-3 items) — acknowledge strong patterns so they're reinforced. This isn't cheerleading — it's calibrating signal.
 - If you genuinely find nothing wrong after all 7 dimensions, say so — but that's rare
 
-### 11. Next Steps
+### 11. Fix and Re-run
 
-After presenting the review:
+After presenting the review report, fix **all** findings regardless of severity (Critical, Warning, and Nitpick). Do not ask the user whether to fix nitpicks — fix everything.
 
-If there are **Critical** or **Warning** items:
-> "Review found issues that should be addressed. Fix them with `/sk:debug`, commit with `/sk:smart-commit`, then re-run `/sk:review` to verify."
+**For each finding:**
+- If the issue is in a file **within** the current branch diff (`git diff $BASE..HEAD --name-only`): fix it inline, include in the auto-commit
+- If the issue is in a file **outside** the current branch diff (pre-existing issue found via blast-radius): log it to `tasks/tech-debt.md` — do NOT fix it inline:
+  ```
+  ### [YYYY-MM-DD] Found during: sk:review
+  File: path/to/file.ext:line
+  Issue: description of the problem
+  Severity: critical | warning | nitpick
+  ```
 
-If there are only **Nitpick** items (no Critical/Warning):
-> "Review complete — no critical issues found, but there are some nitpicks. Would you like to fix them now, or proceed to `/sk:finish-feature`?"
+After all in-scope fixes are applied: auto-commit with `fix(review): address review findings`. Do not ask the user. Re-run `/sk:review` from scratch.
 
-If the user wants to fix nitpicks, loop back to `/sk:debug` + `/sk:smart-commit` → `/sk:review`.
+Loop until the review is completely clean (0 findings across all severities for in-scope code).
 
-If the review is **completely clean**:
-> "Review complete — no issues found. Run `/sk:finish-feature` to finalize the branch and create a PR."
+When clean:
+> "Review complete — 0 findings. Run `/sk:finish-feature` to finalize the branch and create a PR."
+
+**Note:** Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
 
 ### Fix & Retest Protocol
 
@@ -460,7 +468,7 @@ When applying a fix from this review, classify it before committing:
 **b. Logic change** (fix incorrect condition, add missing null check, change data flow, refactor algorithm, fix async bug) → trigger protocol:
 1. Update or add failing unit tests for the corrected behavior
 2. Re-run `/sk:test` — must pass at 100% coverage
-3. Commit (tests + fix together in one commit)
+3. Auto-commit tests + fix together with `fix(review): [description]`.
 4. Re-run `/sk:review` from scratch
 
 **Why:** Review catches logic bugs. Fixing a logic bug without updating tests leaves the test suite asserting on the old (wrong) behavior.

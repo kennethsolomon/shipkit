@@ -98,3 +98,17 @@ Additionally, if new gate skills are added (like sk:e2e):
 5. `README.md` — commands section
 6. `.claude/docs/DOCUMENTATION.md` — skills section
 7. `install.sh` — commands echo block
+
+### [2026-03-20] tech-debt.md — update gate skills when logging format changes
+**Bug:** New tech-debt.md logging format introduced without a tracking entry.
+**Root cause:** No lesson existed to track which files depend on the tech-debt.md format.
+**Prevention:** When the tech-debt.md entry format changes, update ALL of these files in the same commit:
+1. `skills/sk:lint/SKILL.md`
+2. `skills/sk:test/SKILL.md`
+3. `commands/sk/security-check.md`
+4. `skills/sk:perf/SKILL.md`
+5. `skills/sk:review/SKILL.md`
+6. `skills/sk:e2e/SKILL.md`
+7. `skills/sk:context/SKILL.md`
+8. `commands/sk/write-plan.md`
+9. `commands/sk/update-task.md`

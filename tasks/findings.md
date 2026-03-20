@@ -1,98 +1,92 @@
-# Findings — 2026-03-19 — Vibe Coding Inspiration: sk:context + sk:mvp docs + decisions log
+# Findings — 2026-03-20 — Gate Auto-Commit + Tech Debt Logging
 
 ## Problem Statement
 
-ShipKit lacks session continuity tooling. When returning to a project after a break, context must be manually reconstructed by reading 5+ files. sk:mvp also produces no project documentation — the product idea lives only in the conversation. And architectural decisions made during brainstorm are lost (overwritten per task in `tasks/findings.md`).
-
-Inspiration source: `/Users/kennethsolomon/Herd/vibe-coding-starter-kit` — specifically its `03-logs/` memory system and `04-process/llm-prompts.md` session initialization patterns.
+Two UX frustrations with ShipKit's gate workflow:
+1. Gates (lint, test, security, perf, review, e2e) ask the user to approve each commit after every fix cycle — unnecessary friction when the gate itself enforces 0 issues
+2. Pre-existing issues found during gates are either silently skipped ("out of scope") or fixed inline (scope creep) — neither is correct
 
 ## Key Decisions Made
 
-- **All 3 approaches** will be implemented (A, B, C)
-- **No new workflow steps** — these are enhancements to existing skills + one new standalone command
-- **sk:context** outputs a readable session brief AND auto-loads all files into context in the same run
+- **Gate loops own their commits** — fix → auto-commit → re-run is internal to each gate. No asking. Commit message: `fix(<gate>): <what was fixed>`
+- **Conditional commit steps removed** — steps 13, 15, 17, 19, 21, 23 are eliminated. Workflow shrinks from 27 → 21 steps
+- **Pre-existing issues → `tasks/tech-debt.md`** — gates log out-of-scope issues there instead of fixing inline or skipping silently
+- **tech-debt.md is append-only** — entries are never deleted; marked `Resolved:` when fixed
+- **Resolved by sk:update-task** — when a task that addresses a debt item completes, sk:update-task marks it resolved with the branch name
+- **sk:context and sk:write-plan read tech-debt.md** — surface unresolved items in session brief; sk:write-plan asks if any should be included in the current task
 
-## Chosen Approaches
+## Chosen Approach
 
-### Approach A — Enhance sk:mvp with project context docs
+Single approach — no alternatives debated; direction agreed in conversation.
 
-At the end of sk:mvp (after app generation + Playwright validation), auto-generate 3 docs from info already collected during the idea-gathering phase. Zero extra user input.
-
-**Files to generate:**
-- `docs/vision.md` — product name, value prop, target audience, core features, north star
-- `docs/prd.md` — feature list + acceptance criteria derived from the idea prompt
-- `docs/tech-design.md` — tech stack chosen, data models, component map (landing page + app structure)
-
-**Where in sk:mvp:** New Phase 9 (after quality loop, before output summary). Add to SKILL.md as a mandatory step.
-
----
-
-### Approach B — New `sk:context` command (session initializer)
-
-A new standalone skill `/sk:context` designed to be run at the **start of any session**.
-
-**What it does (two things simultaneously):**
-1. **Auto-loads** all context files into the conversation (reads them, extracts key info)
-2. **Outputs a formatted session brief** the user can read immediately
-
-**Files it reads:**
-- `tasks/todo.md` — current task name + pending checkboxes
-- `tasks/workflow-status.md` — current step + `>> next <<`
-- `tasks/progress.md` — last 5-10 entries (most recent work)
-- `tasks/findings.md` — current task decisions and open questions
-- `tasks/lessons.md` — all active lessons (applied as constraints)
-- `docs/decisions.md` — if exists, recent ADR entries
-- `docs/vision.md` — if exists, product context
-
-**Output format (session brief):**
+### Gate Loop (new internal flow for all 6 gates)
 ```
-=== SESSION BRIEF ===
-Branch:      feature/xxx
-Task:        [task name from todo.md]
-Step:        [current step] → [next step command]
-Last done:   [last progress.md entry summary]
-Pending:     N checkboxes remaining
-Lessons:     [count] active — [1-liner summary of most critical]
-Open Qs:     [any from findings.md]
-====================
+gate runs
+→ issues found?
+  → yes: fix all (any severity, any level) → auto-commit → re-run gate → repeat
+  → pre-existing issue (outside branch diff)? → log to tasks/tech-debt.md → do not fix → continue
+→ clean: move to next workflow step
 ```
 
-**New skill file:** `skills/sk:context/SKILL.md`
-**Trigger:** 14+ file updates per lessons.md (new command added)
-
----
-
-### Approach C — Persistent decisions log in sk:brainstorm
-
-sk:brainstorm currently writes to `tasks/findings.md` (overwritten each task). Add a **cumulative** write to `docs/decisions.md` in ADR format.
-
-**What changes in sk:brainstorm (Step 6 — Record findings):**
-- Still writes to `tasks/findings.md` (unchanged)
-- Additionally **appends** a new ADR entry to `docs/decisions.md`
-
-**ADR entry format:**
+### tech-debt.md Entry Format
 ```markdown
-## [YYYY-MM-DD] [Feature/Task Name]
-
-**Context:** [problem being solved]
-**Decision:** [chosen approach]
-**Rationale:** [why this approach over alternatives]
-**Consequences:** [trade-offs accepted]
-**Status:** accepted
+### [YYYY-MM-DD] Found during: sk:<gate>
+File: path/to/file.ext:line
+Issue: description of the problem
+Severity: critical | high | medium | low | nitpick
+Resolved: YYYY-MM-DD — feature/branch-name  ← added by sk:update-task when fixed
 ```
 
-**File location:** `docs/decisions.md` (created on first brainstorm if not exists)
-**Rule:** Never overwritten — append only.
+### New Workflow (21 steps)
+| # | Step |
+|---|------|
+| 1 | Read Todo |
+| 2 | Read Lessons |
+| 3 | Explore |
+| 4 | Design |
+| 5 | Accessibility |
+| 6 | Plan |
+| 7 | Branch |
+| 8 | Migrate |
+| 9 | Write Tests |
+| 10 | Implement |
+| 11 | Commit (post-implement milestone) |
+| 12 | Lint + Dep Audit [gate — internal fix-commit-rerun loop] |
+| 13 | Verify Tests [gate — internal fix-commit-rerun loop] |
+| 14 | Security [gate — internal fix-commit-rerun loop] |
+| 15 | Performance [gate — internal fix-commit-rerun loop] |
+| 16 | Review + Simplify [gate — internal fix-commit-rerun loop] |
+| 17 | E2E Tests [gate — internal fix-commit-rerun loop] |
+| 18 | Update |
+| 19 | Finalize |
+| 20 | Sync Features |
+| 21 | Release |
 
----
+## Files Changed
 
-## Scope Summary
+### Gate SKILL.md files (fix loop + tech-debt logging)
+- `skills/sk:lint/SKILL.md`
+- `skills/sk:test/SKILL.md`
+- `skills/sk:security-check/SKILL.md`
+- `skills/sk:perf/SKILL.md`
+- `skills/sk:review/SKILL.md`
+- `skills/sk:e2e/SKILL.md`
 
-| Item | Type | Complexity | Files Changed |
-|------|------|------------|---------------|
-| Approach A: sk:mvp docs generation | Enhance existing skill | Small | 1 (sk:mvp/SKILL.md) |
-| Approach B: sk:context command | New skill | Small-Medium | 14+ (per lessons.md) |
-| Approach C: decisions.md in sk:brainstorm | Enhance existing skill | Small | 2 (sk:brainstorming/SKILL.md + docs/decisions.md template) |
+### Planning/utility SKILL.md files (tech-debt integration)
+- `skills/sk:context/SKILL.md` — read tech-debt.md, surface unresolved
+- `skills/sk:write-plan/SKILL.md` — read tech-debt.md, ask to include items
+- `skills/sk:update-task/SKILL.md` — mark resolved items
+
+### Workflow definition files (step renumbering)
+- `CLAUDE.md`
+- `skills/sk:setup-claude/templates/CLAUDE.md.template`
+- `skills/sk:setup-claude/templates/tasks/workflow-status.md.template`
+- `README.md`
+- `skills/sk:setup-optimizer/SKILL.md`
+- `.claude/docs/DOCUMENTATION.md`
+- `CHANGELOG.md`
+- `tasks/lessons.md` (append only)
+- Command templates with **Workflow:** breadcrumbs (6 files)
 
 ## Open Questions
 

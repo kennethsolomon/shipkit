@@ -93,21 +93,15 @@ Brainstorm → Plan → Branch → [Schema] → Write Tests → Implement → Co
 | 10 | `/sk:execute-plan` | TDD green: make tests pass |
 | 11 | `/sk:smart-commit` | Conventional commit |
 | 12 | **`/sk:lint`** | **GATE** — Lint + Dep Audit — all linters must pass |
-| 13 | `/sk:smart-commit` | Auto-skip if already clean |
-| 14 | **`/sk:test`** | **GATE** — 100% coverage on new code |
-| 15 | `/sk:smart-commit` | Auto-skip if already clean |
-| 16 | **`/sk:security-check`** | **GATE** — 0 issues |
-| 17 | `/sk:smart-commit` | Auto-skip if already clean |
-| 18 | **`/sk:perf`** | **GATE** *(optional)* — critical/high findings = 0 |
-| 19 | `/sk:smart-commit` | Auto-skip if already clean |
-| 20 | **`/sk:review`** | **GATE** — Review + Simplify + Blast Radius — 0 issues including nitpicks |
-| 21 | `/sk:smart-commit` | Auto-skip if already clean |
-| 22 | **`/sk:e2e`** | **GATE** — E2E Tests — prefers Playwright CLI when config detected, falls back to agent-browser; all scenarios must pass |
-| 23 | `/sk:smart-commit` | Auto-skip if already clean |
-| 24 | `/sk:update-task` | Mark done, log completion |
-| 25 | `/sk:finish-feature` | Changelog + PR |
-| 26 | `/sk:features` | Sync Features — update docs/features/ specs *(required)* |
-| 27 | `/sk:release` | Version bump + tag *(optional)* |
+| 13 | **`/sk:test`** | **GATE** — 100% coverage on new code |
+| 14 | **`/sk:security-check`** | **GATE** — 0 issues |
+| 15 | **`/sk:perf`** | **GATE** *(optional)* — critical/high findings = 0 |
+| 16 | **`/sk:review`** | **GATE** — Review + Simplify + Blast Radius — 0 issues including nitpicks |
+| 17 | **`/sk:e2e`** | **GATE** — E2E Tests — prefers Playwright CLI when config detected, falls back to agent-browser; all scenarios must pass |
+| 18 | `/sk:update-task` | Mark done, log completion |
+| 19 | `/sk:finish-feature` | Changelog + PR |
+| 20 | `/sk:features` | Sync Features — update docs/features/ specs *(required)* |
+| 21 | `/sk:release` | Version bump + tag *(optional)* |
 
 > **Fix & Retest Protocol:** All code-producing gates (Lint, Test, Security, Performance, Review, E2E) apply the Fix & Retest Protocol: logic changes require updating unit tests before committing the fix. Fix immediately, then re-run — never ask the user to re-run.
 

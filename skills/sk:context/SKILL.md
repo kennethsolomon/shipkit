@@ -32,6 +32,7 @@ Load all project context files into the conversation and output a formatted sess
 | 5 | `tasks/lessons.md` | All active lessons — read in full, apply as constraints for this session |
 | 6 | `docs/decisions.md` | If exists: last 3 ADR entries. If missing: note "no decisions log yet" |
 | 7 | `docs/vision.md` | If exists: product name + value proposition. If missing: note "no vision.md found" |
+| 8 | `tasks/tech-debt.md` | If exists: count entries with no `Resolved:` line (unresolved), highest severity among unresolved |
 
 ### Reading Strategy
 
@@ -58,6 +59,7 @@ Last done:  [last progress.md entry summary, 1 line]
 Pending:    [N] checkboxes remaining in todo.md
 Lessons:    [count] active — [most critical 1-liner from lessons.md]
 Open Qs:    [open questions from findings.md, or "none"]
+Tech Debt:  [N] unresolved — highest: [severity] ([file:line])
 Product:    [value prop from vision.md, or "no vision.md found"]
 ════════════════════════════════════════════
 ```
@@ -71,6 +73,7 @@ Product:    [value prop from vision.md, or "no vision.md found"]
 - **Pending:** Count `- [ ]` lines in `tasks/todo.md`. Stop counting at the first `## Verification`, `## Acceptance Criteria`, or `## Risks` heading (these are meta-sections, not tasks).
 - **Lessons:** Count `### [` headings in `tasks/lessons.md` (each lesson starts with `### [YYYY-MM-DD]`). Show the count + the **Prevention:** line from the most recent lesson.
 - **Open Qs:** Check for an "## Open Questions" section in `tasks/findings.md`. List them or say "none".
+- **Tech Debt:** Read `tasks/tech-debt.md` if it exists. Count entries that have no `Resolved:` line — each entry starts with `### [`. For unresolved entries, find the highest severity. Show `N unresolved — highest: [severity] ([file])`. If file missing or 0 unresolved, show `none`.
 - **Product:** From `docs/vision.md`, extract the value proposition. If file doesn't exist, say "no vision.md found".
 
 ---
@@ -96,6 +99,7 @@ After outputting the session brief:
 | No `tasks/lessons.md` | Show "0 active" for Lessons |
 | No `docs/decisions.md` | Show "no decisions log yet" — do not error |
 | No `docs/vision.md` | Show "no vision.md found" — do not error |
+| No `tasks/tech-debt.md` | Show "none" for Tech Debt field — do not error |
 | All checkboxes done in todo.md | Show "Task complete — 0 pending" |
 
 ---

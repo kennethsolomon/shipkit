@@ -1,18 +1,27 @@
 ---
 name: sk:perf
-description: Performance audit. Use before /sk:review to catch performance issues: bundle size, N+1 queries, slow DB queries, Core Web Vitals, memory leaks, caching opportunities. Auto-detects stack. Reports findings — does NOT fix code.
+description: Performance audit. Use before /sk:review to catch performance issues: bundle size, N+1 queries, slow DB queries, Core Web Vitals, memory leaks, caching opportunities. Auto-detects stack. Fixes critical/high in-scope findings and auto-commits. Logs pre-existing issues to tech-debt.
 license: Complete terms in LICENSE.txt
 ---
 
 ## Purpose
 
-Audit the implementation for performance issues before the final review. This is an audit skill — it identifies issues and produces a findings report. It does NOT fix code.
+Audit the implementation for performance issues before the final review. This skill identifies issues, produces a findings report, fixes in-scope critical/high findings immediately, and auto-commits. Pre-existing findings outside the branch diff are logged to `tasks/tech-debt.md`.
 
 Run this skill after implementing and passing lint/tests, but before `/sk:review`.
 
 ## Hard Rules
 
-- **DO NOT fix code.** Report only. The user decides what to fix.
+- **Fix all critical and high in-scope findings** (files in `git diff main..HEAD --name-only`) immediately after the audit. Auto-commit with `fix(perf): resolve [severity] performance findings`. Re-run the audit until critical/high = 0.
+- **Medium/low in-scope findings:** fix them in the same commit if straightforward, otherwise log to `tasks/tech-debt.md`.
+- **Pre-existing findings** (files outside the current branch diff): log to `tasks/tech-debt.md` using this format — do NOT fix inline:
+  ```
+  ### [YYYY-MM-DD] Found during: sk:perf
+  File: path/to/file.ext:line
+  Issue: description of the performance issue
+  Severity: critical | high | medium | low
+  ```
+- **Gates own their commits** — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
 - **Every finding must cite a specific file and line number.**
 - **Every finding must include an estimated impact** (high/medium/low) and a recommendation.
 - **Auto-detect the stack** — only run checks relevant to what's present.
@@ -158,6 +167,8 @@ Write findings to `tasks/perf-findings.md`:
 
 **Never overwrite** `tasks/perf-findings.md` — append new audits with a date header.
 
+The report is written first, then fixes are applied to in-scope critical/high findings.
+
 ## When Done
 
 Tell the user:
@@ -165,7 +176,7 @@ Tell the user:
 > "Performance audit complete. Findings saved to `tasks/perf-findings.md`.
 > - **Critical:** N | **High:** N | **Medium:** N | **Low:** N
 >
-> Address critical and high findings, then run `/sk:review` to proceed."
+> All critical/high in-scope findings have been fixed and committed. Pre-existing issues logged to `tasks/tech-debt.md`. Run `/sk:review` to proceed."
 
 If there are no critical or high findings:
 > "No critical or high performance issues found. N medium/low findings noted in `tasks/perf-findings.md`. Run `/sk:review` to proceed."

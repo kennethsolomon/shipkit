@@ -6,7 +6,7 @@ description: "Audit changed code for security best practices, production-grade q
 
 # /security-check
 
-**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → **Security** → Performance → Review → E2E Tests → Finish → Sync Features
+**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Tests → **Security** → Perf → Review → E2E Tests → Update → Finish → Sync → Release
 
 Audit code for security vulnerabilities, production-grade quality, and industry gold-standard compliance.
 

@@ -2,7 +2,7 @@
 
 # Finish Feature Command
 
-**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → **Finish** → Sync Features
+**Workflow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Tests → Security → Perf → Review → E2E Tests → Update → **Finish** → Sync → Release
 
 Finalize a feature/bug-fix branch: changelog, arch log, security gate, verification, and PR creation.
 

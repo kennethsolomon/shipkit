@@ -126,8 +126,12 @@ Sub-agent 3: [FE command]
 - Read the failure output carefully — identify the root cause
 - Fix the failing **implementation code** or test setup, not the test assertions (tests define expected behavior)
 - Do NOT skip, mark incomplete, or delete failing tests
-- Re-run the failing suite until all tests pass
-- If a fix changes behavior, confirm with the user before applying
+- Auto-commit with message `fix(test): resolve failing tests` — do NOT ask the user
+- Re-run the failing suite
+- Loop until all pass
+- Fix the implementation and auto-commit. If the fix is a logic change (new behavior, changed contract), update the relevant tests to reflect the new behavior before committing.
+
+> Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
 
 ### 5. Verify Coverage
 

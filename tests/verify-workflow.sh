@@ -195,11 +195,11 @@ assert_contains \
   "$CLAUDE" \
   "/sk:features"
 
-# Hard gate step 22 in tracker rules
+# Hard gate step 17 in tracker rules (E2E is now step 17 after 21-step workflow)
 assert_contains \
-  "CLAUDE.md tracker rules list step 22 as hard gate" \
+  "CLAUDE.md tracker rules list step 17 as hard gate" \
   "$CLAUDE" \
-  "Step 22"
+  "Step 17"
 
 # Fix & Retest Protocol section
 assert_contains \
@@ -250,12 +250,12 @@ assert_contains \
   "$CLAUDE" \
   "/sk:review"
 
-# 27-step count: workflow table should have 27 data rows
+# 21-step count: workflow table should have 21 data rows (conditional commits removed)
 assert_count_gte \
-  "CLAUDE.md workflow table has at least 27 rows" \
+  "CLAUDE.md workflow table has at least 21 rows" \
   "$CLAUDE" \
   "^| [0-9]" \
-  27
+  21
 
 # Lint + Dep Audit label
 assert_contains \
@@ -295,12 +295,12 @@ assert_not_contains \
   "$TEMPLATE" \
   "run \`/brainstorm\`"
 
-# workflow-status.md.template — 27 rows + new hard gates
+# workflow-status.md.template — 21 rows (conditional commits removed)
 assert_count_gte \
-  "workflow-status.md.template has at least 27 step rows" \
+  "workflow-status.md.template has at least 21 step rows" \
   "$TRACKER" \
   "^| [0-9]" \
-  27
+  21
 
 assert_contains \
   "workflow-status.md.template has E2E Tests row" \
@@ -330,9 +330,9 @@ assert_contains \
 
 # sk:setup-optimizer
 assert_contains \
-  "sk:setup-optimizer references 27 steps" \
+  "sk:setup-optimizer references 21 steps" \
   "$REPO/skills/sk:setup-optimizer/SKILL.md" \
-  "27"
+  "21"
 
 assert_contains \
   "sk:setup-optimizer flow line has E2E Tests" \
@@ -355,9 +355,9 @@ done
 
 # DOCUMENTATION.md
 assert_contains \
-  "DOCUMENTATION.md has 27 steps" \
+  "DOCUMENTATION.md references 21-step workflow" \
   "$REPO/.claude/docs/DOCUMENTATION.md" \
-  "27"
+  "21"
 
 assert_contains \
   "DOCUMENTATION.md lists sk:e2e" \
@@ -749,6 +749,152 @@ assert_contains \
   "sk:brainstorming marks decisions.md as append-only" \
   "$BRAIN_SKILL" \
   "append"
+
+echo ""
+
+# ── Milestone 10: Gate Auto-Commit + Tech Debt Logging ───────────────────────
+
+echo "── Milestone 10: Gate Auto-Commit + Tech Debt ──"
+
+# Gate skills must have auto-commit language in their fix loops
+assert_contains \
+  "sk:lint fix loop includes auto-commit" \
+  "$REPO/skills/sk:lint/SKILL.md" \
+  "auto-commit"
+
+assert_contains \
+  "sk:test fix loop includes auto-commit" \
+  "$REPO/skills/sk:test/SKILL.md" \
+  "auto-commit"
+
+assert_contains \
+  "sk:security-check fix loop includes auto-commit" \
+  "$REPO/commands/sk/security-check.md" \
+  "auto-commit"
+
+assert_contains \
+  "sk:perf fix loop includes auto-commit" \
+  "$REPO/skills/sk:perf/SKILL.md" \
+  "auto-commit"
+
+assert_contains \
+  "sk:review fix loop includes auto-commit" \
+  "$REPO/skills/sk:review/SKILL.md" \
+  "auto-commit"
+
+assert_contains \
+  "sk:e2e fix loop includes auto-commit" \
+  "$REPO/skills/sk:e2e/SKILL.md" \
+  "auto-commit"
+
+# Gate skills must log pre-existing issues to tech-debt.md
+assert_contains \
+  "sk:review references tasks/tech-debt.md" \
+  "$REPO/skills/sk:review/SKILL.md" \
+  "tech-debt.md"
+
+assert_contains \
+  "sk:security-check references tasks/tech-debt.md" \
+  "$REPO/commands/sk/security-check.md" \
+  "tech-debt.md"
+
+assert_contains \
+  "sk:lint references tasks/tech-debt.md" \
+  "$REPO/skills/sk:lint/SKILL.md" \
+  "tech-debt.md"
+
+assert_contains \
+  "sk:perf references tasks/tech-debt.md" \
+  "$REPO/skills/sk:perf/SKILL.md" \
+  "tech-debt.md"
+
+assert_contains \
+  "sk:e2e references tasks/tech-debt.md" \
+  "$REPO/skills/sk:e2e/SKILL.md" \
+  "tech-debt.md"
+
+# Planning/utility skills integrate tech-debt.md
+assert_contains \
+  "sk:context reads tasks/tech-debt.md" \
+  "$REPO/skills/sk:context/SKILL.md" \
+  "tech-debt.md"
+
+assert_contains \
+  "sk:write-plan reads tasks/tech-debt.md" \
+  "$REPO/commands/sk/write-plan.md" \
+  "tech-debt.md"
+
+assert_contains \
+  "sk:update-task references tasks/tech-debt.md" \
+  "$REPO/commands/sk/update-task.md" \
+  "tech-debt.md"
+
+assert_contains \
+  "sk:update-task marks entries Resolved:" \
+  "$REPO/commands/sk/update-task.md" \
+  "Resolved:"
+
+# Workflow step reduction — conditional commit steps removed
+assert_not_contains \
+  "CLAUDE.md does not have conditional commit step 13" \
+  "$CLAUDE" \
+  "| 13 | Commit"
+
+assert_not_contains \
+  "CLAUDE.md does not have conditional commit step 15" \
+  "$CLAUDE" \
+  "| 15 | Commit"
+
+assert_not_contains \
+  "CLAUDE.md does not have conditional commit step 17" \
+  "$CLAUDE" \
+  "| 17 | Commit"
+
+assert_not_contains \
+  "CLAUDE.md does not have conditional commit step 23" \
+  "$CLAUDE" \
+  "| 23 | Commit"
+
+# Release is now step 21
+assert_contains \
+  "CLAUDE.md Release is step 21" \
+  "$CLAUDE" \
+  "| 21 |"
+
+# Gates own their commits — documented in CLAUDE.md
+assert_contains \
+  "CLAUDE.md documents gate auto-commit rule" \
+  "$CLAUDE" \
+  "Gates own their commits"
+
+# sk:schema-migrate auto-detects and auto-skips when no migration changes
+assert_contains \
+  "sk:schema-migrate auto-detects migration files" \
+  "$REPO/skills/sk:schema-migrate/SKILL.md" \
+  "git diff"
+
+assert_contains \
+  "sk:schema-migrate auto-skips when no migration changes" \
+  "$REPO/skills/sk:schema-migrate/SKILL.md" \
+  "auto-skip"
+
+echo ""
+
+# ── Milestone 11: sk:frontend-design Pencil Disk Persistence ─────────────────
+
+echo "── Milestone 11: sk:frontend-design Pencil Disk Persistence ──"
+
+FD_SKILL="$REPO/skills/sk:frontend-design/SKILL.md"
+
+assert_contains \
+  "sk:frontend-design Pencil phase reads tasks/todo.md for filename" \
+  "$FD_SKILL" \
+  "tasks/todo.md"
+
+assert_not_contains \
+  "sk:frontend-design Pencil phase does not use open_document('new')" \
+  "$FD_SKILL" \
+  "open_document('new')"
 
 echo ""
 
