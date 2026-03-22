@@ -10,12 +10,11 @@
 | 3 | Explore (`/sk:brainstorm`) | done | 6 features identified from game-studios repo; all approved in priority order |
 | 4 | Design (`/sk:frontend-design` or `/sk:api-design`) | skipped | Pure infrastructure/skill changes — no UI, no API contracts |
 | 5 | Accessibility (`/sk:accessibility`) | skipped | No frontend changes |
-| 6 | Plan (`/sk:write-plan`) | done | 5 milestones, 10 waves; hooks + rules + statusline + 3 new skills |
-| 7 | Branch (`/sk:branch`) | >> next << | |
-| 7 | Branch (`/sk:branch`) | not yet | |
-| 8 | Migrate (`/sk:schema-migrate`) | not yet | |
-| 9 | Write Tests (`/sk:write-tests`) | not yet | |
-| 10 | Implement (`/sk:execute-plan`) | not yet | |
+| 6 | Plan (`/sk:write-plan`) | done | 10 milestones; hooks + rules + statusline + 5 new skills + gate agents + fast-track + cached detection |
+| 7 | Branch (`/sk:branch`) | done | feature/hooks-rules-statusline-skills |
+| 8 | Migrate (`/sk:schema-migrate`) | skipped | No DB changes — pure skill/workflow updates |
+| 9 | Write Tests (`/sk:write-tests`) | done | 72 new failing assertions; 143 existing pass; RED phase confirmed |
+| 10 | Implement (`/sk:execute-plan`) | >> next << | |
 | 11 | Commit (`/sk:smart-commit`) | not yet | |
 | 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | |
 | 13 | **Verify Tests** (`/sk:test`) | not yet | |

@@ -4,6 +4,13 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## ✨ What's New (March 2026)
 
+**5 new commands added** — `/sk:fast-track`, `/sk:gates`, `/sk:retro`, `/sk:reverse-doc`, `/sk:scope-check`:
+- `/sk:fast-track` — Abbreviated workflow for small changes, skips planning but keeps all gates
+- `/sk:gates` — Run all quality gates in optimized parallel batches (single command replaces 6)
+- `/sk:retro` — Post-ship retrospective: velocity, blockers, action items
+- `/sk:reverse-doc` — Generate architecture/design docs from existing code
+- `/sk:scope-check` — Compare implementation against plan, detect scope creep
+
 **Workflow expanded to 21 steps (v3.7.0)** — New skills and protocols:
 - `/sk:e2e` (Step 17) — E2E behavioral verification using agent-browser; hard gate after Review
 - **Fix & Retest Protocol** — applies to all code-producing gates (Lint, Test, Security, Performance, Review, E2E): logic changes require updating unit tests before committing
@@ -1172,6 +1179,36 @@ Emergency fix workflow for production incidents — skips design and TDD, qualit
 ```
 /hotfix
 ```
+
+---
+
+### /sk:scope-check
+
+Compare implementation against `tasks/todo.md` to detect scope creep. Classifies changes as On Track, Minor Creep, Significant Creep, or Out of Control based on unplanned additions.
+
+---
+
+### /sk:retro
+
+Post-ship retrospective that analyzes velocity, blockers, gate performance, and patterns from `tasks/progress.md` and git history. Generates 3-5 action items.
+
+---
+
+### /sk:reverse-doc
+
+Generate architecture and design documentation from existing code. Analyzes patterns, asks clarifying questions to distinguish intent from accident, and drafts docs for approval.
+
+---
+
+### /sk:gates
+
+Orchestrator that runs all quality gates in optimized parallel batches: lint+security+perf in parallel, then tests, then review, then E2E. Single command replaces 6 manual invocations.
+
+---
+
+### /sk:fast-track
+
+Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, and write-tests but enforces all quality gates via /sk:gates. Guard rails warn on large diffs (>300 lines).
 
 ---
 

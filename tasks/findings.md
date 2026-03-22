@@ -64,6 +64,34 @@ New skill that generates documentation from existing code:
 - Drafts architecture/design docs
 - Useful for onboarding to existing codebases
 
+### Feature 7: Gate Agents
+Convert gate skills (lint, test, security, perf, e2e) to Claude Code agents (`.claude/agents/`):
+- Run as sub-processes with isolated context — don't pollute main conversation
+- Model routing: haiku for lint (mechanical), sonnet for others
+- Each agent has auto-commit + fix loop built into its prompt
+- Enables parallel execution in `/sk:gates`
+
+### Feature 8: `/sk:gates` Orchestrator
+Single command that runs all quality gates in optimized parallel batches:
+- Batch 1 (parallel): lint + security + perf agents
+- Batch 2: test agent (needs lint fixes)
+- Batch 3 (main context): review (needs deep understanding)
+- Batch 4: e2e agent (needs review fixes)
+- Replaces 6 manual invocations with 1 command
+
+### Feature 9: `/sk:fast-track` Flow
+Abbreviated workflow for small, clear changes:
+- Branch → Implement → Commit → `/sk:gates` → Finalize
+- Skips brainstorm, design, plan, write-tests
+- Still runs ALL quality gates — no shortcuts on code quality
+- Guard rails warn on large diffs (>300 lines) or many new files (>5)
+
+### Feature 10: Cached Stack Detection
+Cache detection results in `.shipkit/config.json`:
+- Language, framework, DB, UI, testing, commands all cached
+- 7-day TTL, `--force-detect` to override
+- Gate skills/agents read cached values instead of re-detecting each time
+
 ## Open Questions
 
-- None — direction locked, all 6 features approved in priority order
+- None — direction locked, all 10 features approved

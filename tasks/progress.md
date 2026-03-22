@@ -238,6 +238,28 @@
 - Updated Workflow: breadcrumb in all 6 command templates
 - Note: release.md.template does not exist in skills/sk:setup-claude/templates/commands/ (only in node_modules); 5 local templates updated
 
+### [2026-03-23] ShipKit Workflow Improvements — Implementation Complete
+- **Milestone 1 (Tests)**: 72 new assertions written in verify-workflow.sh (done in step 9)
+- **Milestone 2 (Hooks)**: 6 hook scripts + settings.json.template created
+  - session-start.sh, pre-compact.sh, validate-commit.sh, validate-push.sh, log-agent.sh, session-stop.sh
+  - settings.json.template with all 6 hooks, statusline, permissions
+- **Milestone 3 (Rules + Statusline)**: 5 rule templates + statusline.sh
+  - tests.md, api.md, frontend.md, laravel.md, react.md rule templates
+  - statusline.sh showing context %, model, workflow step, branch, task
+- **Milestone 4 (New Skills)**: 3 SKILL.md files
+  - sk:scope-check — 4-tier scope creep detection
+  - sk:retro — post-ship retrospective with velocity/blocker analysis
+  - sk:reverse-doc — generate docs from existing code with clarifying questions
+- **Milestone 6 (Gate Agents)**: 5 agent definitions
+  - linter.md (haiku), test-runner.md, security-auditor.md, perf-auditor.md, e2e-tester.md (sonnet)
+- **Milestone 7 (Gates Orchestrator)**: sk:gates SKILL.md — 4-batch parallel execution
+- **Milestone 8 (Fast-Track)**: sk:fast-track SKILL.md — abbreviated workflow with guard rails
+- **Milestone 9 (Cached Detection)**: apply_setup_claude.py updated with detected_at cache + --force-detect
+- **Milestone 10 (Docs)**: CLAUDE.md, README.md, DOCUMENTATION.md updated with 5 new commands
+- **SKILL.md**: sk:setup-claude SKILL.md updated with hooks, agents, rules, statusline, cache docs
+- Tests: 215/215 pass (72 new + 143 existing)
+- Implementation used 5 parallel sub-agents for Batch 1 (22 files), 3 parallel sub-agents for Batch 2
+
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|

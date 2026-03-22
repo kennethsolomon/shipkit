@@ -78,16 +78,48 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - `assert_contains` — `SKILL.md` contains `"architecture"`
   - `assert_contains` — `SKILL.md` contains `"clarifying question"`
 
-- [ ] Add assertions for **documentation updates** (new skills in docs):
+- [ ] Add assertions for **gate agents**:
+  - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/linter.md`
+  - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/test-runner.md`
+  - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/security-auditor.md`
+  - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/perf-auditor.md`
+  - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/e2e-tester.md`
+  - `assert_contains` — `linter.md` contains `"auto-commit"`
+  - `assert_contains` — `test-runner.md` contains `"coverage"`
+  - `assert_contains` — `security-auditor.md` contains `"OWASP"`
+
+- [ ] Add assertions for **gates orchestrator**:
+  - `assert_file_exists` — `skills/sk:gates/SKILL.md`
+  - `assert_contains` — `SKILL.md` contains `"parallel"`
+  - `assert_contains` — `SKILL.md` contains `"Batch 1"`
+  - `assert_contains` — `SKILL.md` contains `"workflow-status"`
+
+- [ ] Add assertions for **fast-track flow**:
+  - `assert_file_exists` — `skills/sk:fast-track/SKILL.md`
+  - `assert_contains` — `SKILL.md` contains `"/sk:gates"`
+  - `assert_contains` — `SKILL.md` contains `"300 lines"`
+  - `assert_contains` — `SKILL.md` contains `"/sk:smart-commit"`
+
+- [ ] Add assertions for **cached detection**:
+  - `assert_contains` — `apply_setup_claude.py` contains `"detected_at"`
+  - `assert_contains` — `apply_setup_claude.py` contains `"force-detect"`
+
+- [ ] Add assertions for **documentation updates** (all new commands in docs):
   - `assert_contains` — `CLAUDE.md` contains `"/sk:scope-check"`
   - `assert_contains` — `CLAUDE.md` contains `"/sk:retro"`
   - `assert_contains` — `CLAUDE.md` contains `"/sk:reverse-doc"`
+  - `assert_contains` — `CLAUDE.md` contains `"/sk:gates"`
+  - `assert_contains` — `CLAUDE.md` contains `"/sk:fast-track"`
   - `assert_contains` — `README.md` contains `"/sk:scope-check"`
   - `assert_contains` — `README.md` contains `"/sk:retro"`
   - `assert_contains` — `README.md` contains `"/sk:reverse-doc"`
+  - `assert_contains` — `README.md` contains `"/sk:gates"`
+  - `assert_contains` — `README.md` contains `"/sk:fast-track"`
   - `assert_contains` — `DOCUMENTATION.md` contains `"sk:scope-check"`
   - `assert_contains` — `DOCUMENTATION.md` contains `"sk:retro"`
   - `assert_contains` — `DOCUMENTATION.md` contains `"sk:reverse-doc"`
+  - `assert_contains` — `DOCUMENTATION.md` contains `"sk:gates"`
+  - `assert_contains` — `DOCUMENTATION.md` contains `"sk:fast-track"`
 
 ---
 
@@ -277,6 +309,171 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 ---
 
+## Milestone 6: Gate Agents
+
+#### Wave 6a (parallel — all agent definitions are independent)
+
+- [ ] Create `.claude/agents/linter.md` template in `skills/sk:setup-claude/templates/`
+  - Specialized prompt for running all project linters + dep audit
+  - Fix → auto-commit → re-run loop built into the agent prompt
+  - Pre-existing issues → log to `tasks/tech-debt.md`
+  - Model: haiku (mechanical task, pattern-following)
+  - Tools: Bash, Read, Edit, Write, Glob, Grep
+
+- [ ] Create `.claude/agents/test-runner.md` template
+  - Run all detected test suites
+  - Fix failures → auto-commit → re-run loop
+  - 100% coverage on new code required
+  - Model: sonnet (needs to understand test logic)
+  - Tools: Bash, Read, Edit, Write, Glob, Grep
+
+- [ ] Create `.claude/agents/security-auditor.md` template
+  - OWASP audit on changed files (git diff)
+  - Fix → auto-commit → re-run loop
+  - Pre-existing issues → log to `tasks/tech-debt.md`
+  - Model: sonnet (needs security knowledge)
+  - Tools: Bash, Read, Edit, Write, Glob, Grep
+
+- [ ] Create `.claude/agents/perf-auditor.md` template
+  - Performance audit: bundle size, N+1, Core Web Vitals, memory
+  - Fix critical/high → auto-commit → re-run loop
+  - Model: sonnet
+  - Tools: Bash, Read, Edit, Write, Glob, Grep
+
+- [ ] Create `.claude/agents/e2e-tester.md` template
+  - E2E behavioral verification via Playwright or agent-browser
+  - Fix → auto-commit → re-run loop
+  - Model: sonnet
+  - Tools: Bash, Read, Edit, Write, Glob, Grep, Agent (browser)
+
+#### Wave 6b (depends on 6a — orchestrator references agent names)
+
+- [ ] Update `apply_setup_claude.py` to deploy agent definitions
+  - Copy from `templates/.claude/agents/` to target `.claude/agents/`
+  - Mode: generated (marker-guarded, updatable)
+
+---
+
+## Milestone 7: `/sk:gates` Orchestrator
+
+#### Wave 7 (depends on Milestone 6)
+
+- [ ] Create `skills/sk:gates/SKILL.md`
+  - Single command that runs all quality gates in optimized order:
+    - **Batch 1 (parallel agents):** lint + security + perf — spawn 3 agents simultaneously
+    - Wait for Batch 1 results. If any agent made fixes, commit is already done (internal to agent).
+    - **Batch 2 (agent):** test — needs lint fixes applied first
+    - Wait for Batch 2. If fixes needed, agent handles commit internally.
+    - **Batch 3 (main context):** review + simplify — needs deep code understanding, stays in main context
+    - **Batch 4 (agent):** e2e — needs review fixes applied
+  - Report summary after all gates:
+    ```
+    Gates: lint (clean) | security (clean) | perf (1 fix) | test (clean) | review (2 fixes) | e2e (clean)
+    All gates passed. Run /sk:update-task
+    ```
+  - If any gate fails after 3 attempts → stop and report to user (3-strike protocol)
+  - Update `tasks/workflow-status.md` steps 12-17 in one shot
+  - Tools: Agent, Read, Write, Bash, Glob, Grep
+
+- [ ] Create `commands/sk/gates.md` command shortcut
+  - Points to `skills/sk:gates/SKILL.md`
+
+---
+
+## Milestone 8: `/sk:fast-track` Flow
+
+#### Wave 8 (depends on Milestone 7)
+
+- [ ] Create `skills/sk:fast-track/SKILL.md`
+  - Abbreviated workflow for small, clear changes:
+    1. Read `tasks/todo.md` + `tasks/lessons.md` (quick context)
+    2. Branch (`/sk:branch`)
+    3. Implement directly (no brainstorm, no design, no TDD)
+    4. Commit (`/sk:smart-commit`)
+    5. Gates (`/sk:gates` — all quality gates, one command)
+    6. Finalize (`/sk:finish-feature`)
+  - Guard rails:
+    - If diff exceeds 300 lines → warn: "This change looks large. Consider the full workflow."
+    - If new files > 5 → warn: "Multiple new files detected. Consider `/sk:write-tests` first."
+    - Still runs ALL quality gates — no shortcuts on code quality
+  - Use cases: config changes, dependency bumps, copy/wording, small refactors, adding missing tests
+  - Tools: Read, Write, Bash, Glob, Grep, Agent, Skill
+
+- [ ] Create `commands/sk/fast-track.md` command shortcut
+
+---
+
+## Milestone 9: Cached Stack Detection
+
+#### Wave 9 (independent — can run parallel with Milestones 6-8)
+
+- [ ] Update `skills/sk:setup-claude/scripts/apply_setup_claude.py`
+  - After detection, write results to `.shipkit/config.json` in target project:
+    ```json
+    {
+      "profile": "balanced",
+      "detected": {
+        "language": "typescript",
+        "framework": "next",
+        "database": "prisma",
+        "ui": "tailwind",
+        "testing": "vitest",
+        "dev_command": "npm run dev",
+        "build_command": "npm run build",
+        "lint_command": "npm run lint",
+        "test_command": "npm test"
+      },
+      "detected_at": "2026-03-23T00:00:00Z"
+    }
+    ```
+  - On subsequent runs: if `detected_at` < 7 days old, skip detection and use cached values
+  - `--force-detect` flag to override cache
+
+- [ ] Update gate skills/agents to read `.shipkit/config.json` for cached detection
+  - `sk:lint` / linter agent: read `lint_command` from config instead of re-detecting
+  - `sk:test` / test-runner agent: read `test_command` from config
+  - Fallback: if config missing or stale, detect fresh
+
+---
+
+## Milestone 10: Documentation Updates (expanded)
+
+#### Wave 10 (depends on Milestones 2-9 being done)
+
+- [ ] Update `CLAUDE.md` — add all new commands to commands table:
+  - `| /sk:scope-check | Compare implementation against plan, detect scope creep |`
+  - `| /sk:retro | Post-ship retrospective: velocity, blockers, action items |`
+  - `| /sk:reverse-doc | Generate architecture/design docs from existing code |`
+  - `| /sk:gates | Run all quality gates in optimized parallel batches |`
+  - `| /sk:fast-track | Abbreviated workflow for small, clear changes |`
+
+- [ ] Update `README.md` — add all new commands:
+  - `/sk:scope-check` under "Quality Gates"
+  - `/sk:retro` under "Shipping"
+  - `/sk:reverse-doc` under "Planning & Design"
+  - `/sk:gates` under "Quality Gates"
+  - `/sk:fast-track` under "Development"
+
+- [ ] Update `.claude/docs/DOCUMENTATION.md`:
+  - Add all new skill descriptions
+  - Add "Gate Agents" section explaining parallel gate architecture
+  - Add "Fast-Track Flow" to workflow scenarios
+  - Update "What's New" section
+
+- [ ] Update `CHANGELOG.md` — document all features:
+  - `### Added` — hooks, rules, statusline, 5 new skills, gate agents, fast-track flow, cached detection
+
+- [ ] Update `install.sh` — add new skill names to example commands
+
+- [ ] Append to `tasks/lessons.md` — tracking entries:
+  - sk:scope-check, sk:retro, sk:reverse-doc: SKILL.md + CLAUDE.md + README.md + DOCUMENTATION.md
+  - sk:gates: SKILL.md + command shortcut + agent definitions + CLAUDE.md + README.md + DOCUMENTATION.md
+  - sk:fast-track: SKILL.md + command shortcut + CLAUDE.md + README.md + DOCUMENTATION.md
+  - Hooks: all hook files + settings.json template + apply_setup_claude.py + SKILL.md
+  - Agents: all agent .md files + apply_setup_claude.py
+
+---
+
 ## Verification
 
 ```bash
@@ -296,33 +493,71 @@ bash -n skills/sk:setup-claude/templates/.claude/statusline.sh
 ls skills/sk:scope-check/SKILL.md
 ls skills/sk:retro/SKILL.md
 ls skills/sk:reverse-doc/SKILL.md
+ls skills/sk:gates/SKILL.md
+ls skills/sk:fast-track/SKILL.md
 
-# Verify settings.json template is valid JSON (after placeholder substitution)
+# Verify agent definitions exist
+ls skills/sk:setup-claude/templates/.claude/agents/linter.md
+ls skills/sk:setup-claude/templates/.claude/agents/test-runner.md
+ls skills/sk:setup-claude/templates/.claude/agents/security-auditor.md
+ls skills/sk:setup-claude/templates/.claude/agents/perf-auditor.md
+ls skills/sk:setup-claude/templates/.claude/agents/e2e-tester.md
+
+# Verify settings.json template
 cat skills/sk:setup-claude/templates/.claude/settings.json.template
 
-# Verify docs updated
-grep "sk:scope-check" CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
-grep "sk:retro" CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
-grep "sk:reverse-doc" CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
+# Verify docs updated with all new commands
+for cmd in scope-check retro reverse-doc gates fast-track; do
+  grep "sk:$cmd" CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
+done
 ```
 
 ## Acceptance Criteria
 
+### Hooks & Infrastructure (Milestones 2-3)
 - [ ] 6 hook scripts exist in `templates/hooks/`, all pass `bash -n` syntax check
 - [ ] `settings.json.template` defines all 6 hooks + statusline + permissions
-- [ ] `apply_setup_claude.py` deploys hooks, settings.json, statusline, and rules to target projects
+- [ ] `apply_setup_claude.py` deploys hooks, settings.json, statusline, rules, and agents to target projects
 - [ ] `session-start.sh` auto-loads workflow state (replaces manual `/sk:context`)
 - [ ] `pre-compact.sh` preserves workflow state before context compression
 - [ ] `validate-commit.sh` checks conventional commit format + debug statements
 - [ ] `validate-push.sh` warns on protected branches
 - [ ] Path-scoped rules generated per detected stack (at minimum: tests.md always)
 - [ ] `statusline.sh` shows workflow step, branch, task, context %
+
+### New Skills (Milestone 4)
 - [ ] `/sk:scope-check` classifies scope bloat with 4-tier system
 - [ ] `/sk:retro` generates structured retrospective from progress.md + git history
 - [ ] `/sk:reverse-doc` generates docs from code with clarifying question phase
-- [ ] All 3 new skills documented in CLAUDE.md, README.md, DOCUMENTATION.md
-- [ ] CHANGELOG.md documents all 6 features
-- [ ] lessons.md updated with tracking entries for new skills + hooks
+
+### Gate Agents (Milestone 6)
+- [ ] 5 agent definitions exist: linter, test-runner, security-auditor, perf-auditor, e2e-tester
+- [ ] Each agent has auto-commit + fix loop built into its prompt
+- [ ] Each agent has tech-debt.md logging for pre-existing issues
+- [ ] Agents use appropriate model routing (haiku for lint, sonnet for others)
+
+### Gates Orchestrator (Milestone 7)
+- [ ] `/sk:gates` runs all gates in optimized parallel batches
+- [ ] Batch 1 (parallel): lint + security + perf
+- [ ] Batch 2: test (after lint fixes)
+- [ ] Batch 3 (main context): review
+- [ ] Batch 4: e2e (after review fixes)
+- [ ] Updates workflow-status.md steps 12-17 in one shot
+
+### Fast-Track Flow (Milestone 8)
+- [ ] `/sk:fast-track` provides abbreviated 6-step workflow
+- [ ] Guard rails warn on large diffs (>300 lines) or many new files (>5)
+- [ ] Still runs ALL quality gates via `/sk:gates`
+
+### Cached Detection (Milestone 9)
+- [ ] `apply_setup_claude.py` writes detection results to `.shipkit/config.json`
+- [ ] Cache expires after 7 days
+- [ ] `--force-detect` flag overrides cache
+
+### Documentation (Milestone 10)
+- [ ] All 5 new commands documented in CLAUDE.md, README.md, DOCUMENTATION.md
+- [ ] CHANGELOG.md documents all features
+- [ ] lessons.md updated with tracking entries for all new skills, hooks, and agents
 - [ ] All tests in `tests/verify-workflow.sh` pass
 
 ## Risks/Unknowns
@@ -332,3 +567,6 @@ grep "sk:reverse-doc" CLAUDE.md README.md .claude/docs/DOCUMENTATION.md
 - **Path-scoped rules**: Claude Code's `.claude/rules/` directory may require specific frontmatter format — need to verify the expected structure.
 - **Statusline script**: The statusline JSON input format needs to match Claude Code's expected schema (model name, context usage fields).
 - **Cross-platform**: Hooks must work on macOS, Linux, and Windows (Git Bash). Use POSIX-compatible patterns, `grep -E` not `grep -P`.
+- **Agent model routing**: `.claude/agents/*.md` may need specific frontmatter format for model selection — need to verify Claude Code's agent definition schema.
+- **Parallel agent coordination**: `/sk:gates` spawning multiple agents needs careful handling — if agent A fixes a file that agent B also touches, merge conflicts can occur. Batch structure (lint before test) mitigates this.
+- **Fast-track scope**: Need clear guidance on when fast-track is appropriate vs. full workflow — user judgment call, but guard rails help.

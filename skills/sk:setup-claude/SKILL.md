@@ -305,6 +305,59 @@ Additionally report:
 - Tools installed vs already present
 - Config files created vs skipped
 
+### Hooks (in `.claude/hooks/`)
+
+Deployed from `templates/hooks/` to `.claude/hooks/` (made executable):
+
+- `session-start.sh` — runs on SessionStart, loads context
+- `session-stop.sh` — runs on Stop, persists session state
+- `pre-compact.sh` — runs on PreCompact, saves context before compaction
+- `validate-commit.sh` — PreToolUse hook for `git commit*`, validates commit messages
+- `validate-push.sh` — PreToolUse hook for `git push*`, confirms before pushing
+- `log-agent.sh` — SubagentStart hook, logs sub-agent launches
+
+### Agent Definitions (in `.claude/agents/`)
+
+Deployed from `templates/.claude/agents/` (create-if-missing):
+
+- `e2e-tester.md` — E2E testing agent definition
+- `linter.md` — Linting agent definition
+- `perf-auditor.md` — Performance auditing agent
+- `security-auditor.md` — Security auditing agent
+- `test-runner.md` — Test execution agent
+
+### Path-Scoped Rules (in `.claude/rules/`)
+
+Deployed from `templates/.claude/rules/` based on detected stack:
+
+| Rule file | Deployed when |
+|-----------|---------------|
+| `tests.md.template` | Always |
+| `frontend.md.template` | Always |
+| `api.md.template` | Always |
+| `laravel.md.template` | Laravel detected in framework |
+| `react.md.template` | React or Next.js detected in framework |
+
+### Settings Generation (`.claude/settings.json`)
+
+Rendered from `templates/.claude/settings.json.template`. Contains:
+- Statusline configuration (points to `.claude/statusline.sh`)
+- Permission allow/deny lists for safe Bash commands
+- Hook wiring for all 6 hooks above
+
+### Statusline Generation (`.claude/statusline.sh`)
+
+Copied from `templates/.claude/statusline.sh` (made executable). Displays:
+- Context window usage percentage
+- Current model
+- Current workflow step (from `tasks/workflow-status.md`)
+- Git branch
+- Current task name
+
+### Cached Detection
+
+Detection results are cached to `.shipkit/config.json` with a `detected_at` timestamp. On subsequent runs, if the cache is less than 7 days old, cached values are used instead of re-scanning. Pass `--force-detect` to bypass the cache and re-run detection from scratch.
+
 ## Templates (Source of Truth)
 
 All output files are rendered from templates in `templates/`:
