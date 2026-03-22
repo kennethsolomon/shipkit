@@ -1,93 +1,69 @@
-# Findings — 2026-03-20 — Gate Auto-Commit + Tech Debt Logging
+# Findings — 2026-03-23 — ShipKit Workflow Improvements from Game Studios
 
 ## Problem Statement
 
-Two UX frustrations with ShipKit's gate workflow:
-1. Gates (lint, test, security, perf, review, e2e) ask the user to approve each commit after every fix cycle — unnecessary friction when the gate itself enforces 0 issues
-2. Pre-existing issues found during gates are either silently skipped ("out of scope") or fixed inline (scope creep) — neither is correct
+ShipKit's workflow relies entirely on manual skill invocations and a large CLAUDE.md for all rules. Three key mechanisms are missing that would improve automation, contextual rule enforcement, and developer experience:
+1. No lifecycle hooks — user must manually run `/sk:context` every session, context compression can lose workflow state
+2. No path-scoped rules — all conventions live in one massive CLAUDE.md regardless of what files are being touched
+3. No persistent status display, scope tracking, retrospective analysis, or reverse documentation
+
+## Source
+
+Analyzed [claude-code-game-studios](https://github.com/kennethsolomon/claude-code-game-studios) — a 48-agent game dev studio template with 8 hooks, 11 path-scoped rules, 37 skills, and a persistent statusline.
 
 ## Key Decisions Made
 
-- **Gate loops own their commits** — fix → auto-commit → re-run is internal to each gate. No asking. Commit message: `fix(<gate>): <what was fixed>`
-- **Conditional commit steps removed** — steps 13, 15, 17, 19, 21, 23 are eliminated. Workflow shrinks from 27 → 21 steps
-- **Pre-existing issues → `tasks/tech-debt.md`** — gates log out-of-scope issues there instead of fixing inline or skipping silently
-- **tech-debt.md is append-only** — entries are never deleted; marked `Resolved:` when fixed
-- **Resolved by sk:update-task** — when a task that addresses a debt item completes, sk:update-task marks it resolved with the branch name
-- **sk:context and sk:write-plan read tech-debt.md** — surface unresolved items in session brief; sk:write-plan asks if any should be included in the current task
+- **All 6 proposed improvements approved**, in priority order
+- This is a ShipKit infrastructure improvement, not a project-specific feature
 
-## Chosen Approach
+## Chosen Approach — 6 Features in Priority Order
 
-Single approach — no alternatives debated; direction agreed in conversation.
+### Feature 1: Lifecycle Hooks (Highest ROI)
+Add Claude Code hooks to `settings.json` via `/sk:setup-claude`:
+- **SessionStart** — auto-load branch, recent commits, workflow-status.md, tech-debt.md, TODO/FIXME counts. Replaces manual `/sk:context`.
+- **PreCompact** — preserve workflow-status.md state + uncommitted changes before context compression. Prevents losing track of current step.
+- **PreToolUse (commit)** — validate staged files: enforce conventional commit format, detect hardcoded secrets, check for debug statements, validate JSON files.
+- **PreToolUse (push)** — warn when pushing to protected branches (main, master, production).
+- **SubagentStart** — log agent invocations with timestamp to `tasks/agent-audit.log`.
+- **Stop** — log session accomplishments to `tasks/progress.md`.
 
-### Gate Loop (new internal flow for all 6 gates)
-```
-gate runs
-→ issues found?
-  → yes: fix all (any severity, any level) → auto-commit → re-run gate → repeat
-  → pre-existing issue (outside branch diff)? → log to tasks/tech-debt.md → do not fix → continue
-→ clean: move to next workflow step
-```
+### Feature 2: Path-Scoped Rules
+Add `.claude/rules/` directory support to `/sk:setup-claude` template:
+- Rules auto-activate based on file path patterns
+- Generated per detected stack (Laravel, React, Vue, etc.)
+- Examples: `laravel.md` for `app/`, `frontend.md` for `resources/`, `tests.md` for `tests/`
+- Reduces CLAUDE.md size by moving contextual rules out
 
-### tech-debt.md Entry Format
-```markdown
-### [YYYY-MM-DD] Found during: sk:<gate>
-File: path/to/file.ext:line
-Issue: description of the problem
-Severity: critical | high | medium | low | nitpick
-Resolved: YYYY-MM-DD — feature/branch-name  ← added by sk:update-task when fixed
-```
+### Feature 3: Statusline
+Add `.claude/statusline.sh` to `/sk:setup-claude` template:
+- Shows: context window %, active model, current workflow step, branch name, active task
+- Always visible in CLI — no need to run `/sk:status`
 
-### New Workflow (21 steps)
-| # | Step |
-|---|------|
-| 1 | Read Todo |
-| 2 | Read Lessons |
-| 3 | Explore |
-| 4 | Design |
-| 5 | Accessibility |
-| 6 | Plan |
-| 7 | Branch |
-| 8 | Migrate |
-| 9 | Write Tests |
-| 10 | Implement |
-| 11 | Commit (post-implement milestone) |
-| 12 | Lint + Dep Audit [gate — internal fix-commit-rerun loop] |
-| 13 | Verify Tests [gate — internal fix-commit-rerun loop] |
-| 14 | Security [gate — internal fix-commit-rerun loop] |
-| 15 | Performance [gate — internal fix-commit-rerun loop] |
-| 16 | Review + Simplify [gate — internal fix-commit-rerun loop] |
-| 17 | E2E Tests [gate — internal fix-commit-rerun loop] |
-| 18 | Update |
-| 19 | Finalize |
-| 20 | Sync Features |
-| 21 | Release |
+### Feature 4: Scope Check Skill (`/sk:scope-check`)
+New skill that compares implementation against `tasks/todo.md`:
+- Lists planned vs. actual scope
+- Identifies unplanned additions
+- Quantifies scope bloat %
+- Classifies: On Track (<=10%), Minor Creep (10-25%), Significant Creep (25-50%), Out of Control (>50%)
+- Useful mid-implementation to catch drift
 
-## Files Changed
+### Feature 5: Retrospective Skill (`/sk:retro`)
+New skill that analyzes completed work after shipping:
+- Planned vs. actual task completion
+- Velocity trends from git history
+- Blocker analysis from `tasks/progress.md`
+- Estimation accuracy
+- Recurring pattern detection across retros
+- 3-5 action items with owners
+- Output to `tasks/retro-YYYY-MM-DD.md`
 
-### Gate SKILL.md files (fix loop + tech-debt logging)
-- `skills/sk:lint/SKILL.md`
-- `skills/sk:test/SKILL.md`
-- `skills/sk:security-check/SKILL.md`
-- `skills/sk:perf/SKILL.md`
-- `skills/sk:review/SKILL.md`
-- `skills/sk:e2e/SKILL.md`
-
-### Planning/utility SKILL.md files (tech-debt integration)
-- `skills/sk:context/SKILL.md` — read tech-debt.md, surface unresolved
-- `skills/sk:write-plan/SKILL.md` — read tech-debt.md, ask to include items
-- `skills/sk:update-task/SKILL.md` — mark resolved items
-
-### Workflow definition files (step renumbering)
-- `CLAUDE.md`
-- `skills/sk:setup-claude/templates/CLAUDE.md.template`
-- `skills/sk:setup-claude/templates/tasks/workflow-status.md.template`
-- `README.md`
-- `skills/sk:setup-optimizer/SKILL.md`
-- `.claude/docs/DOCUMENTATION.md`
-- `CHANGELOG.md`
-- `tasks/lessons.md` (append only)
-- Command templates with **Workflow:** breadcrumbs (6 files)
+### Feature 6: Reverse Document Skill (`/sk:reverse-doc`)
+New skill that generates documentation from existing code:
+- Analyzes code to extract patterns, architecture, conventions
+- Asks clarifying questions to distinguish intent from accident
+- Drafts architecture/design docs
+- Useful for onboarding to existing codebases
 
 ## Open Questions
 
-- None — direction locked
+- None — direction locked, all 6 features approved in priority order
