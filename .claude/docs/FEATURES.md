@@ -381,7 +381,7 @@ Result:
 ## Technical Details
 
 ### Context Files Location
-- **Global:** `tasks/findings.md`, `tasks/lessons.md`, `tasks/todo.md`, `tasks/progress.md`
+- **Global:** `tasks/findings.md`, `tasks/lessons.md`, `tasks/todo.md`, `tasks/progress.md`, `tasks/cross-platform.md`
 - **Arch Logs:** `.claude/docs/architectural_change_log/YYYY-MM-DD-{topic}.md`
 
 ### Scripts

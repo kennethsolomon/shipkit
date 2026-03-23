@@ -199,6 +199,21 @@ Use Claude Code sub-agents to parallelize independent work and speed up developm
 - **Background agents**: Use `run_in_background: true` for long-running tasks
 <!-- END:sub-agent-patterns -->
 
+## Cross-Platform Tracking
+
+This project has a companion codebase (web <-> mobile). During implementation, **log every change that affects the other platform** to `tasks/cross-platform.md`.
+
+**When to log:**
+- API contract changes (new/modified endpoints, payload shapes, auth)
+- Data model changes (new fields, type changes, validation rules)
+- Business logic that must behave identically on both platforms
+- UI/UX flows that should have parity
+- Platform-specific deviations (intentional differences)
+
+**How to log:** Append a new section using the template in `tasks/cross-platform.md`. Include enough context that a developer in the other codebase can implement without guessing.
+
+**When to review:** At the start of every task, check `tasks/cross-platform.md` for pending items targeting this codebase.
+
 ## Project Memory
 
 Read these files at the start of every task:
@@ -206,12 +221,14 @@ Read these files at the start of every task:
 - `tasks/lessons.md` — past mistakes and how to avoid them
 - `tasks/todo.md` — current plan
 - `tasks/tech-debt.md` — unresolved pre-existing issues found by gates (append-only, never overwrite)
+- `tasks/cross-platform.md` — pending changes from the other codebase
 
 Write to these files continuously:
 - `tasks/progress.md` — every attempt, error, and resolution
 - `tasks/findings.md` — anything important discovered mid-task
+- `tasks/cross-platform.md` — any change that impacts the other platform
 
-**Never overwrite** `tasks/lessons.md`, `tasks/security-findings.md`, or `tasks/tech-debt.md`.
+**Never overwrite** `tasks/lessons.md`, `tasks/security-findings.md`, `tasks/tech-debt.md`, or `tasks/cross-platform.md`.
 
 ## Lessons Capture
 

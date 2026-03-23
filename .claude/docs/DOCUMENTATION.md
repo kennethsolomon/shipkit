@@ -211,6 +211,7 @@ PERSISTENT CONTEXT FILES (Never Cleared)
 │ tasks/accessibility-findings.md← WCAG audit results                     │
 │ tasks/perf-findings.md         ← Performance audit results              │
 │ tasks/tech-debt.md             ← Pre-existing issues found during gates │
+│ tasks/cross-platform.md        ← Changes needing replication (web↔mobile)│
 │ tasks/todo.md                  ← Current plan (checkboxes)              │
 │ tasks/progress.md              ← Session work log + error log           │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -1181,6 +1182,7 @@ Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, a
 | `tasks/lessons.md` | Accumulated project lessons — never overwritten |
 | `tasks/workflow-status.md` | Workflow step tracker — persists across conversations |
 | `tasks/tech-debt.md` | Pre-existing issues found by gates — append-only |
+| `tasks/cross-platform.md` | Cross-platform changes needing replication (web <-> mobile) — append-only |
 | `CHANGELOG.md` | Keep a Changelog format — never overwritten if exists |
 
 ---
@@ -1245,6 +1247,7 @@ python3 ~/.claude/skills/setup-claude/scripts/apply_setup_claude.py "$(pwd)"
 - `tasks/findings.md` — Your design decisions
 - `tasks/progress.md` — Your work log
 - `tasks/lessons.md` — Your learned lessons (prevents repeated bugs)
+- `tasks/cross-platform.md` — Your cross-platform change log
 - `CLAUDE.md` — Your project instructions (if custom, has no marker)
 - `CHANGELOG.md` — Your release notes
 

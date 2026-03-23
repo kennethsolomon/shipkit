@@ -39,7 +39,7 @@ The single command to keep your CLAUDE.md current. Diagnoses problems, updates t
 
 Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 
-- **Missing sections** — checks for essential sections (Workflow, Sub-Agent Patterns, Project Memory, Lessons Capture, Testing, Commands, etc.)
+- **Missing sections** — checks for essential sections (Workflow, Sub-Agent Patterns, Cross-Platform Tracking, Project Memory, Lessons Capture, Testing, Commands, etc.)
 - **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/sk:lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
@@ -63,6 +63,7 @@ Read → Explore → Design → Accessibility → Plan → Branch → Migrate �
 - Step completion summary rule (NON-NEGOTIABLE)
 - Bug fix flow section
 - Sub-Agent Patterns section (if missing)
+- Cross-Platform Tracking section (if missing)
 - Project Memory section (if missing)
 - Lessons Capture section (if missing)
 - Testing TDD section (if missing)
