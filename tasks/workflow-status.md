@@ -15,14 +15,14 @@
 | 8 | Migrate (`/sk:schema-migrate`) | skipped | No DB changes — pure skill/workflow files |
 | 9 | Write Tests (`/sk:write-tests`) | done | 51 new failing assertions; 216 existing pass; RED phase confirmed |
 | 10 | Implement (`/sk:execute-plan`) | done | 7 milestones complete, 267/267 tests pass |
-| 11 | Commit (`/sk:smart-commit`) | >> next << | |
-| 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | |
-| 13 | **Verify Tests** (`/sk:test`) | not yet | |
-| 14 | **Security** (`/sk:security-check`) | not yet | |
-| 15 | **Performance** (`/sk:perf`) | not yet | |
-| 16 | **Review + Simplify** (`/sk:review`) | not yet | |
-| 17 | **E2E** (`/sk:e2e`) | not yet | |
-| 18 | Update (`/sk:update-task`) | not yet | |
-| 19 | Finalize (`/sk:finish-feature`) | not yet | |
+| 11 | Commit (`/sk:smart-commit`) | done | cbdd0b4 — 21 files changed |
+| 12 | **Lint + Dep Audit** (`/sk:lint`) | done | no linters; npm audit 0 vulns; 11/11 shell scripts pass syntax |
+| 13 | **Verify Tests** (`/sk:test`) | done | 267/267 pass — clean first attempt |
+| 14 | **Security** (`/sk:security-check`) | done | 0 findings — 21 files audited (markdown, shell, python) |
+| 15 | **Performance** (`/sk:perf`) | skipped | No frontend/backend/DB — pure markdown, shell, and Python templates |
+| 16 | **Review + Simplify** (`/sk:review`) | done | 1 warning fixed (template commands table); 0 issues on re-run |
+| 17 | **E2E** (`/sk:e2e`) | skipped | No running app — pure markdown/shell/Python templates; 267/267 bash tests cover all assertions |
+| 18 | Update (`/sk:update-task`) | done | 59/59 checkboxes marked; completion logged |
+| 19 | Finalize (`/sk:finish-feature`) | >> next << | |
 | 20 | Sync Features (`/sk:features`) | not yet | |
 | 21 | Release (`/sk:release`) | not yet | |
