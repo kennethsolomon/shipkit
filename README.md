@@ -222,7 +222,7 @@ You can run each gate separately:
 | `/sk:security-check` | OWASP Top 10 audit on changed files | Any security finding |
 | `/sk:perf` | Bundle size, N+1 queries, Core Web Vitals, memory leaks | Critical or high findings |
 | `/sk:review` | 7-dimension code review with blast-radius analysis | Any issue including nitpicks |
-| `/sk:e2e` | End-to-end behavioral tests (Playwright or agent-browser) | Any failing scenario |
+| `/sk:e2e` | E2E Tests — end-to-end behavioral verification (Playwright or agent-browser) | Any failing scenario |
 
 ### Running all gates at once
 
