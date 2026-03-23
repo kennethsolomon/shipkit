@@ -41,10 +41,12 @@ npm install -g @kennethsolomon/shipkit && shipkit
 /sk:setup-claude
 
 # 3. Start building
-/sk:brainstorm
+/sk:start
 ```
 
 That's it. `/sk:setup-claude` creates your project scaffolding: planning files, lifecycle hooks, path-scoped coding rules, and a persistent statusline — all auto-configured for your stack.
+
+`/sk:start` is the recommended entry point — it classifies your task and routes you to the optimal flow automatically. You can also jump directly to `/sk:brainstorm`, `/sk:debug`, or any other flow entry point.
 
 ---
 
@@ -52,7 +54,10 @@ That's it. `/sk:setup-claude` creates your project scaffolding: planning files, 
 
 | I want to... | Run this | What happens |
 |--------------|----------|-------------|
+| **Not sure — let ShipKit decide** | `/sk:start` | Classifies your task, routes to optimal flow/mode/agents |
 | **Build a new feature** | `/sk:brainstorm` | Full workflow: plan → TDD → 6 quality gates → PR |
+| **Build hands-free** | `/sk:autopilot` | All 21 steps, auto-skip, auto-advance, auto-commit |
+| **Full-stack feature (parallel)** | `/sk:team` | Parallel domain agents (backend + frontend + QA) |
 | **Make a small change** | `/sk:fast-track` | Skip planning, keep all quality gates |
 | **Fix a bug** | `/sk:debug` | Investigate → regression test → fix → gates → PR |
 | **Fix a production emergency** | `/sk:hotfix` | Skip TDD, but quality gates still enforced |
@@ -204,12 +209,13 @@ Use these anytime — they're not part of any workflow.
 ## All Commands
 
 <details>
-<summary><strong>35 commands</strong> — click to expand</summary>
+<summary><strong>38 commands</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---------|---------|
 | `/sk:accessibility` | WCAG 2.1 AA audit |
 | `/sk:api-design` | Design API contracts before implementation |
+| `/sk:autopilot` | Hands-free workflow — auto-skip, auto-advance, auto-commit |
 | `/sk:brainstorm` | Explore requirements and design |
 | `/sk:branch` | Create feature branch from current task |
 | `/sk:change` | Handle mid-workflow requirement changes |
@@ -243,7 +249,9 @@ Use these anytime — they're not part of any workflow.
 | `/sk:set-profile` | Switch model routing profile |
 | `/sk:setup-claude` | Bootstrap project scaffolding |
 | `/sk:smart-commit` | Conventional commit with approval |
+| `/sk:start` | Smart entry point — classifies task, routes to optimal flow |
 | `/sk:status` | Show workflow + task status |
+| `/sk:team` | Parallel domain agents for full-stack tasks |
 | `/sk:test` | Run all test suites |
 | `/sk:update-task` | Mark task done |
 | `/sk:write-plan` | Write plan to `tasks/todo.md` |

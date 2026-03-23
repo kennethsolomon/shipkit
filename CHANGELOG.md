@@ -8,6 +8,17 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.10.0] — 2026-03-23 — Workflow Acceleration
+
+### Added
+- **Auto-skip intelligence** — optional steps (design, accessibility, migration, performance) automatically skipped when detection criteria aren't met. Works in both manual and autopilot modes. No confirmation prompt — just a log line.
+- **`/sk:autopilot`** — hands-free workflow mode. Runs all 21 steps with auto-skip, auto-advance, and auto-commit. Same quality gates as manual. Stops only for direction approval (1x) and PR push (1x).
+- **`/sk:team`** — parallel domain agents for full-stack tasks. Spawns Backend Agent, Frontend Agent, and QA Agent in isolated worktrees. Requires API contract in plan.
+- **`/sk:start`** — smart entry point that classifies tasks (feature/bug/hotfix/small change), detects scope (full-stack/frontend/backend), and recommends optimal flow + mode + agents.
+- 3 new agent templates: `backend-dev.md`, `frontend-dev.md`, `qa-engineer.md`
+- Model routing entries for start (haiku), autopilot (profile-based), and team (profile-based)
+- `/sk:setup-optimizer` now detects and upgrades existing projects with auto-skip rules and new commands
+
 ## [3.9.0] — 2026-03-23
 
 ### Added

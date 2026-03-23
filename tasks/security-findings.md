@@ -251,3 +251,52 @@ None.
 | Medium   | 0    | 0                 |
 | Low      | 0    | 0                 |
 | **Total** | **0** | **0**            |
+
+---
+
+# Security Audit — 2026-03-24
+
+**Scope:** Changed files on branch `feature/auto-skip-autopilot-team-start`
+**Stack:** Node.js (bin only) / Bash / Markdown
+**Files audited:** 21 (17 markdown/template + 3 shell scripts + 1 Python)
+
+## Critical (must fix before deploy)
+
+*None*
+
+## High (fix before production)
+
+*None*
+
+## Medium (should fix)
+
+*None*
+
+## Low / Informational
+
+*None*
+
+## Passed Checks
+
+- **A01 Broken Access Control** — N/A (no auth layer in changed files)
+- **A02 Cryptographic Failures** — N/A (no crypto operations)
+- **A03 Injection** — `tests/verify-workflow.sh`: all grep patterns are hardcoded string literals, not user-supplied; shell variables are double-quoted throughout. `install.sh`: all variables quoted, no eval/exec. New agent templates and skill definitions are static markdown — no executable code.
+- **A04 Insecure Design** — N/A (documentation and skill definitions only)
+- **A05 Security Misconfiguration** — `.gitignore` correctly excludes `.shipkit/` (config with profile settings)
+- **A06 Vulnerable Components** — `npm audit`: 0 vulnerabilities
+- **A07 Auth Failures** — N/A
+- **A08 Data Integrity Failures** — N/A
+- **A09 Logging Failures** — N/A
+- **A10 SSRF** — N/A (no network requests in changed files)
+- **Shell safety** — `install.sh` additions are static `echo` lines. `verify-workflow.sh` additions use `assert_contains`/`assert_file_exists` with hardcoded patterns only.
+- **Agent templates** — `backend-dev.md`, `frontend-dev.md`, `qa-engineer.md` are static prompts with no executable code, no secrets, no PII.
+
+## Summary
+
+| Severity | Open | Resolved this run |
+|----------|------|-------------------|
+| Critical | 0    | 0                 |
+| High     | 0    | 0                 |
+| Medium   | 0    | 0                 |
+| Low      | 0    | 0                 |
+| **Total** | **0** | **0**           |

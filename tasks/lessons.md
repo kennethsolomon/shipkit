@@ -161,3 +161,35 @@ When hook behavior or settings.json format changes, update:
 3. `skills/sk:setup-claude/scripts/apply_setup_claude.py`
 4. `skills/sk:setup-claude/SKILL.md`
 5. `install.sh` — commands echo block
+
+### [2026-03-23] New skills (batch 2) — update docs when any of these skills change
+**Bug:** 3 new skills added without tracking entries for dependent files.
+**Root cause:** Lesson list not updated when new skills were created.
+**Prevention:** When any of these skills change, update ALL listed files in the same commit:
+
+**sk:start:**
+1. `skills/sk:start/SKILL.md`
+2. `commands/sk/start.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+
+**sk:autopilot:**
+1. `skills/sk:autopilot/SKILL.md`
+2. `commands/sk/autopilot.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+
+**sk:team:**
+1. `skills/sk:team/SKILL.md`
+2. `commands/sk/team.md`
+3. 3 agent templates in `skills/sk:setup-claude/templates/.claude/agents/` (backend-dev.md, frontend-dev.md, qa-engineer.md)
+4. `CLAUDE.md` — commands table
+5. `README.md` — commands section
+6. `.claude/docs/DOCUMENTATION.md` — skills section
+
+**Auto-skip intelligence:**
+1. `CLAUDE.md` — workflow tracker rules section
+2. `skills/sk:setup-claude/templates/CLAUDE.md.template` — same rules
+3. `skills/sk:setup-optimizer/SKILL.md` — auto-skip detection reference

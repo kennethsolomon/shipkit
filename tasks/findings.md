@@ -92,6 +92,149 @@ Cache detection results in `.shipkit/config.json`:
 - 7-day TTL, `--force-detect` to override
 - Gate skills/agents read cached values instead of re-detecting each time
 
+### Feature 11: Auto-Skip Intelligence (Both Modes)
+
+Auto-detect and skip optional steps when they're clearly not needed. Applies to **both manual and autopilot modes** — no confirmation prompt, just a log line.
+
+**Detection rules:**
+
+| Step | Skip When | Detection |
+|------|-----------|-----------|
+| 4 - Design (frontend/API) | No frontend/UI files in plan | Scan plan for component/view/page/CSS/template/blade/vue/react/svelte keywords |
+| 5 - Accessibility | No frontend files in plan | Same detection as step 4 |
+| 8 - Migrate | No DB/schema changes in plan | Scan plan for migration/schema/table/column/model/database/foreign key keywords |
+| 15 - Performance | No frontend AND no DB queries | Combine step 4 + step 8 detection |
+| 21 - Release | **Never auto-skip** | Deployment decision — always ask |
+
+**Output format when auto-skipped:**
+```
+Auto-skipped: Migration (no schema changes detected in plan)
+```
+
+**Implementation:** Add detection logic to the workflow tracker rules in CLAUDE.md and the step-entry section of each optional skill. Detection scans `tasks/todo.md` content after plan is written (step 6).
+
+### Feature 12: `/sk:autopilot` — Hands-Free Workflow Mode
+
+Single command that runs the entire 21-step workflow end-to-end with minimal interruptions. Opt-in only — manual mode remains the default.
+
+**Command:** `/sk:autopilot <task description>`
+
+**Behavior:**
+- Executes ALL 21 steps in order (same as manual)
+- ALL quality gates enforced (same bar as manual)
+- Auto-skip intelligence active (Feature 11)
+- Auto-advances between steps (no "run /sk:next" prompts)
+- Auto-commits with conventional format (no approval prompt)
+- Auto-resets workflow tracker if stale
+
+**Stops only for:**
+1. Direction approval after brainstorm (step 3) — one summary, one y/n
+2. 3-strike failures — needs human judgment
+3. PR push confirmation (step 19) — visible to others, always confirm
+
+**Does NOT stop for:**
+- Optional step skip confirmations (auto-detected)
+- Step transition prompts
+- Commit message approval
+- Gate passes (auto-advances on clean)
+- Tracker reset confirmation
+
+**Quality guarantee:** Identical to manual mode. Same gates, same fix loops, same 100% coverage, same 0-issue security. Only the confirmations between steps are removed.
+
+**Estimated touchpoints:** 2-3 per task (vs. ~15 in manual mode)
+
+### Feature 13: `/sk:team` — Parallel Domain Agents for Full-Stack Tasks
+
+Splits implementation across specialized parallel agents when a task spans multiple domains (frontend + backend). Works in both manual and autopilot modes.
+
+**Agents:**
+
+| Agent | Role | Worktree | Model |
+|-------|------|----------|-------|
+| **Backend Agent** | Writes backend tests + implements API/services/models | Isolated worktree | sonnet |
+| **Frontend Agent** | Writes frontend tests + implements UI/components/pages | Isolated worktree | sonnet |
+| **QA Agent** | Writes E2E scenarios while others implement | Background | sonnet |
+
+**How it works:**
+1. Steps 1-7 run normally (one plan, one design, one branch)
+2. Step 6 (plan) MUST produce an explicit **API contract** — request/response shapes, endpoints, auth — as the shared boundary between agents
+3. At step 9 (write-tests), team mode activates:
+   - Backend Agent spawns in isolated worktree — writes backend tests + implements (steps 9-10 combined)
+   - Frontend Agent spawns in isolated worktree — writes frontend tests + implements against mocked API contract (steps 9-10 combined)
+   - QA Agent spawns in background — writes E2E test scenarios based on the plan (ready for step 17)
+4. **Merge step** (new): Orchestrator merges both worktrees back to feature branch, resolves conflicts
+5. Steps 11-21 continue normally — commit, gates (via sk:gates), finalize
+
+**Activation:**
+- Explicit: `/sk:team` command or `--team` flag on autopilot
+- Auto-detected (autopilot only): plan contains both frontend AND backend tasks with clear domain boundaries
+
+**When NOT to use:**
+- Backend-only or frontend-only tasks — falls back to single-agent mode
+- Tasks where frontend and backend share the same files (e.g., Inertia controllers returning views)
+- Small changes (<100 lines estimated) — overhead of worktree coordination exceeds time saved
+
+**Prerequisite:** API contract must be defined in plan (step 6). If plan doesn't have a clear contract boundary, team mode warns and falls back to single-agent.
+
+**Risk mitigation:**
+- API contract serves as the "handshake" — both agents implement against it
+- Merge conflicts detected early — orchestrator resolves or escalates to user
+- Each agent runs its own test suite before merge — catch issues before they compound
+- QA Agent's E2E scenarios validate the integrated result after merge
+
+**Time savings:** ~30-40% faster for full-stack features (steps 9-10 run in parallel instead of sequential)
+
+### Feature 14: `/sk:start` — Smart Entry Point (Ties Everything Together)
+
+Single entry point that classifies your task and recommends the optimal flow, mode, and agent strategy. Replaces the need to know which command to run first.
+
+**Command:** `/sk:start <task description>`
+
+**Step 1 — Classify** (automatic, no prompt):
+Scans description + `tasks/todo.md` for signals:
+
+| Signal | Flow | Mode Recommendation | Agents |
+|--------|------|---------------------|--------|
+| "bug", "fix", "broken", "error", "regression" | debug (11 steps) | autopilot | solo |
+| "urgent", "prod down", "hotfix", "emergency" | hotfix (11 steps) | autopilot | solo |
+| Estimated <100 lines, config/copy/dep change | fast-track (10 steps) | autopilot | solo |
+| Frontend + backend keywords | feature (21 steps) | autopilot | team |
+| Only frontend OR only backend keywords | feature (21 steps) | autopilot | solo |
+
+**Step 2 — Recommend** (one prompt, user confirms or overrides):
+```
+Detected: Full-stack feature (backend API + frontend page + migration)
+Recommended:
+  Flow:   feature (21 steps)
+  Mode:   autopilot
+  Agents: team (backend + frontend + QA)
+
+Proceed? (y) or override: manual / no-team / fast-track / debug / hotfix
+```
+
+**Step 3 — Route** (enters the chosen flow at step 1):
+- Sets `tasks/workflow-status.md` with the chosen flow/mode/agent config
+- Enters the flow at step 1 (Read Todo)
+- Auto-skip intelligence (Feature 11) applies regardless of mode
+- If autopilot: auto-advances between steps
+- If team: activates parallel agents at step 9
+- If manual: proceeds step-by-step as today
+
+**Override flags:**
+- `--manual` — force manual mode (step-by-step)
+- `--no-team` — force single-agent even if full-stack detected
+- `--team` — force team mode even if single-domain detected
+- `--debug` / `--hotfix` / `--fast-track` — force a specific flow
+
+**Relationship to existing commands:**
+- `/sk:start` is the **recommended** entry point for all new work
+- Old commands (`/sk:brainstorm`, `/sk:debug`, `/sk:hotfix`, `/sk:fast-track`) still work as direct entry points for users who want explicit control
+- `/sk:start` calls those same flows internally — it's a router, not a replacement
+
+**Upgrade path:**
+- New projects: `/sk:setup-claude` generates CLAUDE.md with `/sk:start` as the recommended entry
+- Existing projects: `/sk:setup-optimizer` detects missing `/sk:start` and adds it to CLAUDE.md + installs the skill
+
 ## Open Questions
 
-- None — direction locked, all 10 features approved
+- None — direction locked, all 14 features approved

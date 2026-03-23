@@ -63,6 +63,15 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:change` | Handle mid-workflow requirement change; re-enter at correct step | — |
 | `/sk:status` | Show workflow + task status at a glance | — |
 | `/sk:fast-track` | Abbreviated workflow for small changes; skips ceremony, keeps gates | [sk-fast-track.md](sk:features/sk-fast-track.md) |
+| `/sk:start` | Smart entry point — classifies task, routes to optimal flow/mode/agents | [sk-start.md](sk:features/sk-start.md) |
+| `/sk:autopilot` | Hands-free workflow — all 21 steps, auto-skip, auto-advance, auto-commit | [sk-autopilot.md](sk:features/sk-autopilot.md) |
+| `/sk:team` | Parallel domain agents (backend + frontend + QA) for full-stack tasks | [sk-team.md](sk:features/sk-team.md) |
+
+### Workflow Enhancements
+
+| Feature | Purpose | Spec |
+|---------|---------|------|
+| Auto-Skip Intelligence | Auto-detect and skip optional steps when not needed | [sk-auto-skip.md](sk:features/sk-auto-skip.md) |
 
 ### Setup & Configuration
 
@@ -89,3 +98,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | [sk-reverse-doc.md](sk:features/sk-reverse-doc.md) | 2026-03-23 | v3.7.0 |
 | [sk-gates.md](sk:features/sk-gates.md) | 2026-03-23 | v3.7.0 |
 | [sk-fast-track.md](sk:features/sk-fast-track.md) | 2026-03-23 | v3.7.0 |
+| [sk-auto-skip.md](sk:features/sk-auto-skip.md) | 2026-03-24 | v3.10.0 |
+| [sk-autopilot.md](sk:features/sk-autopilot.md) | 2026-03-24 | v3.10.0 |
+| [sk-team.md](sk:features/sk-team.md) | 2026-03-24 | v3.10.0 |
+| [sk-start.md](sk:features/sk-start.md) | 2026-03-24 | v3.10.0 |

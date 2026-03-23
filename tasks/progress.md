@@ -1,5 +1,18 @@
 # Progress Log
 
+### [2026-03-24] Workflow Acceleration (Features 11-14) — COMPLETED
+- Branch: `feature/auto-skip-autopilot-team-start`
+- Changes: 4 features implemented — auto-skip intelligence, /sk:autopilot, /sk:team, /sk:start
+  - Feature 11: Auto-skip rules added to CLAUDE.md + template (steps 4, 5, 8, 15)
+  - Feature 12: sk:autopilot skill + command (hands-free 21-step workflow)
+  - Feature 13: sk:team skill + command + 3 agent templates (backend-dev, frontend-dev, qa-engineer)
+  - Feature 14: sk:start skill + command (smart router — classifies task, recommends flow/mode/agents)
+  - Profile updates: set-profile model table + setup-optimizer upgrade support
+  - Docs: CLAUDE.md, README.md, DOCUMENTATION.md, CHANGELOG.md, install.sh, lessons.md, CLAUDE.md.template
+- Tests: 267/267 pass (51 new assertions + 216 existing)
+- Files changed: 22 across 2 commits (feat + review fix)
+- Gates: lint clean, 267 tests pass, 0 security findings, perf skipped (no app), review 1 fix (template commands table), e2e skipped (no app)
+
 ### [2026-03-20] Templates — updated to 21-step workflow
 - File: skills/sk:setup-claude/templates/CLAUDE.md.template
 - File: skills/sk:setup-claude/templates/tasks/workflow-status.md.template
