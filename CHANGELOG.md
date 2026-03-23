@@ -8,6 +8,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.8.0] — 2026-03-23
+
 ### Added
 - **Lifecycle hooks** — 6 Claude Code hooks deployed via `/sk:setup-claude`: session-start (auto-context), pre-compact (state preservation), validate-commit (conventional commit + debug statement checks), validate-push (protected branch warnings), log-agent (subagent audit trail), session-stop (session logging)
 - **Path-scoped rules** — `.claude/rules/` directory with stack-specific rules: tests.md (always), api.md, frontend.md, laravel.md, react.md (conditional on detection)

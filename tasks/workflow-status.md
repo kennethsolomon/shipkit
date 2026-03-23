@@ -23,6 +23,6 @@
 | 16 | **Review + Simplify** (`/sk:review`) | done | simplify: 3 files fixed (validate-commit perf, session-start guard, Python DRY); review: 0 issues |
 | 17 | **E2E** (`/sk:e2e`) | skipped | No running app — pure markdown/shell/Python templates; 215/215 bash tests cover all assertions |
 | 18 | Update (`/sk:update-task`) | done | 86/86 checkboxes marked; completion logged |
-| 19 | Finalize (`/sk:finish-feature`) | not yet | |
-| 20 | Sync Features (`/sk:features`) | not yet | |
+| 19 | Finalize (`/sk:finish-feature`) | done | PR #10 created |
+| 20 | Sync Features (`/sk:features`) | done | 5 new specs created + FEATURES.md index updated |
 | 21 | Release (`/sk:release`) | not yet | |
