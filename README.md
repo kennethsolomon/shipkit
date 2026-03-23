@@ -60,37 +60,124 @@ That's it. `/sk:setup-claude` creates your project scaffolding: planning files, 
 
 ---
 
-## How a Feature Gets Built
+## Workflows
 
-Here's what a typical feature flow looks like:
+### Feature Flow — full planning + TDD + all gates
+
+> Start with: `/sk:brainstorm`
 
 ```
-Think:   /sk:brainstorm → /sk:write-plan
-Build:   /sk:branch → /sk:write-tests → /sk:execute-plan → /sk:smart-commit
-Verify:  /sk:gates          ← runs lint, test, security, perf, review, E2E Tests
-Ship:    /sk:finish-feature  ← changelog + PR
+  /sk:brainstorm ···· Explore requirements, propose approaches         THINK
+  /sk:frontend-design  Optional — UI mockup (--pencil for visual)      THINK
+  /sk:api-design ····  Optional — API contracts                        THINK
+  /sk:accessibility ·  Optional — WCAG 2.1 AA audit on design         THINK
+  /sk:write-plan ···· Write decision-complete plan                     THINK
+  /sk:branch ········ Create feature branch                            BUILD
+  /sk:schema-migrate   Optional — auto-skips if no migrations         BUILD
+  /sk:write-tests ··· TDD red — write failing tests                    BUILD
+  /sk:execute-plan ·· TDD green — make tests pass                      BUILD
+  /sk:smart-commit ·· Conventional commit                              BUILD
+  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
+  /sk:update-task ··· Mark done                                        SHIP
+  /sk:finish-feature · Changelog + PR                                  SHIP
+  /sk:features ······ Sync feature specs                               SHIP
+  /sk:release ·······  Optional — version bump + tag                   SHIP
 ```
 
-**The key command is `/sk:gates`** — it runs all 6 quality gates in parallel batches:
+### Fast-Track Flow — skip planning, keep all gates
 
-| Batch | What runs | Why |
-|-------|----------|-----|
-| 1 (parallel) | lint + security + perf | Independent — run simultaneously |
-| 2 | tests | Need lint fixes first |
-| 3 | code review | Needs deep understanding |
-| 4 | E2E tests | Needs review fixes |
+> Start with: `/sk:fast-track`
 
-Each gate auto-fixes issues, auto-commits, and re-runs until clean. You just wait.
+```
+  /sk:brainstorm ····  SKIPPED                                         ·
+  /sk:write-plan ····  SKIPPED                                         ·
+  /sk:write-tests ···  SKIPPED                                         ·
+  /sk:branch ········ Create feature branch                            BUILD
+  implement directly · No TDD — write code                             BUILD
+  /sk:smart-commit ·· Conventional commit                              BUILD
+  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
+  /sk:finish-feature · Changelog + PR                                  SHIP
+```
+
+Guard rails: warns if diff > 300 lines or > 5 new files.
+
+### Bug Fix Flow — investigate first, then fix
+
+> Start with: `/sk:debug`
+
+```
+  /sk:brainstorm ····  SKIPPED                                         ·
+  /sk:write-plan ····  SKIPPED                                         ·
+  /sk:debug ········· Reproduce → isolate → hypothesize → verify       THINK
+  /sk:branch ········ Create fix branch                                BUILD
+  /sk:write-tests ··· Regression test that reproduces the bug          BUILD
+  implement the fix ·· Make regression test pass                       BUILD
+  /sk:smart-commit ·· Commit fix + test                                BUILD
+  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
+  /sk:finish-feature · Changelog + PR                                  SHIP
+```
+
+### Hotfix Flow — production emergency
+
+> Start with: `/sk:hotfix`
+
+```
+  /sk:brainstorm ····  SKIPPED                                         ·
+  /sk:write-plan ····  SKIPPED                                         ·
+  /sk:write-tests ···  SKIPPED                                         ·
+  /sk:debug ········· Root-cause analysis                              THINK
+  /sk:branch ········ Create hotfix branch                             BUILD
+  implement directly · Fix the issue                                   BUILD
+  run existing tests · Must still pass                                 BUILD
+  /sk:smart-commit ·· Commit the fix                                   BUILD
+  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
+  /sk:finish-feature · Changelog + PR (marked as hotfix)               SHIP
+```
+
+After merging: add regression test + lesson to `tasks/lessons.md`.
+
+### Requirement Change — mid-workflow pivot
+
+> Run: `/sk:change` — it classifies scope and re-enters at the right step
+
+```
+  Tier 1 — Behavior tweak (same scope)    → re-enter at /sk:write-tests
+  Tier 2 — New requirements (new scope)   → re-enter at /sk:write-plan
+  Tier 3 — Scope shift (rethink)          → re-enter at /sk:brainstorm
+```
 
 ---
 
-## After Shipping
+## Quality Gates (`/sk:gates`)
 
-| Command | What it does |
-|---------|-------------|
-| `/sk:retro` | Analyze velocity, blockers, and patterns — generates action items |
-| `/sk:scope-check` | Mid-implementation: detect scope creep (On Track → Out of Control) |
-| `/sk:reverse-doc` | Generate docs from existing code — useful for inherited codebases |
+One command runs all 6 gates in parallel batches:
+
+```
+  Batch 1 (parallel):  lint + security + perf     ← independent, run simultaneously
+  Batch 2:             tests                       ← needs lint fixes first
+  Batch 3:             code review                 ← needs deep understanding
+  Batch 4:             E2E Tests                   ← needs review fixes
+```
+
+Each gate auto-fixes → auto-commits → re-runs until clean. If a gate fails 3 times, it stops and asks for help.
+
+Pre-existing issues are logged to `tasks/tech-debt.md` — not fixed inline.
+
+---
+
+## On-Demand Tools
+
+Use these anytime — they're not part of any workflow.
+
+| Command | When to use |
+|---------|------------|
+| `/sk:scope-check` | Mid-implementation — detect scope creep (On Track / Minor / Significant / Out of Control) |
+| `/sk:retro` | After shipping — analyze velocity, blockers, patterns, generate action items |
+| `/sk:reverse-doc` | Inherited codebase — generate architecture/design docs from existing code |
+| `/sk:status` | Quick view of workflow and task status |
+| `/sk:dashboard` | Visual Kanban board across all git worktrees |
+| `/sk:mvp` | Generate a complete MVP app from a single idea prompt |
+| `/sk:seo-audit` | SEO audit for web projects |
 
 ---
 
