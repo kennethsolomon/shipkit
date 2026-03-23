@@ -8,6 +8,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.9.0] — 2026-03-23
+
+### Added
+- **Cross-platform change tracking** — `tasks/cross-platform.md` logs changes that need replication in a companion codebase (web <-> mobile). Integrated into `/sk:setup-claude` bootstrap, `/sk:setup-optimizer` diagnosis, CLAUDE.md template, and Project Memory reads.
+
 ## [3.8.0] — 2026-03-23
 
 ### Added
