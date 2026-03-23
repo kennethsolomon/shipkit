@@ -25,6 +25,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:schema-migrate` | Database schema change analysis (multi-ORM) | — |
 | `/sk:write-tests` | TDD: write failing tests before implementation | — |
 | `/sk:execute-plan` | Execute `tasks/todo.md` checkboxes in batches | — |
+| `/sk:reverse-doc` | Generate architecture/design/API docs from existing code | [sk-reverse-doc.md](sk:features/sk-reverse-doc.md) |
 
 ### Quality Gates
 
@@ -37,6 +38,8 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:seo-audit` | Dual-mode SEO audit (source + dev server), ask-before-fix | — |
 | `/sk:review` | Multi-dimensional self-review with simplify pre-pass | — |
 | `/sk:e2e` | E2E behavioral verification (final quality gate) | — |
+| `/sk:scope-check` | Compare implementation against plan to detect scope creep | [sk-scope-check.md](sk:features/sk-scope-check.md) |
+| `/sk:gates` | Run all quality gates in optimized parallel batches | [sk-gates.md](sk:features/sk-gates.md) |
 
 ### Completion
 
@@ -47,6 +50,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:finish-feature` | Changelog + arch log + PR creation | — |
 | `/sk:features` | Sync feature specs with shipped implementation | — |
 | `/sk:release` | Version bump + changelog + git tag | — |
+| `/sk:retro` | Post-ship retrospective with metrics and action items | [sk-retro.md](sk:features/sk-retro.md) |
 
 ### Developer Tools
 
@@ -58,6 +62,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:hotfix` | Emergency fix workflow (skip TDD, enforce quality gates) | — |
 | `/sk:change` | Handle mid-workflow requirement change; re-enter at correct step | — |
 | `/sk:status` | Show workflow + task status at a glance | — |
+| `/sk:fast-track` | Abbreviated workflow for small changes; skips ceremony, keeps gates | [sk-fast-track.md](sk:features/sk-fast-track.md) |
 
 ### Setup & Configuration
 
@@ -79,3 +84,8 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 |------|-------------|---------|
 | [sk-dashboard.md](sk:features/sk-dashboard.md) | 2026-03-19 | v3.5.0 |
 | [sk-context.md](sk:features/sk-context.md) | 2026-03-20 | v3.6.0 |
+| [sk-scope-check.md](sk:features/sk-scope-check.md) | 2026-03-23 | v3.7.0 |
+| [sk-retro.md](sk:features/sk-retro.md) | 2026-03-23 | v3.7.0 |
+| [sk-reverse-doc.md](sk:features/sk-reverse-doc.md) | 2026-03-23 | v3.7.0 |
+| [sk-gates.md](sk:features/sk-gates.md) | 2026-03-23 | v3.7.0 |
+| [sk-fast-track.md](sk:features/sk-fast-track.md) | 2026-03-23 | v3.7.0 |
