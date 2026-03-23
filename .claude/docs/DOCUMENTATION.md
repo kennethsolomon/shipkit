@@ -56,6 +56,9 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [On-Demand Tools](#on-demand-tools)
 - [Skills](#skills)
 - **[View Complete Features Guide](./FEATURES.md)** — Context threading, auto-detection, lessons compounding
+  - [`/sk:start`](#skstart) — Smart entry point: classifies tasks, routes to optimal flow/mode/agents
+  - [`/sk:autopilot`](#skautopilot) — Hands-free workflow mode with auto-skip and auto-advance
+  - [`/sk:team`](#skteam) — Parallel domain agents for full-stack implementation
   - [`/setup-claude`](#setup-claude) — Bootstrap project infrastructure
   - [`/sk:setup-optimizer`](#sksetup-optimizer) — Diagnose, update workflow, enrich CLAUDE.md
   - [`/sk:schema-migrate`](#schema-migrate) — Multi-ORM schema change analysis
@@ -675,9 +678,78 @@ Single command runs all 6 gates in 4 parallel batches. Each gate auto-fixes + au
 - `/sk:retro` — post-ship retrospective: velocity, blockers, action items
 - `/sk:reverse-doc` — generate docs from existing code
 
+### Workflow Modes
+
+The workflow supports three execution modes. All modes enforce the same quality gates — the difference is how much human interaction is required between steps.
+
+| Mode | Entry Point | Human Stops | Best For |
+|------|-------------|-------------|----------|
+| **Manual** (default) | Any `/sk:` command | Every step | Learning the workflow, complex tasks needing judgment at each step |
+| **Autopilot** | `/sk:autopilot` | 2-3 times (direction approval + PR push) | Well-defined tasks where the plan is clear |
+| **Team** | `/sk:team` | Coordination points (contract review, merge) | Full-stack tasks with independent backend/frontend/QA work |
+
+**Auto-skip intelligence** applies in both manual and autopilot modes. Optional steps (design, accessibility, migration, performance) are automatically skipped when detection criteria are not met — for example, skipping `/sk:frontend-design` when there are no frontend files, or `/sk:schema-migrate` when no schema files changed. No confirmation prompt is needed; the skip is logged with a reason.
+
 ---
 
 ## Skills
+
+### /sk:start
+
+Smart entry point that classifies tasks and routes to the optimal flow, mode, and agent strategy.
+
+**What it does:**
+- Classifies the task type: feature, bug fix, hotfix, or small change
+- Detects scope: full-stack, frontend-only, or backend-only
+- Recommends the optimal flow (feature/debug/hotfix/fast-track), mode (manual/autopilot), and agent strategy (solo/team)
+- Routes to the appropriate workflow entry point based on classification
+
+**Usage:**
+```
+/sk:start add user avatar upload with S3 storage
+/sk:start fix the login timeout bug
+```
+
+---
+
+### /sk:autopilot
+
+Hands-free workflow mode that runs all 21 steps with auto-skip, auto-advance, and auto-commit. Same quality gates as manual mode.
+
+**What it does:**
+- Executes the full 21-step workflow automatically
+- Auto-skips optional steps when detection criteria are not met (no frontend files → skip design, no schema changes → skip migrate)
+- Auto-advances between steps without prompting
+- Auto-commits at appropriate checkpoints
+- Stops only for direction approval (1x after planning) and PR push (1x at finalize)
+- All hard gates (lint, test, security, review, e2e) still enforced — failures trigger automatic fix-and-retry loops
+
+**Usage:**
+```
+/sk:autopilot
+```
+
+---
+
+### /sk:team
+
+Parallel domain agents for full-stack implementation. Spawns Backend, Frontend, and QA agents in isolated worktrees.
+
+**What it does:**
+- Requires an API contract defined in the plan (from `/sk:write-plan` or `/sk:api-design`)
+- Spawns three parallel agents: Backend Agent, Frontend Agent, and QA Agent
+- Each agent works in an isolated git worktree to avoid merge conflicts
+- Backend Agent implements API endpoints and data layer
+- Frontend Agent implements UI components and API integration
+- QA Agent writes tests against the API contract
+- Merges results after all agents complete
+
+**Usage:** After planning is complete with an API contract:
+```
+/sk:team
+```
+
+---
 
 ### `/setup-claude`
 

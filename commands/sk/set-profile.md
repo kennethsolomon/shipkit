@@ -28,6 +28,8 @@ Valid profiles: `full-sail` · `quality` · `balanced` · `budget`
 | perf, schema-migrate, accessibility | opus | sonnet | sonnet | haiku |
 | lint, test | sonnet | sonnet | haiku | haiku |
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
+| autopilot, team | opus | opus | sonnet | sonnet |
+| start | haiku | haiku | haiku | haiku |
 
 Note: `opus` = inherit (uses the current session model). Switch to Opus 4.5 in your session to get the full benefit.
 
@@ -66,6 +68,8 @@ Model assignments for this project:
   perf, schema-migrate, accessibility → <model>
   lint, test → <model>
   smart-commit, branch, update-task → haiku
+  autopilot, team → <model>
+  start → haiku
 
 Run /sk:config to see all settings or make further changes.
 ```

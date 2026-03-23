@@ -11,11 +11,11 @@
 | 4 | Design (`/sk:frontend-design` or `/sk:api-design`) | skipped | Pure infrastructure — no UI, no API contracts |
 | 5 | Accessibility (`/sk:accessibility`) | skipped | No frontend changes |
 | 6 | Plan (`/sk:write-plan`) | done | 7 milestones, 27 tasks — auto-skip, autopilot, team, start |
-| 7 | Branch (`/sk:branch`) | >> next << | |
-| 8 | Migrate (`/sk:schema-migrate`) | not yet | |
-| 9 | Write Tests (`/sk:write-tests`) | not yet | |
-| 10 | Implement (`/sk:execute-plan`) | not yet | |
-| 11 | Commit (`/sk:smart-commit`) | not yet | |
+| 7 | Branch (`/sk:branch`) | done | feature/auto-skip-autopilot-team-start |
+| 8 | Migrate (`/sk:schema-migrate`) | skipped | No DB changes — pure skill/workflow files |
+| 9 | Write Tests (`/sk:write-tests`) | done | 51 new failing assertions; 216 existing pass; RED phase confirmed |
+| 10 | Implement (`/sk:execute-plan`) | done | 7 milestones complete, 267/267 tests pass |
+| 11 | Commit (`/sk:smart-commit`) | >> next << | |
 | 12 | **Lint + Dep Audit** (`/sk:lint`) | not yet | |
 | 13 | **Verify Tests** (`/sk:test`) | not yet | |
 | 14 | **Security** (`/sk:security-check`) | not yet | |

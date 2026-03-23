@@ -1337,6 +1337,295 @@ assert_contains \
 
 echo ""
 
+# ── Feature 11: Auto-Skip Intelligence ───────────────────────────────────────
+
+echo "── Feature 11: Auto-Skip Intelligence ──"
+
+assert_contains \
+  "CLAUDE.md has auto-skip rules" \
+  "$CLAUDE" \
+  "Auto-skipped"
+
+assert_contains \
+  "CLAUDE.md has auto-skip detection" \
+  "$CLAUDE" \
+  "auto-skip"
+
+assert_contains \
+  "CLAUDE.md.template has auto-skip rules" \
+  "$TEMPLATE" \
+  "Auto-skipped"
+
+assert_contains \
+  "CLAUDE.md.template has auto-skip detection" \
+  "$TEMPLATE" \
+  "auto-skip"
+
+echo ""
+
+# ── Feature 12: /sk:autopilot ────────────────────────────────────────────────
+
+echo "── Feature 12: /sk:autopilot ──"
+
+assert_file_exists \
+  "sk:autopilot SKILL.md exists" \
+  "$REPO/skills/sk:autopilot/SKILL.md"
+
+assert_contains \
+  "sk:autopilot has auto-advance" \
+  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "auto-advance"
+
+assert_contains \
+  "sk:autopilot has auto-skip" \
+  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "auto-skip"
+
+assert_contains \
+  "sk:autopilot has auto-commit" \
+  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "auto-commit"
+
+assert_contains \
+  "sk:autopilot has direction approval stop" \
+  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "Direction approval"
+
+assert_contains \
+  "sk:autopilot has 3-strike protocol" \
+  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "3-strike"
+
+assert_contains \
+  "sk:autopilot has PR push stop" \
+  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "PR push"
+
+assert_contains \
+  "sk:autopilot has quality gate reference" \
+  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "quality gate"
+
+assert_file_exists \
+  "sk:autopilot command shortcut exists" \
+  "$REPO/commands/sk/autopilot.md"
+
+echo ""
+
+# ── Feature 13: /sk:team ─────────────────────────────────────────────────────
+
+echo "── Feature 13: /sk:team ──"
+
+assert_file_exists \
+  "sk:team SKILL.md exists" \
+  "$REPO/skills/sk:team/SKILL.md"
+
+assert_contains \
+  "sk:team has Backend Agent" \
+  "$REPO/skills/sk:team/SKILL.md" \
+  "Backend Agent"
+
+assert_contains \
+  "sk:team has Frontend Agent" \
+  "$REPO/skills/sk:team/SKILL.md" \
+  "Frontend Agent"
+
+assert_contains \
+  "sk:team has QA Agent" \
+  "$REPO/skills/sk:team/SKILL.md" \
+  "QA Agent"
+
+assert_contains \
+  "sk:team has API contract requirement" \
+  "$REPO/skills/sk:team/SKILL.md" \
+  "API contract"
+
+assert_contains \
+  "sk:team has worktree isolation" \
+  "$REPO/skills/sk:team/SKILL.md" \
+  "worktree"
+
+assert_contains \
+  "sk:team has merge step" \
+  "$REPO/skills/sk:team/SKILL.md" \
+  "merge"
+
+assert_file_exists \
+  "backend-dev agent template exists" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/agents/backend-dev.md"
+
+assert_file_exists \
+  "frontend-dev agent template exists" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md"
+
+assert_file_exists \
+  "qa-engineer agent template exists" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md"
+
+assert_contains \
+  "backend-dev agent references backend" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/agents/backend-dev.md" \
+  "backend"
+
+assert_contains \
+  "frontend-dev agent references frontend" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md" \
+  "frontend"
+
+assert_contains \
+  "qa-engineer agent references E2E" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md" \
+  "E2E"
+
+assert_file_exists \
+  "sk:team command shortcut exists" \
+  "$REPO/commands/sk/team.md"
+
+echo ""
+
+# ── Feature 14: /sk:start ────────────────────────────────────────────────────
+
+echo "── Feature 14: /sk:start ──"
+
+assert_file_exists \
+  "sk:start SKILL.md exists" \
+  "$REPO/skills/sk:start/SKILL.md"
+
+assert_contains \
+  "sk:start has Classify step" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "Classify"
+
+assert_contains \
+  "sk:start has Recommend step" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "Recommend"
+
+assert_contains \
+  "sk:start has Route step" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "Route"
+
+assert_contains \
+  "sk:start routes to debug flow" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "debug"
+
+assert_contains \
+  "sk:start routes to hotfix flow" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "hotfix"
+
+assert_contains \
+  "sk:start routes to fast-track flow" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "fast-track"
+
+assert_contains \
+  "sk:start routes to autopilot mode" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "autopilot"
+
+assert_contains \
+  "sk:start routes to team mode" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "team"
+
+assert_contains \
+  "sk:start has --manual override" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "\-\-manual"
+
+assert_file_exists \
+  "sk:start command shortcut exists" \
+  "$REPO/commands/sk/start.md"
+
+echo ""
+
+# ── Features 11-14: Documentation ────────────────────────────────────────────
+
+echo "── Features 11-14: Documentation ──"
+
+assert_contains \
+  "CLAUDE.md has /sk:start command" \
+  "$CLAUDE" \
+  "/sk:start"
+
+assert_contains \
+  "CLAUDE.md has /sk:autopilot command" \
+  "$CLAUDE" \
+  "/sk:autopilot"
+
+assert_contains \
+  "CLAUDE.md has /sk:team command" \
+  "$CLAUDE" \
+  "/sk:team"
+
+assert_contains \
+  "README.md has /sk:start" \
+  "$REPO/README.md" \
+  "/sk:start"
+
+assert_contains \
+  "README.md has /sk:autopilot" \
+  "$REPO/README.md" \
+  "/sk:autopilot"
+
+assert_contains \
+  "README.md has /sk:team" \
+  "$REPO/README.md" \
+  "/sk:team"
+
+DOCS="$REPO/.claude/docs/DOCUMENTATION.md"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:start" \
+  "$DOCS" \
+  "sk:start"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:autopilot" \
+  "$DOCS" \
+  "sk:autopilot"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:team" \
+  "$DOCS" \
+  "sk:team"
+
+echo ""
+
+# ── Features 11-14: set-profile + setup-optimizer ────────────────────────────
+
+echo "── Features 11-14: Profile + Optimizer ──"
+
+assert_contains \
+  "set-profile has start skill" \
+  "$REPO/commands/sk/set-profile.md" \
+  "start"
+
+assert_contains \
+  "set-profile has autopilot skill" \
+  "$REPO/commands/sk/set-profile.md" \
+  "autopilot"
+
+assert_contains \
+  "set-profile has team skill" \
+  "$REPO/commands/sk/set-profile.md" \
+  "team"
+
+assert_contains \
+  "setup-optimizer knows about sk:start" \
+  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "sk:start"
+
+assert_contains \
+  "setup-optimizer knows about auto-skip" \
+  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "auto-skip"
+
+echo ""
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 echo "=== Results: $PASS passed, $FAIL failed ==="

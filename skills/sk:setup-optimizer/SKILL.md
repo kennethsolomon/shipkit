@@ -44,6 +44,8 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 21-step TDD flow with hard gates
+- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team` in the Commands table
+- **Auto-skip rules** — checks for auto-skip detection rules in the workflow section
 
 Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
@@ -57,7 +59,7 @@ Read → Explore → Design → Accessibility → Plan → Branch → Migrate �
 ```
 
 **What gets updated:**
-- Workflow table (21 steps with correct commands: `/sk:write-tests`, `/sk:lint`, `/sk:test`, `/sk:accessibility`, `/sk:perf`, `/sk:e2e`)
+- Workflow table (21 steps with correct commands: `/sk:write-tests`, `/sk:lint`, `/sk:test`, `/sk:accessibility`, `/sk:perf`, `/sk:e2e`, `/sk:start`, `/sk:autopilot`, `/sk:team`)
 - Step details (TDD red/green/verify descriptions)
 - Tracker rules (hard gates at 12, 14, 16, 20, 17; optional steps 4, 5, 8, 18, 21)
 - Step completion summary rule (NON-NEGOTIABLE)
@@ -70,6 +72,7 @@ Read → Explore → Design → Accessibility → Plan → Branch → Migrate �
 - 3-Strike Protocol (if missing)
 - Fix & Retest Protocol section (if missing)
 - Requirement Change Flow section (if missing)
+- Auto-skip detection rules (if missing)
 
 **What gets preserved:**
 - Everything marked with `<!-- LOCK -->` is never touched

@@ -24,13 +24,13 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 1 (parallel — all test groups are independent)
 
-- [ ] Add assertions for **auto-skip intelligence** to `tests/verify-workflow.sh`:
+- [x] Add assertions for **auto-skip intelligence** to `tests/verify-workflow.sh`:
   - `assert_contains` — `CLAUDE.md` contains `"Auto-skipped"`
   - `assert_contains` — `CLAUDE.md` contains `"auto-skip"` or `"auto_skip"`
   - `assert_contains` — `CLAUDE.md.template` contains `"Auto-skipped"`
   - `assert_contains` — `CLAUDE.md.template` contains `"auto-skip"` or `"auto_skip"`
 
-- [ ] Add assertions for **`/sk:autopilot`** skill:
+- [x] Add assertions for **`/sk:autopilot`** skill:
   - `assert_file_exists` — `skills/sk:autopilot/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"auto-advance"`
   - `assert_contains` — `SKILL.md` contains `"auto-skip"`
@@ -40,7 +40,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - `assert_contains` — `SKILL.md` contains `"PR push"`
   - `assert_contains` — `SKILL.md` contains `"quality gate"`
 
-- [ ] Add assertions for **`/sk:team`** skill:
+- [x] Add assertions for **`/sk:team`** skill:
   - `assert_file_exists` — `skills/sk:team/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"Backend Agent"`
   - `assert_contains` — `SKILL.md` contains `"Frontend Agent"`
@@ -55,7 +55,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - `assert_contains` — `frontend-dev.md` contains `"frontend"`
   - `assert_contains` — `qa-engineer.md` contains `"E2E"`
 
-- [ ] Add assertions for **`/sk:start`** skill:
+- [x] Add assertions for **`/sk:start`** skill:
   - `assert_file_exists` — `skills/sk:start/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"Classify"`
   - `assert_contains` — `SKILL.md` contains `"Recommend"`
@@ -67,7 +67,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - `assert_contains` — `SKILL.md` contains `"team"`
   - `assert_contains` — `SKILL.md` contains `"--manual"`
 
-- [ ] Add assertions for **documentation updates**:
+- [x] Add assertions for **documentation updates**:
   - `assert_contains` — `CLAUDE.md` contains `"/sk:start"`
   - `assert_contains` — `CLAUDE.md` contains `"/sk:autopilot"`
   - `assert_contains` — `CLAUDE.md` contains `"/sk:team"`
@@ -78,12 +78,12 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - `assert_contains` — `DOCUMENTATION.md` contains `"sk:autopilot"`
   - `assert_contains` — `DOCUMENTATION.md` contains `"sk:team"`
 
-- [ ] Add assertions for **set-profile model table**:
+- [x] Add assertions for **set-profile model table**:
   - `assert_contains` — `commands/sk/set-profile.md` contains `"start"`
   - `assert_contains` — `commands/sk/set-profile.md` contains `"autopilot"`
   - `assert_contains` — `commands/sk/set-profile.md` contains `"team"`
 
-- [ ] Add assertions for **setup-optimizer** upgrade support:
+- [x] Add assertions for **setup-optimizer** upgrade support:
   - `assert_contains` — `skills/sk:setup-optimizer/SKILL.md` contains `"sk:start"`
   - `assert_contains` — `skills/sk:setup-optimizer/SKILL.md` contains `"auto-skip"`
 
@@ -93,14 +93,14 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 2 (sequential — CLAUDE.md changes must be consistent across files)
 
-- [ ] Update `CLAUDE.md` — add auto-skip rules to Workflow Tracker Rules section:
+- [x] Update `CLAUDE.md` — add auto-skip rules to Workflow Tracker Rules section:
   - New rule: "Auto-skip optional steps when detection criteria are met"
   - Detection table: step 4 (no frontend keywords), step 5 (no frontend keywords), step 8 (no DB keywords), step 15 (no frontend AND no DB)
   - Output format: `Auto-skipped: [Step Name] ([reason])`
   - Step 21 (Release) is never auto-skipped
   - Auto-skip applies in both manual and autopilot modes
 
-- [ ] Update `skills/sk:setup-claude/templates/CLAUDE.md.template` — same auto-skip rules:
+- [x] Update `skills/sk:setup-claude/templates/CLAUDE.md.template` — same auto-skip rules:
   - Mirror the exact same auto-skip rules added to CLAUDE.md
   - Ensure template placeholders are preserved
 
@@ -110,7 +110,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 3 (parallel — skill + command are independent files)
 
-- [ ] Create `skills/sk:autopilot/SKILL.md`:
+- [x] Create `skills/sk:autopilot/SKILL.md`:
   - Frontmatter: name, description, triggers, allowed-tools (Agent, Skill, Read, Write, Bash, Glob, Grep)
   - Step 0: Auto-reset workflow tracker if stale (has done/skipped steps from a different task)
   - Step 1: Read `tasks/todo.md` + `tasks/lessons.md` + `tasks/findings.md` (auto, no prompt)
@@ -129,7 +129,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - Quality guarantee section: explicit statement that all gates enforced
   - Model routing section: read `.shipkit/config.json`
 
-- [ ] Create `commands/sk/autopilot.md` command shortcut:
+- [x] Create `commands/sk/autopilot.md` command shortcut:
   - Points to `skills/sk:autopilot/SKILL.md`
   - Description: "Hands-free workflow — all 21 steps, minimal interruptions"
 
@@ -139,7 +139,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 4a (parallel — agent templates are independent)
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/agents/backend-dev.md`:
+- [x] Create `skills/sk:setup-claude/templates/.claude/agents/backend-dev.md`:
   - Frontmatter: name, model (sonnet), description, allowed_tools
   - Prompt: "You are the Backend Agent. Your job is to write backend tests and implement backend code."
   - Reads API contract from `tasks/todo.md` (the plan)
@@ -150,7 +150,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - 3-strike protocol on failures
   - Tools: Bash, Read, Edit, Write, Glob, Grep
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md`:
+- [x] Create `skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md`:
   - Frontmatter: name, model (sonnet), description, allowed_tools
   - Prompt: "You are the Frontend Agent. Your job is to write frontend tests and implement UI code."
   - Reads API contract from `tasks/todo.md` — mocks backend endpoints
@@ -161,7 +161,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - 3-strike protocol on failures
   - Tools: Bash, Read, Edit, Write, Glob, Grep
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md`:
+- [x] Create `skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md`:
   - Frontmatter: name, model (sonnet), description, allowed_tools
   - Prompt: "You are the QA Agent. Your job is to write E2E test scenarios."
   - Reads plan from `tasks/todo.md` — extracts user flows
@@ -173,7 +173,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 4b (depends on 4a — skill references agent names)
 
-- [ ] Create `skills/sk:team/SKILL.md`:
+- [x] Create `skills/sk:team/SKILL.md`:
   - Frontmatter: name, description, triggers, allowed-tools (Agent, Skill, Read, Write, Bash, Glob, Grep)
   - Step 0: Validate prerequisites — check `tasks/todo.md` has API contract section
   - Step 1: If no API contract, warn and fall back to single-agent mode
@@ -191,11 +191,11 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - Works in both manual and autopilot modes
   - Model routing section: read `.shipkit/config.json`
 
-- [ ] Create `commands/sk/team.md` command shortcut:
+- [x] Create `commands/sk/team.md` command shortcut:
   - Points to `skills/sk:team/SKILL.md`
   - Description: "Parallel domain agents for full-stack implementation"
 
-- [ ] Update `skills/sk:setup-claude/scripts/apply_setup_claude.py`:
+- [x] Update `skills/sk:setup-claude/scripts/apply_setup_claude.py`:
   - Add 3 new agent templates to the deployment mapping (backend-dev.md, frontend-dev.md, qa-engineer.md)
   - Same pattern as existing 5 agent deployments
 
@@ -205,7 +205,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 5 (depends on Milestones 3+4 — start routes to autopilot and team)
 
-- [ ] Create `skills/sk:start/SKILL.md`:
+- [x] Create `skills/sk:start/SKILL.md`:
   - Frontmatter: name, description, triggers, allowed-tools (Agent, Skill, Read, Write, Bash, Glob, Grep)
   - Step 1 — Classify (automatic, no prompt):
     - Read task description from arguments
@@ -233,7 +233,7 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
   - Override flags: `--manual`, `--no-team`, `--team`, `--debug`, `--hotfix`, `--fast-track`
   - Model routing section: read `.shipkit/config.json` (haiku for classification, main model for routing)
 
-- [ ] Create `commands/sk/start.md` command shortcut:
+- [x] Create `commands/sk/start.md` command shortcut:
   - Points to `skills/sk:start/SKILL.md`
   - Description: "Smart entry point — classifies task and routes to optimal flow"
 
@@ -243,13 +243,13 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 6 (parallel — set-profile and setup-optimizer are independent)
 
-- [ ] Update `commands/sk/set-profile.md` — add new skills to model table:
+- [x] Update `commands/sk/set-profile.md` — add new skills to model table:
   - Add row: `start` → haiku across all profiles (lightweight classification)
   - Add row: `autopilot` → same as brainstorm row (opus/opus/sonnet/sonnet — orchestrator needs planning-level model)
   - Add row: `team (orchestrator)` → same as execute-plan row
   - Update Step 5 confirm display to show new skill assignments
 
-- [ ] Update `skills/sk:setup-optimizer/SKILL.md`:
+- [x] Update `skills/sk:setup-optimizer/SKILL.md`:
   - Add `/sk:start` to the list of commands it checks for in CLAUDE.md
   - Add auto-skip rules to the workflow section it updates
   - Add `/sk:autopilot` and `/sk:team` to detected commands
@@ -261,30 +261,30 @@ Add 4 workflow acceleration features to ShipKit that reduce friction without com
 
 #### Wave 7 (parallel — all doc files are independent, but depend on Milestones 2-5)
 
-- [ ] Update `CLAUDE.md` — add 3 new commands to commands table:
+- [x] Update `CLAUDE.md` — add 3 new commands to commands table:
   - `| /sk:start | Smart entry point — classifies task, routes to optimal flow/mode/agents |`
   - `| /sk:autopilot | Hands-free workflow — all 21 steps, minimal interruptions |`
   - `| /sk:team | Parallel domain agents (backend + frontend + QA) for full-stack tasks |`
 
-- [ ] Update `README.md` — add 3 new commands:
+- [x] Update `README.md` — add 3 new commands:
   - `/sk:start` under "Getting Started" or top of commands (primary entry point)
   - `/sk:autopilot` under "Development" category
   - `/sk:team` under "Development" category
   - Add "Quick Start" section showing `/sk:start` as the recommended entry
 
-- [ ] Update `.claude/docs/DOCUMENTATION.md`:
+- [x] Update `.claude/docs/DOCUMENTATION.md`:
   - Add sk:start, sk:autopilot, sk:team to skills section
   - Add "Auto-Skip Intelligence" section explaining detection rules
   - Add "Workflow Modes" section explaining manual vs autopilot vs team
   - Update "What's New" section
 
-- [ ] Update `CHANGELOG.md`:
+- [x] Update `CHANGELOG.md`:
   - Add new version section with `### Added` for all 4 features
 
-- [ ] Update `install.sh`:
+- [x] Update `install.sh`:
   - Add sk:start, sk:autopilot, sk:team to commands echo block
 
-- [ ] Append to `tasks/lessons.md` — tracking entries for new skills:
+- [x] Append to `tasks/lessons.md` — tracking entries for new skills:
   - sk:start: SKILL.md + command + CLAUDE.md + README.md + DOCUMENTATION.md + feature spec
   - sk:autopilot: SKILL.md + command + CLAUDE.md + README.md + DOCUMENTATION.md + feature spec
   - sk:team: SKILL.md + command + 3 agent templates + apply_setup_claude.py + CLAUDE.md + README.md + DOCUMENTATION.md + feature spec
@@ -330,48 +330,48 @@ grep "autopilot" commands/sk/set-profile.md
 ## Acceptance Criteria
 
 ### Auto-Skip Intelligence (Milestone 2)
-- [ ] CLAUDE.md contains auto-skip detection rules for steps 4, 5, 8, 15
-- [ ] CLAUDE.md.template contains matching auto-skip rules
-- [ ] Auto-skip output format is `Auto-skipped: [Step Name] ([reason])`
-- [ ] Step 21 (Release) is never auto-skipped
-- [ ] Auto-skip works in both manual and autopilot modes
+- [x] CLAUDE.md contains auto-skip detection rules for steps 4, 5, 8, 15
+- [x] CLAUDE.md.template contains matching auto-skip rules
+- [x] Auto-skip output format is `Auto-skipped: [Step Name] ([reason])`
+- [x] Step 21 (Release) is never auto-skipped
+- [x] Auto-skip works in both manual and autopilot modes
 
 ### `/sk:autopilot` (Milestone 3)
-- [ ] Skill runs all 21 steps in order
-- [ ] All quality gates enforced (same as manual)
-- [ ] Auto-skip intelligence active
-- [ ] Auto-advances between steps
-- [ ] Auto-commits with conventional format
-- [ ] Stops only for: direction approval (step 3), 3-strike failures, PR push (step 19)
-- [ ] Model routing reads `.shipkit/config.json`
+- [x] Skill runs all 21 steps in order
+- [x] All quality gates enforced (same as manual)
+- [x] Auto-skip intelligence active
+- [x] Auto-advances between steps
+- [x] Auto-commits with conventional format
+- [x] Stops only for: direction approval (step 3), 3-strike failures, PR push (step 19)
+- [x] Model routing reads `.shipkit/config.json`
 
 ### `/sk:team` (Milestone 4)
-- [ ] 3 agent templates exist: backend-dev, frontend-dev, qa-engineer
-- [ ] Skill validates API contract prerequisite before spawning
-- [ ] Backend + Frontend agents run in parallel worktrees
-- [ ] QA Agent runs in background
-- [ ] Merge step handles worktree consolidation
-- [ ] Falls back to single-agent if no API contract or single-domain task
-- [ ] `apply_setup_claude.py` deploys 3 new agent templates
+- [x] 3 agent templates exist: backend-dev, frontend-dev, qa-engineer
+- [x] Skill validates API contract prerequisite before spawning
+- [x] Backend + Frontend agents run in parallel worktrees
+- [x] QA Agent runs in background
+- [x] Merge step handles worktree consolidation
+- [x] Falls back to single-agent if no API contract or single-domain task
+- [x] `apply_setup_claude.py` deploys 3 new agent templates
 
 ### `/sk:start` (Milestone 5)
-- [ ] Classifies tasks into: feature, debug, hotfix, fast-track
-- [ ] Detects scope: full-stack, frontend-only, backend-only
-- [ ] Recommends flow + mode + agents in one prompt
-- [ ] Override flags work: `--manual`, `--no-team`, `--team`, `--debug`, `--hotfix`, `--fast-track`
-- [ ] Routes to correct flow after user confirmation
-- [ ] Resets workflow tracker with chosen config
+- [x] Classifies tasks into: feature, debug, hotfix, fast-track
+- [x] Detects scope: full-stack, frontend-only, backend-only
+- [x] Recommends flow + mode + agents in one prompt
+- [x] Override flags work: `--manual`, `--no-team`, `--team`, `--debug`, `--hotfix`, `--fast-track`
+- [x] Routes to correct flow after user confirmation
+- [x] Resets workflow tracker with chosen config
 
 ### Profile + Optimizer (Milestone 6)
-- [ ] `set-profile.md` model table includes start, autopilot, team
-- [ ] `setup-optimizer` can upgrade existing projects with auto-skip rules + new commands
+- [x] `set-profile.md` model table includes start, autopilot, team
+- [x] `setup-optimizer` can upgrade existing projects with auto-skip rules + new commands
 
 ### Documentation (Milestone 7)
-- [ ] All 3 new commands in CLAUDE.md, README.md, DOCUMENTATION.md
-- [ ] CHANGELOG.md documents all 4 features
-- [ ] install.sh lists all 3 new commands
-- [ ] lessons.md updated with tracking entries
-- [ ] All tests pass
+- [x] All 3 new commands in CLAUDE.md, README.md, DOCUMENTATION.md
+- [x] CHANGELOG.md documents all 4 features
+- [x] install.sh lists all 3 new commands
+- [x] lessons.md updated with tracking entries
+- [x] All tests pass
 
 ## Risks/Unknowns
 

@@ -80,9 +80,17 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
 
 3. **Optional steps** (4, 5, 8, 15, 21): Ask the user "Skip [step]?" and require explicit confirmation. Record the reason in Notes.
 
-4. **Gates own their commits.** Each gate's fix-commit-rerun loop is fully internal. No separate commit step follows a gate. When a gate requires fixes, commit inside the gate loop, then re-run the gate from scratch.
+4. **Auto-skip detection.** Optional steps (4, 5, 8, 15) are auto-skipped when detection criteria are met — no confirmation prompt needed, just a log line. Detection runs after the plan is written (step 6) by scanning `tasks/todo.md`:
+   - **Step 4 (Design)**: Auto-skipped if plan contains NO frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button)
+   - **Step 5 (Accessibility)**: Auto-skipped if plan contains NO frontend keywords (same list as step 4)
+   - **Step 8 (Migrate)**: Auto-skipped if plan contains NO database keywords (migration, schema, table, column, model, database, foreign key, index, seed)
+   - **Step 15 (Performance)**: Auto-skipped if plan contains NO frontend keywords AND NO database keywords
+   - **Step 21 (Release)**: NEVER auto-skipped — always ask
+   - Output when auto-skipped: `Auto-skipped: [Step Name] ([reason])` — e.g., `Auto-skipped: Design (no frontend keywords detected in plan)`
 
-5. **Loop steps are HARD GATES** (12, 13, 14, 16, 17): These steps BLOCK all forward progress until they pass clean. Fix issues immediately and re-run. Do NOT ask the user to re-run — fix and re-run automatically. Track attempt number in Notes (e.g., "clean on attempt 3").
+5. **Gates own their commits.** Each gate's fix-commit-rerun loop is fully internal. No separate commit step follows a gate. When a gate requires fixes, commit inside the gate loop, then re-run the gate from scratch.
+
+6. **Loop steps are HARD GATES** (12, 13, 14, 16, 17): These steps BLOCK all forward progress until they pass clean. Fix issues immediately and re-run. Do NOT ask the user to re-run — fix and re-run automatically. Track attempt number in Notes (e.g., "clean on attempt 3").
    - **Step 12 (Lint + Dep Audit)**: All detected linting tools AND dependency audits must pass — every single one.
    - **Step 13 (Verify Tests)**: All detected test suites (BE + FE) must pass with 100% coverage on new code.
    - **Step 14 (Security)**: 0 issues across all severities.
@@ -91,13 +99,13 @@ Progress is tracked in `tasks/workflow-status.md`. This file persists across con
    - **Step 15 (Performance)**: Optional gate — if run, loop until critical/high findings = 0. Can be skipped with explicit confirmation.
    - **DO NOT mark these steps as `done` until every check passes.** If even one tool fails, the step is NOT done. Never proceed to the next step with errors remaining.
 
-6. **Never skip steps without confirmation.** Steps cannot run out of order. Hard gate steps (12, 13, 14, 16, 17) can NEVER be skipped. Optional gate step (15) requires explicit confirmation to skip.
+7. **Never skip steps without confirmation.** Steps cannot run out of order. Hard gate steps (12, 13, 14, 16, 17) can NEVER be skipped. Optional gate step (15) requires explicit confirmation to skip.
 
-7. **Never auto-advance.** When one step completes, stop and tell the user which step is next. Do not proceed automatically.
+8. **Never auto-advance.** When one step completes, stop and tell the user which step is next. Do not proceed automatically.
 
-8. **Never write code during design or plan phases.** Steps 1-6 are reading/exploring/planning/design only — no code, no file edits (except `tasks/` files).
+9. **Never write code during design or plan phases.** Steps 1-6 are reading/exploring/planning/design only — no code, no file edits (except `tasks/` files).
 
-9. **Step completion summary is NON-NEGOTIABLE.** After finishing ANY step, you MUST output a summary block in this exact format before stopping:
+10. **Step completion summary is NON-NEGOTIABLE.** After finishing ANY step, you MUST output a summary block in this exact format before stopping:
 
 ```
 --- Step [#] [Name]: [done/skipped/partial] ---
@@ -257,6 +265,7 @@ Never retry the same failing approach.
 |---------|---------|
 | `/sk:accessibility` | WCAG 2.1 AA audit — runs after design, before implementation |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) before implementation |
+| `/sk:autopilot` | Hands-free workflow — all 21 steps, auto-skip, auto-advance, auto-commit |
 | `/sk:brainstorm` | Explore requirements and design |
 | `/sk:branch` | Create feature branch auto-named from current task |
 | `/sk:change` | Handle mid-workflow requirement changes — re-enter at correct step |
@@ -282,7 +291,9 @@ Never retry the same failing approach.
 | `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
 | `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 | `/sk:smart-commit` | Conventional commit with approval |
+| `/sk:start` | Smart entry point — classifies task, routes to optimal flow/mode/agents |
 | `/sk:status` | Show workflow + task status |
+| `/sk:team` | Parallel domain agents (backend + frontend + QA) for full-stack tasks |
 | `/sk:test` | Auto-detect and run all project test suites |
 | `/sk:update-task` | Mark task done and log completion |
 | `/sk:write-plan` | Write decision-complete plan into `tasks/todo.md` |
