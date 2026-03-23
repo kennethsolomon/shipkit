@@ -177,6 +177,7 @@ Requirement changes → /sk:change → re-enter at correct step
 | `/sk:plan` | Create or refresh task planning files |
 | `/sk:setup-claude` | Bootstrap project scaffolding (CLAUDE.md + tasks/) |
 | `/sk:setup-optimizer` | Enrich CLAUDE.md by scanning the codebase |
+| `/sk:reverse-doc` | Generate architecture/design docs from existing code |
 
 ### Development
 
@@ -189,6 +190,7 @@ Requirement changes → /sk:change → re-enter at correct step
 | `/sk:change` | Handle a mid-workflow requirement change — assess scope and re-enter at the right step |
 | `/sk:debug` | Structured bug investigation: reproduce → isolate → fix |
 | `/sk:hotfix` | Emergency fix workflow — skips design and TDD |
+| `/sk:fast-track` | Abbreviated workflow for small changes — skip planning, keep all gates |
 
 ### Prototyping
 
@@ -206,6 +208,8 @@ Requirement changes → /sk:change → re-enter at correct step
 | `/sk:perf` | Performance audit: bundle size, N+1 queries, Core Web Vitals |
 | `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
 | `/sk:review` | Blast-radius-aware self-review across 7 dimensions + cross-file impact analysis |
+| `/sk:gates` | Run all quality gates in optimized parallel batches |
+| `/sk:scope-check` | Compare implementation against plan, detect scope creep |
 
 ### Shipping
 
@@ -216,6 +220,7 @@ Requirement changes → /sk:change → re-enter at correct step
 | `/sk:finish-feature` | Write changelog entry + create PR |
 | `/sk:release` | Version bump + CHANGELOG + git tag + push |
 | `/sk:features` | Sync docs/features/ specs with the codebase |
+| `/sk:retro` | Post-ship retrospective: velocity, blockers, action items |
 
 ### Laravel
 

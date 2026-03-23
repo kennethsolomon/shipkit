@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "statusline": {
+    "command": "bash .claude/statusline.sh"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git rev-parse*)",
+      "Bash(ls*)",
+      "Bash(cat package.json)",
+      "Bash(cat composer.json)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(sudo *)",
+      "Bash(chmod -R 777*)",
+      "Bash(cat .env*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/session-start.sh",
+        "timeout": 10000
+      }
+    ],
+    "PreCompact": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/pre-compact.sh",
+        "timeout": 10000
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/validate-commit.sh",
+        "timeout": 10000,
+        "matcher": {
+          "tool_name": "Bash",
+          "command_pattern": "git commit*"
+        }
+      },
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/validate-push.sh",
+        "timeout": 5000,
+        "matcher": {
+          "tool_name": "Bash",
+          "command_pattern": "git push*"
+        }
+      }
+    ],
+    "SubagentStart": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/log-agent.sh",
+        "timeout": 5000
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/session-stop.sh",
+        "timeout": 10000
+      }
+    ]
+  }
+}

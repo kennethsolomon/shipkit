@@ -898,6 +898,445 @@ assert_not_contains \
 
 echo ""
 
+# ── Milestone 12: Lifecycle Hooks ────────────────────────────────────────────
+
+echo "── Milestone 12: Lifecycle Hooks ──"
+
+HOOKS_DIR="$REPO/skills/sk:setup-claude/templates/hooks"
+
+assert_file_exists \
+  "session-start.sh hook exists" \
+  "$HOOKS_DIR/session-start.sh"
+
+assert_file_exists \
+  "pre-compact.sh hook exists" \
+  "$HOOKS_DIR/pre-compact.sh"
+
+assert_file_exists \
+  "validate-commit.sh hook exists" \
+  "$HOOKS_DIR/validate-commit.sh"
+
+assert_file_exists \
+  "validate-push.sh hook exists" \
+  "$HOOKS_DIR/validate-push.sh"
+
+assert_file_exists \
+  "log-agent.sh hook exists" \
+  "$HOOKS_DIR/log-agent.sh"
+
+assert_file_exists \
+  "session-stop.sh hook exists" \
+  "$HOOKS_DIR/session-stop.sh"
+
+assert_contains \
+  "session-start.sh references workflow-status" \
+  "$HOOKS_DIR/session-start.sh" \
+  "workflow-status"
+
+assert_contains \
+  "pre-compact.sh references workflow-status" \
+  "$HOOKS_DIR/pre-compact.sh" \
+  "workflow-status"
+
+assert_contains \
+  "validate-commit.sh references conventional commit" \
+  "$HOOKS_DIR/validate-commit.sh" \
+  "conventional commit"
+
+assert_contains \
+  "validate-push.sh references protected branches" \
+  "$HOOKS_DIR/validate-push.sh" \
+  "protected"
+
+echo ""
+
+# ── Milestone 12b: settings.json Template ────────────────────────────────────
+
+echo "── Milestone 12b: settings.json Template ──"
+
+SETTINGS_TPL="$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template"
+
+assert_file_exists \
+  "settings.json.template exists" \
+  "$SETTINGS_TPL"
+
+assert_contains \
+  "settings.json defines SessionStart hook" \
+  "$SETTINGS_TPL" \
+  "SessionStart"
+
+assert_contains \
+  "settings.json defines PreCompact hook" \
+  "$SETTINGS_TPL" \
+  "PreCompact"
+
+assert_contains \
+  "settings.json defines PreToolUse hook" \
+  "$SETTINGS_TPL" \
+  "PreToolUse"
+
+assert_contains \
+  "settings.json defines SubagentStart hook" \
+  "$SETTINGS_TPL" \
+  "SubagentStart"
+
+assert_contains \
+  "settings.json defines Stop hook" \
+  "$SETTINGS_TPL" \
+  "Stop"
+
+assert_contains \
+  "settings.json defines statusline" \
+  "$SETTINGS_TPL" \
+  "statusline"
+
+echo ""
+
+# ── Milestone 13: Path-Scoped Rules ─────────────────────────────────────────
+
+echo "── Milestone 13: Path-Scoped Rules ──"
+
+RULES_DIR="$REPO/skills/sk:setup-claude/templates/.claude/rules"
+
+assert_file_exists \
+  "tests.md.template rule exists" \
+  "$RULES_DIR/tests.md.template"
+
+assert_contains \
+  "tests rule references coverage" \
+  "$RULES_DIR/tests.md.template" \
+  "coverage"
+
+assert_contains \
+  "sk:setup-claude SKILL.md references rules/" \
+  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "rules/"
+
+echo ""
+
+# ── Milestone 14: Statusline ────────────────────────────────────────────────
+
+echo "── Milestone 14: Statusline ──"
+
+STATUSLINE="$REPO/skills/sk:setup-claude/templates/.claude/statusline.sh"
+
+assert_file_exists \
+  "statusline.sh exists" \
+  "$STATUSLINE"
+
+assert_contains \
+  "statusline.sh references workflow-status" \
+  "$STATUSLINE" \
+  "workflow-status"
+
+assert_contains \
+  "statusline.sh references Branch" \
+  "$STATUSLINE" \
+  "Branch"
+
+echo ""
+
+# ── Milestone 15: Scope Check Skill ─────────────────────────────────────────
+
+echo "── Milestone 15: Scope Check Skill ──"
+
+SCOPE_SKILL="$REPO/skills/sk:scope-check/SKILL.md"
+
+assert_file_exists \
+  "sk:scope-check SKILL.md exists" \
+  "$SCOPE_SKILL"
+
+assert_contains \
+  "sk:scope-check references scope creep" \
+  "$SCOPE_SKILL" \
+  "scope creep"
+
+assert_contains \
+  "sk:scope-check has On Track tier" \
+  "$SCOPE_SKILL" \
+  "On Track"
+
+assert_contains \
+  "sk:scope-check has Minor Creep tier" \
+  "$SCOPE_SKILL" \
+  "Minor Creep"
+
+assert_contains \
+  "sk:scope-check has Significant Creep tier" \
+  "$SCOPE_SKILL" \
+  "Significant Creep"
+
+assert_contains \
+  "sk:scope-check has Out of Control tier" \
+  "$SCOPE_SKILL" \
+  "Out of Control"
+
+assert_contains \
+  "sk:scope-check references tasks/todo.md" \
+  "$SCOPE_SKILL" \
+  "tasks/todo.md"
+
+echo ""
+
+# ── Milestone 16: Retrospective Skill ───────────────────────────────────────
+
+echo "── Milestone 16: Retrospective Skill ──"
+
+RETRO_SKILL="$REPO/skills/sk:retro/SKILL.md"
+
+assert_file_exists \
+  "sk:retro SKILL.md exists" \
+  "$RETRO_SKILL"
+
+assert_contains \
+  "sk:retro references velocity" \
+  "$RETRO_SKILL" \
+  "velocity"
+
+assert_contains \
+  "sk:retro references blocker" \
+  "$RETRO_SKILL" \
+  "blocker"
+
+assert_contains \
+  "sk:retro references action item" \
+  "$RETRO_SKILL" \
+  "action item"
+
+assert_contains \
+  "sk:retro references tasks/progress.md" \
+  "$RETRO_SKILL" \
+  "tasks/progress.md"
+
+echo ""
+
+# ── Milestone 17: Reverse Document Skill ────────────────────────────────────
+
+echo "── Milestone 17: Reverse Document Skill ──"
+
+REVDOC_SKILL="$REPO/skills/sk:reverse-doc/SKILL.md"
+
+assert_file_exists \
+  "sk:reverse-doc SKILL.md exists" \
+  "$REVDOC_SKILL"
+
+assert_contains \
+  "sk:reverse-doc references existing code" \
+  "$REVDOC_SKILL" \
+  "existing code"
+
+assert_contains \
+  "sk:reverse-doc references architecture" \
+  "$REVDOC_SKILL" \
+  "architecture"
+
+assert_contains \
+  "sk:reverse-doc references clarifying question" \
+  "$REVDOC_SKILL" \
+  "clarifying question"
+
+echo ""
+
+# ── Milestone 18: Gate Agents ───────────────────────────────────────────────
+
+echo "── Milestone 18: Gate Agents ──"
+
+AGENTS_DIR="$REPO/skills/sk:setup-claude/templates/.claude/agents"
+
+assert_file_exists \
+  "linter agent exists" \
+  "$AGENTS_DIR/linter.md"
+
+assert_file_exists \
+  "test-runner agent exists" \
+  "$AGENTS_DIR/test-runner.md"
+
+assert_file_exists \
+  "security-auditor agent exists" \
+  "$AGENTS_DIR/security-auditor.md"
+
+assert_file_exists \
+  "perf-auditor agent exists" \
+  "$AGENTS_DIR/perf-auditor.md"
+
+assert_file_exists \
+  "e2e-tester agent exists" \
+  "$AGENTS_DIR/e2e-tester.md"
+
+assert_contains \
+  "linter agent has auto-commit" \
+  "$AGENTS_DIR/linter.md" \
+  "auto-commit"
+
+assert_contains \
+  "test-runner agent references coverage" \
+  "$AGENTS_DIR/test-runner.md" \
+  "coverage"
+
+assert_contains \
+  "security-auditor agent references OWASP" \
+  "$AGENTS_DIR/security-auditor.md" \
+  "OWASP"
+
+echo ""
+
+# ── Milestone 19: Gates Orchestrator ────────────────────────────────────────
+
+echo "── Milestone 19: Gates Orchestrator ──"
+
+GATES_SKILL="$REPO/skills/sk:gates/SKILL.md"
+
+assert_file_exists \
+  "sk:gates SKILL.md exists" \
+  "$GATES_SKILL"
+
+assert_contains \
+  "sk:gates references parallel" \
+  "$GATES_SKILL" \
+  "parallel"
+
+assert_contains \
+  "sk:gates has Batch 1" \
+  "$GATES_SKILL" \
+  "Batch 1"
+
+assert_contains \
+  "sk:gates references workflow-status" \
+  "$GATES_SKILL" \
+  "workflow-status"
+
+echo ""
+
+# ── Milestone 20: Fast-Track Flow ───────────────────────────────────────────
+
+echo "── Milestone 20: Fast-Track Flow ──"
+
+FASTTRACK_SKILL="$REPO/skills/sk:fast-track/SKILL.md"
+
+assert_file_exists \
+  "sk:fast-track SKILL.md exists" \
+  "$FASTTRACK_SKILL"
+
+assert_contains \
+  "sk:fast-track references /sk:gates" \
+  "$FASTTRACK_SKILL" \
+  "/sk:gates"
+
+assert_contains \
+  "sk:fast-track has 300 line guard" \
+  "$FASTTRACK_SKILL" \
+  "300 lines"
+
+assert_contains \
+  "sk:fast-track references /sk:smart-commit" \
+  "$FASTTRACK_SKILL" \
+  "/sk:smart-commit"
+
+echo ""
+
+# ── Milestone 21: Cached Detection ──────────────────────────────────────────
+
+echo "── Milestone 21: Cached Detection ──"
+
+APPLY_SCRIPT="$REPO/skills/sk:setup-claude/scripts/apply_setup_claude.py"
+
+assert_contains \
+  "apply_setup_claude.py has detected_at cache" \
+  "$APPLY_SCRIPT" \
+  "detected_at"
+
+assert_contains \
+  "apply_setup_claude.py has --force-detect flag" \
+  "$APPLY_SCRIPT" \
+  "force-detect"
+
+echo ""
+
+# ── Milestone 22: Documentation Updates (all new commands) ──────────────────
+
+echo "── Milestone 22: Documentation Updates ──"
+
+CLAUDE="$REPO/CLAUDE.md"
+README="$REPO/README.md"
+DOCS="$REPO/.claude/docs/DOCUMENTATION.md"
+
+assert_contains \
+  "CLAUDE.md has /sk:scope-check" \
+  "$CLAUDE" \
+  "/sk:scope-check"
+
+assert_contains \
+  "CLAUDE.md has /sk:retro" \
+  "$CLAUDE" \
+  "/sk:retro"
+
+assert_contains \
+  "CLAUDE.md has /sk:reverse-doc" \
+  "$CLAUDE" \
+  "/sk:reverse-doc"
+
+assert_contains \
+  "CLAUDE.md has /sk:gates" \
+  "$CLAUDE" \
+  "/sk:gates"
+
+assert_contains \
+  "CLAUDE.md has /sk:fast-track" \
+  "$CLAUDE" \
+  "/sk:fast-track"
+
+assert_contains \
+  "README.md has /sk:scope-check" \
+  "$README" \
+  "/sk:scope-check"
+
+assert_contains \
+  "README.md has /sk:retro" \
+  "$README" \
+  "/sk:retro"
+
+assert_contains \
+  "README.md has /sk:reverse-doc" \
+  "$README" \
+  "/sk:reverse-doc"
+
+assert_contains \
+  "README.md has /sk:gates" \
+  "$README" \
+  "/sk:gates"
+
+assert_contains \
+  "README.md has /sk:fast-track" \
+  "$README" \
+  "/sk:fast-track"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:scope-check" \
+  "$DOCS" \
+  "sk:scope-check"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:retro" \
+  "$DOCS" \
+  "sk:retro"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:reverse-doc" \
+  "$DOCS" \
+  "sk:reverse-doc"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:gates" \
+  "$DOCS" \
+  "sk:gates"
+
+assert_contains \
+  "DOCUMENTATION.md has sk:fast-track" \
+  "$DOCS" \
+  "sk:fast-track"
+
+echo ""
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 echo "=== Results: $PASS passed, $FAIL failed ==="

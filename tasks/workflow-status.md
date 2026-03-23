@@ -5,24 +5,24 @@
 
 | # | Step | Status | Notes |
 |---|------|--------|-------|
-| 1 | Read Todo | done | New task: Gate Auto-Commit + Tech Debt Logging |
-| 2 | Read Lessons | done | All active lessons applied as constraints |
-| 3 | Explore (`/sk:brainstorm`) | done | Direction agreed in conversation — gate auto-commit + tech-debt.md logging |
-| 4 | Design (`/sk:frontend-design` or `/sk:api-design`) | skipped | Pure skill/workflow updates — no UI, no API |
+| 1 | Read Todo | done | Read previous todo.md (Gate Auto-Commit task complete) |
+| 2 | Read Lessons | done | All 7 active lessons applied as constraints |
+| 3 | Explore (`/sk:brainstorm`) | done | 6 features identified from game-studios repo; all approved in priority order |
+| 4 | Design (`/sk:frontend-design` or `/sk:api-design`) | skipped | Pure infrastructure/skill changes — no UI, no API contracts |
 | 5 | Accessibility (`/sk:accessibility`) | skipped | No frontend changes |
-| 6 | Plan (`/sk:write-plan`) | done | 4 milestones, 5 waves; 21-step workflow; awaiting approval |
-| 7 | Branch (`/sk:branch`) | done | feature/gate-auto-commit-tech-debt |
+| 6 | Plan (`/sk:write-plan`) | done | 10 milestones; hooks + rules + statusline + 5 new skills + gate agents + fast-track + cached detection |
+| 7 | Branch (`/sk:branch`) | done | feature/hooks-rules-statusline-skills |
 | 8 | Migrate (`/sk:schema-migrate`) | skipped | No DB changes — pure skill/workflow updates |
-| 9 | Write Tests (`/sk:write-tests`) | done | 22 new failing assertions in Milestone 10; 117 existing pass; RED phase confirmed |
-| 10 | Implement (`/sk:execute-plan`) | done | 143/143 tests pass; all milestones complete (incl. Milestone 5 Pencil disk persistence) |
-| 11 | Commit (`/sk:smart-commit`) | done | f9429f4 — 30 files, 143/143 tests pass |
-| 12 | **Lint + Dep Audit** (`/sk:lint`) | done | no linters detected; npm audit 0 vulns |
-| 13 | **Verify Tests** (`/sk:test`) | done | 143/143 pass — clean first attempt |
-| 14 | **Security** (`/sk:security-check`) | done | 0 findings — pure markdown/bash, npm audit clean |
-| 15 | **Performance** (`/sk:perf`) | done | 0 findings — no frontend/backend/DB in scope |
-| 16 | **Review + Simplify** (`/sk:review`) | done | 0 issues; 3 fixes (e2e/review tech-debt format, DOCUMENTATION.md table) |
-| 17 | **E2E** (`/sk:e2e`) | done | 143/143 pass — clean first attempt |
-| 18 | Update (`/sk:update-task`) | done | all tasks checked; completion logged |
-| 19 | Finalize (`/sk:finish-feature`) | done | PR #9 created |
-| 20 | Sync Features (`/sk:features`) | done | sk-context.md updated with tech-debt.md integration |
-| 21 | Release (`/sk:release`) | not yet | >> next << |
+| 9 | Write Tests (`/sk:write-tests`) | done | 72 new failing assertions; 143 existing pass; RED phase confirmed |
+| 10 | Implement (`/sk:execute-plan`) | done | 33 files, 10 milestones, 215/215 tests pass |
+| 11 | Commit (`/sk:smart-commit`) | done | 92a8927 — 33 files changed |
+| 12 | **Lint + Dep Audit** (`/sk:lint`) | done | no linters detected; npm audit 0 vulns; 7/7 shell scripts pass syntax check |
+| 13 | **Verify Tests** (`/sk:test`) | done | 215/215 pass — clean first attempt |
+| 14 | **Security** (`/sk:security-check`) | done | 0 findings — 33 files audited (shell, python, json, markdown) |
+| 15 | **Performance** (`/sk:perf`) | skipped | No frontend/backend/DB — pure markdown, shell, and Python templates |
+| 16 | **Review + Simplify** (`/sk:review`) | done | simplify: 3 files fixed (validate-commit perf, session-start guard, Python DRY); review: 0 issues |
+| 17 | **E2E** (`/sk:e2e`) | skipped | No running app — pure markdown/shell/Python templates; 215/215 bash tests cover all assertions |
+| 18 | Update (`/sk:update-task`) | done | 86/86 checkboxes marked; completion logged |
+| 19 | Finalize (`/sk:finish-feature`) | done | PR #10 created |
+| 20 | Sync Features (`/sk:features`) | done | 5 new specs created + FEATURES.md index updated |
+| 21 | Release (`/sk:release`) | not yet | |

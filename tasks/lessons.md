@@ -112,3 +112,52 @@ Additionally, if new gate skills are added (like sk:e2e):
 7. `skills/sk:context/SKILL.md`
 8. `commands/sk/write-plan.md`
 9. `commands/sk/update-task.md`
+
+### [2026-03-23] New skills — update docs when any of these skills change
+**Bug:** 5 new skills added without tracking entries for dependent files.
+**Root cause:** Lesson list not updated when new skills were created.
+**Prevention:** When any of these skills change, update ALL listed files in the same commit:
+
+**sk:scope-check:**
+1. `skills/sk:scope-check/SKILL.md`
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `docs/sk:features/sk-scope-check.md` — feature spec
+
+**sk:retro:**
+1. `skills/sk:retro/SKILL.md`
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `docs/sk:features/sk-retro.md` — feature spec
+
+**sk:reverse-doc:**
+1. `skills/sk:reverse-doc/SKILL.md`
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `docs/sk:features/sk-reverse-doc.md` — feature spec
+
+**sk:gates:**
+1. `skills/sk:gates/SKILL.md`
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `docs/sk:features/sk-gates.md` — feature spec
+6. All 5 agent definitions in `skills/sk:setup-claude/templates/.claude/agents/`
+
+**sk:fast-track:**
+1. `skills/sk:fast-track/SKILL.md`
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `docs/sk:features/sk-fast-track.md` — feature spec
+
+**Hooks & infrastructure:**
+When hook behavior or settings.json format changes, update:
+1. All 6 hook scripts in `skills/sk:setup-claude/templates/hooks/`
+2. `skills/sk:setup-claude/templates/.claude/settings.json.template`
+3. `skills/sk:setup-claude/scripts/apply_setup_claude.py`
+4. `skills/sk:setup-claude/SKILL.md`
+5. `install.sh` — commands echo block
