@@ -36,13 +36,16 @@ if [ -f "tasks/tech-debt.md" ]; then
     fi
 fi
 
-# Code health
+# Code health (skip on large codebases to keep session start fast)
 if [ -d "src" ]; then
-    TODO_COUNT=$(grep -r "TODO" src/ 2>/dev/null | wc -l | tr -d ' ')
-    FIXME_COUNT=$(grep -r "FIXME" src/ 2>/dev/null | wc -l | tr -d ' ')
-    if [ "$TODO_COUNT" -gt 0 ] || [ "$FIXME_COUNT" -gt 0 ]; then
-        echo ""
-        echo "Code health: ${TODO_COUNT} TODOs, ${FIXME_COUNT} FIXMEs in src/"
+    FILE_COUNT=$(find src/ -type f 2>/dev/null | head -1001 | wc -l | tr -d ' ')
+    if [ "$FILE_COUNT" -le 1000 ]; then
+        TODO_COUNT=$(grep -r "TODO" src/ 2>/dev/null | wc -l | tr -d ' ')
+        FIXME_COUNT=$(grep -r "FIXME" src/ 2>/dev/null | wc -l | tr -d ' ')
+        if [ "$TODO_COUNT" -gt 0 ] || [ "$FIXME_COUNT" -gt 0 ]; then
+            echo ""
+            echo "Code health: ${TODO_COUNT} TODOs, ${FIXME_COUNT} FIXMEs in src/"
+        fi
     fi
 fi
 

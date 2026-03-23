@@ -34,38 +34,41 @@ if [ -n "$COMMIT_MSG" ]; then
     fi
 fi
 
-# Check staged files for debug statements
+# Check staged files for debug statements and secrets
 STAGED=$(git diff --cached --name-only 2>/dev/null)
 if [ -n "$STAGED" ]; then
+    # Read full staged diff once (avoids repeated git subprocess calls per file)
+    FULL_DIFF=$(git diff --cached 2>/dev/null)
+
     while IFS= read -r file; do
         if [ -f "$file" ]; then
+            FILE_DIFF=$(echo "$FULL_DIFF" | sed -n "/^diff --git a\/$file /,/^diff --git /p")
             # JavaScript/TypeScript debug
             if echo "$file" | grep -qE '\.(js|ts|jsx|tsx)$'; then
-                if git diff --cached "$file" 2>/dev/null | grep -E '^\+.*console\.(log|debug|warn)\(' | grep -qv '//.*console'; then
+                if echo "$FILE_DIFF" | grep -E '^\+.*console\.(log|debug|warn)\(' | grep -qv '//.*console'; then
                     WARNINGS="$WARNINGS\nDEBUG: $file has console.log/debug/warn in staged changes"
                 fi
-                if git diff --cached "$file" 2>/dev/null | grep -qE '^\+.*debugger'; then
+                if echo "$FILE_DIFF" | grep -qE '^\+.*debugger'; then
                     WARNINGS="$WARNINGS\nDEBUG: $file has debugger statement in staged changes"
                 fi
             fi
             # PHP debug
             if echo "$file" | grep -qE '\.php$'; then
-                if git diff --cached "$file" 2>/dev/null | grep -qE '^\+.*(dd\(|dump\(|var_dump\(|print_r\()'; then
+                if echo "$FILE_DIFF" | grep -qE '^\+.*(dd\(|dump\(|var_dump\(|print_r\()'; then
                     WARNINGS="$WARNINGS\nDEBUG: $file has dd/dump/var_dump in staged changes"
                 fi
             fi
             # Python debug
             if echo "$file" | grep -qE '\.py$'; then
-                if git diff --cached "$file" 2>/dev/null | grep -qE '^\+.*(breakpoint\(\)|pdb\.set_trace\(\))'; then
+                if echo "$FILE_DIFF" | grep -qE '^\+.*(breakpoint\(\)|pdb\.set_trace\(\))'; then
                     WARNINGS="$WARNINGS\nDEBUG: $file has breakpoint/pdb in staged changes"
                 fi
             fi
         fi
     done <<< "$STAGED"
 
-    # Check for potential hardcoded secrets in staged diffs
-    DIFF_CONTENT=$(git diff --cached 2>/dev/null)
-    if echo "$DIFF_CONTENT" | grep -qE '^\+.*(PRIVATE_KEY|SECRET_KEY|API_KEY|PASSWORD|TOKEN)[[:space:]]*=.*[a-zA-Z0-9]{16,}'; then
+    # Check for potential hardcoded secrets (reuse FULL_DIFF)
+    if echo "$FULL_DIFF" | grep -qE '^\+.*(PRIVATE_KEY|SECRET_KEY|API_KEY|PASSWORD|TOKEN)[[:space:]]*=.*[a-zA-Z0-9]{16,}'; then
         WARNINGS="$WARNINGS\nSECRET: Staged changes may contain hardcoded secrets. Review before committing."
     fi
 fi

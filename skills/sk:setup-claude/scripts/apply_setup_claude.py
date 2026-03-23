@@ -318,6 +318,24 @@ def _plan_file_if_generated(dest: Path, content: str) -> str:
     return "skipped" if existing == content else "updated"
 
 
+def _collect_results(
+    results,
+    repo_root: Path,
+    created: List[str],
+    updated: List[str],
+    skipped: List[str],
+) -> None:
+    """Categorize deployment results into created/updated/skipped lists."""
+    for action, p in results:
+        rel = str(p.relative_to(repo_root))
+        if action == "created":
+            created.append(rel)
+        elif action == "updated":
+            updated.append(rel)
+        else:
+            skipped.append(rel)
+
+
 def _make_executable(path: Path) -> None:
     """Add owner-execute permission to a file."""
     st = path.stat()
@@ -495,67 +513,39 @@ def apply(
         else:
             action, p = ("skipped", dest_path)
 
-        if action == "created":
-            created.append(str(p.relative_to(repo_root)))
-        elif action == "updated":
-            updated.append(str(p.relative_to(repo_root)))
-        else:
-            skipped.append(str(p.relative_to(repo_root)))
+        _collect_results([(action, p)], repo_root, created, updated, skipped)
 
     # --- Deploy hooks ---
     hooks_src = skill_root / "templates" / "hooks"
     hooks_dest = repo_root / ".claude" / "hooks"
-    for action, p in _deploy_directory(hooks_src, hooks_dest, dry_run=dry_run, executable=True):
-        rel = str(p.relative_to(repo_root))
-        if action == "created":
-            created.append(rel)
-        elif action == "updated":
-            updated.append(rel)
-        else:
-            skipped.append(rel)
+    _collect_results(
+        _deploy_directory(hooks_src, hooks_dest, dry_run=dry_run, executable=True),
+        repo_root, created, updated, skipped,
+    )
 
     # --- Deploy agents ---
     agents_src = skill_root / "templates" / ".claude" / "agents"
     agents_dest = repo_root / ".claude" / "agents"
-    for action, p in _deploy_directory(agents_src, agents_dest, dry_run=dry_run):
-        rel = str(p.relative_to(repo_root))
-        if action == "created":
-            created.append(rel)
-        elif action == "updated":
-            updated.append(rel)
-        else:
-            skipped.append(rel)
+    _collect_results(
+        _deploy_directory(agents_src, agents_dest, dry_run=dry_run),
+        repo_root, created, updated, skipped,
+    )
 
     # --- Deploy rules (stack-filtered) ---
     rules_src = skill_root / "templates" / ".claude" / "rules"
     rules_dest = repo_root / ".claude" / "rules"
-    for action, p in _deploy_directory(
-        rules_src,
-        rules_dest,
-        dry_run=dry_run,
-        filter_fn=_rules_filter(detection),
-    ):
-        rel = str(p.relative_to(repo_root))
-        if action == "created":
-            created.append(rel)
-        elif action == "updated":
-            updated.append(rel)
-        else:
-            skipped.append(rel)
+    _collect_results(
+        _deploy_directory(rules_src, rules_dest, dry_run=dry_run, filter_fn=_rules_filter(detection)),
+        repo_root, created, updated, skipped,
+    )
 
     # --- Deploy settings.json ---
     settings_template = skill_root / "templates" / ".claude" / "settings.json.template"
     settings_dest = repo_root / ".claude" / "settings.json"
-    action, p = _deploy_rendered_file(
-        settings_template, settings_dest, detection, dry_run=dry_run
+    _collect_results(
+        [_deploy_rendered_file(settings_template, settings_dest, detection, dry_run=dry_run)],
+        repo_root, created, updated, skipped,
     )
-    rel = str(p.relative_to(repo_root))
-    if action == "created":
-        created.append(rel)
-    elif action == "updated":
-        updated.append(rel)
-    else:
-        skipped.append(rel)
 
     # --- Deploy statusline.sh ---
     statusline_src = skill_root / "templates" / ".claude" / "statusline.sh"
@@ -570,11 +560,7 @@ def apply(
             shutil.copy2(statusline_src, statusline_dest)
             _make_executable(statusline_dest)
             action_sl = "created"
-        rel_sl = str(statusline_dest.relative_to(repo_root))
-        if action_sl == "created":
-            created.append(rel_sl)
-        else:
-            skipped.append(rel_sl)
+        _collect_results([(action_sl, statusline_dest)], repo_root, created, updated, skipped)
 
     if dry_run:
         print("setup-claude dry-run complete (no files written)")
