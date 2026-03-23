@@ -66,85 +66,93 @@ That's it. `/sk:setup-claude` creates your project scaffolding: planning files, 
 
 > Start with: `/sk:brainstorm`
 
-```
-  /sk:brainstorm ···· Explore requirements, propose approaches         THINK
-  /sk:frontend-design  Optional — UI mockup (--pencil for visual)      THINK
-  /sk:api-design ····  Optional — API contracts                        THINK
-  /sk:accessibility ·  Optional — WCAG 2.1 AA audit on design         THINK
-  /sk:write-plan ···· Write decision-complete plan                     THINK
-  /sk:branch ········ Create feature branch                            BUILD
-  /sk:schema-migrate   Optional — auto-skips if no migrations         BUILD
-  /sk:write-tests ··· TDD red — write failing tests                    BUILD
-  /sk:execute-plan ·· TDD green — make tests pass                      BUILD
-  /sk:smart-commit ·· Conventional commit                              BUILD
-  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
-  /sk:update-task ··· Mark done                                        SHIP
-  /sk:finish-feature · Changelog + PR                                  SHIP
-  /sk:features ······ Sync feature specs                               SHIP
-  /sk:release ·······  Optional — version bump + tag                   SHIP
-```
+| Step | Command | What it does | Phase |
+|------|---------|-------------|-------|
+| 1 | `/sk:brainstorm` | Explore requirements, propose approaches | Think |
+| 2 | `/sk:frontend-design` | *Optional* — UI mockup (`--pencil` for visual) | Think |
+| 3 | `/sk:api-design` | *Optional* — API contracts | Think |
+| 4 | `/sk:accessibility` | *Optional* — WCAG 2.1 AA audit on design | Think |
+| 5 | `/sk:write-plan` | Write decision-complete plan | Think |
+| 6 | `/sk:branch` | Create feature branch | Build |
+| 7 | `/sk:schema-migrate` | *Optional* — auto-skips if no migrations | Build |
+| 8 | `/sk:write-tests` | TDD red — write failing tests | Build |
+| 9 | `/sk:execute-plan` | TDD green — make tests pass | Build |
+| 10 | `/sk:smart-commit` | Conventional commit | Build |
+| 11 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
+| 12 | `/sk:update-task` | Mark done | Ship |
+| 13 | `/sk:finish-feature` | Changelog + PR | Ship |
+| 14 | `/sk:features` | Sync feature specs | Ship |
+| 15 | `/sk:release` | *Optional* — version bump + tag | Ship |
+
+---
 
 ### Fast-Track Flow — skip planning, keep all gates
 
 > Start with: `/sk:fast-track`
 
-```
-  /sk:brainstorm ····  SKIPPED                                         ·
-  /sk:write-plan ····  SKIPPED                                         ·
-  /sk:write-tests ···  SKIPPED                                         ·
-  /sk:branch ········ Create feature branch                            BUILD
-  implement directly · No TDD — write code                             BUILD
-  /sk:smart-commit ·· Conventional commit                              BUILD
-  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
-  /sk:finish-feature · Changelog + PR                                  SHIP
-```
+| Step | Command | What it does | Phase |
+|------|---------|-------------|-------|
+| ~~1~~ | ~~/sk:brainstorm~~ | **Skipped** | — |
+| ~~2~~ | ~~/sk:write-plan~~ | **Skipped** | — |
+| ~~3~~ | ~~/sk:write-tests~~ | **Skipped** | — |
+| 4 | `/sk:branch` | Create feature branch | Build |
+| 5 | implement directly | No TDD — write code | Build |
+| 6 | `/sk:smart-commit` | Conventional commit | Build |
+| 7 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
+| 8 | `/sk:finish-feature` | Changelog + PR | Ship |
 
 Guard rails: warns if diff > 300 lines or > 5 new files.
+
+---
 
 ### Bug Fix Flow — investigate first, then fix
 
 > Start with: `/sk:debug`
 
-```
-  /sk:brainstorm ····  SKIPPED                                         ·
-  /sk:write-plan ····  SKIPPED                                         ·
-  /sk:debug ········· Reproduce → isolate → hypothesize → verify       THINK
-  /sk:branch ········ Create fix branch                                BUILD
-  /sk:write-tests ··· Regression test that reproduces the bug          BUILD
-  implement the fix ·· Make regression test pass                       BUILD
-  /sk:smart-commit ·· Commit fix + test                                BUILD
-  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
-  /sk:finish-feature · Changelog + PR                                  SHIP
-```
+| Step | Command | What it does | Phase |
+|------|---------|-------------|-------|
+| ~~1~~ | ~~/sk:brainstorm~~ | **Skipped** | — |
+| ~~2~~ | ~~/sk:write-plan~~ | **Skipped** | — |
+| 3 | `/sk:debug` | Reproduce, isolate, hypothesize, verify | Think |
+| 4 | `/sk:branch` | Create fix branch | Build |
+| 5 | `/sk:write-tests` | Regression test that reproduces the bug | Build |
+| 6 | implement the fix | Make regression test pass | Build |
+| 7 | `/sk:smart-commit` | Commit fix + test | Build |
+| 8 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
+| 9 | `/sk:finish-feature` | Changelog + PR | Ship |
+
+---
 
 ### Hotfix Flow — production emergency
 
 > Start with: `/sk:hotfix`
 
-```
-  /sk:brainstorm ····  SKIPPED                                         ·
-  /sk:write-plan ····  SKIPPED                                         ·
-  /sk:write-tests ···  SKIPPED                                         ·
-  /sk:debug ········· Root-cause analysis                              THINK
-  /sk:branch ········ Create hotfix branch                             BUILD
-  implement directly · Fix the issue                                   BUILD
-  run existing tests · Must still pass                                 BUILD
-  /sk:smart-commit ·· Commit the fix                                   BUILD
-  /sk:gates ········· All 6 quality gates (parallel)                   VERIFY
-  /sk:finish-feature · Changelog + PR (marked as hotfix)               SHIP
-```
+| Step | Command | What it does | Phase |
+|------|---------|-------------|-------|
+| ~~1~~ | ~~/sk:brainstorm~~ | **Skipped** | — |
+| ~~2~~ | ~~/sk:write-plan~~ | **Skipped** | — |
+| ~~3~~ | ~~/sk:write-tests~~ | **Skipped** | — |
+| 4 | `/sk:debug` | Root-cause analysis | Think |
+| 5 | `/sk:branch` | Create hotfix branch | Build |
+| 6 | implement directly | Fix the issue | Build |
+| 7 | run existing tests | Must still pass | Build |
+| 8 | `/sk:smart-commit` | Commit the fix | Build |
+| 9 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
+| 10 | `/sk:finish-feature` | Changelog + PR (marked as hotfix) | Ship |
 
 After merging: add regression test + lesson to `tasks/lessons.md`.
+
+---
 
 ### Requirement Change — mid-workflow pivot
 
 > Run: `/sk:change` — it classifies scope and re-enters at the right step
 
-```
-  Tier 1 — Behavior tweak (same scope)    → re-enter at /sk:write-tests
-  Tier 2 — New requirements (new scope)   → re-enter at /sk:write-plan
-  Tier 3 — Scope shift (rethink)          → re-enter at /sk:brainstorm
-```
+| Tier | What changed | Example | Re-entry point |
+|------|-------------|---------|----------------|
+| **Tier 1** | Behavior tweak (same scope) | "Delete all" → "Delete users only" | `/sk:write-tests` |
+| **Tier 2** | New requirements (new scope) | "Also add export to CSV" | `/sk:write-plan` |
+| **Tier 3** | Scope shift (rethink) | "Different approach entirely" | `/sk:brainstorm` |
 
 ---
 
@@ -152,14 +160,14 @@ After merging: add regression test + lesson to `tasks/lessons.md`.
 
 One command runs all 6 gates in parallel batches:
 
-```
-  Batch 1 (parallel):  lint + security + perf     ← independent, run simultaneously
-  Batch 2:             tests                       ← needs lint fixes first
-  Batch 3:             code review                 ← needs deep understanding
-  Batch 4:             E2E Tests                   ← needs review fixes
-```
+| Batch | Gates | Why this order |
+|-------|-------|---------------|
+| **1** (parallel) | lint + security + perf | Independent — run simultaneously |
+| **2** | tests | Needs lint fixes first |
+| **3** | code review | Needs deep understanding |
+| **4** | E2E Tests | Needs review fixes |
 
-Each gate auto-fixes → auto-commits → re-runs until clean. If a gate fails 3 times, it stops and asks for help.
+Each gate auto-fixes, auto-commits, and re-runs until clean. If a gate fails 3 times, it stops and asks for help.
 
 Pre-existing issues are logged to `tasks/tech-debt.md` — not fixed inline.
 
