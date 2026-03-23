@@ -41,210 +41,338 @@ Works on Mac, Linux, and Windows.
 
 ---
 
+## What is ShipKit?
+
+ShipKit is a collection of slash commands that turn Claude Code into a disciplined development partner. Instead of asking Claude to "write some code," you follow a structured workflow where every feature goes through:
+
+1. **Planning** — brainstorm, design, write a plan
+2. **Implementation** — TDD (write tests first, then code)
+3. **Quality gates** — lint, test, security audit, performance check, code review, E2E tests
+4. **Shipping** — changelog, PR, release
+
+Each gate must pass before the next step. If lint fails, fix it. If tests don't cover new code, write them. Security issues block the PR. This forces quality into the process rather than hoping for it at the end.
+
+**ShipKit auto-detects your stack** — no configuration needed. It finds your linters, test runners, frameworks, and package managers automatically.
+
+---
+
 ## Quick Start
 
 ```bash
 # 1. Install ShipKit globally
 npm install -g @kennethsolomon/shipkit && shipkit
 
-# 2. Bootstrap your project (run inside your project directory)
+# 2. Open your project in Claude Code, then bootstrap it
 /sk:setup-claude
 
 # 3. Start your first feature
 /sk:brainstorm
 ```
 
-`/sk:setup-claude` creates `tasks/todo.md`, `tasks/lessons.md`, and a project-specific `CLAUDE.md` with the full workflow baked in. Run it once per project.
+`/sk:setup-claude` creates `tasks/todo.md`, `tasks/lessons.md`, a project-specific `CLAUDE.md` with the full workflow, lifecycle hooks, path-scoped rules, and a persistent statusline. Run it once per project.
 
 ---
 
-## How It Works
+## Which Flow Should I Use?
 
-ShipKit installs slash commands and skills into `~/.claude/`. Each command is a focused instruction set that Claude follows — no magic, just structured prompts that enforce quality gates.
+ShipKit has 5 workflows. Pick the one that matches your situation:
 
-The workflow is linear: **Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features**
+| Situation | Flow | Command | Steps |
+|-----------|------|---------|-------|
+| **Building a new feature** | Full Workflow | `/sk:brainstorm` | 21 steps — full planning + TDD + all gates |
+| **Small, obvious change** (config, typo, deps) | Fast-Track | `/sk:fast-track` | 6 steps — skip planning, keep all gates |
+| **Fixing a bug** | Bug Fix | `/sk:debug` | 11 steps — investigate first, then fix |
+| **Production emergency** | Hotfix | `/sk:hotfix` | 11 steps — skip TDD, gates still enforced |
+| **Requirements changed mid-work** | Change | `/sk:change` | Re-enter at the right step |
 
-Every gate must pass before the next step. If lint fails, fix it. If tests don't cover new code, write them. Security issues block the PR. This isn't optional — it's the whole point.
-
-**Requirements change mid-workflow?** Run `/sk:change`. It assesses the scope and tells you exactly where to re-enter — no guessing, no skipping steps.
-
----
-
-## Workflow
-
-### Feature Flow
-
-```
-Brainstorm → Plan → Branch → [Schema] → Write Tests → Implement → Commit
-  → Lint ✓ → Test ✓ → Security ✓ → Review ✓ → E2E ✓ → Update Task → Finish → Sync Features
-```
-
-| # | Command | Purpose |
-|---|---------|---------|
-| 1 | read `tasks/todo.md` | Pick the next task |
-| 2 | read `tasks/lessons.md` | Review past corrections |
-| 3 | `/sk:brainstorm` | Clarify requirements — no code |
-| 4 | `/sk:frontend-design` or `/sk:api-design` | Design spec *(skip if not needed)*. Frontend: add `--pencil` for Pencil visual mockup. API: REST/GraphQL contracts. |
-| 5 | `/sk:accessibility` | WCAG 2.1 AA audit on design *(skip if no frontend)* |
-| 6 | `/sk:write-plan` | Write plan to `tasks/todo.md` |
-| 7 | `/sk:branch` | Create branch from current task |
-| 8 | `/sk:schema-migrate` | Schema change analysis *(skip if no DB changes)* |
-| 9 | `/sk:write-tests` | TDD red: write failing tests first |
-| 10 | `/sk:execute-plan` | TDD green: make tests pass |
-| 11 | `/sk:smart-commit` | Conventional commit |
-| 12 | **`/sk:lint`** | **GATE** — Lint + Dep Audit — all linters must pass |
-| 13 | **`/sk:test`** | **GATE** — 100% coverage on new code |
-| 14 | **`/sk:security-check`** | **GATE** — 0 issues |
-| 15 | **`/sk:perf`** | **GATE** *(optional)* — critical/high findings = 0 |
-| 16 | **`/sk:review`** | **GATE** — Review + Simplify + Blast Radius — 0 issues including nitpicks |
-| 17 | **`/sk:e2e`** | **GATE** — E2E Tests — prefers Playwright CLI when config detected, falls back to agent-browser; all scenarios must pass |
-| 18 | `/sk:update-task` | Mark done, log completion |
-| 19 | `/sk:finish-feature` | Changelog + PR |
-| 20 | `/sk:features` | Sync Features — update docs/features/ specs *(required)* |
-| 21 | `/sk:release` | Version bump + tag *(optional)* |
-
-> **Fix & Retest Protocol:** All code-producing gates (Lint, Test, Security, Performance, Review, E2E) apply the Fix & Retest Protocol: logic changes require updating unit tests before committing the fix. Fix immediately, then re-run — never ask the user to re-run.
-
-### Bug Fix Flow
-
-```
-Debug → Plan → Branch → Write Tests → Implement → Lint ✓ → Test ✓ → Security ✓ → Review ✓ → Finish
-```
-
-| # | Command | Purpose |
-|---|---------|---------|
-| 1 | `/sk:debug` | Root-cause analysis |
-| 2 | `/sk:write-plan` | Fix plan |
-| 3 | `/sk:branch` | Create branch |
-| 4 | `/sk:write-tests` | Reproduce the bug in a test |
-| 5 | `/sk:execute-plan` | Fix — make the test pass |
-| 6–10 | `/sk:lint` → `/sk:test` → `/sk:security-check` → `/sk:review` → `/sk:e2e` | Quality gates |
-| 11 | `/sk:finish-feature` | Changelog + PR |
-
-### Hotfix Flow
-
-For production issues that need to ship immediately. Skips brainstorm, design, and TDD. **Quality gates are non-negotiable even in a hotfix.**
-
-```
-Debug → Branch → Fix → Smoke Test → Lint ✓ → Test ✓ → Security ✓ → Review ✓ → Finish
-```
-
-| # | Command | Purpose |
-|---|---------|---------|
-| 1 | `/sk:debug` | Root-cause analysis — understand before touching code |
-| 2 | `/sk:branch` | Auto-named from the bug description |
-| 3 | implement directly | No write-tests phase — go straight to the fix |
-| 4 | run existing tests | Existing tests MUST still pass |
-| 5 | `/sk:smart-commit` | Commit the fix |
-| 6 | **`/sk:lint`** | **GATE** |
-| 7 | **`/sk:test`** | **GATE** |
-| 8 | **`/sk:security-check`** | **GATE** |
-| 9 | **`/sk:review`** | **GATE** |
-| 10 | `/sk:update-task` | Mark done |
-| 11 | `/sk:finish-feature` | Changelog + PR — mark as hotfix |
-
-After merging: add a regression test and a lesson to `tasks/lessons.md`.
-
-### Requirement Change Flow
-
-Requirements change mid-workflow all the time. Run `/sk:change` whenever something shifts — it classifies the scope and routes you back to the right step automatically.
-
-```
-Requirement changes → /sk:change → re-enter at correct step
-```
-
-| Tier | What changed | Re-entry point |
-|------|-------------|----------------|
-| **Tier 1** — Behavior Tweak | Logic changes, scope stays the same *(e.g. delete all → delete users only)* | `/sk:write-tests` |
-| **Tier 2** — New Requirements | New scope, new constraints, new acceptance criteria | `/sk:write-plan` |
-| **Tier 3** — Scope Shift | Fundamental rethinking of approach or architecture | `/sk:brainstorm` |
-
-`/sk:change` logs the change to `tasks/todo.md` and `tasks/progress.md`, marks invalidated tasks, and tells you exactly what to carry forward.
+**Not sure?** Start with `/sk:brainstorm`. If the change turns out to be small, you can always switch to `/sk:fast-track`.
 
 ---
 
-## Commands
+## Workflows in Detail
 
-### Planning & Design
+### 1. Full Feature Flow
 
-| Command | Description |
-|---------|-------------|
-| `/sk:brainstorm` | Explore requirements and design before writing any code |
-| `/sk:frontend-design` | Create UI design specs and mockups. After the design summary, it asks if you want a Pencil visual mockup. Use `--pencil` flag to jump directly to the Pencil phase *(requires Pencil app + MCP)* |
-| `/sk:api-design` | Design REST or GraphQL API contracts |
-| `/sk:accessibility` | WCAG 2.1 AA audit on design or existing frontend |
-| `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |
-| `/sk:plan` | Create or refresh task planning files |
-| `/sk:setup-claude` | Bootstrap project scaffolding (CLAUDE.md + tasks/) |
-| `/sk:setup-optimizer` | Enrich CLAUDE.md by scanning the codebase |
-| `/sk:reverse-doc` | Generate architecture/design docs from existing code |
+Use this for any new feature, significant refactor, or change that needs design thinking.
 
-### Development
+```
+/sk:brainstorm → /sk:write-plan → /sk:branch → /sk:write-tests → /sk:execute-plan
+  → /sk:smart-commit → /sk:gates → /sk:update-task → /sk:finish-feature
+```
 
-| Command | Description |
-|---------|-------------|
-| `/sk:branch` | Create a feature branch from the current task |
-| `/sk:schema-migrate` | Analyze pending schema changes (Prisma, Drizzle, Eloquent, SQLAlchemy, ActiveRecord) |
-| `/sk:write-tests` | TDD: write failing tests before implementation |
-| `/sk:execute-plan` | Implement the plan in small batches |
-| `/sk:change` | Handle a mid-workflow requirement change — assess scope and re-enter at the right step |
-| `/sk:debug` | Structured bug investigation: reproduce → isolate → fix |
-| `/sk:hotfix` | Emergency fix workflow — skips design and TDD |
-| `/sk:fast-track` | Abbreviated workflow for small changes — skip planning, keep all gates |
+**Step by step:**
 
-### Prototyping
+| Phase | Step | Command | What it does |
+|-------|------|---------|-------------|
+| **Think** | 1 | read `tasks/todo.md` | Pick the next task |
+| | 2 | read `tasks/lessons.md` | Review past mistakes to avoid repeating them |
+| | 3 | `/sk:brainstorm` | Explore requirements — ask questions, propose approaches, get alignment. No code. |
+| | 4 | `/sk:frontend-design` or `/sk:api-design` | Design mockup or API contract. Skip if not needed. Use `--pencil` for Pencil visual mockups. |
+| | 5 | `/sk:accessibility` | WCAG 2.1 AA audit on the design. Skip if backend-only. |
+| | 6 | `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` with milestones and waves. |
+| **Build** | 7 | `/sk:branch` | Create a feature branch auto-named from the task. |
+| | 8 | `/sk:schema-migrate` | Analyze database schema changes. Auto-skips if no migrations detected. |
+| | 9 | `/sk:write-tests` | TDD red phase — write failing tests that define expected behavior. |
+| | 10 | `/sk:execute-plan` | TDD green phase — implement code to make tests pass. Uses sub-agents for parallel work. |
+| | 11 | `/sk:smart-commit` | Stage changes and generate a conventional commit message for approval. |
+| **Verify** | 12-17 | `/sk:gates` | Run ALL quality gates in one command (see [Quality Gates](#quality-gates) below). |
+| **Ship** | 18 | `/sk:update-task` | Mark task done in `tasks/todo.md`, log completion. |
+| | 19 | `/sk:finish-feature` | Update CHANGELOG, create architectural changelog if needed, push branch, create PR. |
+| | 20 | `/sk:features` | Sync `docs/sk:features/` specs with what was actually shipped. |
+| | 21 | `/sk:release` | Bump version, create git tag, push. Optional — skip if not releasing yet. |
 
-| Command | Description |
-|---------|-------------|
-| `/sk:mvp` | Generate a complete MVP from a single idea prompt — landing page with waitlist + working app with fake data. Supports Next.js, Nuxt, Laravel, React+Vite. Optional Pencil MCP design phase and Playwright MCP visual validation. |
+**After shipping (recommended):** Run `/sk:retro` to analyze what went well, what didn't, and generate action items for next time.
 
-### Quality Gates
+---
 
-| Command | Description |
-|---------|-------------|
-| `/sk:lint` | Auto-detect and run all linters (Pint, ESLint, PHPStan, Prettier…) |
-| `/sk:test` | Auto-detect and run all test suites, verify 100% coverage on new code |
-| `/sk:security-check` | OWASP security audit across changed code |
-| `/sk:perf` | Performance audit: bundle size, N+1 queries, Core Web Vitals |
-| `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
-| `/sk:review` | Blast-radius-aware self-review across 7 dimensions + cross-file impact analysis |
-| `/sk:gates` | Run all quality gates in optimized parallel batches |
-| `/sk:scope-check` | Compare implementation against plan, detect scope creep |
+### 2. Fast-Track Flow
 
-### Shipping
+Use this for small, obvious changes where the "what" is already clear: config changes, dependency bumps, copy/wording edits, small refactors, adding a missing test.
 
-| Command | Description |
-|---------|-------------|
-| `/sk:smart-commit` | Generate conventional commit messages with approval |
-| `/sk:update-task` | Mark current task done, log completion |
-| `/sk:finish-feature` | Write changelog entry + create PR |
-| `/sk:release` | Version bump + CHANGELOG + git tag + push |
-| `/sk:features` | Sync docs/features/ specs with the codebase |
-| `/sk:retro` | Post-ship retrospective: velocity, blockers, action items |
+```bash
+/sk:fast-track
+```
 
-### Laravel
+That's it — one command. It handles:
 
-| Command | Description |
-|---------|-------------|
-| `/sk:laravel-new` | Scaffold a fresh Laravel app with production-ready conventions |
-| `/sk:laravel-init` | Configure an existing Laravel project |
+1. Create branch
+2. Implement directly (no brainstorm, no design, no TDD)
+3. Commit with conventional message
+4. Run ALL quality gates via `/sk:gates`
+5. Create PR
 
-### Configuration
+**Guard rails:** If your diff exceeds 300 lines or creates more than 5 new files, it warns you to consider the full workflow.
 
-| Command | Description |
-|---------|-------------|
-| `/sk:config` | View and edit project config (`.shipkit/config.json`) |
-| `/sk:set-profile` | Switch model routing profile for this project |
+**Still enforces all quality gates.** Fast-track skips the planning ceremony, not the quality checks.
 
-### Meta
+---
 
-| Command | Description |
-|---------|-------------|
-| `/sk:help` | Show all commands and workflow overview |
-| `/sk:status` | Show workflow and task status at a glance |
-| `/sk:dashboard` | Read-only workflow Kanban board — localhost server, multi-worktree |
-| `/sk:context` | Load all context files + output session brief for fast session start |
-| `/sk:skill-creator` | Create or improve ShipKit skills |
+### 3. Bug Fix Flow
+
+Use this when something is broken and you need to investigate before fixing.
+
+```
+/sk:debug → /sk:branch → /sk:write-tests → fix → /sk:smart-commit → /sk:gates → /sk:finish-feature
+```
+
+| Step | Command | What it does |
+|------|---------|-------------|
+| 1 | `/sk:debug` | Structured investigation: reproduce → isolate → hypothesize → verify. Logs findings. |
+| 2 | `/sk:branch` | Create a fix branch. |
+| 3 | `/sk:write-tests` | Write a regression test that reproduces the bug (it should fail). |
+| 4 | implement the fix | Make the regression test pass. |
+| 5 | `/sk:smart-commit` | Commit the fix + test together. |
+| 6 | `/sk:gates` | Run all quality gates. |
+| 7 | `/sk:finish-feature` | Create PR. |
+
+---
+
+### 4. Hotfix Flow
+
+Use this for production emergencies that need to ship immediately. Skips brainstorm, design, and TDD — but quality gates are still enforced.
+
+```bash
+/sk:hotfix
+```
+
+| Step | Command | What it does |
+|------|---------|-------------|
+| 1 | `/sk:debug` | Understand the root cause before touching code. |
+| 2 | `/sk:branch` | Create branch. |
+| 3 | implement directly | Fix the issue — no write-tests phase. |
+| 4 | run existing tests | Existing tests MUST still pass. |
+| 5 | `/sk:smart-commit` | Commit the fix. |
+| 6 | `/sk:gates` | All quality gates run. |
+| 7 | `/sk:finish-feature` | Create PR marked as hotfix. |
+
+**After merging:** Add a regression test and a lesson to `tasks/lessons.md` so it doesn't happen again.
+
+---
+
+### 5. Requirement Change Flow
+
+Requirements change mid-workflow all the time. Don't start over — run `/sk:change`.
+
+```bash
+/sk:change
+```
+
+It classifies the scope and routes you back to the right step automatically:
+
+| Tier | What changed | Example | Re-entry point |
+|------|-------------|---------|----------------|
+| **Tier 1** — Behavior Tweak | Logic changes, scope stays the same | "Delete all" → "Delete users only" | `/sk:write-tests` |
+| **Tier 2** — New Requirements | New scope, new constraints | "Also add export to CSV" | `/sk:write-plan` |
+| **Tier 3** — Scope Shift | Fundamental rethinking | "Actually, let's use a different approach entirely" | `/sk:brainstorm` |
+
+---
+
+## Quality Gates
+
+Quality gates are the core of ShipKit. Every change — whether full workflow, fast-track, bug fix, or hotfix — must pass these gates before merging.
+
+### Running gates individually
+
+You can run each gate separately:
+
+| Command | What it checks | Blocks on |
+|---------|---------------|-----------|
+| `/sk:lint` | All detected linters + dependency vulnerability audit | Any lint error or high/critical vulnerability |
+| `/sk:test` | All detected test suites | Any test failure or <100% coverage on new code |
+| `/sk:security-check` | OWASP Top 10 audit on changed files | Any security finding |
+| `/sk:perf` | Bundle size, N+1 queries, Core Web Vitals, memory leaks | Critical or high findings |
+| `/sk:review` | 7-dimension code review with blast-radius analysis | Any issue including nitpicks |
+| `/sk:e2e` | E2E Tests — end-to-end behavioral verification (Playwright or agent-browser) | Any failing scenario |
+
+### Running all gates at once
+
+```bash
+/sk:gates
+```
+
+This single command replaces running 6 gates manually. It runs them in optimized parallel batches:
+
+| Batch | Gates | Why this order |
+|-------|-------|---------------|
+| **Batch 1** (parallel) | lint + security + perf | Independent — no dependencies on each other |
+| **Batch 2** | test | Needs lint fixes applied first |
+| **Batch 3** | review | Needs deep code understanding — runs in main context |
+| **Batch 4** | e2e | Needs review fixes applied |
+
+Each gate auto-fixes issues, auto-commits fixes, and re-runs until clean. You don't need to do anything — just wait for the results.
+
+### How gates fix issues
+
+When a gate finds a problem:
+1. It fixes the issue automatically
+2. Commits with a descriptive message (e.g., `fix(lint): resolve lint issues`)
+3. Re-runs the gate from scratch
+4. Repeats until clean
+
+If a gate fails 3 times, it stops and asks you for help (3-strike protocol).
+
+**Pre-existing issues** (problems that existed before your branch) are logged to `tasks/tech-debt.md` instead of being fixed inline — they're out of scope for your current task.
+
+---
+
+## On-Demand Tools
+
+These commands aren't part of any workflow — use them whenever you need them.
+
+### Scope Check
+
+```bash
+/sk:scope-check
+```
+
+Run mid-implementation to check if you're building more than planned. Compares your actual changes against `tasks/todo.md` and classifies scope creep:
+
+| Classification | Bloat % | What it means |
+|---------------|---------|---------------|
+| **On Track** | 0-10% | Normal — minor supporting changes |
+| **Minor Creep** | 10-25% | Some unplanned additions — review if necessary |
+| **Significant Creep** | 25-50% | Scope has grown substantially — consider splitting |
+| **Out of Control** | >50% | More unplanned than planned — stop and reassess with `/sk:change` |
+
+### Retrospective
+
+```bash
+/sk:retro
+```
+
+Run after shipping a feature to analyze what happened:
+- Completion rate (planned vs. actual tasks)
+- Velocity (commits/day, files changed/day)
+- Blocker analysis (errors from `tasks/progress.md`)
+- Gate performance (how many attempts before clean)
+- 3-5 action items for next time
+
+Saves to `tasks/retro-YYYY-MM-DD.md`. Reads previous retros to detect recurring patterns.
+
+### Reverse Documentation
+
+```bash
+/sk:reverse-doc architecture src/core/
+/sk:reverse-doc design src/components/auth/
+/sk:reverse-doc api routes/
+```
+
+Generate documentation from existing code — works backwards from implementation. Useful when:
+- Onboarding to an inherited codebase with no docs
+- Formalizing a prototype into documented design
+- Capturing the "why" before a major refactor
+
+It analyzes the code, asks you clarifying questions (to distinguish intent from accident), then drafts documentation for your approval.
+
+### Other Tools
+
+| Command | When to use |
+|---------|------------|
+| `/sk:context` | Load all project context at session start (automatic via hooks, but can run manually) |
+| `/sk:status` | Quick view of workflow and task status |
+| `/sk:dashboard` | Visual Kanban board showing workflow status across all git worktrees |
+| `/sk:mvp` | Generate a complete MVP app from a single idea prompt |
+| `/sk:seo-audit` | SEO audit for web projects |
+
+---
+
+## Infrastructure (What `/sk:setup-claude` Creates)
+
+When you run `/sk:setup-claude`, it detects your stack and creates:
+
+### Planning Files (`tasks/`)
+
+| File | Purpose |
+|------|---------|
+| `tasks/todo.md` | Current task plan with checkboxes |
+| `tasks/findings.md` | Discoveries from brainstorming |
+| `tasks/progress.md` | Work log — every attempt, error, and resolution |
+| `tasks/lessons.md` | Past mistakes and how to avoid them (append-only) |
+| `tasks/workflow-status.md` | Tracks which workflow step you're on |
+| `tasks/tech-debt.md` | Pre-existing issues found by gates (append-only) |
+
+### Lifecycle Hooks (`.claude/hooks/`)
+
+Hooks fire automatically — no manual invocation needed.
+
+| Hook | When it fires | What it does |
+|------|--------------|-------------|
+| `session-start.sh` | Every session start | Loads branch, workflow step, tech debt count, code health |
+| `pre-compact.sh` | Before context compression | Preserves workflow state so you don't lose track |
+| `validate-commit.sh` | Before every commit | Checks conventional commit format, detects debug statements and secrets |
+| `validate-push.sh` | Before every push | Warns when pushing to protected branches (main, master, production) |
+| `log-agent.sh` | When a sub-agent starts | Logs agent invocations to `tasks/agent-audit.log` |
+| `session-stop.sh` | When session ends | Logs session accomplishments to `tasks/progress.md` |
+
+### Gate Agents (`.claude/agents/`)
+
+Specialized agents that run quality gates as isolated sub-processes:
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `linter` | Haiku | Run linters + dependency audits (mechanical — fast model) |
+| `test-runner` | Sonnet | Run test suites, fix failures, verify coverage |
+| `security-auditor` | Sonnet | OWASP audit on changed files |
+| `perf-auditor` | Sonnet | Performance audit (N+1, bundle, memory) |
+| `e2e-tester` | Sonnet | End-to-end behavioral verification |
+
+### Path-Scoped Rules (`.claude/rules/`)
+
+Rules that auto-activate based on which files you're editing:
+
+| Rule | Activates on | What it enforces |
+|------|-------------|-----------------|
+| `tests.md` | `tests/`, `test/`, `__tests__/` | Naming conventions, arrange/act/assert, coverage requirements |
+| `api.md` | `routes/api/`, `src/api/` | Input validation, error responses, auth patterns |
+| `frontend.md` | `resources/`, `src/components/` | Component structure, accessibility, state management |
+| `laravel.md` | `app/`, `routes/`, `database/` | Eloquent patterns, form requests, service layer (Laravel only) |
+| `react.md` | `src/components/`, `src/hooks/` | Hooks rules, component patterns, TypeScript (React only) |
+
+### Other Files
+
+- **`CLAUDE.md`** — Project-specific instructions with the full workflow baked in
+- **`.claude/settings.json`** — Hook configuration, permissions, statusline
+- **`.claude/statusline.sh`** — Persistent CLI status showing context %, model, workflow step, branch, task
 
 ---
 
@@ -301,6 +429,55 @@ ShipKit routes each skill to the right model automatically. Set it once per proj
 
 ---
 
+## All Commands Reference
+
+| Command | Purpose |
+|---------|---------|
+| `/sk:accessibility` | WCAG 2.1 AA audit — runs after design, before implementation |
+| `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) before implementation |
+| `/sk:brainstorm` | Explore requirements and design |
+| `/sk:branch` | Create feature branch auto-named from current task |
+| `/sk:change` | Handle mid-workflow requirement changes — re-enter at correct step |
+| `/sk:config` | View and edit project config (`.shipkit/config.json`) |
+| `/sk:context` | Load all context files + output session brief for fast session start |
+| `/sk:dashboard` | Read-only workflow Kanban board — localhost server, multi-worktree |
+| `/sk:debug` | Investigate and debug issues (bug fix entry point) |
+| `/sk:e2e` | E2E behavioral verification using agent-browser (final quality gate) |
+| `/sk:execute-plan` | Execute `tasks/todo.md` checkboxes in batches |
+| `/sk:fast-track` | Abbreviated workflow for small changes — skip planning, keep all gates |
+| `/sk:features` | Sync feature specs with shipped implementation |
+| `/sk:finish-feature` | Changelog + PR creation |
+| `/sk:frontend-design` | UI mockup before implementation. Prompts to create Pencil visual mockup |
+| `/sk:gates` | Run all quality gates in optimized parallel batches |
+| `/sk:help` | Show all commands and workflow overview |
+| `/sk:hotfix` | Emergency fix workflow — skip design/TDD, quality gates enforced |
+| `/sk:laravel-init` | Configure existing Laravel project with opinionated conventions |
+| `/sk:laravel-new` | Scaffold fresh Laravel app |
+| `/sk:lint` | Auto-detect and run all project linters + dependency audits |
+| `/sk:mvp` | Generate complete MVP validation app from a prompt |
+| `/sk:perf` | Performance audit — bundle, N+1, Core Web Vitals, memory |
+| `/sk:plan` | Create or refresh task planning files |
+| `/sk:release` | Version bump + changelog + tag. Use `--android` / `--ios` for store audit. |
+| `/sk:retro` | Post-ship retrospective: velocity, blockers, action items |
+| `/sk:reverse-doc` | Generate architecture/design docs from existing code |
+| `/sk:review` | Self-review with simplify pre-pass + multi-dimensional review |
+| `/sk:schema-migrate` | Multi-ORM schema change analysis |
+| `/sk:scope-check` | Compare implementation against plan, detect scope creep |
+| `/sk:security-check` | OWASP security audit on changed files |
+| `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server) |
+| `/sk:set-profile` | Switch model routing profile for this project |
+| `/sk:setup-claude` | Bootstrap project scaffolding (CLAUDE.md + tasks/ + hooks + rules) |
+| `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
+| `/sk:skill-creator` | Create or improve ShipKit skills |
+| `/sk:smart-commit` | Conventional commit with approval |
+| `/sk:status` | Show workflow + task status |
+| `/sk:test` | Auto-detect and run all project test suites |
+| `/sk:update-task` | Mark task done and log completion |
+| `/sk:write-plan` | Write decision-complete plan into `tasks/todo.md` |
+| `/sk:write-tests` | TDD: Write failing tests before implementation |
+
+---
+
 ## Stack Support
 
 ShipKit auto-detects your stack — no configuration needed.
@@ -335,6 +512,8 @@ ShipKit instructs Claude to audit your code — but Claude also has access to yo
 ```
 
 This prevents Claude from reading secrets even if a prompt tries to access them. Pair this with your `.gitignore` — never commit `.env` files.
+
+ShipKit also deploys a `validate-commit.sh` hook that warns about hardcoded secrets in staged changes before every commit.
 
 If you discover a security issue in ShipKit itself, please open a [GitHub issue](https://github.com/kennethsolomon/shipkit/issues) or email directly rather than posting publicly.
 
