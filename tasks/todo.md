@@ -25,7 +25,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 1 (parallel — all test groups are independent)
 
-- [ ] Add assertions for **lifecycle hooks** to `tests/verify-workflow.sh`:
+- [x] Add assertions for **lifecycle hooks** to `tests/verify-workflow.sh`:
   - `assert_file_exists` — `skills/sk:setup-claude/templates/hooks/session-start.sh`
   - `assert_file_exists` — `skills/sk:setup-claude/templates/hooks/pre-compact.sh`
   - `assert_file_exists` — `skills/sk:setup-claude/templates/hooks/validate-commit.sh`
@@ -37,7 +37,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - `assert_contains` — `validate-commit.sh` contains `"conventional commit"`
   - `assert_contains` — `validate-push.sh` contains `"protected"`
 
-- [ ] Add assertions for **settings.json template**:
+- [x] Add assertions for **settings.json template**:
   - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/settings.json.template`
   - `assert_contains` — settings template contains `"SessionStart"`
   - `assert_contains` — settings template contains `"PreCompact"`
@@ -46,17 +46,17 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - `assert_contains` — settings template contains `"Stop"`
   - `assert_contains` — settings template contains `"statusline"`
 
-- [ ] Add assertions for **path-scoped rules**:
+- [x] Add assertions for **path-scoped rules**:
   - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/rules/tests.md.template`
   - `assert_contains` — `tests.md.template` contains `"coverage"`
   - `assert_contains` — `skills/sk:setup-claude/SKILL.md` contains `"rules/"`
 
-- [ ] Add assertions for **statusline**:
+- [x] Add assertions for **statusline**:
   - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/statusline.sh`
   - `assert_contains` — `statusline.sh` contains `"workflow-status"`
   - `assert_contains` — `statusline.sh` contains `"Branch"`
 
-- [ ] Add assertions for **scope check skill**:
+- [x] Add assertions for **scope check skill**:
   - `assert_file_exists` — `skills/sk:scope-check/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"scope creep"` or `"scope bloat"`
   - `assert_contains` — `SKILL.md` contains `"On Track"`
@@ -65,20 +65,20 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - `assert_contains` — `SKILL.md` contains `"Out of Control"`
   - `assert_contains` — `SKILL.md` contains `"tasks/todo.md"`
 
-- [ ] Add assertions for **retrospective skill**:
+- [x] Add assertions for **retrospective skill**:
   - `assert_file_exists` — `skills/sk:retro/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"velocity"`
   - `assert_contains` — `SKILL.md` contains `"blocker"`
   - `assert_contains` — `SKILL.md` contains `"action item"`
   - `assert_contains` — `SKILL.md` contains `"tasks/progress.md"`
 
-- [ ] Add assertions for **reverse document skill**:
+- [x] Add assertions for **reverse document skill**:
   - `assert_file_exists` — `skills/sk:reverse-doc/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"existing code"`
   - `assert_contains` — `SKILL.md` contains `"architecture"`
   - `assert_contains` — `SKILL.md` contains `"clarifying question"`
 
-- [ ] Add assertions for **gate agents**:
+- [x] Add assertions for **gate agents**:
   - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/linter.md`
   - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/test-runner.md`
   - `assert_file_exists` — `skills/sk:setup-claude/templates/.claude/agents/security-auditor.md`
@@ -88,23 +88,23 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - `assert_contains` — `test-runner.md` contains `"coverage"`
   - `assert_contains` — `security-auditor.md` contains `"OWASP"`
 
-- [ ] Add assertions for **gates orchestrator**:
+- [x] Add assertions for **gates orchestrator**:
   - `assert_file_exists` — `skills/sk:gates/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"parallel"`
   - `assert_contains` — `SKILL.md` contains `"Batch 1"`
   - `assert_contains` — `SKILL.md` contains `"workflow-status"`
 
-- [ ] Add assertions for **fast-track flow**:
+- [x] Add assertions for **fast-track flow**:
   - `assert_file_exists` — `skills/sk:fast-track/SKILL.md`
   - `assert_contains` — `SKILL.md` contains `"/sk:gates"`
   - `assert_contains` — `SKILL.md` contains `"300 lines"`
   - `assert_contains` — `SKILL.md` contains `"/sk:smart-commit"`
 
-- [ ] Add assertions for **cached detection**:
+- [x] Add assertions for **cached detection**:
   - `assert_contains` — `apply_setup_claude.py` contains `"detected_at"`
   - `assert_contains` — `apply_setup_claude.py` contains `"force-detect"`
 
-- [ ] Add assertions for **documentation updates** (all new commands in docs):
+- [x] Add assertions for **documentation updates** (all new commands in docs):
   - `assert_contains` — `CLAUDE.md` contains `"/sk:scope-check"`
   - `assert_contains` — `CLAUDE.md` contains `"/sk:retro"`
   - `assert_contains` — `CLAUDE.md` contains `"/sk:reverse-doc"`
@@ -127,38 +127,38 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 2a (parallel — all hook scripts are independent)
 
-- [ ] Create `skills/sk:setup-claude/templates/hooks/session-start.sh`
+- [x] Create `skills/sk:setup-claude/templates/hooks/session-start.sh`
   - Load branch name, recent 5 commits
   - Read `tasks/workflow-status.md` — find current step (the `>> next <<` row)
   - Read `tasks/tech-debt.md` — count unresolved entries
   - Count TODO/FIXME in src/ (if exists)
   - Output formatted context block
 
-- [ ] Create `skills/sk:setup-claude/templates/hooks/pre-compact.sh`
+- [x] Create `skills/sk:setup-claude/templates/hooks/pre-compact.sh`
   - Read and output `tasks/workflow-status.md` current state
   - Show git status (staged, unstaged, untracked)
   - Log compaction timestamp to `tasks/progress.md`
   - Output recovery guidance
 
-- [ ] Create `skills/sk:setup-claude/templates/hooks/validate-commit.sh`
+- [x] Create `skills/sk:setup-claude/templates/hooks/validate-commit.sh`
   - Parse commit message from stdin JSON (`tool_input.command`)
   - Validate conventional commit format (`type(scope): message`)
   - Check staged files for `console.log`, `dd(`, `var_dump(`, `debugger`, hardcoded secrets patterns
   - Warnings on stderr (non-blocking), block on invalid JSON data files
   - Exit 0 = allow, Exit 2 = block
 
-- [ ] Create `skills/sk:setup-claude/templates/hooks/validate-push.sh`
+- [x] Create `skills/sk:setup-claude/templates/hooks/validate-push.sh`
   - Parse push command from stdin JSON
   - Warn (stderr) when pushing to main, master, production, release branches
   - Warn on `--force` or `--force-with-lease`
   - Non-blocking (exit 0) — warnings only
 
-- [ ] Create `skills/sk:setup-claude/templates/hooks/log-agent.sh`
+- [x] Create `skills/sk:setup-claude/templates/hooks/log-agent.sh`
   - Parse `agent_name` from stdin JSON
   - Append timestamped entry to `tasks/agent-audit.log`
   - Exit 0 always
 
-- [ ] Create `skills/sk:setup-claude/templates/hooks/session-stop.sh`
+- [x] Create `skills/sk:setup-claude/templates/hooks/session-stop.sh`
   - Read `tasks/workflow-status.md` — find current step
   - Summarize uncommitted changes
   - Append session summary to `tasks/progress.md`
@@ -166,7 +166,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 2b (depends on 2a — settings template references hook paths)
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/settings.json.template`
+- [x] Create `skills/sk:setup-claude/templates/.claude/settings.json.template`
   - Define all 6 hooks with correct event types and matchers:
     - `SessionStart` → `hooks/session-start.sh`
     - `PreCompact` → `hooks/pre-compact.sh`
@@ -180,13 +180,13 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
     - Deny: rm -rf, git push --force, git reset --hard, sudo
   - Set appropriate timeouts (5-15s per hook)
 
-- [ ] Update `skills/sk:setup-claude/scripts/apply_setup_claude.py`
+- [x] Update `skills/sk:setup-claude/scripts/apply_setup_claude.py`
   - Add hook file deployment: copy from `templates/hooks/` to target `.claude/hooks/`
   - Add settings.json deployment: render template to target `.claude/settings.json` (mode: generated, marker-guarded)
   - Add statusline.sh deployment: copy to target `.claude/statusline.sh`
   - Preserve idempotency — don't overwrite custom hooks/settings
 
-- [ ] Update `skills/sk:setup-claude/SKILL.md`
+- [x] Update `skills/sk:setup-claude/SKILL.md`
   - Document new hook capabilities in Bootstrap Contract section
   - List all 6 hooks with descriptions
   - Document settings.json generation
@@ -198,23 +198,23 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 3a (parallel — rules and statusline are independent)
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/rules/tests.md.template`
+- [x] Create `skills/sk:setup-claude/templates/.claude/rules/tests.md.template`
   - Testing conventions: naming patterns, arrange/act/assert, coverage requirements
   - Applies to `tests/`, `test/`, `__tests__/`, `spec/`
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/rules/api.md.template`
+- [x] Create `skills/sk:setup-claude/templates/.claude/rules/api.md.template`
   - API conventions: input validation, error responses, auth patterns
   - Applies to `routes/api/`, `app/Http/Controllers/Api/`, `src/api/`
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/rules/frontend.md.template`
+- [x] Create `skills/sk:setup-claude/templates/.claude/rules/frontend.md.template`
   - Frontend conventions: component structure, state management, accessibility
   - Applies to `resources/`, `src/components/`, `app/components/`
 
-- [ ] Create stack-specific rule templates (conditional on detection):
+- [x] Create stack-specific rule templates (conditional on detection):
   - `skills/sk:setup-claude/templates/.claude/rules/laravel.md.template` — Eloquent patterns, service layer, form requests
   - `skills/sk:setup-claude/templates/.claude/rules/react.md.template` — hooks patterns, component patterns, state
 
-- [ ] Create `skills/sk:setup-claude/templates/.claude/statusline.sh`
+- [x] Create `skills/sk:setup-claude/templates/.claude/statusline.sh`
   - Parse JSON input (jq with grep fallback)
   - Show context window usage %
   - Show active model name
@@ -225,7 +225,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 3b (depends on 3a — apply script needs to know about rules)
 
-- [ ] Update `apply_setup_claude.py` for rules deployment
+- [x] Update `apply_setup_claude.py` for rules deployment
   - Add rules directory deployment based on detected stack
   - Laravel detected → deploy laravel.md + tests.md + api.md
   - React/Vue detected → deploy frontend.md + react.md + tests.md
@@ -238,7 +238,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 4 (parallel — all 3 skills are independent)
 
-- [ ] Create `skills/sk:scope-check/SKILL.md`
+- [x] Create `skills/sk:scope-check/SKILL.md`
   - Read `tasks/todo.md` — extract all planned tasks (checkboxes)
   - Run `git diff main..HEAD --stat` — get list of changed files
   - Compare planned scope vs. actual changes:
@@ -250,7 +250,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - Output structured report with recommendations
   - Tools: Read, Glob, Grep, Bash (git commands)
 
-- [ ] Create `skills/sk:retro/SKILL.md`
+- [x] Create `skills/sk:retro/SKILL.md`
   - Read `tasks/todo.md` — planned tasks
   - Read `tasks/progress.md` — actual progress, errors, resolutions
   - Read `tasks/workflow-status.md` — step-by-step status
@@ -266,7 +266,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - Check for previous retros — detect recurring patterns
   - Tools: Read, Glob, Grep, Bash (git commands), Write
 
-- [ ] Create `skills/sk:reverse-doc/SKILL.md`
+- [x] Create `skills/sk:reverse-doc/SKILL.md`
   - Accept argument: `<path>` — file, directory, or module to document
   - Phase 1: Analyze — read code, identify patterns, architecture, dependencies
   - Phase 2: Clarify — ask user 3-5 questions to distinguish intent from accident
@@ -282,26 +282,26 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 5 (parallel — all doc files are independent, but depend on Milestones 2-4 being done)
 
-- [ ] Update `CLAUDE.md` — add 3 new skills to commands table:
+- [x] Update `CLAUDE.md` — add 3 new skills to commands table:
   - `| /sk:scope-check | Compare implementation against plan, detect scope creep |`
   - `| /sk:retro | Post-ship retrospective: velocity, blockers, action items |`
   - `| /sk:reverse-doc | Generate architecture/design docs from existing code |`
 
-- [ ] Update `README.md` — add 3 new skills to commands section:
+- [x] Update `README.md` — add 3 new skills to commands section:
   - Add `/sk:scope-check` under "Quality Gates" category
   - Add `/sk:retro` under "Shipping" category
   - Add `/sk:reverse-doc` under "Planning & Design" category
 
-- [ ] Update `.claude/docs/DOCUMENTATION.md` — add skill descriptions:
+- [x] Update `.claude/docs/DOCUMENTATION.md` — add skill descriptions:
   - Add scope-check, retro, reverse-doc to skills section
   - Update "What's New" section with hooks, rules, statusline, new skills
 
-- [ ] Update `CHANGELOG.md` — document all 6 features:
+- [x] Update `CHANGELOG.md` — document all 6 features:
   - `### Added` section with all new capabilities
 
-- [ ] Update `install.sh` — add new skill names to example commands (if applicable)
+- [x] Update `install.sh` — add new skill names to example commands (if applicable)
 
-- [ ] Append to `tasks/lessons.md` — tracking entries for each new skill:
+- [x] Append to `tasks/lessons.md` — tracking entries for each new skill:
   - sk:scope-check: SKILL.md + CLAUDE.md + README.md + DOCUMENTATION.md
   - sk:retro: SKILL.md + CLAUDE.md + README.md + DOCUMENTATION.md
   - sk:reverse-doc: SKILL.md + CLAUDE.md + README.md + DOCUMENTATION.md
@@ -313,34 +313,34 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 6a (parallel — all agent definitions are independent)
 
-- [ ] Create `.claude/agents/linter.md` template in `skills/sk:setup-claude/templates/`
+- [x] Create `.claude/agents/linter.md` template in `skills/sk:setup-claude/templates/`
   - Specialized prompt for running all project linters + dep audit
   - Fix → auto-commit → re-run loop built into the agent prompt
   - Pre-existing issues → log to `tasks/tech-debt.md`
   - Model: haiku (mechanical task, pattern-following)
   - Tools: Bash, Read, Edit, Write, Glob, Grep
 
-- [ ] Create `.claude/agents/test-runner.md` template
+- [x] Create `.claude/agents/test-runner.md` template
   - Run all detected test suites
   - Fix failures → auto-commit → re-run loop
   - 100% coverage on new code required
   - Model: sonnet (needs to understand test logic)
   - Tools: Bash, Read, Edit, Write, Glob, Grep
 
-- [ ] Create `.claude/agents/security-auditor.md` template
+- [x] Create `.claude/agents/security-auditor.md` template
   - OWASP audit on changed files (git diff)
   - Fix → auto-commit → re-run loop
   - Pre-existing issues → log to `tasks/tech-debt.md`
   - Model: sonnet (needs security knowledge)
   - Tools: Bash, Read, Edit, Write, Glob, Grep
 
-- [ ] Create `.claude/agents/perf-auditor.md` template
+- [x] Create `.claude/agents/perf-auditor.md` template
   - Performance audit: bundle size, N+1, Core Web Vitals, memory
   - Fix critical/high → auto-commit → re-run loop
   - Model: sonnet
   - Tools: Bash, Read, Edit, Write, Glob, Grep
 
-- [ ] Create `.claude/agents/e2e-tester.md` template
+- [x] Create `.claude/agents/e2e-tester.md` template
   - E2E behavioral verification via Playwright or agent-browser
   - Fix → auto-commit → re-run loop
   - Model: sonnet
@@ -348,7 +348,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 6b (depends on 6a — orchestrator references agent names)
 
-- [ ] Update `apply_setup_claude.py` to deploy agent definitions
+- [x] Update `apply_setup_claude.py` to deploy agent definitions
   - Copy from `templates/.claude/agents/` to target `.claude/agents/`
   - Mode: generated (marker-guarded, updatable)
 
@@ -358,7 +358,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 7 (depends on Milestone 6)
 
-- [ ] Create `skills/sk:gates/SKILL.md`
+- [x] Create `skills/sk:gates/SKILL.md`
   - Single command that runs all quality gates in optimized order:
     - **Batch 1 (parallel agents):** lint + security + perf — spawn 3 agents simultaneously
     - Wait for Batch 1 results. If any agent made fixes, commit is already done (internal to agent).
@@ -375,7 +375,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - Update `tasks/workflow-status.md` steps 12-17 in one shot
   - Tools: Agent, Read, Write, Bash, Glob, Grep
 
-- [ ] Create `commands/sk/gates.md` command shortcut
+- [x] Create `commands/sk/gates.md` command shortcut
   - Points to `skills/sk:gates/SKILL.md`
 
 ---
@@ -384,7 +384,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 8 (depends on Milestone 7)
 
-- [ ] Create `skills/sk:fast-track/SKILL.md`
+- [x] Create `skills/sk:fast-track/SKILL.md`
   - Abbreviated workflow for small, clear changes:
     1. Read `tasks/todo.md` + `tasks/lessons.md` (quick context)
     2. Branch (`/sk:branch`)
@@ -399,7 +399,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - Use cases: config changes, dependency bumps, copy/wording, small refactors, adding missing tests
   - Tools: Read, Write, Bash, Glob, Grep, Agent, Skill
 
-- [ ] Create `commands/sk/fast-track.md` command shortcut
+- [x] Create `commands/sk/fast-track.md` command shortcut
 
 ---
 
@@ -407,7 +407,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 9 (independent — can run parallel with Milestones 6-8)
 
-- [ ] Update `skills/sk:setup-claude/scripts/apply_setup_claude.py`
+- [x] Update `skills/sk:setup-claude/scripts/apply_setup_claude.py`
   - After detection, write results to `.shipkit/config.json` in target project:
     ```json
     {
@@ -429,7 +429,7 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
   - On subsequent runs: if `detected_at` < 7 days old, skip detection and use cached values
   - `--force-detect` flag to override cache
 
-- [ ] Update gate skills/agents to read `.shipkit/config.json` for cached detection
+- [x] Update gate skills/agents to read `.shipkit/config.json` for cached detection
   - `sk:lint` / linter agent: read `lint_command` from config instead of re-detecting
   - `sk:test` / test-runner agent: read `test_command` from config
   - Fallback: if config missing or stale, detect fresh
@@ -440,32 +440,32 @@ Add 6 infrastructure improvements to ShipKit inspired by claude-code-game-studio
 
 #### Wave 10 (depends on Milestones 2-9 being done)
 
-- [ ] Update `CLAUDE.md` — add all new commands to commands table:
+- [x] Update `CLAUDE.md` — add all new commands to commands table:
   - `| /sk:scope-check | Compare implementation against plan, detect scope creep |`
   - `| /sk:retro | Post-ship retrospective: velocity, blockers, action items |`
   - `| /sk:reverse-doc | Generate architecture/design docs from existing code |`
   - `| /sk:gates | Run all quality gates in optimized parallel batches |`
   - `| /sk:fast-track | Abbreviated workflow for small, clear changes |`
 
-- [ ] Update `README.md` — add all new commands:
+- [x] Update `README.md` — add all new commands:
   - `/sk:scope-check` under "Quality Gates"
   - `/sk:retro` under "Shipping"
   - `/sk:reverse-doc` under "Planning & Design"
   - `/sk:gates` under "Quality Gates"
   - `/sk:fast-track` under "Development"
 
-- [ ] Update `.claude/docs/DOCUMENTATION.md`:
+- [x] Update `.claude/docs/DOCUMENTATION.md`:
   - Add all new skill descriptions
   - Add "Gate Agents" section explaining parallel gate architecture
   - Add "Fast-Track Flow" to workflow scenarios
   - Update "What's New" section
 
-- [ ] Update `CHANGELOG.md` — document all features:
+- [x] Update `CHANGELOG.md` — document all features:
   - `### Added` — hooks, rules, statusline, 5 new skills, gate agents, fast-track flow, cached detection
 
-- [ ] Update `install.sh` — add new skill names to example commands
+- [x] Update `install.sh` — add new skill names to example commands
 
-- [ ] Append to `tasks/lessons.md` — tracking entries:
+- [x] Append to `tasks/lessons.md` — tracking entries:
   - sk:scope-check, sk:retro, sk:reverse-doc: SKILL.md + CLAUDE.md + README.md + DOCUMENTATION.md
   - sk:gates: SKILL.md + command shortcut + agent definitions + CLAUDE.md + README.md + DOCUMENTATION.md
   - sk:fast-track: SKILL.md + command shortcut + CLAUDE.md + README.md + DOCUMENTATION.md
@@ -515,50 +515,50 @@ done
 ## Acceptance Criteria
 
 ### Hooks & Infrastructure (Milestones 2-3)
-- [ ] 6 hook scripts exist in `templates/hooks/`, all pass `bash -n` syntax check
-- [ ] `settings.json.template` defines all 6 hooks + statusline + permissions
-- [ ] `apply_setup_claude.py` deploys hooks, settings.json, statusline, rules, and agents to target projects
-- [ ] `session-start.sh` auto-loads workflow state (replaces manual `/sk:context`)
-- [ ] `pre-compact.sh` preserves workflow state before context compression
-- [ ] `validate-commit.sh` checks conventional commit format + debug statements
-- [ ] `validate-push.sh` warns on protected branches
-- [ ] Path-scoped rules generated per detected stack (at minimum: tests.md always)
-- [ ] `statusline.sh` shows workflow step, branch, task, context %
+- [x] 6 hook scripts exist in `templates/hooks/`, all pass `bash -n` syntax check
+- [x] `settings.json.template` defines all 6 hooks + statusline + permissions
+- [x] `apply_setup_claude.py` deploys hooks, settings.json, statusline, rules, and agents to target projects
+- [x] `session-start.sh` auto-loads workflow state (replaces manual `/sk:context`)
+- [x] `pre-compact.sh` preserves workflow state before context compression
+- [x] `validate-commit.sh` checks conventional commit format + debug statements
+- [x] `validate-push.sh` warns on protected branches
+- [x] Path-scoped rules generated per detected stack (at minimum: tests.md always)
+- [x] `statusline.sh` shows workflow step, branch, task, context %
 
 ### New Skills (Milestone 4)
-- [ ] `/sk:scope-check` classifies scope bloat with 4-tier system
-- [ ] `/sk:retro` generates structured retrospective from progress.md + git history
-- [ ] `/sk:reverse-doc` generates docs from code with clarifying question phase
+- [x] `/sk:scope-check` classifies scope bloat with 4-tier system
+- [x] `/sk:retro` generates structured retrospective from progress.md + git history
+- [x] `/sk:reverse-doc` generates docs from code with clarifying question phase
 
 ### Gate Agents (Milestone 6)
-- [ ] 5 agent definitions exist: linter, test-runner, security-auditor, perf-auditor, e2e-tester
-- [ ] Each agent has auto-commit + fix loop built into its prompt
-- [ ] Each agent has tech-debt.md logging for pre-existing issues
-- [ ] Agents use appropriate model routing (haiku for lint, sonnet for others)
+- [x] 5 agent definitions exist: linter, test-runner, security-auditor, perf-auditor, e2e-tester
+- [x] Each agent has auto-commit + fix loop built into its prompt
+- [x] Each agent has tech-debt.md logging for pre-existing issues
+- [x] Agents use appropriate model routing (haiku for lint, sonnet for others)
 
 ### Gates Orchestrator (Milestone 7)
-- [ ] `/sk:gates` runs all gates in optimized parallel batches
-- [ ] Batch 1 (parallel): lint + security + perf
-- [ ] Batch 2: test (after lint fixes)
-- [ ] Batch 3 (main context): review
-- [ ] Batch 4: e2e (after review fixes)
-- [ ] Updates workflow-status.md steps 12-17 in one shot
+- [x] `/sk:gates` runs all gates in optimized parallel batches
+- [x] Batch 1 (parallel): lint + security + perf
+- [x] Batch 2: test (after lint fixes)
+- [x] Batch 3 (main context): review
+- [x] Batch 4: e2e (after review fixes)
+- [x] Updates workflow-status.md steps 12-17 in one shot
 
 ### Fast-Track Flow (Milestone 8)
-- [ ] `/sk:fast-track` provides abbreviated 6-step workflow
-- [ ] Guard rails warn on large diffs (>300 lines) or many new files (>5)
-- [ ] Still runs ALL quality gates via `/sk:gates`
+- [x] `/sk:fast-track` provides abbreviated 6-step workflow
+- [x] Guard rails warn on large diffs (>300 lines) or many new files (>5)
+- [x] Still runs ALL quality gates via `/sk:gates`
 
 ### Cached Detection (Milestone 9)
-- [ ] `apply_setup_claude.py` writes detection results to `.shipkit/config.json`
-- [ ] Cache expires after 7 days
-- [ ] `--force-detect` flag overrides cache
+- [x] `apply_setup_claude.py` writes detection results to `.shipkit/config.json`
+- [x] Cache expires after 7 days
+- [x] `--force-detect` flag overrides cache
 
 ### Documentation (Milestone 10)
-- [ ] All 5 new commands documented in CLAUDE.md, README.md, DOCUMENTATION.md
-- [ ] CHANGELOG.md documents all features
-- [ ] lessons.md updated with tracking entries for all new skills, hooks, and agents
-- [ ] All tests in `tests/verify-workflow.sh` pass
+- [x] All 5 new commands documented in CLAUDE.md, README.md, DOCUMENTATION.md
+- [x] CHANGELOG.md documents all features
+- [x] lessons.md updated with tracking entries for all new skills, hooks, and agents
+- [x] All tests in `tests/verify-workflow.sh` pass
 
 ## Risks/Unknowns
 

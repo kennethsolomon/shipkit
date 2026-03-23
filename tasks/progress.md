@@ -260,6 +260,14 @@
 - Tests: 215/215 pass (72 new + 143 existing)
 - Implementation used 5 parallel sub-agents for Batch 1 (22 files), 3 parallel sub-agents for Batch 2
 
+### [2026-03-23] ShipKit Workflow Improvements — COMPLETED
+- Branch: `feature/hooks-rules-statusline-skills`
+- Changes: 10 milestones implemented — lifecycle hooks (6 scripts + settings.json), path-scoped rules (5 templates), statusline, 5 new skills (scope-check, retro, reverse-doc, gates, fast-track), 5 gate agents (linter, test-runner, security-auditor, perf-auditor, e2e-tester), cached stack detection
+- Tests: 215/215 pass (72 new assertions)
+- Files changed: 33 (+2288/-43)
+- Commits: 2 (feat + simplify fix)
+- Gates: lint clean, 215 tests pass, 0 security findings, perf skipped (no app), review 0 issues (3 files fixed in simplify), e2e skipped (no app)
+
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|
