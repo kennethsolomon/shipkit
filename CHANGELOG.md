@@ -8,6 +8,19 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+### Added
+- **Lifecycle hooks** — 6 Claude Code hooks deployed via `/sk:setup-claude`: session-start (auto-context), pre-compact (state preservation), validate-commit (conventional commit + debug statement checks), validate-push (protected branch warnings), log-agent (subagent audit trail), session-stop (session logging)
+- **Path-scoped rules** — `.claude/rules/` directory with stack-specific rules: tests.md (always), api.md, frontend.md, laravel.md, react.md (conditional on detection)
+- **Statusline** — persistent CLI status showing context %, model, workflow step, branch, and task name
+- **Gate agents** — 5 agent definitions for parallel gate execution: linter (haiku), test-runner, security-auditor, perf-auditor, e2e-tester (sonnet)
+- `/sk:scope-check` — compare implementation against plan, detect scope creep with 4-tier classification
+- `/sk:retro` — post-ship retrospective: velocity, blockers, gate performance, action items
+- `/sk:reverse-doc` — generate architecture/design docs from existing code with clarifying questions
+- `/sk:gates` — run all quality gates in optimized parallel batches (single command replaces 6)
+- `/sk:fast-track` — abbreviated workflow for small changes: skip planning, keep all quality gates
+- **Cached stack detection** — `apply_setup_claude.py` caches detection results in `.shipkit/config.json` with 7-day TTL and `--force-detect` override
+- `settings.json.template` — Claude Code settings with hooks, statusline, and permission allow/deny lists
+
 ## [3.7.0] — 2026-03-20
 
 ### Changed
