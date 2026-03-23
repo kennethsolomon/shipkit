@@ -2,40 +2,45 @@
 
 Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and maintaining projects.
 
-## ✨ What's New (March 2026)
+## What's New (March 2026)
 
-**5 new commands added** — `/sk:fast-track`, `/sk:gates`, `/sk:retro`, `/sk:reverse-doc`, `/sk:scope-check`:
-- `/sk:fast-track` — Abbreviated workflow for small changes, skips planning but keeps all gates
-- `/sk:gates` — Run all quality gates in optimized parallel batches (single command replaces 6)
-- `/sk:retro` — Post-ship retrospective: velocity, blockers, action items
-- `/sk:reverse-doc` — Generate architecture/design docs from existing code
-- `/sk:scope-check` — Compare implementation against plan, detect scope creep
+**v3.8.0** — Lifecycle hooks, gate agents, path-scoped rules, and new commands:
+- **Lifecycle hooks** — 6 hooks auto-deployed by `/sk:setup-claude` (pre-commit, post-commit, etc.)
+- **Gate agents** — 5 agents for parallel gate execution (lint, test, security, review, e2e)
+- **Path-scoped rules** — coding rules that auto-activate per directory (stack-dependent)
+- `/sk:gates` — single command replaces 6 manual gate invocations (runs 4 parallel batches)
+- `/sk:fast-track` — abbreviated workflow for small changes; warns on >300 lines or >5 new files
+- `/sk:scope-check` — detect scope creep mid-implementation (4-tier: On Track to Out of Control)
+- `/sk:retro` — post-ship retrospective: velocity, blockers, action items
+- `/sk:reverse-doc` — generate docs from existing code
+- **Cached stack detection** with `--force-detect` to re-scan
+- **Statusline** showing context %, model, workflow step, and branch
 
-**Workflow expanded to 21 steps (v3.7.0)** — New skills and protocols:
+**v3.7.0** — Workflow expanded to 21 steps, new skills and protocols:
 - `/sk:e2e` (Step 17) — E2E behavioral verification using agent-browser; hard gate after Review
 - **Fix & Retest Protocol** — applies to all code-producing gates (Lint, Test, Security, Performance, Review, E2E): logic changes require updating unit tests before committing
 - **Sync Features step** (Step 20) — `/sk:features` runs after Finalize to keep feature specs in sync with shipped code
 - **Dependency audit** folded into `/sk:lint` — runs `composer audit` / `npm audit` / `pip-audit` alongside code linters
 - All commands standardized to `/sk:` prefix throughout docs and templates
 
-**Pencil MCP Integration** — `/frontend-design` now optionally creates visual `.pen` mockups:
+**Pencil MCP Integration** — `/sk:frontend-design` now optionally creates visual `.pen` mockups:
 - After the text design summary, prompts: "Would you like me to create a Pencil visual mockup? (y/n)"
 - Saves `.pen` files to `docs/design/` in the project
 - Requires Pencil app open with MCP connected
 
-**Mobile Store Readiness Audits** — `/release` now supports `--android` and `--ios` flags:
+**Mobile Store Readiness Audits** — `/sk:release` now supports `--android` and `--ios` flags:
 - Covers signing, permissions, icons, privacy policy, SDK levels, store listing, and common rejection reasons
 - Auto-detects framework (Expo, React Native, Flutter, native), checks configs, reports PASS/FAIL per item
 
 **Lessons + Findings Context Threading** — Every skill that makes decisions reads `tasks/lessons.md`; every skill that accepts handoff reads `tasks/findings.md`.
 
-**Intelligent Architectural Change Detection** — `/finish-feature` auto-generates 80% of arch log markdown from your diff.
+**Intelligent Architectural Change Detection** — `/sk:finish-feature` auto-generates 80% of arch log markdown from your diff.
 
 ---
 
 ## Table of Contents
 
-- [What's New (March 2026)](#-whats-new-march-2026)
+- [What's New (March 2026)](#whats-new-march-2026)
 - [Installation](#installation)
 - [Why This Workflow](#why-this-workflow)
 - [Complete Workflow Flow](#complete-workflow-flow)
@@ -43,23 +48,29 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 - [New User Quick Start](#new-user-quick-start)
 - [Recommended Workflow](#recommended-workflow)
 - [Workflow Scenarios: When to Use Each Skill](#workflow-scenarios-when-to-use-each-skill)
+  - [Fast-Track Flow](#fast-track-flow)
+  - [Bug Fix Flow](#bug-fix-flow)
+  - [Hotfix Flow](#hotfix-flow)
+  - [Requirement Change Flow](#requirement-change-flow)
+  - [Quality Gates (`/sk:gates`)](#quality-gates-skgates)
+  - [On-Demand Tools](#on-demand-tools)
 - [Skills](#skills)
-- **[→ View Complete Features Guide](./FEATURES.md)** — Context threading, auto-detection, lessons compounding
+- **[View Complete Features Guide](./FEATURES.md)** — Context threading, auto-detection, lessons compounding
   - [`/setup-claude`](#setup-claude) — Bootstrap project infrastructure
-  - [`/claude-setup-tools`](#claude-setup-tools) — Create, diagnose, maintain CLAUDE.md
-  - [`/schema-migrate`](#schema-migrate) — Multi-ORM schema change analysis
-  - [`/commit`](#commit) — Smart conventional commits
-  - [`/frontend-design`](#frontend-design) — Production-grade UI design + optional Pencil mockup
-  - [`/api-design`](#api-design) — REST/GraphQL API contract design
-  - [`/accessibility`](#accessibility) — WCAG 2.1 AA audit
-  - [`/write-tests`](#write-tests) — TDD: write failing tests before implementation
-  - [`/debug`](#debug) — Structured debugging
-  - [`/perf`](#perf) — Performance audit (bundle, N+1, Core Web Vitals)
-  - [`/review`](#review) — Self-review across 7 dimensions (report-only)
+  - [`/sk:setup-optimizer`](#sksetup-optimizer) — Diagnose, update workflow, enrich CLAUDE.md
+  - [`/sk:schema-migrate`](#schema-migrate) — Multi-ORM schema change analysis
+  - [`/sk:smart-commit`](#commit) — Smart conventional commits
+  - [`/sk:frontend-design`](#frontend-design) — Production-grade UI design + optional Pencil mockup
+  - [`/sk:api-design`](#api-design) — REST/GraphQL API contract design
+  - [`/sk:accessibility`](#accessibility) — WCAG 2.1 AA audit
+  - [`/sk:write-tests`](#write-tests) — TDD: write failing tests before implementation
+  - [`/sk:debug`](#debug) — Structured debugging
+  - [`/sk:perf`](#perf) — Performance audit (bundle, N+1, Core Web Vitals)
+  - [`/sk:review`](#review) — Self-review across 7 dimensions (report-only)
   - [`/sk:e2e`](#ske2e) — E2E behavioral verification using agent-browser — final quality gate
-  - [`/hotfix`](#hotfix) — Emergency fix workflow
-  - [`/finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
-  - [`/release`](#release) — Release automation + mobile store audits
+  - [`/sk:hotfix`](#hotfix) — Emergency fix workflow
+  - [`/sk:finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
+  - [`/sk:release`](#release) — Release automation + mobile store audits
 - [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
 - [Requirements](#requirements)
 
@@ -67,15 +78,13 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## Installation
 
-### Step 1: Clone and install (one-time setup)
+### Step 1: Install ShipKit (one-time setup)
 
 ```bash
-git clone git@github.com:kennethsolomon/claude-skills.git
-cd claude-skills
-./install.sh
+npm install -g @kennethsolomon/shipkit && shipkit
 ```
 
-This symlinks each skill into `~/.claude/skills/` and each command into `~/.claude/commands/`, which is where Claude Code discovers personal skills and commands. After this, **global skills** are immediately available in every project when you type `/` — no per-project setup needed.
+This installs the ShipKit CLI globally and sets up skills and commands in `~/.claude/`. After this, **global skills** are immediately available in every project when you type `/` — no per-project setup needed.
 
 ### Step 2: Set up a project (per-project)
 
@@ -85,7 +94,7 @@ cd /path/to/your-project
 /setup-claude
 ```
 
-This generates **per-project commands** (like `/finish-feature`, `/write-plan`, `/execute-plan`) into your project's `.claude/commands/` directory. These commands are tailored to your project's stack and are only available inside that project.
+This generates **per-project commands** (like `/finish-feature`, `/write-plan`, `/execute-plan`) into your project's `.claude/commands/` directory. These map to global skills `/sk:finish-feature`, `/sk:write-plan`, `/sk:execute-plan`. These commands are tailored to your project's stack and are only available inside that project.
 
 ### What's available when?
 
@@ -96,11 +105,8 @@ This generates **per-project commands** (like `/finish-feature`, `/write-plan`, 
 
 ### Updating
 
-Pull the latest changes — no re-install needed since it's a symlink:
-
 ```bash
-cd claude-skills
-git pull
+npm update -g @kennethsolomon/shipkit
 ```
 
 ---
@@ -119,23 +125,23 @@ PHASE 1: READ (No Code)
 
 PHASE 2: DESIGN (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 3 — /brainstorm                                                     │
+│ Step 3 — /sk:brainstorm                                                  │
 │ • Reads: tasks/findings.md (prior decisions), tasks/lessons.md          │
 │ • Clarifies requirements, proposes approaches, gets approval             │
 │ • Writes: tasks/findings.md (design decision + rationale)               │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 4 — /frontend-design or /api-design  (OPTIONAL)                    │
-│ • /frontend-design: UI mockups, layouts, visual direction (NO CODE)     │
+│ Step 4 — /sk:frontend-design or /sk:api-design  (OPTIONAL)              │
+│ • /sk:frontend-design: UI mockups, layouts, visual direction (NO CODE)  │
 │   → Prompts to create Pencil .pen mockup (saved to docs/design/)        │
-│ • /api-design: REST/GraphQL endpoint contracts, request/response shapes │
+│ • /sk:api-design: REST/GraphQL endpoint contracts, request/response     │
 │ • Skip if pure backend with no UI and no new API                        │
 │ • Writes: findings.md (design artifacts + decisions)                    │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 5 — /accessibility  (OPTIONAL)                                      │
+│ Step 5 — /sk:accessibility  (OPTIONAL)                                   │
 │ • WCAG 2.1 AA audit on the design spec                                  │
 │ • Checks: color contrast, keyboard nav, ARIA, forms, motion, content    │
 │ • Writes: tasks/accessibility-findings.md (append-only)                 │
@@ -144,21 +150,21 @@ PHASE 2: DESIGN (No Code)
                               ↓
 PHASE 3: PLAN (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 6 — /write-plan                                                     │
+│ Step 6 — /sk:write-plan                                                  │
 │ • Reads: tasks/findings.md (all design outputs), tasks/lessons.md       │
 │ • Writes: tasks/todo.md (decision-complete checklist)                   │
 │ • Applies lessons as plan constraints                                   │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 PHASE 4: BRANCH + MIGRATE
-  Step 7 — /branch            Create feature branch auto-named from task
-  Step 8 — /schema-migrate    (OPTIONAL) Analyze schema changes safely
+  Step 7 — /sk:branch            Create feature branch auto-named from task
+  Step 8 — /sk:schema-migrate    (OPTIONAL) Analyze schema changes safely
 
 PHASE 5: IMPLEMENT (Code Time)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 9 — /write-tests   TDD RED: write failing tests first              │
-│ Step 10 — /execute-plan TDD GREEN: implement to make tests pass         │
-│ Step 11 — /smart-commit Commit tests + implementation                   │
+│ Step 9 — /sk:write-tests   TDD RED: write failing tests first           │
+│ Step 10 — /sk:execute-plan TDD GREEN: implement to make tests pass      │
+│ Step 11 — /sk:smart-commit Commit tests + implementation                │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 PHASE 6: QUALITY GATES (all are HARD GATES — cannot be skipped)
@@ -225,18 +231,18 @@ AI-assisted development without structure produces more bugs, not fewer. The rea
 
 **The five root causes of bugs in AI-assisted projects — and how each step addresses them:**
 
-1. **Building the wrong thing** → `/brainstorm` forces requirement clarity before a single line is written. You cannot skip it and expect the right outcome. It reads existing `tasks/findings.md` so prior decisions are never re-litigated accidentally. Also reads `tasks/lessons.md` to apply known constraints.
+1. **Building the wrong thing** → `/sk:brainstorm` forces requirement clarity before a single line is written. You cannot skip it and expect the right outcome. It reads existing `tasks/findings.md` so prior decisions are never re-litigated accidentally. Also reads `tasks/lessons.md` to apply known constraints.
 
-2. **Ad-hoc implementation** → `/write-plan` writes a decision-complete plan into `tasks/todo.md` — and reads `tasks/lessons.md` first, so known failure patterns become plan constraints. Without an approved plan, Claude makes architectural decisions inline — inconsistently and without user visibility.
+2. **Ad-hoc implementation** → `/sk:write-plan` writes a decision-complete plan into `tasks/todo.md` — and reads `tasks/lessons.md` first, so known failure patterns become plan constraints. Without an approved plan, Claude makes architectural decisions inline — inconsistently and without user visibility.
 
-3. **Untested code reaching review** → `/write-tests` after every feature. Tests are not optional in this workflow. A feature without tests is not done. Reads lessons.md to apply known test patterns and avoid past mistakes.
+3. **Untested code reaching review** → `/sk:write-tests` after every feature. Tests are not optional in this workflow. A feature without tests is not done. Reads lessons.md to apply known test patterns and avoid past mistakes.
 
-4. **Symptom masking instead of root-cause fixing** → `/debug` has a hard gate: no code changes until a hypothesis is confirmed. Random fixes are explicitly forbidden by the skill. It reads `tasks/progress.md` to correlate recent error patterns, reads `tasks/findings.md` and `tasks/lessons.md` to apply prior knowledge, and writes both when finding root causes.
+4. **Symptom masking instead of root-cause fixing** → `/sk:debug` has a hard gate: no code changes until a hypothesis is confirmed. Random fixes are explicitly forbidden by the skill. It reads `tasks/progress.md` to correlate recent error patterns, reads `tasks/findings.md` and `tasks/lessons.md` to apply prior knowledge, and writes both when finding root causes.
 
-5. **Repeated mistakes** → `tasks/lessons.md` is read by `/execute-plan`, `/write-plan`, `/write-tests`, `/debug`, `/review`, and `/finish-feature` before they start. The system compounds knowledge instead of resetting each session. When you correct the agent mid-execution, it writes the lesson immediately. Lessons become active constraints, not just documentation.
+5. **Repeated mistakes** → `tasks/lessons.md` is read by `/sk:execute-plan`, `/sk:write-plan`, `/sk:write-tests`, `/sk:debug`, `/sk:review`, and `/sk:finish-feature` before they start. The system compounds knowledge instead of resetting each session. When you correct the agent mid-execution, it writes the lesson immediately. Lessons become active constraints, not just documentation.
 
 **Architectural Changes Without Manual Guessing:**
-→ `/finish-feature` step 4 now auto-detects architectural changes using intelligent script analysis. No more "did I need an arch log?" questions. The script analyzes your diff, generates a markdown draft (80% complete), and you edit the final 20%.
+→ `/sk:finish-feature` step 4 now auto-detects architectural changes using intelligent script analysis. No more "did I need an arch log?" questions. The script analyzes your diff, generates a markdown draft (80% complete), and you edit the final 20%.
 
 **The opinionated rule:** Follow all steps in order. Optional steps (design, accessibility, performance) can be skipped with confirmation. Hard gates (lint, tests, security, review, e2e) can never be skipped. A "quick fix" that bypasses brainstorm and planning is the source of most production bugs in AI-assisted codebases.
 
@@ -249,18 +255,18 @@ This is an opinionated workflow. It will feel slower at first. It is faster over
 A concrete walkthrough: *Add user avatar upload to a Next.js app.*
 
 ```
-Step 1 — Explore: /brainstorm add user avatar upload
+Step 1 — Explore: /sk:brainstorm add user avatar upload
 → Reads existing tasks/findings.md (none yet); asks clarifying questions:
   "S3 or server storage? Max file size? Instant crop or manual?"
   saves approach decision to tasks/findings.md
 
-Step 1a — Design: /frontend-design
+Step 1a — Design: /sk:frontend-design
 → Reads findings.md (brainstorm decision: S3, 10MB, instant crop);
   Creates UI mockups: upload form, progress indicator, crop interface
   (no code yet—just design artifacts)
   Writes design to tasks/findings.md
 
-Step 2 — Plan: /write-plan
+Step 2 — Plan: /sk:write-plan
 → Reads findings.md (both brainstorm + frontend-design outputs);
   Reads lessons.md + CLAUDE.md;
   Writes unified 8-step plan to tasks/todo.md:
@@ -270,22 +276,22 @@ Step 2 — Plan: /write-plan
   [ ] Tests for endpoint + components
   [ ] Manual testing on staging
 
-Step 3 — Implement: /execute-plan
+Step 3 — Implement: /sk:execute-plan
 → Reads lessons.md + progress.md error log, runs batch 1 (items 1–3),
-  logs to tasks/progress.md; prompts: run /commit after batch passes
+  logs to tasks/progress.md; prompts: run /sk:smart-commit after batch passes
 
-Step 4 — Commit: /commit
+Step 4 — Commit: /sk:smart-commit
 → Reads tasks/progress.md for rationale; generates:
   feat(avatar): add S3 upload endpoint
 
-Step 5 — Test: /write-tests src/avatar/upload.ts
+Step 5 — Test: /sk:write-tests src/avatar/upload.ts
 → Reads lessons.md, generates upload.test.ts with 6 test cases, all pass
 
-Step 6 — Review: /review
+Step 6 — Review: /sk:review
 → Reads CLAUDE.md + lessons.md Bug fields as targeted checks;
   flags 1 warning (missing file-size validation); no criticals
 
-Step 7 — Finalize: /finish-feature
+Step 7 — Finalize: /sk:finish-feature
 → Checklist: changelog updated ✓, test coverage >80% ✓, PR approved ✓
 ```
 
@@ -300,40 +306,36 @@ Each step hands context to the next. The design + plan approach ensures frontend
 Install these before using the skills:
 
 - [Claude Code CLI](https://claude.ai/code) — the AI coding agent
-- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/finish-feature` PR creation
-- Python 3 — required for the `/setup-claude` deterministic bootstrap script
-- `playwright@claude-plugins-official` plugin — required for browser verification in `/frontend-design`, `/debug`, and `/write-tests` (Playwright projects). Enable in Claude Code settings under Plugins.
+- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/sk:finish-feature` PR creation
+- Python 3 — required for the `/sk:setup-claude` deterministic bootstrap script
+- `playwright@claude-plugins-official` plugin — required for browser verification in `/sk:frontend-design`, `/sk:debug`, and `/sk:write-tests` (Playwright projects). Enable in Claude Code settings under Plugins.
 
 ### Your First Project
 
-Four commands to go from zero to a fully configured project:
+Three commands to go from zero to a fully configured project:
 
 ```bash
-# 1. Clone and install the skills (one-time, global)
-git clone git@github.com:kennethsolomon/claude-skills.git
-cd claude-skills && ./install.sh
+# 1. Install ShipKit (one-time, global)
+npm install -g @kennethsolomon/shipkit && shipkit
 
 # 2. Open your project in Claude Code
 cd /path/to/your-project
 
 # 3. Bootstrap the project (run inside Claude Code)
 /setup-claude
-
-# 4. Verify your CLAUDE.md looks right
-/doctor-claude
 ```
 
-After these four steps: `CLAUDE.md` is configured for your stack, `tasks/` planning files exist, and all workflow commands (`/brainstorm`, `/frontend-design`, `/api-design`, `/write-plan`, `/write-tests`, `/execute-plan`, `/lint`, `/test`, `/security-check`, `/perf`, `/review`, `/finish-feature`) are available.
+After these three steps: `CLAUDE.md` is configured for your stack, `tasks/` planning files exist, and all workflow commands (`/sk:brainstorm`, `/sk:frontend-design`, `/sk:api-design`, `/sk:write-plan`, `/sk:write-tests`, `/sk:execute-plan`, `/sk:lint`, `/sk:test`, `/sk:security-check`, `/sk:perf`, `/sk:review`, `/sk:finish-feature`) are available.
 
 ### Daily Workflow
 
-During normal development, follow the 27-step workflow: Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
+During normal development, follow the 21-step workflow: Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
 
 ---
 
 ## Recommended Workflow
 
-The complete 27-step workflow from idea to merge with **automatic context threading and bug prevention**:
+The complete 21-step workflow from idea to merge with **automatic context threading and bug prevention**:
 
 | # | Step | Command | Notes |
 |---|------|---------|-------|
@@ -365,38 +367,38 @@ The complete 27-step workflow from idea to merge with **automatic context thread
 ✅ **TDD Enforced** — Tests written before implementation (step 9), verified after (step 14)
 ✅ **Context Threading** — findings.md flows brainstorm → design → plan; never re-ask decisions
 ✅ **Compounding Lessons** — One bug debugged = one lesson written = 8+ skills apply it next time
-✅ **Auto-Architecture Detection** — `/finish-feature` intelligently detects & documents arch changes
+✅ **Auto-Architecture Detection** — `/sk:finish-feature` intelligently detects & documents arch changes
 ✅ **No Context Reset** — findings.md, lessons.md, security-findings.md, perf-findings.md persist across sessions
 
 ### Design Phase Options
 
-`/brainstorm` is required. Design step (4) is optional — choose based on what you're building:
+`/sk:brainstorm` is required. Design step (4) is optional — choose based on what you're building:
 
-- **`/brainstorm` (required)** — explores user intent, clarifies requirements, proposes approaches, and gets approval. No code is written.
-- **`/frontend-design` (optional)** — for UI work: mockups, layouts, visual direction, optional Pencil `.pen` mockup. Skip for backend-only.
-- **`/api-design` (optional)** — for new APIs: endpoint design, request/response shapes, auth flows, error codes. Skip if no new API surface.
-- **`/accessibility` (optional, step 5)** — WCAG 2.1 AA audit on the design spec. Skip if no frontend.
-- **`/write-plan` (required)** — incorporates brainstorm + design outputs into a unified plan.
+- **`/sk:brainstorm` (required)** — explores user intent, clarifies requirements, proposes approaches, and gets approval. No code is written.
+- **`/sk:frontend-design` (optional)** — for UI work: mockups, layouts, visual direction, optional Pencil `.pen` mockup. Skip for backend-only.
+- **`/sk:api-design` (optional)** — for new APIs: endpoint design, request/response shapes, auth flows, error codes. Skip if no new API surface.
+- **`/sk:accessibility` (optional, step 5)** — WCAG 2.1 AA audit on the design spec. Skip if no frontend.
+- **`/sk:write-plan` (required)** — incorporates brainstorm + design outputs into a unified plan.
 
 **With UI work:**
 ```
-/brainstorm        ← clarify: what are we building?
-/frontend-design   ← design: UI mockups, layouts (no code)
-/accessibility     ← WCAG 2.1 AA audit on the design
-/write-plan        ← unified plan for frontend + backend
+/sk:brainstorm        ← clarify: what are we building?
+/sk:frontend-design   ← design: UI mockups, layouts (no code)
+/sk:accessibility     ← WCAG 2.1 AA audit on the design
+/sk:write-plan        ← unified plan for frontend + backend
 ```
 
 **With new API:**
 ```
-/brainstorm    ← clarify requirements
-/api-design    ← design: endpoints, payloads, auth, errors
-/write-plan    ← plan the implementation
+/sk:brainstorm    ← clarify requirements
+/sk:api-design    ← design: endpoints, payloads, auth, errors
+/sk:write-plan    ← plan the implementation
 ```
 
 **Backend-only (no UI, no new API):**
 ```
-/brainstorm    ← clarify: what are we building?
-/write-plan    ← plan the implementation
+/sk:brainstorm    ← clarify: what are we building?
+/sk:write-plan    ← plan the implementation
 ```
 
 ---
@@ -413,7 +415,7 @@ Three concrete scenarios showing how the full skill system works together — **
 START:  I want to add two-factor authentication to user login
 
 Step 1 — DESIGN (no code yet)
-   /brainstorm Add two-factor authentication to login
+   /sk:brainstorm Add two-factor authentication to login
    → Reads tasks/findings.md (if it exists from prior work)
    → Asks: SMS, email, or app-based? Required or optional?
    → Asks: Should we store backup codes?
@@ -421,7 +423,7 @@ Step 1 — DESIGN (no code yet)
    → Writes design decision to tasks/findings.md
 
 Step 2 — PLAN (no code yet)
-   /write-plan
+   /sk:write-plan
    → Reads tasks/findings.md (uses your prior design decision)
    → Reads tasks/lessons.md (if prior bugs taught us lessons, applies them)
    → Writes detailed 6-step plan to tasks/todo.md
@@ -433,28 +435,28 @@ Step 2 — PLAN (no code yet)
      [ ] Manual testing on staging
 
 Step 3 — IMPLEMENT (code time)
-   /execute-plan
+   /sk:execute-plan
    → Reads tasks/todo.md (knows exactly what to do)
    → Reads tasks/lessons.md (applies past lessons as constraints)
    → Implements item 1, logs to tasks/progress.md
-   → Prompts: /commit after this batch? (you say yes)
+   → Prompts: /sk:smart-commit after this batch? (you say yes)
 
 Step 4 — COMMIT
-   /commit
+   /sk:smart-commit
    → Analyzes staged changes (generates, tests, types)
    → Auto-classifies: feat(2fa): add backup code generation
    → Asks approval: create this commit? (you say yes)
 
-   [repeat: /execute-plan batch → /commit after logical unit]
+   [repeat: /sk:execute-plan batch → /sk:smart-commit after logical unit]
 
 Step 5 — TEST
-   /write-tests src/2fa/verify.ts
+   /sk:write-tests src/2fa/verify.ts
    → Reads tasks/lessons.md (knows what not to do)
    → Generates test cases: valid code, expired code, rate limiting
    → Tests pass on first run
 
 Step 6 — DEBUG (if something breaks)
-   /debug The QR code endpoint returns 500 on iOS
+   /sk:debug The QR code endpoint returns 500 on iOS
    → Reproduces: navigates to page, checks console errors
    → Forms hypotheses: wrong CORS header? Image format issue?
    → Tests hypothesis #1: checks CORS config
@@ -462,10 +464,10 @@ Step 6 — DEBUG (if something breaks)
    → Proposes fix, you approve
    → Logs finding to tasks/findings.md
    → Writes lesson: "Always verify CORS headers for cross-origin image loads"
-     (this lesson will now be read by /write-plan, /execute-plan, /review on next feature)
+     (this lesson will now be read by /sk:write-plan, /sk:execute-plan, /sk:review on next feature)
 
 Step 7 — SECURITY AUDIT
-   /security-check
+   /sk:security-check
    → Reads tasks/security-findings.md (prior audits)
    → Audits changed files against OWASP Top 10 + stack-specific checks
    → Finds: 1 Medium (missing rate limiting on QR endpoint)
@@ -473,15 +475,15 @@ Step 7 — SECURITY AUDIT
    → User fixes and re-runs: all clear ✓
 
 Step 8 — REVIEW
-   /review
+   /sk:review
    → Reads tasks/lessons.md (uses Bug patterns as targeted checks)
    → Reads tasks/security-findings.md (checks prior audit resolved)
    → Scans diff for: CORS issues ✓, QR code encoding ✓, token expiry ✓
    → Flags: 1 warning (missing refresh token rotation), no criticals
-   → User fixes with /debug, commits, re-runs /review: all clean ✓
+   → User fixes with /sk:debug, commits, re-runs /sk:review: all clean ✓
 
 Step 9 — FINALIZE + PR
-   /finish-feature
+   /sk:finish-feature
    → Updates CHANGELOG.md, auto-commits: "docs: update CHANGELOG.md"
    → AUTO-DETECTS arch changes, generates draft, auto-commits: "docs: add arch log"
    → Security gate: no unresolved Critical/High findings ✓
@@ -507,7 +509,7 @@ Step 1 — ASSESS (quick look)
    → Suspicious: email validation looks too simple
 
 Step 2 — DEBUG (structured investigation)
-   /debug Users with + or _ in email can't reset password
+   /sk:debug Users with + or _ in email can't reset password
 
    PHASE 1: REPRODUCE
    → Creates test user: user+test@example.com
@@ -546,66 +548,66 @@ Step 2 — DEBUG (structured investigation)
      **Bug:** Email validation too restrictive
      **Root cause:** Regex pattern didn't follow RFC 5321 spec
      **Prevention:** Always validate email against RFC 5321; allow +-._ in local part
-     (This lesson will now be read by /write-tests, /review, /execute-plan)
+     (This lesson will now be read by /sk:write-tests, /sk:review, /sk:execute-plan)
 
 Step 3 — TEST THE FIX
-   /write-tests src/auth/email-validation.ts
+   /sk:write-tests src/auth/email-validation.ts
    → Reads tasks/lessons.md (sees new email lesson)
    → Generates tests: valid +, valid _, valid -, edge case: many special chars
    → All pass
 
 Step 4 — COMMIT
-   /commit
+   /sk:smart-commit
    → Auto-classifies: fix(auth): allow special chars in email validation (RFC 5321)
 
 Step 5 — REVIEW (with lesson checking!)
-   /review
+   /sk:review
    → Reads tasks/lessons.md (email lesson is active)
    → Checks diff for: email validation ✓, RFC compliance ✓
    → No warnings — review is clean
 
 Step 6 — FINALIZE + PR
-   /finish-feature
+   /sk:finish-feature
    → Updates CHANGELOG.md, auto-commits docs
    → Reads tasks/lessons.md
    → Scans diff against email lesson: ✓ Pattern not found (we fixed it)
    → Creates PR via gh pr create
 
 RESULT: Bug fixed + lesson learned. Next time you work on email validation,
-/write-plan will read that lesson and remind you about RFC 5321 ✅
+/sk:write-plan will read that lesson and remind you about RFC 5321 ✅
 ```
 
 ### Scenario 3: When to Use Each Command
 
 | Situation | Command | Why? |
 |-----------|---------|------|
-| **Starting a new feature** | `/brainstorm` | Lock in design before coding. Prevents "building the wrong thing." |
-| **Building UI** | `/frontend-design` | Design mockups before code. Optional Pencil visual mockup. |
-| **Building a new API** | `/api-design` | Design contracts before code. Endpoint, payloads, errors. |
-| **UI design needs review** | `/accessibility` | WCAG 2.1 AA audit before planning. |
-| **Feature planned, ready to code** | `/write-plan` | Creates checklist. Applies lessons as constraints. |
-| **Implementing the plan** | `/execute-plan` | Batches work, logs to progress.md, reads lessons before each batch. |
-| **Logical unit done** | `/smart-commit` | After each 2-3 tasks. Generates conventional commit message. |
-| **Feature ready for tests** | `/write-tests` | TDD: write failing tests first, then implement. |
-| **Something breaks** | `/debug` | Structured investigation. Reproduces, isolates, hypothesizes, verifies. |
-| **Code complete — lint gate** | `/lint` | All linters must pass. Hard gate — cannot skip. |
-| **Code complete — test gate** | `/test` | 100% coverage on new code. Hard gate — cannot skip. |
-| **Code complete, pre-review** | `/security-check` | OWASP Top 10, 0 issues required. Hard gate. |
-| **Performance concerns** | `/perf` | Bundle, N+1, Core Web Vitals. Optional gate. |
-| **Ready for review** | `/review` | 7-dimension self-review. 0 issues required. Hard gate. |
-| **Production emergency** | `/hotfix` | Skips design/TDD, quality gates still enforced. |
-| **Review clean, ready to ship** | `/finish-feature` | Changelog + arch log + security gate + create PR. |
+| **Starting a new feature** | `/sk:brainstorm` | Lock in design before coding. Prevents "building the wrong thing." |
+| **Building UI** | `/sk:frontend-design` | Design mockups before code. Optional Pencil visual mockup. |
+| **Building a new API** | `/sk:api-design` | Design contracts before code. Endpoint, payloads, errors. |
+| **UI design needs review** | `/sk:accessibility` | WCAG 2.1 AA audit before planning. |
+| **Feature planned, ready to code** | `/sk:write-plan` | Creates checklist. Applies lessons as constraints. |
+| **Implementing the plan** | `/sk:execute-plan` | Batches work, logs to progress.md, reads lessons before each batch. |
+| **Logical unit done** | `/sk:smart-commit` | After each 2-3 tasks. Generates conventional commit message. |
+| **Feature ready for tests** | `/sk:write-tests` | TDD: write failing tests first, then implement. |
+| **Something breaks** | `/sk:debug` | Structured investigation. Reproduces, isolates, hypothesizes, verifies. |
+| **Code complete — lint gate** | `/sk:lint` | All linters must pass. Hard gate — cannot skip. |
+| **Code complete — test gate** | `/sk:test` | 100% coverage on new code. Hard gate — cannot skip. |
+| **Code complete, pre-review** | `/sk:security-check` | OWASP Top 10, 0 issues required. Hard gate. |
+| **Performance concerns** | `/sk:perf` | Bundle, N+1, Core Web Vitals. Optional gate. |
+| **Ready for review** | `/sk:review` | 7-dimension self-review. 0 issues required. Hard gate. |
+| **Production emergency** | `/sk:hotfix` | Skips design/TDD, quality gates still enforced. |
+| **Review clean, ready to ship** | `/sk:finish-feature` | Changelog + arch log + security gate + create PR. |
 
 ### Scenario 4: Lessons Compounding Over Time
 
-Day 1: `/debug` finds race condition in cache invalidation → writes lesson
+Day 1: `/sk:debug` finds race condition in cache invalidation → writes lesson
 ```
 **Bug:** Cache not invalidated on concurrent updates
 **Root cause:** Missing mutex lock on cache write
 **Prevention:** Always use cache.invalidate() AFTER db.update(), never before
 ```
 
-Day 5: `/write-plan` reads lesson, applies it to new feature:
+Day 5: `/sk:write-plan` reads lesson, applies it to new feature:
 ```
 Step 3: Update user profile
    [Apply lesson: cache invalidation after DB update, never before]
@@ -613,7 +615,7 @@ Step 3: Update user profile
 → Plan now says: "Update DB, then invalidate cache"
 ```
 
-Day 6: `/execute-plan` reads lesson as standing constraint:
+Day 6: `/sk:execute-plan` reads lesson as standing constraint:
 ```
 Implementing "Update user profile"...
 → Reading lessons.md for constraints
@@ -621,7 +623,7 @@ Implementing "Update user profile"...
 → Applying: invalidate() call happens AFTER update() ✓
 ```
 
-Day 10: `/review` scans diff against lessons:
+Day 10: `/sk:review` scans diff against lessons:
 ```
 Checking diff for cache patterns...
 → Lesson says: "cache.invalidate() AFTER db.update()"
@@ -630,6 +632,47 @@ Checking diff for cache patterns...
 ```
 
 **Result:** One lesson learned → read by 3+ subsequent skills → prevents the same bug from happening again.
+
+### Fast-Track Flow
+
+```
+/sk:fast-track
+```
+
+One command for small changes. Handles: branch → implement → commit → `/sk:gates` → PR.
+Guard rails: warns on >300 lines or >5 new files. Still runs all quality gates.
+
+### Bug Fix Flow
+
+```
+/sk:debug → /sk:branch → /sk:write-tests → fix → /sk:smart-commit → /sk:gates → /sk:finish-feature
+```
+
+### Hotfix Flow
+
+```
+/sk:hotfix
+```
+
+Emergency: skip TDD, gates still enforced. After merging: add regression test + lesson.
+
+### Requirement Change Flow
+
+```
+/sk:change
+```
+
+Tier 1 (tweak) → `/sk:write-tests`. Tier 2 (new scope) → `/sk:write-plan`. Tier 3 (rethink) → `/sk:brainstorm`.
+
+### Quality Gates (`/sk:gates`)
+
+Single command runs all 6 gates in 4 parallel batches. Each gate auto-fixes + auto-commits.
+
+### On-Demand Tools
+
+- `/sk:scope-check` — detect scope creep mid-implementation (4-tier: On Track → Out of Control)
+- `/sk:retro` — post-ship retrospective: velocity, blockers, action items
+- `/sk:reverse-doc` — generate docs from existing code
 
 ---
 
@@ -643,7 +686,7 @@ Bootstrap or repair Claude Code infrastructure on any project.
 - Detects your tech stack (Next.js, Laravel, Python, Go, Ruby, etc.)
 - Creates or optimizes `CLAUDE.md`, project commands in `.claude/commands/`, and Claude docs in `.claude/docs/`
 - Adds `tasks/findings.md` + `tasks/progress.md` for persistent context across long sessions
-- Adds project-level workflow commands: `/re-setup`, `/brainstorm`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/security-check`, `/finish-feature`
+- Adds project-level workflow commands: `/re-setup`, `/brainstorm`, `/write-plan`, `/execute-plan`, `/plan`, `/status`, `/finish-feature`
 - Fully idempotent — safe to re-run on existing projects
 
 **Supported stacks:** Next.js + Drizzle, Next.js + Prisma, Next.js + Supabase, Laravel + Eloquent, Supabase (any framework), Python + FastAPI, Generic
@@ -657,15 +700,15 @@ Bootstrap or repair Claude Code infrastructure on any project.
 
 1. Run `/setup-claude` (creates scaffolding + commands).
 2. Read `tasks/todo.md` (pick next task) and `tasks/lessons.md` (past corrections).
-3. Run `/brainstorm` to explore requirements (no code).
-4. *(Optional)* Run `/frontend-design` or `/api-design` for design artifacts (no code).
-5. *(Optional)* Run `/accessibility` for WCAG 2.1 AA audit on the design.
-6. Run `/write-plan` to write a decision-complete plan into `tasks/todo.md`.
-7. Run `/branch` to create a feature branch.
-8. *(Optional)* Run `/schema-migrate` for database changes.
-9. Run `/write-tests` to write failing tests first (TDD red phase).
-10. Run `/execute-plan` to implement in small batches (TDD green phase).
-11. Run `/smart-commit` to commit tests + implementation.
+3. Run `/sk:brainstorm` to explore requirements (no code).
+4. *(Optional)* Run `/sk:frontend-design` or `/sk:api-design` for design artifacts (no code).
+5. *(Optional)* Run `/sk:accessibility` for WCAG 2.1 AA audit on the design.
+6. Run `/sk:write-plan` to write a decision-complete plan into `tasks/todo.md`.
+7. Run `/sk:branch` to create a feature branch.
+8. *(Optional)* Run `/sk:schema-migrate` for database changes.
+9. Run `/sk:write-tests` to write failing tests first (TDD red phase).
+10. Run `/sk:execute-plan` to implement in small batches (TDD green phase).
+11. Run `/sk:smart-commit` to commit tests + implementation.
 12. Run `/sk:lint` — **hard gate** (Lint + Dep Audit), fix and re-run until clean.
 13. Run `/sk:test` — **hard gate**, 100% coverage on new code.
 14. Run `/sk:security-check` — **hard gate**, 0 issues across all severities.
@@ -715,113 +758,14 @@ python3 "$HOME/.claude/skills/setup-claude/scripts/apply_setup_claude.py" "$(pwd
 
 ---
 
-### `/claude-setup-tools`
+### `/sk:setup-optimizer`
 
-Create, diagnose, and intelligently maintain `CLAUDE.md` files with auto-detection, comprehensive context discovery, and safe re-running during development.
+Diagnose, update workflow, and enrich CLAUDE.md. The single command to keep any CLAUDE.md current.
 
-**Three Skills + Three Guides:**
-
-**Skills:**
-- `/setup-starter` — Auto-generate CLAUDE.md with intelligent project discovery (ENHANCED)
-- `/doctor-claude` — Diagnose issues with context-aware suggestions (ENHANCED)
-- `/optimize-claude` — Enrich CLAUDE.md with project context and safely re-run during development
-
-**Guides:**
-- `/explain-claude` — Learn what each CLAUDE.md section means
-- `/implement-claude` — Step-by-step workflow to create perfect CLAUDE.md
-- `/review-claude` — Quality checklist before committing
-
-**What `/setup-starter` Does (Enhanced):**
-- 🔍 **Auto-discovers** actual project directories: src/, tests/, docs/, config/, scripts/, etc.
-- 📚 **Finds documentation**: README.md, CONTRIBUTING.md, docs/*.md, .github/CONTRIBUTING.md
-- 🔧 **Detects workflows**: npm scripts, Makefile targets, GitHub Actions workflows
-- 📄 **Generates tailored CLAUDE.md** specific to each project (not generic)
-- 📊 **Reports discoveries** showing directories, docs, and workflows found
-- ✅ Preserves all file safety features (sidecar handling, markers)
-
-**What `/doctor-claude` Does (Enhanced):**
-- 🔍 **Discovers project structure** during diagnosis for comparison
-- 📊 **Compares documented vs actual** content to identify gaps
-- ⚠️ **Reports undocumented** directories and missing documentation sections
-- 💡 **Stack-specific suggestions**: Tailored to React, Django, FastAPI, etc.
-- 🔧 **Detects workflows** and suggests documentation improvements
-- ✅ Shows "Project Structure Detected" in diagnostic output
-
-**What `/optimize-claude` Does:**
-- 🔍 **Auto-discovers** project structure: src/, tests/, docs/, config/, etc.
-- 📚 **Finds documentation**: README.md, CONTRIBUTING.md, docs/*.md, etc.
-- 🔧 **Detects workflows**: Makefile targets, npm scripts, GitHub Actions
-- 🔄 **Safely re-runs** during development without losing customizations
-- 🔒 **Preserves edits** with smart detection + auto-locking of user sections
-- 📊 **Reports findings** showing what was added and preserved
-
-**Key Features:**
-- ✅ Auto-detects JavaScript, Python, Go, Rust projects
-- ✅ Generates CLAUDE.md in seconds (100-150 lines)
-- ✅ Stays under 200 lines with comprehensive context
-- ✅ Safe to run multiple times (preserves all user work)
-- ✅ Never overwrites without permission (marker system)
-- ✅ Works with real project structure (not templates)
-
-**Why use it:**
-- 💨 Saves 15+ minutes per project vs manual writing
-- 🔄 Maintenance command - run during development to keep CLAUDE.md fresh
-- 🛡️ Smart customization preservation - your edits are always safe
-- 📚 Comprehensive yet maintainable - grows with your project
-- 🤖 Automated discovery - new dirs/docs/workflows auto-detected
-
-**Supported stacks:** Node.js (React, Next.js, etc.), Python (FastAPI, Django, Flask), Go, Rust, and any project (manual customization)
-
-**Typical Usage:**
-```bash
-/setup-starter          # Create initial CLAUDE.md
-                        # (auto-discovers: 7 directories, 10 doc files, workflows)
-
-# Verify the generated CLAUDE.md
-/doctor-claude          # Shows discovered structure and suggestions
-
-# Later, after adding directories/docs:
-/optimize-claude        # Discovers and adds them automatically!
-
-# Edit Important Context with custom notes
-vim CLAUDE.md
-/optimize-claude        # ✅ Your edits preserved!
-```
-
-**Example Output from `/setup-starter`:**
-```
-✓ CLAUDE.md created: CLAUDE.md
-  Lines: 104/150
-  Sections: Stack, Quick Start, Project Structure, Key Files, Development,
-            Build & Deploy, Important Context, Environment Variables,
-            Common Tasks, Documentation, Key Directories,
-            Documentation & Resources, Common Workflows
-
-📁 Discoveries from project structure:
-   📂 7 directories found
-   📚 10 documentation files
-   🔧 Workflows discovered and documented
-
-✅ CLAUDE.md created successfully!
-```
-
-**Example Output from `/doctor-claude`:**
-```
-🔍 Project Structure Detected:
-   📂 7 directories: src, tests, docs, public, scripts, config, .github
-   📚 10 documentation files
-   🔧 Workflows: npm (4 scripts)
-
-⚠️ Issues found:
-   1. Project has undocumented directories: tests, scripts
-
-💡 Suggestions:
-   1. Add documentation for: tests, scripts
-   2. Document additional npm scripts: lint, format, type-check
-   3. Consider adding 'Components & Architecture' section for React
-```
-
-**Example:** For a React + Prisma + Jest project with docs/, the tool discovers all structure automatically and generates complete, organized documentation in under 30 seconds.
+- Auto-discovers project structure, docs, and workflows
+- Compares documented vs actual content
+- Updates CLAUDE.md without losing customizations
+- Safe to re-run during development
 
 ---
 
@@ -839,11 +783,11 @@ Design distinctive, production-grade frontend interfaces that avoid generic "AI 
 
 **Usage:**
 ```
-/frontend-design build a landing page for a design agency
-/frontend-design create a dark dashboard with data visualizations
+/sk:frontend-design build a landing page for a design agency
+/sk:frontend-design create a dark dashboard with data visualizations
 ```
 
-> **Workflow:** Run `/brainstorm` first to lock in requirements, then `/frontend-design` to design, then `/write-plan` to create a unified plan, then `/execute-plan` to implement. See [Brainstorming + Frontend Design](#brainstorming--frontend-design).
+> **Workflow:** Run `/sk:brainstorm` first to lock in requirements, then `/sk:frontend-design` to design, then `/sk:write-plan` to create a unified plan, then `/sk:execute-plan` to implement. See [Brainstorming + Frontend Design](#brainstorming--frontend-design).
 
 > Requires the `playwright@claude-plugins-official` plugin for visual preview. Without it, design artifact generation still works — only the preview step is skipped.
 
@@ -864,7 +808,7 @@ Analyze schema changes safely before applying them — works across 5 ORMs with 
 
 **Usage:** Inside any supported project, run before any schema push:
 ```
-/schema-migrate
+/sk:schema-migrate
 ```
 
 **Compatibility:**
@@ -900,7 +844,7 @@ Smart conventional commits with auto-classification and approval workflow.
 
 **Usage:** After staging changes:
 ```
-/commit
+/sk:smart-commit
 ```
 
 ---
@@ -920,8 +864,8 @@ Generate comprehensive test files matching your project's framework and conventi
 
 **Usage:** Point it at code to test:
 ```
-/write-tests src/auth/login.ts
-/write-tests              # tests most recently changed files
+/sk:write-tests src/auth/login.ts
+/sk:write-tests              # tests most recently changed files
 ```
 
 ---
@@ -942,15 +886,15 @@ Structured bug investigation with hypothesis tracking and documentation.
 
 **Usage:** When something is broken:
 ```
-/debug                    # describe the bug when prompted
-/debug the API returns 500 on login
+/sk:debug                    # describe the bug when prompted
+/sk:debug the API returns 500 on login
 ```
 
 ---
 
 ### `/review`
 
-Rigorous multi-dimensional code review across 7 dimensions — the quality bar of a senior engineer at a top-tier tech company. Report-only — PR creation is handled by `/finish-feature`.
+Rigorous multi-dimensional code review across 7 dimensions — the quality bar of a senior engineer at a top-tier tech company. Report-only — PR creation is handled by `/sk:finish-feature`.
 
 **What it does:**
 - Reviews all changes on the current branch against main across **7 dimensions:**
@@ -963,13 +907,13 @@ Rigorous multi-dimensional code review across 7 dimensions — the quality bar o
   7. **Testing** — coverage gaps, edge cases, assertion quality, test isolation, flakiness risks
 - Every finding tagged with dimension, file:line, and **why** it matters
 - Generates severity-leveled report: Critical / Warning / Nitpick (max 20 items)
-- Critical/Warning: loop `/debug` + `/commit` + `/review` until clean
-- Nitpick only: asks user — fix now or proceed to `/finish-feature`?
+- Critical/Warning: loop `/sk:debug` + `/sk:smart-commit` + `/sk:review` until clean
+- Nitpick only: asks user — fix now or proceed to `/sk:finish-feature`?
 - Report-only: intentionally cannot modify files
 
 **Usage:** When ready for review:
 ```
-/review
+/sk:review
 ```
 
 ---
@@ -978,7 +922,7 @@ Rigorous multi-dimensional code review across 7 dimensions — the quality bar o
 
 > This is not a global skill — it's a project-level command generated by `/setup-claude` into `.claude/commands/finish-feature.md`.
 
-After running `/setup-claude` on your project, you'll have `/finish-feature` available. It provides a comprehensive, stack-aware checklist for finalizing a feature branch including:
+After running `/setup-claude` on your project, you'll have `/sk:finish-feature` available. It provides a comprehensive, stack-aware checklist for finalizing a feature branch including:
 
 **Pre-merge Verification:**
 - Git branch validation (feature/fix/chore naming)
@@ -999,7 +943,7 @@ The test checklist is **framework-aware** — generated with guidance specific t
 
 #### Smart Architectural Change Detection
 
-When you run `/finish-feature`, Step 4 automatically:
+When you run `/sk:finish-feature`, Step 4 automatically:
 
 1. **Scans your diff** for architectural changes using the `detect_arch_changes.py` script
 2. **Analyzes patterns** like control flow changes, data flow changes, skill integrations
@@ -1012,7 +956,7 @@ When you run `/finish-feature`, Step 4 automatically:
 **Example: Automatic Detection**
 
 ```bash
-$ /finish-feature
+$ /sk:finish-feature
 ...
 Step 4: Check for Architectural Changes
 → Running auto-detector...
@@ -1046,10 +990,10 @@ Automate releases with optional mobile store submission audits.
 
 | Invocation | What happens |
 |---|---|
-| `/release` | Git release: version bump, CHANGELOG update, git tag, push to GitHub |
-| `/release --android` | Git release + Play Store readiness audit |
-| `/release --ios` | Git release + App Store readiness audit |
-| `/release --android --ios` | Git release + both store audits |
+| `/sk:release` | Git release: version bump, CHANGELOG update, git tag, push to GitHub |
+| `/sk:release --android` | Git release + Play Store readiness audit |
+| `/sk:release --ios` | Git release + App Store readiness audit |
+| `/sk:release --android --ios` | Git release + both store audits |
 
 **What the store audit does:**
 - Auto-detects your mobile framework (Expo, React Native, Flutter, native Android/iOS, Capacitor/Ionic, .NET MAUI)
@@ -1066,10 +1010,10 @@ Automate releases with optional mobile store submission audits.
 
 **Usage:**
 ```
-/release                    # Just tag and push
-/release --android          # + Play Store audit
-/release --ios              # + App Store audit
-/release --android --ios    # + both audits
+/sk:release                    # Just tag and push
+/sk:release --android          # + Play Store audit
+/sk:release --ios              # + App Store audit
+/sk:release --android --ios    # + both audits
 ```
 
 ---
@@ -1084,9 +1028,9 @@ Design REST/GraphQL API contracts before any implementation begins.
 - Covers auth flows (JWT, OAuth, API keys), rate limiting, and versioning strategy
 - Output: complete API Design Specification — no code, design only
 
-**Usage:** After `/brainstorm`, before `/write-plan`:
+**Usage:** After `/sk:brainstorm`, before `/sk:write-plan`:
 ```
-/api-design
+/sk:api-design
 ```
 
 ---
@@ -1100,9 +1044,9 @@ WCAG 2.1 AA compliance audit on frontend design specs and existing UI code.
 - Every finding includes: WCAG criterion, severity (Critical/High/Medium/Low), specific recommendation
 - Writes to `tasks/accessibility-findings.md` (append-only — never overwritten)
 
-**Usage:** After `/frontend-design`, before `/write-plan`:
+**Usage:** After `/sk:frontend-design`, before `/sk:write-plan`:
 ```
-/accessibility
+/sk:accessibility
 ```
 
 ---
@@ -1120,7 +1064,7 @@ Performance audit — auto-detects stack and checks both frontend and backend.
 
 **Usage:** After security check, before review:
 ```
-/perf
+/sk:perf
 ```
 
 ---
@@ -1177,7 +1121,7 @@ Emergency fix workflow for production incidents — skips design and TDD, qualit
 
 **Usage:** Production emergency only:
 ```
-/hotfix
+/sk:hotfix
 ```
 
 ---
@@ -1224,12 +1168,19 @@ Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, a
 | `.claude/commands/finish-feature.md` | Branch finalization checklist (stack-aware) |
 | `.claude/commands/plan.md` | `/plan` — create/refresh planning files |
 | `.claude/commands/status.md` | `/status` — show task progress summary |
+| `.claude/hooks/` | 6 lifecycle hook scripts (pre-commit, post-commit, etc.) |
+| `.claude/agents/` | 5 gate agent definitions (lint, test, security, review, e2e) |
+| `.claude/rules/` | Path-scoped coding rules (stack-dependent, auto-activate per directory) |
+| `.claude/settings.json` | Hook config, permissions, statusline |
+| `.claude/statusline.sh` | Persistent CLI status (context %, model, workflow step, branch) |
 | `.claude/docs/changelog-guide.md` | How to maintain `CHANGELOG.md` |
 | `.claude/docs/arch-changelog-guide.md` | How to log architectural decisions |
 | `tasks/todo.md` | Active task tracker (Goal / Plan / Results / Errors) |
 | `tasks/findings.md` | Detection notes and decisions log |
 | `tasks/progress.md` | Session work log and error log |
 | `tasks/lessons.md` | Accumulated project lessons — never overwritten |
+| `tasks/workflow-status.md` | Workflow step tracker — persists across conversations |
+| `tasks/tech-debt.md` | Pre-existing issues found by gates — append-only |
 | `CHANGELOG.md` | Keep a Changelog format — never overwritten if exists |
 
 ---
@@ -1301,14 +1252,14 @@ python3 ~/.claude/skills/setup-claude/scripts/apply_setup_claude.py "$(pwd)"
 
 As of March 2026, `/re-setup` now **automatically detects when templates have been updated** using template hash comparison. You don't need to manually delete and regenerate files unless you want to reset to defaults or adopt a custom version.
 
-When templates improve (e.g., new guidance in `/finish-feature`), running `/re-setup` will automatically update any generated files that use outdated templates.
+When templates improve (e.g., new guidance in `/sk:finish-feature`), running `/re-setup` will automatically update any generated files that use outdated templates.
 
 ---
 
 ## Requirements
 
 - [Claude Code CLI](https://claude.ai/code) installed and configured
-- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/finish-feature` PR creation
-- Python 3 — required for `/setup-claude` deterministic bootstrap script
-- Git — required for `/commit`, `/review`, `/debug`, and `/finish-feature`
-- `playwright@claude-plugins-official` plugin — required for browser verification in `/frontend-design`, browser reproduction in `/debug`, and live-page assertion capture in `/write-tests` (Playwright projects only). Enable in Claude Code settings under Plugins.
+- [GitHub CLI (`gh`)](https://cli.github.com/) — required for `/sk:finish-feature` PR creation
+- Python 3 — required for `/sk:setup-claude` deterministic bootstrap script
+- Git — required for `/sk:smart-commit`, `/sk:review`, `/sk:debug`, and `/sk:finish-feature`
+- `playwright@claude-plugins-official` plugin — required for browser verification in `/sk:frontend-design`, browser reproduction in `/sk:debug`, and live-page assertion capture in `/sk:write-tests` (Playwright projects only). Enable in Claude Code settings under Plugins.
