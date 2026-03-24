@@ -34,7 +34,7 @@ You MUST create a task for each of these items and complete them in order:
    - Open questions (if any remain)
    Additionally, **append** an ADR entry to `docs/decisions.md` (see "Decisions Log" section below).
    (Optionally also write a full design doc to docs/plans/YYYY-MM-DD-<topic>-design.md)
-6. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+6. **Transition to implementation** — invoke `/sk:write-plan` skill to create implementation plan
 
 ## Process Flow
 
@@ -46,7 +46,7 @@ digraph brainstorming {
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
     "Write design doc" [shape=box];
-    "Invoke writing-plans skill" [shape=doublecircle];
+    "Invoke `/sk:write-plan` skill" [shape=doublecircle];
 
     "Explore project context" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
@@ -54,11 +54,11 @@ digraph brainstorming {
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Invoke writing-plans skill";
+    "Write design doc" -> "Invoke `/sk:write-plan` skill";
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+**The terminal state is invoking `/sk:write-plan`.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is `/sk:write-plan`.
 
 ## The Process
 
@@ -95,8 +95,8 @@ digraph brainstorming {
 - Commit the findings, decisions log entry, and any design document to git
 
 **Implementation:**
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+- Invoke the `/sk:write-plan` skill to create a detailed implementation plan
+- Do NOT invoke any other skill. `/sk:write-plan` is the next step.
 
 ## Decisions Log
 

@@ -44,8 +44,8 @@ class FindingsWriter:
             self._append_entry(entry)
             print(f"\n✅ Findings written to {self.findings_path}")
             return True
-        except Exception as e:
-            print(f"\n❌ Error writing findings: {e}")
+        except OSError as e:
+            print(f"\n❌ Error writing findings to {self.findings_path}: {e}")
             return False
 
     def _ensure_file_exists(self):

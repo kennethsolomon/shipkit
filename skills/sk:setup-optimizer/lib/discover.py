@@ -1,7 +1,8 @@
 """Intelligent project structure, documentation, and workflow discovery."""
 
+import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 
 # Directories to exclude from discovery
@@ -174,16 +175,14 @@ def _extract_makefile_targets(root_path: Path) -> List[str]:
                 target = line.split(':')[0].strip()
                 if target and not target.startswith('.'):
                     targets.append(target)
-    except Exception:
-        pass
+    except (OSError, UnicodeDecodeError) as e:
+        print(f"Warning: Could not parse Makefile: {e}")
 
     return list(set(targets))[:10]  # Limit to 10 targets
 
 
 def _extract_npm_scripts(root_path: Path) -> List[str]:
     """Extract scripts from package.json."""
-    import json
-
     package_json = root_path / 'package.json'
     if not package_json.exists():
         return []
@@ -191,14 +190,14 @@ def _extract_npm_scripts(root_path: Path) -> List[str]:
     scripts = []
     try:
         content = json.loads(package_json.read_text())
-        if 'scripts' in content:
+        if isinstance(content, dict) and 'scripts' in content:
             # Include common scripts, exclude default ones
             exclude = {'test', 'start', 'dev', 'build'}
             for script_name in content['scripts'].keys():
                 if script_name not in exclude:
                     scripts.append(script_name)
-    except Exception:
-        pass
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError) as e:
+        print(f"Warning: Could not parse package.json scripts: {e}")
 
     return scripts[:8]  # Limit to 8 scripts
 
@@ -215,7 +214,7 @@ def _find_github_workflows(root_path: Path) -> List[str]:
             workflows.append(workflow_file.stem)
         for workflow_file in workflows_dir.glob('*.yaml'):
             workflows.append(workflow_file.stem)
-    except Exception:
-        pass
+    except OSError as e:
+        print(f"Warning: Could not read GitHub workflows: {e}")
 
     return workflows[:5]  # Limit to 5 workflows

@@ -1,9 +1,11 @@
 """Execute individual debug steps (3-11)."""
 
+from __future__ import annotations
+
+import shlex
 import subprocess
-from typing import Dict
 from pathlib import Path
-import sys
+from typing import Dict
 
 
 class StepRunner:
@@ -42,8 +44,7 @@ class StepRunner:
             # Recent commits
             print("📋 Recent commits:")
             result = subprocess.run(
-                "git log --oneline -10",
-                shell=True,
+                ["git", "log", "--oneline", "-10"],
                 capture_output=True,
                 text=True
             )
@@ -52,8 +53,7 @@ class StepRunner:
             # Recent diffs
             print("\n📋 Recent file changes:")
             result = subprocess.run(
-                "git diff HEAD~3 --stat",
-                shell=True,
+                ["git", "diff", "HEAD~3", "--stat"],
                 capture_output=True,
                 text=True
             )
@@ -107,8 +107,7 @@ class StepRunner:
 
         try:
             result = subprocess.run(
-                command,
-                shell=True,
+                shlex.split(command),
                 capture_output=True,
                 text=True,
                 timeout=30
@@ -277,8 +276,7 @@ class StepRunner:
         if command:
             try:
                 result = subprocess.run(
-                    command,
-                    shell=True,
+                    shlex.split(command),
                     capture_output=True,
                     text=True,
                     timeout=30

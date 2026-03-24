@@ -171,8 +171,8 @@ Read `.shipkit/config.json` from the project root if it exists.
 
 | Profile | Model |
 |---------|-------|
-| `full-sail` | sonnet |
-| `quality` | sonnet |
+| `full-sail` | opus (inherit) |
+| `quality` | opus (inherit) |
 | `balanced` | haiku |
 | `budget` | haiku |
 

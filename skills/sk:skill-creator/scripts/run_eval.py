@@ -5,6 +5,8 @@ Tests whether a skill's description causes Claude to trigger (read the skill)
 for a set of queries. Outputs results as JSON.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import os
@@ -221,7 +223,7 @@ def run_eval(
             try:
                 query_triggers[query].append(future.result())
             except Exception as e:
-                print(f"Warning: query failed: {e}", file=sys.stderr)
+                print(f"Warning: query failed for '{query[:60]}': {type(e).__name__}: {e}", file=sys.stderr)
                 query_triggers[query].append(False)
 
     for query, triggers in query_triggers.items():

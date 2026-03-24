@@ -66,8 +66,8 @@ class LessonsWriter:
             self._append_lesson(entry)
             print(f"\n✅ New lesson added to {self.lessons_path}")
             return True
-        except Exception as e:
-            print(f"\n❌ Error writing lesson: {e}")
+        except OSError as e:
+            print(f"\n❌ Error writing lesson to {self.lessons_path}: {e}")
             return False
 
     def _ensure_file_exists(self):

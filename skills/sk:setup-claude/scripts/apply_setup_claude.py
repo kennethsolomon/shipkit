@@ -271,7 +271,16 @@ def _write_file_if_missing(dest: Path, content: str) -> Tuple[str, Path]:
     if dest.exists():
         return ("skipped", dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(content, encoding="utf-8")
+    # Atomic write: write to temp file then rename to avoid TOCTOU race
+    import tempfile
+    fd, tmp_path = tempfile.mkstemp(dir=dest.parent, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(content)
+        Path(tmp_path).replace(dest)
+    except BaseException:
+        Path(tmp_path).unlink(missing_ok=True)
+        raise
     return ("created", dest)
 
 
@@ -282,7 +291,7 @@ def _write_file_if_generated(dest: Path, content: str, template_path: Optional[P
         return ("created", dest)
     try:
         existing = dest.read_text(encoding="utf-8")
-    except Exception:
+    except (OSError, UnicodeDecodeError):
         return ("skipped", dest)
     if GENERATED_MARKER in existing:
         # Check if content is identical (fast path)
@@ -311,7 +320,7 @@ def _plan_file_if_generated(dest: Path, content: str) -> str:
         return "created"
     try:
         existing = dest.read_text(encoding="utf-8")
-    except Exception:
+    except (OSError, UnicodeDecodeError):
         return "skipped"
     if GENERATED_MARKER not in existing:
         return "skipped"

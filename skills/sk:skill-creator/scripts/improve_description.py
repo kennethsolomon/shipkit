@@ -5,6 +5,8 @@ Takes eval results (from run_eval.py) and generates an improved description
 using Claude with extended thinking.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import re

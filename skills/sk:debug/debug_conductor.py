@@ -75,7 +75,6 @@ class DebugConductor:
             if not self._can_proceed(step):
                 print(f"\n⛔ BLOCKED: {self._gate_reason(step)}")
                 print("\nRun /debug again to continue from this step.")
-                self._save_progress()
                 return
 
             # Run step and update state
@@ -94,7 +93,6 @@ class DebugConductor:
                 proceed = input(f"\n✅ Step {step_num} complete. Continue to step {step_num + 1}? (y/n): ").strip().lower()
                 if proceed not in ['y', 'yes', '']:
                     print(f"Pausing after step {step_num}. Run /debug again to continue.")
-                    self._save_progress()
                     return
 
         print("\n" + "="*70)
@@ -160,12 +158,6 @@ class DebugConductor:
         ):
             return "No confirmed hypothesis yet—cannot propose fix."
         return "Precondition not met for this step."
-
-    def _save_progress(self):
-        """Save current state for resumption (optional)."""
-        # Could implement checkpoint system here
-        pass
-
 
 def main():
     """Entry point for /debug skill."""
