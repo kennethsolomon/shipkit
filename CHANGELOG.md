@@ -8,6 +8,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.10.2] — 2026-03-24 — UX/UI Design Intelligence Upgrade
+
+### Changed
+- **`sk:frontend-design`** — added UX Quality Constraints section with 99 rules across 10 priority-ordered categories (accessibility, touch, performance, style, layout, typography, animation, forms, navigation, charts); added Professional UI Anti-Patterns section; added Pre-Delivery Checklist to design output template
+- **`sk:accessibility`** — added iOS Dynamic Type audit section; added escape routes and keyboard shortcut preservation rules to keyboard navigation checklist
+
 ## [3.10.1] — 2026-03-24 — Security & Quality Fixes
 
 ### Fixed
