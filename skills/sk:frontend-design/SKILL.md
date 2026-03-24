@@ -63,6 +63,235 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 
 Remember: Claude is capable of extraordinary creative thinking. Don't hold back on the design direction — show what can be envisioned when thinking outside the box and committing fully to a distinctive aesthetic.
 
+## UX Quality Constraints
+
+Apply these rules as hard constraints during design. They are organized by priority — address CRITICAL issues first, then HIGH, then MEDIUM. Skip categories irrelevant to the current design (e.g., Charts for a landing page).
+
+| Priority | Category | Impact | Key Rule |
+|---|---|---|---|
+| 1 | Accessibility | CRITICAL | Contrast 4.5:1, keyboard nav, aria-labels, focus rings |
+| 2 | Touch & Interaction | CRITICAL | Min 44×44px targets, tap feedback, no hover-only |
+| 3 | Performance | HIGH | WebP/AVIF images, lazy load, skeleton screens, no layout shift |
+| 4 | Style Selection | HIGH | Match style to product type, SVG icons (never emoji), one primary CTA |
+| 5 | Layout & Responsive | HIGH | Mobile-first, breakpoints 375/768/1024/1440, no horizontal scroll |
+| 6 | Typography & Color | MEDIUM | Base 16px body, line-height 1.5, semantic color tokens |
+| 7 | Animation | MEDIUM | 150–300ms duration, transform/opacity only, respect prefers-reduced-motion |
+| 8 | Forms & Feedback | MEDIUM | Visible labels, error near field, loading → success/error on submit |
+| 9 | Navigation | HIGH | Bottom nav ≤5 items, predictable back, deep linking |
+| 10 | Charts & Data | LOW | Match chart to data type, accessible colors, legend visible |
+
+### 1. Accessibility (CRITICAL)
+
+- Minimum 4.5:1 contrast ratio for normal text (large text 3:1)
+- Visible focus rings on all interactive elements (2–4px outline)
+- Descriptive alt text on all meaningful images
+- `aria-label` on icon-only buttons
+- Tab order matches visual order; full keyboard navigation supported
+- `label[for]` on every form input — never placeholder-only
+- Never convey information by color alone (add icon or text)
+- Respect `prefers-reduced-motion` — reduce or disable animations when set
+- Sequential heading hierarchy h1→h6, no skipped levels
+- Screen reader logical reading order; meaningful accessibilityLabel/Hint
+- Skip-to-main-content link for keyboard users
+
+### 2. Touch & Interaction (CRITICAL)
+
+- Minimum 44×44pt (iOS) / 48×48dp (Android) tap target — expand hitSlop if icon is smaller
+- Minimum 8px gap between adjacent touch targets
+- Never rely on hover-only for primary interactions — use click/tap
+- Disable buttons during async operations; show spinner or progress
+- Add `cursor-pointer` to all clickable elements (web)
+- Provide visual feedback on press within 100ms (ripple, opacity, elevation)
+- Use `touch-action: manipulation` to eliminate 300ms tap delay (web)
+- Avoid horizontal swipe on scrollable content — prefer vertical scroll
+- Don't block system gestures (back swipe, Control Center, home indicator)
+
+### 3. Performance (HIGH)
+
+- Use WebP/AVIF with `srcset`/`sizes`; lazy load non-hero images
+- Declare `width`/`height` or `aspect-ratio` on images to prevent CLS
+- Use `font-display: swap` or `optional` to avoid FOIT
+- Preload only critical fonts — avoid preloading every weight variant
+- Lazy load non-hero components via dynamic import / route-level splitting
+- Load third-party scripts `async`/`defer`
+- Reserve space for async content to avoid layout jumps (CLS < 0.1)
+- Virtualize lists with 50+ items
+- Use skeleton/shimmer for loads >300ms — never a blank frame
+- Keep per-frame work <16ms (60fps); move heavy tasks off main thread
+- Debounce/throttle scroll, resize, and input handlers
+
+### 4. Style Selection (HIGH)
+
+- Match style to product type and industry — no random style mixing
+- Use SVG icons (Heroicons, Lucide) — never emojis as structural icons
+- Use one icon set throughout — consistent stroke width, corner radius, filled vs outline
+- Each screen has exactly one primary CTA; secondary actions are visually subordinate
+- Apply a consistent elevation/shadow scale — no arbitrary shadow values
+- Design light and dark variants together; don't assume light values work in dark mode
+- Blur signals background dismissal (modals, sheets) — not decoration
+- Respect platform idioms (iOS HIG vs Material Design) for navigation, controls, motion
+
+### 5. Layout & Responsive (HIGH)
+
+- `<meta name="viewport" content="width=device-width, initial-scale=1">` — never disable zoom
+- Design mobile-first; scale up to 768, 1024, 1440
+- No horizontal scroll on mobile; all content fits viewport width
+- Use 4pt/8dp incremental spacing system throughout
+- Consistent `max-w-6xl`/`7xl` container on desktop
+- Define a z-index scale (e.g., 0 / 10 / 20 / 40 / 100 / 1000) — no arbitrary values
+- Fixed navbars/bottom bars must pad underlying scroll content
+- Use `min-h-dvh` instead of `100vh` on mobile
+- Establish hierarchy via size, spacing, contrast — not color alone
+- Core content first on mobile; fold or hide secondary content
+
+### 6. Typography & Color (MEDIUM)
+
+- Minimum 16px body text on mobile (prevents iOS auto-zoom)
+- Line-height 1.5–1.75 for body text
+- 60–75 characters per line on desktop; 35–60 on mobile
+- Consistent type scale (e.g., 12 / 14 / 16 / 18 / 24 / 32)
+- Bold headings (600–700), regular body (400), medium labels (500)
+- Define semantic color tokens (`--color-primary`, `--color-error`, `--color-surface`) — never raw hex in components
+- Dark mode: use desaturated/lighter tonal variants, not inverted colors; test contrast independently
+- All foreground/background pairs must meet 4.5:1 (AA); use a contrast checker
+- Use tabular/monospaced figures for prices, data columns, and timers
+- Use whitespace intentionally to group related items and separate sections
+
+### 7. Animation (MEDIUM)
+
+- Duration: 150–300ms for micro-interactions; complex transitions ≤400ms; never >500ms
+- Animate `transform` and `opacity` only — never `width`, `height`, `top`, `left`
+- Use ease-out for entering elements; ease-in for exiting
+- Every animation expresses cause-effect — no purely decorative motion
+- State changes (hover, active, expanded, modal) animate smoothly — no snapping
+- Page transitions maintain spatial continuity (shared element, directional slide)
+- Exit animations should be 60–70% of enter duration to feel responsive
+- Stagger list/grid item entrance by 30–50ms per item
+- Animations must be interruptible — user tap cancels in-progress animation immediately
+- Never block user input during an animation
+- Scale feedback on press: subtle 0.95–1.05 scale on tappable cards/buttons
+- `prefers-reduced-motion` must reduce or disable animations entirely
+
+### 8. Forms & Feedback (MEDIUM)
+
+- Every input has a visible label — never placeholder-only
+- Show errors immediately below the related field (not only at the top)
+- Mark required fields (asterisk or explicit label)
+- Submit button: loading state → success or error state
+- Auto-dismiss toasts in 3–5s; toasts must not steal focus (`aria-live="polite"`)
+- Confirm before destructive actions (modals, undo toasts)
+- Validate on blur, not on every keystroke
+- Use semantic input types (`email`, `tel`, `number`) for correct mobile keyboard
+- Provide show/hide toggle on password fields
+- Error messages state the cause + how to fix — not just "Invalid input"
+- Multi-step forms show a step indicator and allow back navigation
+- After submit error, auto-focus the first invalid field
+
+### 9. Navigation (HIGH)
+
+- Bottom navigation: maximum 5 items with both icon and text label
+- Back navigation is predictable and restores scroll/filter state
+- All key screens are deep-linkable via URL/route
+- Current location is visually highlighted in navigation (color, weight, indicator)
+- Modals have a clear close affordance; support swipe-down to dismiss on mobile
+- Never use modals for primary navigation flows
+- Large screens (≥1024px) prefer sidebar; small screens use bottom/top nav
+- Don't mix Tab + Sidebar + Bottom Nav at the same hierarchy level
+- Dangerous actions (logout, delete account) are visually separated from normal nav
+- After route change, move focus to main content region for screen readers
+
+### 10. Charts & Data (when applicable)
+
+- Match chart type to data: trend → line, comparison → bar, proportion → pie/donut
+- Avoid pie/donut for >5 categories — use bar chart instead
+- Use accessible color palettes; never red/green only (colorblind users)
+- Always show a legend near the chart (not below a scroll fold)
+- Provide tooltips/data labels on hover (web) or tap (mobile)
+- Label all axes with units; avoid rotated labels on mobile
+- Charts must reflow on small screens (horizontal bar instead of vertical, fewer ticks)
+- Show skeleton/shimmer while chart data loads — never an empty axis frame
+- Grid lines should be low-contrast (e.g., `gray-200`) so they don't compete with data
+- Provide a text summary or `aria-label` describing the chart's key insight
+
+---
+
+## Professional UI Anti-Patterns
+
+These are frequently overlooked issues that make UI look unprofessional. Flag any of these in the design spec so implementation avoids them.
+
+### Icons & Visual Elements
+- **No emoji as icons** — use Heroicons, Lucide, or equivalent SVG sets
+- **No raster icons** — SVG only; PNGs blur and can't adapt to dark mode
+- **No mixed icon styles** — pick one set; consistent stroke width and fill style throughout
+- **No inconsistent sizing** — define icon size tokens (sm/md/lg = 16/20/24pt)
+- **Pressed states must not shift layout** — use opacity/color/elevation, not transforms that reflow siblings
+
+### Interaction
+- **No tap-only no-feedback** — every tappable element responds visually within 100ms
+- **No hover-only states on mobile** — hover states are fine for desktop, never the only affordance
+- **No disabled elements that look enabled** — use `opacity: 0.38–0.5` + `cursor: not-allowed` + semantic `disabled` attribute
+- **No precision-required targets** — avoid requiring taps on thin edges or pixel-perfect areas
+
+### Light/Dark Mode
+- **No hardcoded hex in components** — use semantic tokens that map per theme
+- **No light-mode-only testing** — always verify dark mode contrast independently
+- **No weak modal scrims** — use 40–60% black so background doesn't compete with foreground
+- **No color-only state indicators** — always pair color with icon or label
+
+### Layout & Spacing
+- **No safe-area violations** — respect notch, Dynamic Island, and gesture bar on mobile
+- **No scroll content hidden behind fixed bars** — add correct insets
+- **No random spacing** — every gap follows the 4/8dp rhythm
+- **No edge-to-edge paragraphs on tablets** — constrain long-form text width for readability
+
+---
+
+## Pre-Delivery Checklist
+
+Include this checklist at the end of every design output. Implementation must pass all applicable items before shipping.
+
+```
+### Pre-Delivery Checklist
+
+**Accessibility**
+- [ ] All text contrast ≥4.5:1 (normal) or ≥3:1 (large/UI)
+- [ ] Focus rings visible on all interactive elements
+- [ ] All images/icons have alt text or aria-label
+- [ ] No color-only information conveyance
+- [ ] prefers-reduced-motion respected
+
+**Touch & Interaction**
+- [ ] All tap targets ≥44×44pt
+- [ ] Every tappable element has pressed-state feedback
+- [ ] No hover-only interactions on mobile
+- [ ] cursor-pointer on all clickable web elements
+
+**Layout**
+- [ ] No horizontal scroll at 375px
+- [ ] Safe areas respected (notch, gesture bar, tab bar)
+- [ ] Scroll content not hidden behind fixed bars
+- [ ] 4/8dp spacing rhythm consistent throughout
+
+**Typography & Color**
+- [ ] Body text ≥16px on mobile
+- [ ] Semantic color tokens used (no raw hex in components)
+- [ ] Dark mode contrast verified independently
+
+**Performance**
+- [ ] Images use WebP/AVIF with declared dimensions
+- [ ] Skeleton/shimmer shown for loads >300ms
+- [ ] No layout shift from async content (CLS < 0.1)
+
+**Animation**
+- [ ] All transitions 150–300ms
+- [ ] Only transform/opacity animated (no width/height/top/left)
+- [ ] Animations interruptible; no input blocking
+
+**Icons**
+- [ ] No emojis used as icons (SVG only)
+- [ ] Consistent icon family and stroke style throughout
+```
+
 ## Output Format
 
 End every `/sk:frontend-design` session with a structured summary:
@@ -93,6 +322,9 @@ End every `/sk:frontend-design` session with a structured summary:
 
 ### Implementation Notes
 [Specific Tailwind classes, CSS patterns, or gotchas for /sk:execute-plan]
+
+### Pre-Delivery Checklist
+[Copy the checklist from the UX Quality Constraints section above and mark which items are covered by this design, and which need special attention during implementation]
 ```
 
 After presenting the design summary, you **MUST** stop and ask — do not continue or summarize further:

@@ -43,6 +43,8 @@ Run this skill:
 - Visible focus indicator on all interactive elements (not removed with `outline: none` without replacement)
 - Modal/dialog focus management: focus moves into modal on open, returns to trigger on close
 - Skip navigation link present for pages with repeated navigation
+- Modals and multi-step flows must have a visible cancel/back affordance — no dead ends (WCAG 3.2.2)
+- Do not override or intercept system/platform keyboard shortcuts (Tab, arrow keys, Escape, VoiceOver gestures)
 
 ### 3. ARIA & Semantics (WCAG 4.1.2, 1.3.1)
 - Semantic HTML first (`<button>`, `<nav>`, `<main>`, `<header>`) — ARIA only when HTML is insufficient
@@ -70,7 +72,14 @@ Run this skill:
 - All non-essential animations respect `prefers-reduced-motion` media query
 - Auto-playing animations can be paused, stopped, or hidden
 
-### 7. Content & Structure (WCAG 1.3.1, 2.4.6, 2.4.2)
+### 7. iOS Dynamic Type (Apple HIG)
+- UI must remain fully readable and usable when system font size is at the largest accessibility setting
+- No text truncation at large sizes — prefer wrapping over ellipsis
+- All layouts must reflow correctly without overlapping or clipping at Dynamic Type XXL
+- Avoid fixed heights on elements that contain text — use dynamic sizing
+- Test at: Settings → Accessibility → Display & Text Size → Larger Text (max slider)
+
+### 8. Content & Structure (WCAG 1.3.1, 2.4.6, 2.4.2)
 - Single `<h1>` per page; heading hierarchy is logical (no skipped levels)
 - Page has a descriptive `<title>`
 - Link text is descriptive standalone ("Read the docs" not "Click here")
