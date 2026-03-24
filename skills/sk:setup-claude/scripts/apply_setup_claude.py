@@ -451,7 +451,6 @@ def apply(
     add("templates/tasks/progress.md.template", "tasks/progress.md", "missing")
     add("templates/tasks/lessons.md.template", "tasks/lessons.md", "missing")
     add("templates/tasks/security-findings.md.template", "tasks/security-findings.md", "missing")
-    add("templates/tasks/workflow-status.md.template", "tasks/workflow-status.md", "missing")
     add("templates/tasks/cross-platform.md.template", "tasks/cross-platform.md", "missing")
 
     # commands (update if generated)

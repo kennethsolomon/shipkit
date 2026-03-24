@@ -61,15 +61,6 @@ Before proceeding, check the scope of planned changes:
 ### 6. Finalize
 - Run `/sk:finish-feature` for changelog + PR
 
-## Workflow Status
-
-Fast-track updates `tasks/workflow-status.md` with abbreviated steps:
-- Steps 1-2 (read): done
-- Steps 3-6 (explore, design, accessibility, plan): skipped (fast-track)
-- Steps 7-11 (branch, implement, commit): done
-- Steps 12-17 (gates): handled by `/sk:gates`
-- Steps 18-21 (update, finalize, sync, release): done as applicable
-
 ## Model Routing
 
 | Profile | Model |

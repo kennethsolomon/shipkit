@@ -23,7 +23,6 @@ Read these files to build the retrospective:
 |------|----------------|
 | `tasks/todo.md` | Planned tasks — count total, completed, dropped |
 | `tasks/progress.md` | Work log — errors, resolutions, session timestamps |
-| `tasks/workflow-status.md` | Step-by-step status — attempt counts, skip reasons |
 | `tasks/findings.md` | Design decisions — were they validated? |
 | `tasks/lessons.md` | New lessons added during this task |
 | `tasks/tech-debt.md` | Tech debt logged during gates |
@@ -51,7 +50,7 @@ git rev-list main..HEAD --count
 |--------|-----|
 | **Completion rate** | Completed tasks / Planned tasks * 100 |
 | **Velocity** | Commits per day, files changed per day |
-| **Gate performance** | Extract attempt counts from workflow-status.md Notes (e.g., "clean on attempt 3") |
+| **Gate performance** | Count fix commits per gate from git log (e.g., `fix(lint):`, `fix(test):`) |
 | **Blocker count** | Count "FAIL", "error", "blocked", "3-Strike" entries in tasks/progress.md |
 | **Rework rate** | Count fix commits (fix(lint):, fix(test):, etc.) vs feature commits |
 

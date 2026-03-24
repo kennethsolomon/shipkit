@@ -34,115 +34,65 @@
 ## Workflow — Follow This Order
 <!-- LOCK -->
 
-**Flow:** Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features
+**Flow:** Explore → Design → Plan → Branch → Write Tests + Implement → Commit → Gates → Finalize
 
-Progress is tracked in `tasks/workflow-status.md`. This file persists across conversations.
+Progress is tracked via git branch + `tasks/todo.md` checkboxes.
 
-| # | Step | Command | Type | Loop? |
-|---|------|---------|------|-------|
-| 1 | Read Todo | read `tasks/todo.md` | required | no |
-| 2 | Read Lessons | read `tasks/lessons.md` | required | no |
-| 3 | Explore | `/sk:brainstorm` | required | no |
-| 4 | Design | `/sk:frontend-design` or `/sk:api-design` | optional (confirm to skip) | no |
-| 5 | Accessibility | `/sk:accessibility` | optional (confirm to skip) | no |
-| 6 | Plan | `/sk:write-plan` | required | no |
-| 7 | Branch | `/sk:branch` | required | no |
-| 8 | Migrate | `/sk:schema-migrate` | optional (confirm to skip) | no |
-| 9 | Write Tests | `/sk:write-tests` | required | no |
-| 10 | Implement | `/sk:execute-plan` | required | no |
-| 11 | Commit | `/sk:smart-commit` | required | no |
-| 12 | Lint + Dep Audit | `/sk:lint` | required | yes — must be clean |
-| 13 | Verify Tests | `/sk:test` | required | yes — 100% coverage required |
-| 14 | Security | `/sk:security-check` | required | yes — must reach 0 issues |
-| 15 | Performance | `/sk:perf` | optional (confirm to skip) | yes — loop until critical/high = 0 |
-| 16 | Review + Simplify | `/sk:review` | required | yes — must reach 0 issues |
-| 17 | E2E Tests | `/sk:e2e` | required | yes — all scenarios must pass |
-| 18 | Update | `/sk:update-task` | required | no |
-| 19 | Finalize | `/sk:finish-feature` | required | no |
-| 20 | Sync Features | `/sk:features` | required | no |
-| 21 | Release | `/sk:release` | optional (confirm to skip) | no |
+| # | Step | Command | Type |
+|---|------|---------|------|
+| 1 | Explore | `/sk:brainstorm` | required |
+| 2 | Design | `/sk:frontend-design` or `/sk:api-design` | optional (auto-skip) |
+| 3 | Plan | `/sk:write-plan` | required |
+| 4 | Branch | `/sk:branch` | required |
+| 5 | Write Tests + Implement | `/sk:write-tests` then `/sk:execute-plan` | required |
+| 6 | Commit | `/sk:smart-commit` | required |
+| 7 | Gates | `/sk:gates` | required (hard gate) |
+| 8 | Finalize | `/sk:finish-feature` | required |
 
 ### Step Details
 
-1.  **Read** `tasks/todo.md` — pick the next incomplete task
-2.  **Read** `tasks/lessons.md` — review past corrections before writing code
-3.  **Explore** — run `/sk:brainstorm` to clarify requirements, constraints, and approach. No code in this step.
-4.  **Design** — run `/sk:frontend-design` for UI mockup or `/sk:api-design` for API contracts. No code — design only. Skip if pure backend with no UI and no new API. After the design summary, the skill asks if you want a Pencil visual mockup — answer `y` only if you have the Pencil app open and Pencil MCP connected. Use `/sk:frontend-design --pencil` to jump directly to the Pencil phase.
-5.  **Accessibility** — run `/sk:accessibility` to audit the design spec for WCAG 2.1 AA compliance. Produces `tasks/accessibility-findings.md`. Skip if backend-only with no frontend.
-6.  **Plan** — run `/sk:write-plan` to write a decision-complete plan into `tasks/todo.md` using brainstorm + design outputs. No code in this step.
-7.  **Branch** — run `/sk:branch` to create a feature branch auto-named from the current task.
-8.  **Migrate** — run `/sk:schema-migrate` for database changes. Skip if no schema changes needed.
-9.  **Write Tests** — run `/sk:write-tests` (TDD red phase). Write failing tests for all planned code. If modifying existing behavior, update existing tests first. Tests SHOULD fail — no implementation yet.
-10. **Implement** — run `/sk:execute-plan` to execute `tasks/todo.md` checkboxes in small batches, making the failing tests pass (TDD green phase). Log progress to `tasks/progress.md`.
-11. **Commit** — run `/sk:smart-commit` to commit tests + implementation
-12. **Lint + Dep Audit** — run `/sk:lint` — auto-detects and runs all project linters plus dependency vulnerability audits. Fix all issues immediately, then re-run until clean. Do not ask to re-run — fix and re-run automatically. Gates own their commits — commit any fixes before moving on.
-13. **Verify Tests** — run `/sk:test` — auto-detects and runs all project test suites. **100% test coverage required.** Fix failures immediately, then re-run. Do not ask to re-run — fix and re-run automatically. Gates own their commits — commit any fixes before moving on.
-14. **Security** — run `/sk:security-check`. Must reach 0 issues across all severities. Fix issues immediately, commit, then re-run. Loop until clean. Gates own their commits — commit any fixes before moving on.
-15. **Performance** — run `/sk:perf` to audit for performance issues. Produces `tasks/perf-findings.md`. Fix critical/high findings, commit, then re-run. Loop until critical/high = 0. Skip if confirmed with user. Gates own their commits — commit any fixes before moving on.
-16. **Review + Simplify** — run `/sk:review`. First runs a simplify pre-pass on changed files, then performs full multi-dimensional review. Must reach 0 issues including nitpicks. Fix issues immediately, commit, then re-run. Loop until clean. Gates own their commits — commit any fixes before moving on.
-17. **E2E Tests** — run `/sk:e2e`. Verifies the complete, reviewed, secure implementation works end-to-end from a user's perspective using agent-browser. All scenarios must pass. Cannot be skipped. Gates own their commits — commit any fixes before moving on.
-18. **Update** — run `/sk:update-task` to mark the task done in `tasks/todo.md` and log completion to `tasks/progress.md`.
-19. **Finalize** — run `/sk:finish-feature` for changelog + PR
-20. **Sync Features** — run `/sk:features` to sync `docs/sk:features/` specs with what was actually shipped.
-21. **Release** — run `/sk:release` if deploying. Skip if not ready.
+1.  **Explore** — run `/sk:brainstorm`. Reads `tasks/todo.md`, `tasks/lessons.md`, and `tasks/findings.md` automatically. Clarifies requirements, constraints, and approach. No code in this step.
+2.  **Design** — run `/sk:frontend-design` for UI mockup (includes `/sk:accessibility` audit) or `/sk:api-design` for API contracts. No code — design only. Auto-skipped if no frontend/API keywords in the task. Use `--pencil` for Pencil visual mockup.
+3.  **Plan** — run `/sk:write-plan` to write a decision-complete plan into `tasks/todo.md`. No code in this step. After the plan is written, auto-skip detection runs for step 2 if not already done.
+4.  **Branch** — run `/sk:branch` to create a feature branch auto-named from the current task.
+5.  **Write Tests + Implement** — run `/sk:write-tests` (TDD red phase), then `/sk:execute-plan` (TDD green phase). Includes `/sk:schema-migrate` if database keywords detected in the plan. Log progress to `tasks/progress.md`.
+6.  **Commit** — run `/sk:smart-commit` to commit tests + implementation.
+7.  **Gates** — run `/sk:gates` to execute all quality gates in optimized parallel batches (lint, test, security, perf, review, e2e). This is a **hard gate** — blocks all forward progress until every check passes. Individual gate commands (`/sk:lint`, `/sk:test`, `/sk:security-check`, `/sk:perf`, `/sk:review`, `/sk:e2e`) are still available standalone.
+8.  **Finalize** — run `/sk:finish-feature` for changelog, PR creation, `/sk:update-task`, `/sk:features` sync. Ask about `/sk:release` (never auto-skipped).
 
-### Workflow Tracker Rules
+### Workflow Rules
 
-**These rules are mandatory for every step:**
+1. **Auto-advance by default.** Move to the next step automatically after each step completes. Pause only at: plan approval (step 3), PR push (step 8), and release confirmation.
 
-1. **Read tracker first.** At the start of every step, read `tasks/workflow-status.md` to verify the current step. If the step being run does not match the `>> next <<` step, STOP and ask the user to confirm skipping the intervening steps.
-
-2. **Update tracker after.** At the end of every step, update `tasks/workflow-status.md`:
-   - Set the current step's Status to `done`, `skipped`, or `partial`
-   - Add relevant Notes (e.g., "clean on attempt 2", "backend-only, no UI")
-   - Move `>> next <<` to the next pending step
-
-3. **Optional steps** (4, 5, 8, 15, 21): Ask the user "Skip [step]?" and require explicit confirmation. Record the reason in Notes.
-
-4. **Auto-skip detection.** Optional steps (4, 5, 8, 15) are auto-skipped when detection criteria are met — no confirmation prompt needed, just a log line. Detection runs after the plan is written (step 6) by scanning `tasks/todo.md`:
-   - **Step 4 (Design)**: Auto-skipped if plan contains NO frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button)
-   - **Step 5 (Accessibility)**: Auto-skipped if plan contains NO frontend keywords (same list as step 4)
-   - **Step 8 (Migrate)**: Auto-skipped if plan contains NO database keywords (migration, schema, table, column, model, database, foreign key, index, seed)
-   - **Step 15 (Performance)**: Auto-skipped if plan contains NO frontend keywords AND NO database keywords
-   - **Step 21 (Release)**: NEVER auto-skipped — always ask
-   - Output when auto-skipped: `Auto-skipped: [Step Name] ([reason])` — e.g., `Auto-skipped: Design (no frontend keywords detected in plan)`
-
-5. **Gates own their commits.** Each hard gate (steps 12–17) is responsible for committing any fixes it produces before passing control to the next step. There are no separate conditional commit steps.
-
-6. **Loop steps are HARD GATES** (12, 13, 14, 16, 17): These steps BLOCK all forward progress until they pass clean. Fix issues immediately and re-run. Do NOT ask the user to re-run — fix and re-run automatically. Track attempt number in Notes (e.g., "clean on attempt 3").
-   - **Step 12 (Lint)**: All detected linting tools must pass — every single one.
-   - **Step 13 (Verify Tests)**: All detected test suites (BE + FE) must pass with 100% coverage on new code.
-   - **Step 14 (Security)**: 0 issues across all severities.
-   - **Step 16 (Review)**: 0 issues including nitpicks.
-   - **Step 17 (E2E Tests)**: All scenarios must pass. 0 failures allowed.
-   - **Step 15 (Performance)**: Optional gate — if run, loop until critical/high findings = 0. Can be skipped with explicit confirmation.
-   - **DO NOT mark these steps as `done` until every check passes.** If even one tool fails, the step is NOT done. Never proceed to the next step with errors remaining.
-
-7. **Never skip steps without confirmation.** Steps cannot run out of order. Hard gate steps (12, 13, 14, 16, 17) can NEVER be skipped. Optional gate step (15) requires explicit confirmation to skip.
-
-8. **Requirements change mid-workflow?** Stop the current step and run `/sk:change` immediately. It will classify the scope (behavior tweak / new requirements / scope shift) and tell you exactly where to re-enter the workflow. Never continue implementing stale requirements.
-
-8. **Never auto-advance.** When one step completes, stop and tell the user which step is next. Do not proceed automatically.
-
-9. **Never write code during design or plan phases.** Steps 1-6 are reading/exploring/planning/design only — no code, no file edits (except `tasks/` files).
-
-10. **Step completion summary is NON-NEGOTIABLE.** After finishing ANY step, you MUST output a summary block in this exact format before stopping:
-
+2. **Conditional summary.** Only output the step summary block when the step was `skipped`, `partial`, or required fixes. Clean passes just move on silently.
 ```
---- Step [#] [Name]: [done/skipped/partial] ---
-Summary: [1-2 sentence summary of what was done]
+--- Step [#] [Name]: [skipped/partial] ---
+Summary: [1-2 sentence summary]
 Next step: [#] [Name] — run `[command]`
 ```
 
-This tells the user exactly what happened and what to do next. Never finish a step silently.
+3. **Auto-skip detection.** After the plan is written (step 3), scan `tasks/todo.md` for keywords:
+   - **Step 2 (Design)**: Auto-skip if NO frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button) AND NO API keywords (endpoint, route, controller, API)
+   - **Migrate** (inside step 5): Auto-skip if NO database keywords (migration, schema, table, column, model, database, foreign key, index, seed)
+   - **Performance** (inside gates): Auto-skip if NO frontend AND NO database keywords
+   - **Release** (inside step 8): NEVER auto-skipped — always ask
+   - Output: `Auto-skipped: [Name] ([reason])`
+
+4. **Gates are a hard gate.** Step 7 BLOCKS all forward progress until every check passes. Gates auto-fix and re-run internally. Do NOT ask the user to re-run — fix and re-run automatically.
+
+5. **Squash gate commits.** When a gate requires fixes, collect all fixes for that gate pass, then make ONE commit: `fix(<gate>): resolve <gate> issues`. Do not commit after each individual fix. Each gate produces at most one commit per pass.
+
+6. **Never write code during explore, design, or plan phases.** Steps 1-3 are reading/exploring/planning/design only — no code, no file edits (except `tasks/` files).
+
+7. **Requirements change mid-workflow?** Stop and run `/sk:change` immediately. It classifies the scope and tells you where to re-enter.
 
 ### Fix & Retest Protocol
 
-**Applies to steps 12, 13, 14, 15, 16, 17 — any step that can produce code changes.**
+**Applies to all gates — any gate that can produce code changes.**
 
-When any of these steps require a fix, classify the fix before committing:
+When a gate requires a fix, classify the fix before committing:
 
-**a. Format/style/config/wording change** → commit and re-run the gate. No test update needed.
+**a. Format/style/config/wording change** (formatter auto-fix, CSS tweak, copy change, config value, comment) → include in the gate's squash commit and re-run. No test update needed.
 
 **b. Logic change** (new branch, modified condition, new data path, query change, new function, changed algorithm, API change) → trigger protocol:
 1. Update or add failing unit tests for the new behavior
@@ -152,14 +102,9 @@ When any of these steps require a fix, classify the fix before committing:
 
 **Exception:** Lint formatter auto-fixes (Prettier, Pint, gofmt, cargo fmt) are never logic changes — bypass protocol automatically.
 
-### Tracker Reset
-
-- When starting a new task, check if `tasks/workflow-status.md` has any `done` or `skipped` steps. If yes, ask: "Existing workflow detected. Start fresh and reset tracker?"
-- Reset sets all steps to `not yet` and marks step 1 as `>> next <<`.
-
 ### Bug Fix Flow
 
-When fixing a bug (not building a feature), use `/sk:debug` as the entry point. This sets up a shorter workflow:
+Use `/sk:debug` as the entry point:
 
 | # | Step | Command |
 |---|------|---------|
@@ -168,55 +113,34 @@ When fixing a bug (not building a feature), use `/sk:debug` as the entry point. 
 | 3 | Write Tests | `/sk:write-tests` (regression test) |
 | 4 | Fix | implement the fix |
 | 5 | Commit | `/sk:smart-commit` |
-| 6 | Lint | `/sk:lint` |
-| 7 | Commit | `/sk:smart-commit` (skip if clean) |
-| 8 | Verify Tests | `/sk:test` |
-| 9 | Commit | `/sk:smart-commit` (skip if clean) |
-| 10 | Security | `/sk:security-check` |
-| 11 | Commit | `/sk:smart-commit` (skip if clean) |
-| 12 | Review | `/sk:review` |
-| 13 | Commit | `/sk:smart-commit` (skip if clean) |
-| 14 | Update | `/sk:update-task` |
-| 15 | Finalize | `/sk:finish-feature` |
-
-Start with `/sk:debug` to investigate, then follow the abbreviated flow.
+| 6 | Gates | `/sk:gates` |
+| 7 | Finalize | `/sk:finish-feature` |
 
 ### Hotfix Flow
 
-For production emergencies that need to ship immediately, use `/sk:hotfix`. Skips brainstorm, design, and write-tests. Quality gates still apply.
+For production emergencies. Skips brainstorm, design, and write-tests. Quality gates still apply.
 
 | # | Step | Command |
 |---|------|---------|
 | 1 | Investigate | `/sk:debug` |
 | 2 | Branch | `/sk:branch` |
 | 3 | Fix | implement directly |
-| 4 | Smoke Test | run existing tests |
-| 5 | Commit | `/sk:smart-commit` |
-| 6 | Lint | `/sk:lint` |
-| 7 | Commit | `/sk:smart-commit` (skip if clean) |
-| 8 | Verify Tests | `/sk:test` |
-| 9 | Commit | `/sk:smart-commit` (skip if clean) |
-| 10 | Security | `/sk:security-check` |
-| 11 | Commit | `/sk:smart-commit` (skip if clean) |
-| 12 | Review | `/sk:review` |
-| 13 | Commit | `/sk:smart-commit` (skip if clean) |
-| 14 | Update | `/sk:update-task` |
-| 15 | Finalize | `/sk:finish-feature` |
+| 4 | Commit | `/sk:smart-commit` |
+| 5 | Gates | `/sk:gates` |
+| 6 | Finalize | `/sk:finish-feature` |
 
 After merging: add a regression test and a lessons.md entry.
 
 ### Requirement Change Flow
 
-When requirements change mid-workflow, run `/sk:change` to avoid implementing the wrong behavior:
+When requirements change mid-workflow, run `/sk:change`:
 
 | # | Step | Command |
 |---|------|---------|
 | 1 | Assess | `/sk:change` — classify scope (Tier 1/2/3) |
-| 2 | Tier 1 (test update only) | update tests → re-enter at step 9 |
-| 3 | Tier 2 (plan revision) | revise plan → re-enter at step 6 |
-| 4 | Tier 3 (re-brainstorm) | re-enter at step 3 |
-
-Never update tests or implementation based on a changed requirement without going through `/sk:change` first.
+| 2 | Tier 1 (test update only) | update tests → re-enter at step 5 |
+| 3 | Tier 2 (plan revision) | revise plan → re-enter at step 3 |
+| 4 | Tier 3 (re-brainstorm) | re-enter at step 1 |
 
 ## Sub-Agent Patterns
 <!-- BEGIN:sub-agent-patterns -->
@@ -327,15 +251,15 @@ Entry format:
 
 ## Testing — TDD, 100% Coverage Required
 
-Tests are written **before** implementation (step 9) and verified **after** (step 14).
+Tests are written **before** implementation (step 5) and verified during gates (step 7).
 
 ### TDD Flow
 
 1. `/sk:write-tests` — write failing tests based on the plan (RED)
 2. `/sk:execute-plan` — implement code to make tests pass (GREEN)
-3. `/sk:test` — verify all tests pass with 100% coverage (VERIFY)
+3. `/sk:test` — verify all tests pass with 100% coverage (VERIFY — runs as part of `/sk:gates`)
 
-Every new function, endpoint, component, and module needs tests. No code proceeds past step 12 without 100% coverage on new code.
+Every new function, endpoint, component, and module needs tests. No code proceeds past gates without 100% coverage on new code.
 
 ## 3-Strike Protocol
 
@@ -356,7 +280,7 @@ Create entries in: `[ARCH_CHANGELOG_DIR]`
 |---------|---------|
 | `/sk:accessibility` | WCAG 2.1 AA audit — runs after design, before implementation |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) before implementation |
-| `/sk:autopilot` | Hands-free workflow — all 21 steps, auto-skip, auto-advance, auto-commit |
+| `/sk:autopilot` | Hands-free workflow — all 8 steps, auto-skip, auto-advance, auto-commit |
 | `/sk:brainstorm` | Explore requirements and design |
 | `/sk:branch` | Create feature branch auto-named from current task |
 | `/sk:change` | Handle mid-workflow requirement changes — re-enter at correct step |

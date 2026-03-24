@@ -29,9 +29,8 @@ PORT=4000 node skills/sk:dashboard/server.js
 ## What It Shows
 
 - **Swimlanes per worktree** — one row per worktree discovered via `git worktree list`
-- **Phase timeline** — workflow steps laid out as columns (Read, Explore, Plan, Branch, Tests, Implement, Lint, Verify, Security, Review, E2E, Finalize)
-- **Status indicators** — done, skipped, partial, in-progress, not yet
-- **Progress bars** — percentage of steps completed per worktree
+- **Phase timeline** — workflow steps laid out as columns (Explore, Design, Plan, Branch, Tests+Implement, Commit, Gates, Finalize)
+- **Progress bars** — percentage of todo.md checkboxes completed per worktree
 - **Current task** — the active task name from `tasks/todo.md`
 
 ## Architecture
@@ -39,7 +38,7 @@ PORT=4000 node skills/sk:dashboard/server.js
 Zero-dependency Node.js server. Uses only built-in modules (`http`, `fs`, `path`, `child_process`).
 
 - `server.js` serves the dashboard HTML and exposes `/api/status`
-- `/api/status` reads `tasks/workflow-status.md` and `tasks/todo.md` from each worktree, parses step statuses, and returns JSON
+- `/api/status` reads `tasks/todo.md` from each worktree, parses checkbox progress, and returns JSON
 - `dashboard.html` is a single-file UI (HTML + embedded CSS + JS) that polls `/api/status` every 3 seconds
 - Worktree discovery via `git worktree list`
 

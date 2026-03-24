@@ -19,16 +19,7 @@ Explore design and clarify requirements **before** any code is written.
 
 ## Steps
 
-0. **Check workflow tracker:**
-   - Read `tasks/workflow-status.md`. If it doesn't exist, create it using the standard
-     14-step template (all steps `not yet`, step 1 `>> next <<`).
-   - If any steps show `done`, `skipped`, or `partial`: ask the user —
-     "Existing workflow detected. Start fresh and reset tracker?" Wait for confirmation.
-   - If yes: reset all steps to `not yet`, mark step 1 as `>> next <<`, and clear all Notes
-     (except the default labels: optional, conditional, loop).
-   - If no: continue from current state (the user is resuming a prior workflow).
-
-1. **Read context files first:**
+0. **Read context files first:**
    - If `tasks/findings.md` exists and has content, read it — summarize prior decisions
      and ask: extend, revise, or start fresh?
    - If `tasks/lessons.md` exists, read it in full. Apply every active lesson as a design
@@ -65,9 +56,7 @@ Explore design and clarify requirements **before** any code is written.
 
 ## When Done
 
-1. Update `tasks/workflow-status.md`: set step 1 (`/sk:brainstorm`) to `done`, move `>> next <<` to the next pending step.
-2. Print the full workflow status dashboard table.
-3. Tell the user:
+1. Tell the user:
    > "Brainstorming complete. Findings saved to `tasks/findings.md`."
 4. If step 2 (`/sk:frontend-design`) is next, ask: "Step 2 is `/sk:frontend-design` (optional). Run it or skip?"
 

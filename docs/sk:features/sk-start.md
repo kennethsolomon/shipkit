@@ -29,7 +29,6 @@ Smart entry point that classifies a task description and recommends the optimal 
 | Output | Destination | Notes |
 |--------|-------------|-------|
 | Classification | Terminal | Flow + scope + agent recommendation |
-| Workflow tracker reset | `tasks/workflow-status.md` | Reset with chosen mode/flow metadata |
 | Dispatched flow | Invoked skill | Routes to autopilot, brainstorm, debug, hotfix, or fast-track |
 
 ---
@@ -48,7 +47,6 @@ Smart entry point that classifies a task description and recommends the optimal 
    - Show override options
    - Wait for user confirmation
 3. **Route**:
-   - Reset workflow tracker with chosen config
    - Dispatch to chosen flow (autopilot, brainstorm, debug, hotfix, fast-track)
 
 ---
@@ -87,7 +85,7 @@ Smart entry point that classifies a task description and recommends the optimal 
 ```
 Detected: Full-stack feature (backend API + frontend page + migration)
 Recommended:
-  Flow:   feature (21 steps)
+  Flow:   feature (8 steps)
   Mode:   autopilot
   Agents: team (backend + frontend + QA)
 

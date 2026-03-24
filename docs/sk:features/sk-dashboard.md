@@ -19,7 +19,6 @@ Start: `node skills/sk:dashboard/server.js` → `http://localhost:3333`
 
 | Input | Source | Required |
 |-------|--------|----------|
-| `tasks/workflow-status.md` | Each worktree's task directory | No — empty state if missing |
 | `tasks/todo.md` | Each worktree's task directory | No — empty state if missing |
 | `git worktree list` | Git CLI (child_process) | Yes — falls back to `{path: cwd, branch: 'unknown'}` on error |
 
@@ -45,21 +44,6 @@ Start: `node skills/sk:dashboard/server.js` → `http://localhost:3333`
     "todoItems": [
       { "text": "Update tests/verify-workflow.sh", "done": true, "section": "Milestone 1: Tests" },
       { "text": "Create skills/sk:dashboard/server.js", "done": true, "section": "Milestone 2: Core Implementation" }
-    ],
-    "currentStep": 22,
-    "totalDone": 14,
-    "totalSkipped": 7,
-    "totalSteps": 27,
-    "steps": [
-      {
-        "number": 1,
-        "name": "Read Todo",
-        "command": "/sk:brainstorm",
-        "status": "done",
-        "notes": "tasks/findings.md and lessons.md read",
-        "isHardGate": false,
-        "isOptional": false
-      }
     ]
   }
 ]
@@ -78,8 +62,7 @@ Start: `node skills/sk:dashboard/server.js` → `http://localhost:3333`
    - Branched worktree: `^path  hash  [branch]$` → `{path, branch}`
    - Detached HEAD: `^path  hash  (HEAD detached at ...)$` → `{path, branch: "(detached)"}`
    - Falls back to `[{path: cwd, branch: "unknown"}]` on `execSync` error.
-5. **`parseWorkflowStatus(worktreePath)`** — reads `tasks/workflow-status.md`, parses markdown table rows into step objects. Returns `[]` on ENOENT.
-6. **`parseTodo(worktreePath)`** — reads `tasks/todo.md`:
+5. **`parseTodo(worktreePath)`** — reads `tasks/todo.md`:
    - Extracts `taskName` from `# TODO — date — <name>` header (splits on first em dash `—`)
    - Counts `[x]` / `[ ]` checkboxes for `todosDone` / `todosTotal`
    - Collects `todoItems` only from `## Milestone` sections — starts collecting at first `## Milestone` header (`inMilestones = true`), stops at first `STOP_HEADERS` match after milestones (`pastMilestones = true`). STOP_HEADERS: `Verification`, `Acceptance Criteria`, `Risks`, `Change Log`, `Summary`.
@@ -91,10 +74,7 @@ Start: `node skills/sk:dashboard/server.js` → `http://localhost:3333`
 1. On load, calls `fetchStatus()` immediately, then polls every 3 seconds.
 2. **Change detection**: compares `JSON.stringify(data)` against `lastResponseJson` — skips re-render if identical.
 3. **`renderWorktree(wt)`** — builds swimlane HTML:
-   - Header: branch name + task name + progress bar (done+skipped / total steps, %)
-   - Phase timeline: numbered step dots colored by status (done=green, next=blue pulse, skipped=amber, gate=red outline, partial=purple, not-yet=gray)
-   - Active step card: highlighted display of current step number + command
-   - Kanban columns: Done (14), Next (1), Hard Gate indicator, Skipped, Not Yet
+   - Header: branch name + task name + progress bar (todosDone / todosTotal, %)
    - **TASKS panel**: rendered by `renderTodoItems(wt.todoItems)` — see below
 4. **`renderTodoItems(todoItems)`** — renders TASKS panel:
    - Groups items by `section` with divider labels
@@ -121,7 +101,6 @@ Start: `node skills/sk:dashboard/server.js` → `http://localhost:3333`
 
 | Scenario | Behavior |
 |----------|----------|
-| `tasks/workflow-status.md` missing | Returns `steps: []`, `currentStep: 0`, `totalDone: 0` |
 | `tasks/todo.md` missing | Returns `taskName: ""`, `todosDone: 0`, `todosTotal: 0`, `todoItems: []` |
 | No `## Milestone` headers in todo.md | `todoItems: []` (empty — TASKS panel renders nothing) |
 | `## Change Log` appears before `## Milestone` | Handled correctly — `inMilestones` flag stays `false` until first `## Milestone` |
@@ -153,10 +132,7 @@ Start: `node skills/sk:dashboard/server.js` → `http://localhost:3333`
 ```
 ┌─ SHIPKIT MISSION CONTROL ──────────── LIVE  ↻ 3s  HH:MM ─┐
 │                                                             │
-│ ▼ feature/sk-dashboard  •  Task Name              21/27 78%│
-│   [phase timeline: 1 2 3 4 5 6 7 8 9 10 11 ...]           │
-│   [active step card: 22 E2E /sk:e2e]                       │
-│   Done(14) │ Next(1) │ Skipped(7) │ Not Yet(6)             │
+│ ▼ feature/sk-dashboard  •  Task Name              12/19 63%│
 │   ─── TASKS ────────────────────────────────────────────── │
 │   Milestone 1: Tests                                        │
 │   ✓ Update verify-workflow.sh                              │
@@ -167,17 +143,6 @@ Start: `node skills/sk:dashboard/server.js` → `http://localhost:3333`
 └─────────────────────────────────────────────────────────── ┘
 │ 1 worktree · Last refresh: 2s ago · Port 3333              │
 ```
-
-### Step Status Colors
-
-| Status | Color | Class |
-|--------|-------|-------|
-| `done` | Green | `step-done` |
-| `>> next <<` | Blue pulse | `step-next` |
-| `skipped` | Amber | `step-skipped` |
-| `partial` | Purple | `step-partial` |
-| hard gate + not done | Red outline | `step-gate` |
-| `not yet` | Gray | `step-pending` |
 
 ### Todo Item States
 
@@ -208,6 +173,5 @@ CLI tool — no mobile platform. Developer-only, localhost-only, read-only.
 - `skills/sk:dashboard/SKILL.md` — skill definition and model routing
 - `skills/sk:dashboard/server.js` — HTTP server implementation (~200 lines)
 - `skills/sk:dashboard/dashboard.html` — single-file UI (~940 lines)
-- `tasks/workflow-status.md` — data source for step statuses
-- `tasks/todo.md` — data source for task name, counts, and `todoItems`
+- `tasks/todo.md` — data source for task name, progress counts, and `todoItems`
 - `.claude/docs/architectural_change_log/2026-03-19-subsystem-refactor.md` — architecture decision record

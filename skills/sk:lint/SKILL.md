@@ -111,10 +111,10 @@ If any analyzer reports errors or the dep audit blocks:
 2. Re-run formatters (fixes may need formatting)
 3. Re-launch all analyzers in parallel
 4. Re-run dep audit if any dependency was fixed
-5. Auto-commit with message `fix(lint): resolve lint and dep audit issues` — do NOT ask the user
-6. Re-run from step 3 until every tool exits clean
+5. Re-run from step 3 until every tool exits clean
+6. Once all tools pass clean, make ONE squash commit: `fix(lint): resolve lint and dep audit issues` — do NOT ask the user
 
-> Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
+> Squash gate commits — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
 
 ### 7. Report Results
 

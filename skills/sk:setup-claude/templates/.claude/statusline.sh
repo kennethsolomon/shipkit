@@ -26,20 +26,6 @@ fi
 # Branch
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "none")
 
-# Current workflow step
-STEP="—"
-if [ -f "tasks/workflow-status.md" ]; then
-    NEXT_LINE=$(grep -E ">>\s*next\s*<<" "tasks/workflow-status.md" 2>/dev/null | head -1)
-    if [ -n "$NEXT_LINE" ]; then
-        # Extract step number and name from table row
-        STEP_NUM=$(echo "$NEXT_LINE" | grep -oE '^\|[[:space:]]*[0-9]+' | grep -oE '[0-9]+')
-        STEP_NAME=$(echo "$NEXT_LINE" | sed 's/.*| *>> next << *|.*//' | sed 's/|.*//;s/^ *//;s/ *$//')
-        if [ -n "$STEP_NUM" ]; then
-            STEP="Step ${STEP_NUM}"
-        fi
-    fi
-fi
-
 # Task name from todo.md
 TASK="—"
 if [ -f "tasks/todo.md" ]; then
@@ -47,4 +33,4 @@ if [ -f "tasks/todo.md" ]; then
 fi
 
 # Output single line
-echo "[${CTX_PCT}%] ${MODEL} | ${STEP} | ${BRANCH} | ${TASK}"
+echo "[${CTX_PCT}%] ${MODEL} | ${BRANCH} | ${TASK}"

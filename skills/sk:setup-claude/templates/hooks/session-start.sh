@@ -15,17 +15,6 @@ if [ -n "$BRANCH" ]; then
     done
 fi
 
-# Current workflow step from workflow-status.md
-if [ -f "tasks/workflow-status.md" ]; then
-    echo ""
-    NEXT_STEP=$(grep -E ">>\s*next\s*<<" "tasks/workflow-status.md" 2>/dev/null | head -1)
-    if [ -n "$NEXT_STEP" ]; then
-        echo "Workflow: $NEXT_STEP"
-    else
-        echo "Workflow: all steps complete or not started"
-    fi
-fi
-
 # Tech debt count
 if [ -f "tasks/tech-debt.md" ]; then
     TOTAL=$(grep -c "^### \[" "tasks/tech-debt.md" 2>/dev/null || echo 0)

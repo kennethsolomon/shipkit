@@ -184,17 +184,17 @@ If any fail → apply Fix & Retest Protocol.
 
 When this gate requires a fix, classify it before committing:
 
-**a. Style/config/wording change** (CSS tweak, copy change, selector fix) → auto-commit with `fix(e2e): resolve failing E2E scenarios` and re-run `/sk:e2e`. Do not ask the user.
+**a. Style/config/wording change** (CSS tweak, copy change, selector fix) → include in the gate's squash commit and re-run `/sk:e2e`. Do not ask the user.
 
 **b. Logic change** (new branch, modified condition, new data path, query change, new function, API change) → trigger protocol:
 1. Update or add failing unit tests for the new behavior
 2. Re-run `/sk:test` — must pass at 100% coverage
-3. Auto-commit tests + fix together with `fix(e2e): [description]`.
+3. Commit tests + fix together with `fix(e2e): [description]`.
 4. Re-run `/sk:e2e` from scratch
 
 **Exception:** Formatter auto-fixes are never logic changes — bypass protocol automatically.
 
-Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
+> Squash gate commits — collect all fixes for the pass, then one commit: `fix(e2e): resolve failing E2E scenarios`. Do not commit after each individual fix.
 
 **This gate cannot be skipped.** All scenarios must pass before proceeding to `/sk:update-task`.
 

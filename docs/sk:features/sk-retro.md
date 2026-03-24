@@ -20,7 +20,6 @@ Post-ship retrospective that analyzes completed work to generate actionable impr
 |-------|--------|----------|
 | `tasks/todo.md` | Planned tasks — total, completed, dropped | Yes |
 | `tasks/progress.md` | Work log — errors, resolutions, timestamps | Yes |
-| `tasks/workflow-status.md` | Step status — attempt counts, skip reasons | Yes |
 | `tasks/findings.md` | Design decisions — validation status | No |
 | `tasks/lessons.md` | Lessons added during this task | No |
 | `tasks/tech-debt.md` | Tech debt logged during gates | No |
@@ -41,12 +40,12 @@ Post-ship retrospective that analyzes completed work to generate actionable impr
 
 ## Business Logic
 
-1. **Gather data** — read all task files (`todo.md`, `progress.md`, `workflow-status.md`, `findings.md`, `lessons.md`, `tech-debt.md`).
+1. **Gather data** — read all task files (`todo.md`, `progress.md`, `findings.md`, `lessons.md`, `tech-debt.md`).
 2. **Analyze git history** — extract commits on branch, time span (first to last commit), files changed with insertions/deletions, total commit count.
 3. **Calculate metrics**:
    - Completion rate: completed / planned * 100
    - Velocity: commits per day, files changed per day
-   - Gate performance: attempt counts from workflow-status.md notes
+   - Gate performance: attempt counts from git log (fix commits per gate)
    - Blocker count: occurrences of "FAIL", "error", "blocked", "3-Strike" in progress.md
    - Rework rate: fix commits vs. feature commits
 4. **Identify patterns** — recurring blockers, estimation accuracy, gate friction (which gates needed most fix cycles), previous retro follow-up status.

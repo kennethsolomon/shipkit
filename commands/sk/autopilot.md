@@ -1,5 +1,5 @@
 ---
-description: "Hands-free workflow — all 21 steps, auto-skip, auto-advance, auto-commit. Stops only for direction approval and PR push."
+description: "Hands-free workflow — all 8 steps, auto-skip, auto-advance, auto-commit. Stops only for direction approval and PR push."
 ---
 
 # /sk:autopilot
@@ -8,7 +8,7 @@ Run the full ShipIt workflow in hands-free mode.
 
 Usage: `/sk:autopilot <task description>`
 
-Executes all 21 workflow steps with:
+Executes all 8 workflow steps with:
 - **Auto-skip** — optional steps skipped when clearly not needed
 - **Auto-advance** — no manual step transitions
 - **Auto-commit** — conventional format, no approval prompt

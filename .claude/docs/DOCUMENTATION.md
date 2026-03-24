@@ -118,7 +118,7 @@ npm update -g @kennethsolomon/shipkit
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         CLAUDE SKILLS WORKFLOW (21 STEPS)                   │
+│                         CLAUDE SKILLS WORKFLOW (8 STEPS)                    │
 │                        (Auto-context & Bug Prevention)                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 
@@ -333,13 +333,13 @@ After these three steps: `CLAUDE.md` is configured for your stack, `tasks/` plan
 
 ### Daily Workflow
 
-During normal development, follow the 21-step workflow: Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
+During normal development, follow the 8-step workflow: Explore → Design → Plan → Branch → Write Tests + Implement → Commit → Gates → Finalize. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
 
 ---
 
 ## Recommended Workflow
 
-The complete 21-step workflow from idea to merge with **automatic context threading and bug prevention**:
+The complete 8-step workflow from idea to merge with **automatic context threading and bug prevention**:
 
 | # | Step | Command | Notes |
 |---|------|---------|-------|
@@ -714,10 +714,10 @@ Smart entry point that classifies tasks and routes to the optimal flow, mode, an
 
 ### /sk:autopilot
 
-Hands-free workflow mode that runs all 21 steps with auto-skip, auto-advance, and auto-commit. Same quality gates as manual mode.
+Hands-free workflow mode that runs all 8 steps with auto-skip, auto-advance, and auto-commit. Same quality gates as manual mode.
 
 **What it does:**
-- Executes the full 21-step workflow automatically
+- Executes the full 8-step workflow automatically
 - Auto-skips optional steps when detection criteria are not met (no frontend files → skip design, no schema changes → skip migrate)
 - Auto-advances between steps without prompting
 - Auto-commits at appropriate checkpoints
@@ -1155,7 +1155,7 @@ Run at any point after implementation — not a numbered workflow step.
 Session initializer — loads all project context files and outputs a formatted session brief. Run at the start of every conversation.
 
 **What it does:**
-- Reads 7 context files: `tasks/todo.md`, `tasks/workflow-status.md`, `tasks/progress.md`, `tasks/findings.md`, `tasks/lessons.md`, `docs/decisions.md`, `docs/vision.md`
+- Reads 6 context files: `tasks/todo.md`, `tasks/progress.md`, `tasks/findings.md`, `tasks/lessons.md`, `docs/decisions.md`, `docs/vision.md`
 - Outputs a formatted SESSION BRIEF with branch, task, step, pending items, lessons, and open questions
 - Applies all active lessons from `tasks/lessons.md` as standing constraints for the session
 - Graceful fallback for missing files — notes them in the brief instead of erroring
@@ -1170,7 +1170,7 @@ Read-only workflow Kanban board served on localhost. Shows workflow status acros
 
 **What it does:**
 - Serves a browser-based Kanban board displaying workflow step status for the current project
-- Scans all git worktrees and reads each `tasks/workflow-status.md` to build the board
+- Scans all git worktrees and reads each `tasks/todo.md` to build the board
 - Read-only — no mutations, no side effects
 - Standalone optional command, not a numbered workflow step
 
@@ -1252,7 +1252,6 @@ Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, a
 | `tasks/findings.md` | Detection notes and decisions log |
 | `tasks/progress.md` | Session work log and error log |
 | `tasks/lessons.md` | Accumulated project lessons — never overwritten |
-| `tasks/workflow-status.md` | Workflow step tracker — persists across conversations |
 | `tasks/tech-debt.md` | Pre-existing issues found by gates — append-only |
 | `tasks/cross-platform.md` | Cross-platform changes needing replication (web <-> mobile) — append-only |
 | `CHANGELOG.md` | Keep a Changelog format — never overwritten if exists |

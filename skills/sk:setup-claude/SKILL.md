@@ -22,7 +22,7 @@ After bootstrapping a project, the recommended workflow becomes:
 ## What Gets Bootstrapped In The Target Repo
 
 ### Planning / Memory Files (in `tasks/`)
-- `tasks/todo.md` — plan + checkboxes + results
+- `tasks/todo.md` — plan + checkboxes + results (also tracks workflow progress via checkboxes)
 - `tasks/findings.md` — discoveries + decisions
 - `tasks/progress.md` — chronological work log + test results
 - `tasks/lessons.md` — durable “don’t repeat mistakes” log (**never overwrite**)
@@ -352,7 +352,6 @@ Rendered from `templates/.claude/settings.json.template`. Contains:
 Copied from `templates/.claude/statusline.sh` (made executable). Displays:
 - Context window usage percentage
 - Current model
-- Current workflow step (from `tasks/workflow-status.md`)
 - Git branch
 - Current task name
 

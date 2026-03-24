@@ -126,12 +126,12 @@ Sub-agent 3: [FE command]
 - Read the failure output carefully — identify the root cause
 - Fix the failing **implementation code** or test setup, not the test assertions (tests define expected behavior)
 - Do NOT skip, mark incomplete, or delete failing tests
-- Auto-commit with message `fix(test): resolve failing tests` — do NOT ask the user
 - Re-run the failing suite
 - Loop until all pass
-- Fix the implementation and auto-commit. If the fix is a logic change (new behavior, changed contract), update the relevant tests to reflect the new behavior before committing.
+- If the fix is a logic change (new behavior, changed contract), update the relevant tests to reflect the new behavior.
+- Once all tests pass, make ONE squash commit: `fix(test): resolve failing tests` — do NOT ask the user
 
-> Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
+> Squash gate commits — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
 
 ### 5. Verify Coverage
 

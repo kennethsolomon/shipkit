@@ -170,20 +170,8 @@ echo "── Milestone 2: Workflow Files ──"
 
 CLAUDE="$REPO/CLAUDE.md"
 TEMPLATE="$REPO/skills/sk:setup-claude/templates/CLAUDE.md.template"
-TRACKER="$REPO/skills/sk:setup-claude/templates/tasks/workflow-status.md.template"
-
-# Flow line
-assert_contains \
-  "CLAUDE.md flow line has E2E Tests" \
-  "$CLAUDE" \
-  "E2E Tests"
-
-assert_contains \
-  "CLAUDE.md flow line has Sync Features" \
-  "$CLAUDE" \
-  "Sync Features"
-
-# Step 22 E2E
+# Step table references
+# (flow line was removed in workflow simplification — /sk:e2e and /sk:features tested below)
 assert_contains \
   "CLAUDE.md has /sk:e2e step" \
   "$CLAUDE" \
@@ -194,12 +182,6 @@ assert_contains \
   "CLAUDE.md has /sk:features step" \
   "$CLAUDE" \
   "/sk:features"
-
-# Hard gate step 17 in tracker rules (E2E is now step 17 after 21-step workflow)
-assert_contains \
-  "CLAUDE.md tracker rules list step 17 as hard gate" \
-  "$CLAUDE" \
-  "Step 17"
 
 # Fix & Retest Protocol section
 assert_contains \
@@ -250,24 +232,12 @@ assert_contains \
   "$CLAUDE" \
   "/sk:review"
 
-# 21-step count: workflow table should have 21 data rows (conditional commits removed)
+# 8-step count: workflow table should have 8 data rows (collapsed workflow)
 assert_count_gte \
-  "CLAUDE.md workflow table has at least 21 rows" \
+  "CLAUDE.md workflow table has at least 8 rows" \
   "$CLAUDE" \
   "^| [0-9]" \
-  21
-
-# Lint + Dep Audit label
-assert_contains \
-  "CLAUDE.md step 12 labelled 'Lint + Dep Audit'" \
-  "$CLAUDE" \
-  "Lint + Dep Audit"
-
-# Review + Simplify label
-assert_contains \
-  "CLAUDE.md step 20 labelled 'Review + Simplify'" \
-  "$CLAUDE" \
-  "Review + Simplify"
+  8
 
 # CLAUDE.md.template — same key checks
 assert_contains \
@@ -295,27 +265,23 @@ assert_not_contains \
   "$TEMPLATE" \
   "run \`/brainstorm\`"
 
-# workflow-status.md.template — 21 rows (conditional commits removed)
+# workflow-status.md.template should NOT exist (removed in workflow simplification)
+if [[ ! -f "$REPO/skills/sk:setup-claude/templates/tasks/workflow-status.md.template" ]]; then
+  echo -e "${green}PASS${reset} workflow-status.md.template does not exist"
+  PASS=$((PASS + 1))
+else
+  echo -e "${red}FAIL${reset} workflow-status.md.template does not exist"
+  echo "       File should have been deleted"
+  FAIL=$((FAIL + 1))
+  FAILURES+=("workflow-status.md.template does not exist")
+fi
+
+# CLAUDE.md.template has 8-step workflow table
 assert_count_gte \
-  "workflow-status.md.template has at least 21 step rows" \
-  "$TRACKER" \
+  "CLAUDE.md.template workflow table has at least 8 rows" \
+  "$TEMPLATE" \
   "^| [0-9]" \
-  21
-
-assert_contains \
-  "workflow-status.md.template has E2E Tests row" \
-  "$TRACKER" \
-  "sk:e2e"
-
-assert_contains \
-  "workflow-status.md.template marks step 22 as HARD GATE" \
-  "$TRACKER" \
-  "HARD GATE"
-
-assert_contains \
-  "workflow-status.md.template has Sync Features row" \
-  "$TRACKER" \
-  "sk:features"
+  8
 
 # README.md
 assert_contains \
@@ -330,14 +296,14 @@ assert_contains \
 
 # sk:setup-optimizer
 assert_contains \
-  "sk:setup-optimizer references 21 steps" \
+  "sk:setup-optimizer references 8 steps" \
   "$REPO/skills/sk:setup-optimizer/SKILL.md" \
-  "21"
+  "8"
 
 assert_contains \
-  "sk:setup-optimizer flow line has E2E Tests" \
+  "sk:setup-optimizer flow line has Gates" \
   "$REPO/skills/sk:setup-optimizer/SKILL.md" \
-  "E2E Tests"
+  "Gates"
 
 # install.sh
 assert_contains \
@@ -355,9 +321,9 @@ done
 
 # DOCUMENTATION.md
 assert_contains \
-  "DOCUMENTATION.md references 21-step workflow" \
+  "DOCUMENTATION.md references 8-step workflow" \
   "$REPO/.claude/docs/DOCUMENTATION.md" \
-  "21"
+  "8"
 
 assert_contains \
   "DOCUMENTATION.md lists sk:e2e" \
@@ -529,9 +495,9 @@ assert_contains \
   "worktree"
 
 assert_contains \
-  "sk:dashboard server reads workflow-status.md" \
+  "sk:dashboard server reads todo.md" \
   "$DASH_SERVER" \
-  "workflow-status.md"
+  "todo.md"
 
 assert_contains \
   "sk:dashboard server exposes /api/status endpoint" \
@@ -668,11 +634,6 @@ assert_contains \
   "tasks/todo.md"
 
 assert_contains \
-  "sk:context reads tasks/workflow-status.md" \
-  "$CTX_SKILL" \
-  "tasks/workflow-status.md"
-
-assert_contains \
   "sk:context reads tasks/lessons.md" \
   "$CTX_SKILL" \
   "tasks/lessons.md"
@@ -763,14 +724,14 @@ assert_contains \
   "auto-commit"
 
 assert_contains \
-  "sk:test fix loop includes auto-commit" \
+  "sk:test fix loop includes squash commit" \
   "$REPO/skills/sk:test/SKILL.md" \
-  "auto-commit"
+  "squash commit"
 
 assert_contains \
-  "sk:security-check fix loop includes auto-commit" \
+  "sk:security-check fix loop includes squash commit" \
   "$REPO/commands/sk/security-check.md" \
-  "auto-commit"
+  "squash"
 
 assert_contains \
   "sk:perf fix loop includes auto-commit" \
@@ -834,38 +795,29 @@ assert_contains \
   "$REPO/commands/sk/update-task.md" \
   "Resolved:"
 
-# Workflow step reduction — conditional commit steps removed
-assert_not_contains \
-  "CLAUDE.md does not have conditional commit step 13" \
-  "$CLAUDE" \
-  "| 13 | Commit"
-
-assert_not_contains \
-  "CLAUDE.md does not have conditional commit step 15" \
-  "$CLAUDE" \
-  "| 15 | Commit"
-
-assert_not_contains \
-  "CLAUDE.md does not have conditional commit step 17" \
-  "$CLAUDE" \
-  "| 17 | Commit"
-
-assert_not_contains \
-  "CLAUDE.md does not have conditional commit step 23" \
-  "$CLAUDE" \
-  "| 23 | Commit"
-
-# Release is now step 21
+# Squash gate commits — documented in CLAUDE.md
 assert_contains \
-  "CLAUDE.md Release is step 21" \
+  "CLAUDE.md documents squash gate commits rule" \
   "$CLAUDE" \
-  "| 21 |"
+  "Squash gate commits"
 
-# Gates own their commits — documented in CLAUDE.md
+# Auto-advance by default — documented in CLAUDE.md
 assert_contains \
-  "CLAUDE.md documents gate auto-commit rule" \
+  "CLAUDE.md documents auto-advance by default" \
   "$CLAUDE" \
-  "Gates own their commits"
+  "Auto-advance by default"
+
+# Conditional summary — documented in CLAUDE.md
+assert_contains \
+  "CLAUDE.md documents conditional summary" \
+  "$CLAUDE" \
+  "Conditional summary"
+
+# Never auto-advance rule is REMOVED
+assert_not_contains \
+  "CLAUDE.md does not contain Never auto-advance" \
+  "$CLAUDE" \
+  "Never auto-advance"
 
 # sk:schema-migrate auto-detects and auto-skips when no migration changes
 assert_contains \
@@ -929,14 +881,14 @@ assert_file_exists \
   "$HOOKS_DIR/session-stop.sh"
 
 assert_contains \
-  "session-start.sh references workflow-status" \
+  "session-start.sh references tech-debt" \
   "$HOOKS_DIR/session-start.sh" \
-  "workflow-status"
+  "tech-debt"
 
 assert_contains \
-  "pre-compact.sh references workflow-status" \
+  "pre-compact.sh references progress" \
   "$HOOKS_DIR/pre-compact.sh" \
-  "workflow-status"
+  "progress"
 
 assert_contains \
   "validate-commit.sh references conventional commit" \
@@ -1025,9 +977,9 @@ assert_file_exists \
   "$STATUSLINE"
 
 assert_contains \
-  "statusline.sh references workflow-status" \
+  "statusline.sh references todo.md" \
   "$STATUSLINE" \
-  "workflow-status"
+  "todo.md"
 
 assert_contains \
   "statusline.sh references Branch" \
@@ -1201,9 +1153,9 @@ assert_contains \
   "Batch 1"
 
 assert_contains \
-  "sk:gates references workflow-status" \
+  "sk:gates references quality gates" \
   "$GATES_SKILL" \
-  "workflow-status"
+  "quality gates"
 
 echo ""
 

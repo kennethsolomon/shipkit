@@ -65,11 +65,10 @@ All gates passed. Run /sk:update-task
 
 ## Failure Handling
 
-- Each agent handles its own fix → auto-commit → re-run loop internally
+- Each agent handles its own fix → re-run loop internally
+- **Squash gate commits:** When a gate requires fixes, collect all fixes for that pass, then make ONE commit: `fix(<gate>): resolve <gate> issues`. Do not commit after each individual fix.
 - If any agent fails after 3 attempts → stop all gates and report to user
 - Do NOT proceed to the next batch if the current batch has unresolved failures
-- Update `tasks/workflow-status.md` for each gate as it completes:
-  - Steps 12-17 marked `done` with attempt count in Notes
 
 ## 3-Strike Protocol
 

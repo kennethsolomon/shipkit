@@ -2,9 +2,9 @@
 
 > **Status:** Shipped
 > **Type:** Workflow Enhancement
-> **Workflow Position:** Applies to optional steps (4, 5, 8, 15)
-> **Command:** N/A — built into workflow tracker rules
-> **Config:** `CLAUDE.md` Workflow Tracker Rules section
+> **Workflow Position:** Applies to optional steps (Design, Migrate, Performance)
+> **Command:** N/A — built into workflow rules
+> **Config:** `CLAUDE.md` Workflow Rules section
 
 ---
 
@@ -27,30 +27,27 @@ Automatically detects and skips optional workflow steps when they're clearly not
 | Output | Destination | Notes |
 |--------|-------------|-------|
 | Skip log line | Terminal | `Auto-skipped: [Step Name] ([reason])` |
-| Workflow tracker update | `tasks/workflow-status.md` | Step marked as `skipped` with reason |
 
 ---
 
 ## Business Logic
 
-1. After plan is written (step 6), scan `tasks/todo.md` for signal keywords
+1. After plan is written (step 3), scan `tasks/todo.md` for signal keywords
 2. For each optional step, check detection criteria:
-   - **Step 4 (Design)**: Skip if NO frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button)
-   - **Step 5 (Accessibility)**: Skip if NO frontend keywords (same list)
-   - **Step 8 (Migrate)**: Skip if NO database keywords (migration, schema, table, column, model, database, foreign key, index, seed)
-   - **Step 15 (Performance)**: Skip if NO frontend AND NO database keywords
-3. Step 21 (Release) is NEVER auto-skipped
+   - **Step 2 (Design)**: Skip if NO frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button) AND NO API keywords (endpoint, route, controller, API)
+   - **Migrate** (inside step 5): Skip if NO database keywords (migration, schema, table, column, model, database, foreign key, index, seed)
+   - **Performance** (inside gates): Skip if NO frontend AND NO database keywords
+3. Release (inside step 8) is NEVER auto-skipped
 4. Output log line for each auto-skipped step
-5. Update workflow tracker with skip reason
 
 ---
 
 ## Hard Rules
 
-- Never auto-skip step 21 (Release) — deployment decisions always require user input
+- Never auto-skip Release — deployment decisions always require user input
 - Auto-skip applies in BOTH manual and autopilot modes
 - No confirmation prompt — just a log line
-- Detection runs AFTER plan is written (step 6), not before
+- Detection runs AFTER plan is written (step 3), not before
 
 ---
 
@@ -95,6 +92,6 @@ N/A — CLI tool only.
 
 ## Related Docs
 
-- `CLAUDE.md` — Workflow Tracker Rules (rule 4: auto-skip detection)
+- `CLAUDE.md` — Workflow Rules (rule 3: auto-skip detection)
 - `skills/sk:setup-claude/templates/CLAUDE.md.template` — template version
 - `skills/sk:setup-optimizer/SKILL.md` — upgrades existing projects with auto-skip rules

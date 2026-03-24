@@ -12,8 +12,8 @@ Run this skill after implementing and passing lint/tests, but before `/sk:review
 
 ## Hard Rules
 
-- **Fix all critical and high in-scope findings** (files in `git diff main..HEAD --name-only`) immediately after the audit. Auto-commit with `fix(perf): resolve [severity] performance findings`. Re-run the audit until critical/high = 0.
-- **Medium/low in-scope findings:** fix them in the same commit if straightforward, otherwise log to `tasks/tech-debt.md`.
+- **Fix all critical and high in-scope findings** (files in `git diff main..HEAD --name-only`) immediately after the audit. Re-run the audit until critical/high = 0. Once clean, make ONE squash commit: `fix(perf): resolve performance findings`.
+- **Medium/low in-scope findings:** fix them in the same pass if straightforward, otherwise log to `tasks/tech-debt.md`.
 - **Pre-existing findings** (files outside the current branch diff): log to `tasks/tech-debt.md` using this format — do NOT fix inline:
   ```
   ### [YYYY-MM-DD] Found during: sk:perf
@@ -21,7 +21,7 @@ Run this skill after implementing and passing lint/tests, but before `/sk:review
   Issue: description of the performance issue
   Severity: critical | high | medium | low
   ```
-- **Gates own their commits** — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
+- **Squash gate commits** — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
 - **Every finding must cite a specific file and line number.**
 - **Every finding must include an estimated impact** (high/medium/low) and a recommendation.
 - **Auto-detect the stack** — only run checks relevant to what's present.

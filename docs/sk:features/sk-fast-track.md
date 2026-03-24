@@ -31,7 +31,7 @@ Abbreviated workflow for small, well-understood changes. Skips brainstorm, desig
 | Feature branch | Git | Created via `/sk:branch` |
 | Implementation code | Working tree | Direct implementation, no TDD |
 | Conventional commit | Git history | Via `/sk:smart-commit` |
-| Gate results | Terminal + `tasks/workflow-status.md` | Via `/sk:gates` |
+| Gate results | Terminal | Via `/sk:gates` |
 | Changelog + PR | Git + remote | Via `/sk:finish-feature` |
 
 ---
@@ -57,7 +57,7 @@ Abbreviated workflow for small, well-understood changes. Skips brainstorm, desig
 - Guard rails must trigger warnings at thresholds (300 lines, 5 new files, migration files)
 - Guard rail warnings require explicit user confirmation to proceed
 - Cannot be used for new features (use full workflow), multi-system changes (use full workflow), design-dependent changes (use `/sk:brainstorm`), or bug fixes (use `/sk:debug` flow)
-- Workflow status must be updated: planning steps marked as "skipped (fast-track)"
+- Skipped planning steps are implicit — fast-track flow does not use them
 
 ---
 

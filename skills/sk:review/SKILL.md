@@ -450,14 +450,14 @@ After presenting the review report, fix **all** findings regardless of severity 
   Severity: critical | high | medium | low
   ```
 
-After all in-scope fixes are applied: auto-commit with `fix(review): address review findings`. Do not ask the user. Re-run `/sk:review` from scratch.
+After all in-scope fixes are applied: make ONE squash commit with `fix(review): address review findings`. Do not ask the user. Re-run `/sk:review` from scratch.
 
 Loop until the review is completely clean (0 findings across all severities for in-scope code).
 
 When clean:
 > "Review complete — 0 findings. Run `/sk:finish-feature` to finalize the branch and create a PR."
 
-**Note:** Gates own their commits — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
+> Squash gate commits — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
 
 ### Fix & Retest Protocol
 

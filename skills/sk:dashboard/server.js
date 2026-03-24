@@ -7,9 +7,6 @@ const { execSync } = require("child_process");
 const PORT =
   parseInt(process.argv.find((_, i, a) => a[i - 1] === "--port") || process.env.PORT, 10) || 3333;
 
-const HARD_GATES = new Set([12, 14, 16, 20, 22]);
-const OPTIONALS = new Set([4, 5, 8, 18, 27]);
-
 function stripMd(s) {
   return (s || "").replace(/\*\*/g, "").replace(/`/g, "").trim();
 }
@@ -31,53 +28,6 @@ function discoverWorktrees() {
       .filter(Boolean);
   } catch {
     return [{ path: process.cwd(), branch: "unknown" }];
-  }
-}
-
-function parseWorkflowStatus(worktreePath) {
-  const filePath = path.join(worktreePath, "tasks", "workflow-status.md");
-  try {
-    const lines = fs.readFileSync(filePath, "utf8").split("\n");
-
-    let headerFound = false;
-    let separatorSkipped = false;
-    const steps = [];
-
-    for (const line of lines) {
-      if (!headerFound) {
-        if (line.includes("| # |")) headerFound = true;
-        continue;
-      }
-      if (!separatorSkipped) {
-        separatorSkipped = true;
-        continue;
-      }
-      const cells = line.split("|").slice(1, -1).map((c) => c.trim());
-      if (cells.length < 3) continue;
-
-      const number = parseInt(cells[0], 10);
-      if (isNaN(number)) continue;
-
-      const rawStep = stripMd(cells[1]);
-      const cmdMatch = rawStep.match(/\((.+?)\)/);
-      const command = cmdMatch ? cmdMatch[1].trim() : "";
-      const name = rawStep.replace(/\s*\(.+?\)\s*/, "").trim();
-
-      steps.push({
-        number,
-        name,
-        command,
-        status: stripMd(cells[2]),
-        notes: stripMd(cells[3]),
-        isHardGate: HARD_GATES.has(number),
-        isOptional: OPTIONALS.has(number),
-      });
-    }
-    return steps;
-  } catch (err) {
-    if (err.code === "ENOENT") return [];
-    process.stderr.write(`Error parsing workflow-status.md: ${err.message}\n`);
-    return [];
   }
 }
 
@@ -137,17 +87,7 @@ function parseTodo(worktreePath) {
 function buildStatus() {
   const worktrees = discoverWorktrees();
   return worktrees.map((wt) => {
-    const steps = parseWorkflowStatus(wt.path);
     const todo = parseTodo(wt.path);
-
-    let currentStep = 0;
-    let totalDone = 0;
-    let totalSkipped = 0;
-    for (const s of steps) {
-      if (s.status === ">> next <<") currentStep = s.number;
-      if (s.status === "done") totalDone++;
-      if (s.status === "skipped") totalSkipped++;
-    }
 
     return {
       path: wt.path,
@@ -156,11 +96,6 @@ function buildStatus() {
       todosDone: todo.todosDone,
       todosTotal: todo.todosTotal,
       todoItems: todo.todoItems,
-      currentStep,
-      totalDone,
-      totalSkipped,
-      totalSteps: steps.length,
-      steps,
     };
   });
 }
