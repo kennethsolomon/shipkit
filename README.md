@@ -175,6 +175,13 @@ Use these anytime — they're not part of any workflow.
 | `/sk:dashboard` | Visual Kanban board across all git worktrees |
 | `/sk:mvp` | Generate a complete MVP app from a single idea prompt |
 | `/sk:seo-audit` | SEO audit for web projects |
+| `/sk:learn` | Extract reusable patterns from sessions into learned instincts |
+| `/sk:context-budget` | Audit context window token consumption and find savings |
+| `/sk:health` | Harness self-audit scorecard (7 categories, 0-70) |
+| `/sk:save-session` | Save current session state for cross-session continuity |
+| `/sk:resume-session` | Resume a previously saved session with full context |
+| `/sk:safety-guard` | Protect against destructive ops (careful/freeze/guard modes) |
+| `/sk:eval` | Define, run, and report on evaluations for agent reliability |
 
 ---
 
@@ -193,7 +200,7 @@ Use these anytime — they're not part of any workflow.
 ## All Commands
 
 <details>
-<summary><strong>38 commands</strong> — click to expand</summary>
+<summary><strong>45 commands</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---------|---------|
@@ -205,27 +212,34 @@ Use these anytime — they're not part of any workflow.
 | `/sk:change` | Handle mid-workflow requirement changes |
 | `/sk:config` | View/edit project config |
 | `/sk:context` | Load project context (automatic via hooks) |
+| `/sk:context-budget` | Audit context window token consumption |
 | `/sk:dashboard` | Live Kanban board — sk:dashboard across worktrees |
 | `/sk:debug` | Structured bug investigation |
 | `/sk:e2e` | E2E Tests — behavioral verification |
+| `/sk:eval` | Define, run, and report evals for agent reliability |
 | `/sk:execute-plan` | Execute plan checkboxes in batches |
 | `/sk:fast-track` | Small changes — skip planning, keep gates |
 | `/sk:features` | Sync feature specs with codebase |
 | `/sk:finish-feature` | Changelog + PR |
 | `/sk:frontend-design` | UI mockup + optional Pencil visual design |
 | `/sk:gates` | All quality gates in parallel batches |
+| `/sk:health` | Harness self-audit scorecard |
 | `/sk:help` | Show all commands |
 | `/sk:hotfix` | Emergency fix workflow |
 | `/sk:laravel-init` | Configure existing Laravel project |
 | `/sk:laravel-new` | Scaffold fresh Laravel app |
+| `/sk:learn` | Extract reusable patterns from sessions |
 | `/sk:lint` | Auto-detect and run all linters |
 | `/sk:mvp` | Generate MVP app from a prompt |
 | `/sk:perf` | Performance audit |
 | `/sk:plan` | Create/refresh planning files |
 | `/sk:release` | Version bump + tag (`--android` / `--ios` for store audit) |
+| `/sk:resume-session` | Resume a previously saved session |
 | `/sk:retro` | Post-ship retrospective |
 | `/sk:reverse-doc` | Generate docs from existing code |
 | `/sk:review` | 7-dimension code review |
+| `/sk:safety-guard` | Protect against destructive ops |
+| `/sk:save-session` | Save session state for continuity |
 | `/sk:schema-migrate` | Database schema change analysis |
 | `/sk:scope-check` | Detect scope creep mid-implementation |
 | `/sk:security-check` | OWASP security audit |

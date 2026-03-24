@@ -30,6 +30,10 @@ Valid profiles: `full-sail` · `quality` · `balanced` · `budget`
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
 | autopilot, team | opus | opus | sonnet | sonnet |
 | start | haiku | haiku | haiku | haiku |
+| learn, context-budget, health | haiku | haiku | haiku | haiku |
+| save-session, resume-session | haiku | haiku | haiku | haiku |
+| safety-guard | haiku | haiku | haiku | haiku |
+| eval | sonnet | sonnet | sonnet | haiku |
 
 Note: `opus` = inherit (uses the current session model). Switch to Opus 4.5 in your session to get the full benefit.
 
@@ -70,6 +74,10 @@ Model assignments for this project:
   smart-commit, branch, update-task → haiku
   autopilot, team → <model>
   start → haiku
+  learn, context-budget, health → haiku
+  save-session, resume-session → haiku
+  safety-guard → haiku
+  eval → <model>
 
 Run /sk:config to see all settings or make further changes.
 ```

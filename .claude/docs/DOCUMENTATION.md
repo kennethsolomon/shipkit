@@ -74,6 +74,13 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/sk:hotfix`](#hotfix) — Emergency fix workflow
   - [`/sk:finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
   - [`/sk:release`](#release) — Release automation + mobile store audits
+  - [`/sk:learn`](#sklearn) — Extract reusable patterns from sessions into learned instincts
+  - [`/sk:context-budget`](#skcontext-budget) — Audit context window token consumption and find savings
+  - [`/sk:health`](#skhealth) — Harness self-audit scorecard (7 categories, 0-70)
+  - [`/sk:save-session`](#sksave-session) — Save current session state for cross-session continuity
+  - [`/sk:resume-session`](#skresume-session) — Resume a previously saved session with full context
+  - [`/sk:safety-guard`](#sksafety-guard) — Protect against destructive ops (careful/freeze/guard modes)
+  - [`/sk:eval`](#skeval) — Define, run, and report on evaluations for agent reliability
 - [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
 - [Requirements](#requirements)
 

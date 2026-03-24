@@ -74,6 +74,19 @@ digraph brainstorming {
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
 - Focus on understanding: purpose, constraints, success criteria
 
+**Search-First Research (before proposing approaches):**
+Before proposing custom solutions, check if the problem is already solved:
+1. **Grep codebase** — does similar functionality already exist in this repo?
+2. **Check package registries** — is there a well-maintained package for this? (npm, PyPI, Packagist, crates.io)
+3. **Check existing skills** — does a ShipKit skill or MCP server already handle this?
+
+Decision matrix:
+- **Adopt** — existing solution covers 90%+ of requirements → use it directly
+- **Extend** — existing solution covers 60-90% → extend or wrap it
+- **Build custom** — nothing suitable exists → build from scratch (informed by what was found)
+
+If a suitable package or existing solution is found, include it as one of the approaches.
+
 **Exploring approaches:**
 - Propose 2-3 different approaches with trade-offs
 - Present options conversationally with your recommendation and reasoning

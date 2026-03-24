@@ -4,13 +4,33 @@
 
 Custom Claude Code skills and commands for bootstrapping and maintaining projects with an enforced TDD workflow.
 
+## Tech Stack
+
+| Tech | Details |
+|------|---------|
+| **Language** | JavaScript (Node.js >= 16.7.0) |
+| **Package** | `@kennethsolomon/shipkit` v3.10.2 |
+| **Testing** | Shell-based (`tests/verify-workflow.sh`) |
+
 ## Key Directories
 
 | Path | Purpose |
 |------|---------|
 | `skills/` | All skill implementations (skills/*/SKILL.md) |
-| `commands/` | Claude Code slash commands |
+| `commands/` | Claude Code slash commands (commands/sk/*.md) |
 | `tasks/` | Planning + findings + progress + security logs |
+| `bin/` | CLI entry point (`shipkit.js`) |
+| `docs/` | Feature specs, design docs |
+| `.claude/docs/` | Architectural change log, guides |
+| `assets/` | Static assets |
+
+## Build & Run
+
+```bash
+npm install                    # install dependencies
+node bin/shipkit.js            # run CLI
+bash tests/verify-workflow.sh  # run workflow verification
+```
 
 ## Workflow — Follow This Order
 <!-- LOCK -->
@@ -128,16 +148,66 @@ When requirements change mid-workflow, run `/sk:change`:
 
 Use Claude Code sub-agents to parallelize independent work and speed up development.
 
-- **Codebase exploration**: Launch parallel Explore agents before implementation
-- **Parallel quality checks**: Run analyzers in parallel after formatters
-- **Code review**: Split security, performance, and test coverage into parallel agents
-- **Worktree isolation**: Use `isolation: "worktree"` for risky refactors
-- **Background agents**: Use `run_in_background: true` for long-running tasks
+### Codebase Exploration (before implementation)
+
+Before implementing a feature, launch parallel Explore agents to understand the affected areas:
+
+```
+Use Agent tool with subagent_type="Explore" — launch all in a single message:
+  - Agent 1: Explore related models, migrations, and relationships
+  - Agent 2: Explore existing routes, controllers, and middleware
+  - Agent 3: Explore test patterns and existing test coverage for the area
+```
+
+This replaces sequential file reading and gives a complete picture before writing code.
+
+### Parallel Quality Checks (/lint)
+
+After formatters run, launch analyzers in parallel (both are read-only):
+
+```
+1. Formatters (sequential — modify files)
+2. Then in parallel:
+   - Agent 1: Static analysis
+   - Agent 2: Code quality checks
+```
+
+### Code Review Parallelization
+
+For `/review` and `/security-check`, split into parallel agents for faster feedback:
+
+```
+Launch in a single message:
+  - Agent 1: Security review — OWASP, injection, auth bypass
+  - Agent 2: Performance review — N+1 queries, missing indexes, cache misses
+  - Agent 3: Test coverage gaps — untested paths, missing edge cases
+```
+
+### Worktree Isolation for Risky Changes
+
+For refactors or experimental approaches, use `isolation: "worktree"` to try the change on an isolated copy:
+
+```
+Agent tool with isolation: "worktree":
+  - Try the refactor in isolation
+  - If it works, apply the same changes to the main worktree
+  - If it fails, the worktree is discarded — no cleanup needed
+```
+
+### Background Agents for Long-Running Tasks
+
+Use `run_in_background: true` for tasks that don't block your next step:
+
+```
+- Background agent: Run full test suite while you continue implementing
+- Background agent: Static analysis while you fix other suggestions
+- You'll be notified when they complete
+```
 <!-- END:sub-agent-patterns -->
 
 ## Cross-Platform Tracking
 
-This project has a companion codebase (web <-> mobile). During implementation, **log every change that affects the other platform** to `tasks/cross-platform.md`.
+This project may have a companion codebase (web <-> mobile). During implementation, **log every change that affects the other platform** to `tasks/cross-platform.md`.
 
 **When to log:**
 - API contract changes (new/modified endpoints, payload shapes, auth)
@@ -156,7 +226,7 @@ Read these files at the start of every task:
 - `tasks/findings.md` — key decisions and project constraints
 - `tasks/lessons.md` — past mistakes and how to avoid them
 - `tasks/todo.md` — current plan
-- `tasks/tech-debt.md` — unresolved pre-existing issues found by gates (append-only, never overwrite)
+- `tasks/tech-debt.md` — known shortcuts, deferred work, and areas to revisit
 - `tasks/cross-platform.md` — pending changes from the other codebase
 
 Write to these files continuously:
@@ -164,7 +234,7 @@ Write to these files continuously:
 - `tasks/findings.md` — anything important discovered mid-task
 - `tasks/cross-platform.md` — any change that impacts the other platform
 
-**Never overwrite** `tasks/lessons.md`, `tasks/security-findings.md`, `tasks/tech-debt.md`, or `tasks/cross-platform.md`.
+**Never overwrite** `tasks/lessons.md`, `tasks/security-findings.md`, or `tasks/cross-platform.md`.
 
 ## Lessons Capture
 
@@ -172,11 +242,25 @@ When the user corrects you:
 - Explicit: `lesson:`, `remember:`, `don't do this again:` → append to `tasks/lessons.md` immediately
 - Implicit: detect "no", "don't", "instead", "wrong" → ask "Should I add this to lessons.md?" → append on confirmation
 
+Entry format:
+```
+### [YYYY-MM-DD] [Brief title]
+**Mistake:** What went wrong
+**Root cause:** Why it happened
+**Prevention:** What to do differently
+```
+
 ## Testing — TDD, 100% Coverage Required
+
+Tests are written **before** implementation (step 5) and verified during gates (step 7).
+
+### TDD Flow
 
 1. `/sk:write-tests` — write failing tests based on the plan (RED)
 2. `/sk:execute-plan` — implement code to make tests pass (GREEN)
-3. `/sk:test` — verify all tests pass with 100% coverage (VERIFY)
+3. `/sk:test` — verify all tests pass with 100% coverage (VERIFY — runs as part of `/sk:gates`)
+
+Every new function, endpoint, component, and module needs tests. No code proceeds past gates without 100% coverage on new code.
 
 ## 3-Strike Protocol
 
@@ -187,6 +271,10 @@ When blocked:
 
 Never retry the same failing approach.
 
+## Architectural Change Log
+
+Create entries in: `.claude/docs/architectural_change_log/`
+
 ## Commands
 
 | Command | Purpose |
@@ -194,26 +282,33 @@ Never retry the same failing approach.
 | `/sk:accessibility` | WCAG 2.1 AA audit — runs after design, before implementation |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) before implementation |
 | `/sk:autopilot` | Hands-free workflow — all 8 steps, auto-skip, auto-advance, auto-commit |
-| `/sk:brainstorm` | Explore requirements and design |
+| `/sk:brainstorm` | Explore requirements and design (includes search-first research) |
 | `/sk:branch` | Create feature branch auto-named from current task |
 | `/sk:change` | Handle mid-workflow requirement changes — re-enter at correct step |
 | `/sk:context` | Load all context files + output session brief for fast session start |
+| `/sk:context-budget` | Audit context window token consumption and find savings |
 | `/sk:dashboard` | Read-only workflow Kanban board — localhost server, multi-worktree |
 | `/sk:debug` | Investigate and debug issues (bug fix entry point) |
 | `/sk:e2e` | E2E behavioral verification using agent-browser (final quality gate) |
+| `/sk:eval` | Define, run, and report on evaluations for agent reliability |
 | `/sk:execute-plan` | Execute `tasks/todo.md` checkboxes in batches |
 | `/sk:fast-track` | Abbreviated workflow for small changes — skip planning, keep all gates |
 | `/sk:features` | Sync feature specs with shipped implementation |
 | `/sk:finish-feature` | Changelog + PR creation |
 | `/sk:frontend-design` | UI mockup before implementation. Prompts to create Pencil visual mockup |
 | `/sk:gates` | Run all quality gates in optimized parallel batches |
+| `/sk:health` | Harness self-audit scorecard (7 categories, 0-70) |
 | `/sk:hotfix` | Emergency fix workflow — skip design/TDD, quality gates enforced |
+| `/sk:learn` | Extract reusable patterns from sessions into learned instincts |
 | `/sk:lint` | Auto-detect and run all project linters + dependency audits |
 | `/sk:perf` | Performance audit — bundle, N+1, Core Web Vitals, memory |
 | `/sk:release` | Version bump + changelog + tag |
 | `/sk:retro` | Post-ship retrospective: velocity, blockers, action items |
 | `/sk:reverse-doc` | Generate architecture/design docs from existing code |
+| `/sk:resume-session` | Resume a previously saved session with full context restoration |
 | `/sk:review` | Self-review with simplify pre-pass + multi-dimensional review |
+| `/sk:safety-guard` | Protect against destructive ops (careful/freeze/guard modes) |
+| `/sk:save-session` | Save current session state for cross-session continuity |
 | `/sk:scope-check` | Compare implementation against plan, detect scope creep |
 | `/sk:security-check` | OWASP security audit on changed files |
 | `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
@@ -226,7 +321,3 @@ Never retry the same failing approach.
 | `/sk:update-task` | Mark task done and log completion |
 | `/sk:write-plan` | Write decision-complete plan into `tasks/todo.md` |
 | `/sk:write-tests` | TDD: Write failing tests before implementation |
-
-## Architectural Change Log
-
-Create entries in: `.claude/docs/architectural_change_log/`

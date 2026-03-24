@@ -44,9 +44,10 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 8-step flow with `/sk:gates` as single gate step
-- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team` in the Commands table
+- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval` in the Commands table
 - **Auto-skip rules** — checks for auto-skip detection rules in the workflow section
 - **Stale tracker references** — checks for `tasks/workflow-status.md` references (removed — progress tracked via git branch + todo.md checkboxes)
+- **Missing hooks** — checks if `.claude/hooks/` exists and contains both core and enhanced hooks
 
 Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
@@ -88,6 +89,23 @@ Explore → Design → Plan → Branch → Write Tests + Implement → Commit �
 3. If different, replace the workflow section (between `## Workflow` and the next `##` that isn't a workflow subsection)
 4. Insert missing sections (Sub-Agent Patterns, Project Memory, etc.) in their correct positions
 5. Preserve all `<!-- LOCK -->` and project-specific sections
+
+### Step 1.5: Hooks Check
+
+After updating the workflow, check hooks status:
+
+1. **Check if `.claude/hooks/` exists** — if not, hooks were never installed
+2. **Check for core hooks** — `session-start.sh`, `session-stop.sh`, `pre-compact.sh`, `validate-commit.sh`, `validate-push.sh`, `log-agent.sh`
+3. **Check for enhanced hooks** — `config-protection.sh`, `post-edit-format.sh`, `console-log-warning.sh`, `cost-tracker.sh`, `suggest-compact.sh`, `safety-guard.sh`
+4. **Check `settings.json`** — verify hooks are wired correctly
+
+**If hooks are missing or outdated**, prompt:
+
+> "Hooks status: [X core, Y enhanced installed out of 6/6]
+> Install/update hooks? [y/n]"
+
+If yes: deploy missing hooks from templates, update settings.json.
+If no: skip.
 
 ### Step 2: Scan & Enrich
 
