@@ -26,21 +26,19 @@ Load all project context files into the conversation and output a formatted sess
 | # | File | What to Extract |
 |---|------|-----------------|
 | 1 | `tasks/todo.md` | Task name (from `# TODO —` heading), milestone progress, count of `- [x]` (done) vs `- [ ]` (pending) checkboxes |
-| 2 | `tasks/workflow-status.md` | Current step (row with `>> next <<`), step name, command to run |
-| 3 | `tasks/progress.md` | Last 5 entries only (most recent work). If file is large, read only the last 50 lines. |
-| 4 | `tasks/findings.md` | Current decisions, chosen approach, open questions |
-| 5 | `tasks/lessons.md` | All active lessons — read in full, apply as constraints for this session |
-| 6 | `docs/decisions.md` | If exists: last 3 ADR entries. If missing: note "no decisions log yet" |
-| 7 | `docs/vision.md` | If exists: product name + value proposition. If missing: note "no vision.md found" |
-| 8 | `tasks/tech-debt.md` | If exists: count entries with no `Resolved:` line (unresolved), highest severity among unresolved |
+| 2 | `tasks/progress.md` | Last 5 entries only (most recent work). If file is large, read only the last 50 lines. |
+| 3 | `tasks/findings.md` | Current decisions, chosen approach, open questions |
+| 4 | `tasks/lessons.md` | All active lessons — read in full, apply as constraints for this session |
+| 5 | `docs/decisions.md` | If exists: last 3 ADR entries. If missing: note "no decisions log yet" |
+| 6 | `docs/vision.md` | If exists: product name + value proposition. If missing: note "no vision.md found" |
+| 7 | `tasks/tech-debt.md` | If exists: count entries with no `Resolved:` line (unresolved), highest severity among unresolved |
 
 ### Reading Strategy
 
-- Read files 1-5 first (these are the core context).
-- Files 6-7 are optional — check if they exist before reading.
+- Read files 1-4 first (these are the core context).
+- Files 5-6 are optional — check if they exist before reading.
 - For `tasks/progress.md`: only read the last 50 lines to avoid loading a huge file.
 - If `tasks/todo.md` is missing: the project has no active task.
-- If `tasks/workflow-status.md` is missing: the workflow hasn't started.
 
 ---
 
@@ -54,9 +52,8 @@ After reading all files, output this session brief:
 ╚══════════════════════════════════════════╝
 Branch:     [current git branch]
 Task:       [task name from todo.md, or "No active task"]
-Step:       [step #] [step name] → run `/sk:[command]`
+Progress:   [N done] / [M total] checkboxes in todo.md
 Last done:  [last progress.md entry summary, 1 line]
-Pending:    [N] checkboxes remaining in todo.md
 Lessons:    [count] active — [most critical 1-liner from lessons.md]
 Open Qs:    [open questions from findings.md, or "none"]
 Tech Debt:  [N] unresolved — highest: [severity] ([file:line])
@@ -68,9 +65,8 @@ Product:    [value prop from vision.md, or "no vision.md found"]
 
 - **Branch:** Run `git branch --show-current` to get the current branch name.
 - **Task:** Extract from the first `# TODO —` line in `tasks/todo.md`. If the file doesn't exist or all checkboxes are done, show "No active task — ready to start fresh".
-- **Step:** Find the row containing `>> next <<` in `tasks/workflow-status.md`. Extract step number, name, and command. If no `>> next <<` found, show "Workflow complete" or "Not started".
+- **Progress:** Count `- [x]` (done) and `- [ ]` (pending) lines in `tasks/todo.md`. Stop counting at the first `## Verification`, `## Acceptance Criteria`, or `## Risks` heading (these are meta-sections, not tasks). Show `N done / M total`.
 - **Last done:** The most recent entry from `tasks/progress.md`. Summarize in one line.
-- **Pending:** Count `- [ ]` lines in `tasks/todo.md`. Stop counting at the first `## Verification`, `## Acceptance Criteria`, or `## Risks` heading (these are meta-sections, not tasks).
 - **Lessons:** Count `### [` headings in `tasks/lessons.md` (each lesson starts with `### [YYYY-MM-DD]`). Show the count + the **Prevention:** line from the most recent lesson.
 - **Open Qs:** Check for an "## Open Questions" section in `tasks/findings.md`. List them or say "none".
 - **Tech Debt:** Read `tasks/tech-debt.md` if it exists. Count entries that have no `Resolved:` line — each entry starts with `### [`. For unresolved entries, find the highest severity. Show `N unresolved — highest: [severity] ([file])`. If file missing or 0 unresolved, show `none`.
@@ -93,7 +89,7 @@ After outputting the session brief:
 | Scenario | Behavior |
 |----------|----------|
 | No `tasks/todo.md` | Show "No active task — ready to start fresh" |
-| No `tasks/workflow-status.md` | Show "Workflow not started" for Step field |
+| All checkboxes done in todo.md | Show "Task complete — 0 pending" for Progress field |
 | No `tasks/progress.md` | Show "No progress logged yet" for Last done |
 | No `tasks/findings.md` | Show "none" for Open Qs |
 | No `tasks/lessons.md` | Show "0 active" for Lessons |

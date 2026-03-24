@@ -55,8 +55,8 @@ That's it. `/sk:setup-claude` creates your project scaffolding: planning files, 
 | I want to... | Run this | What happens |
 |--------------|----------|-------------|
 | **Not sure — let ShipKit decide** | `/sk:start` | Classifies your task, routes to optimal flow/mode/agents |
-| **Build a new feature** | `/sk:brainstorm` | Full workflow: plan → TDD → 6 quality gates → PR |
-| **Build hands-free** | `/sk:autopilot` | All 21 steps, auto-skip, auto-advance, auto-commit |
+| **Build a new feature** | `/sk:brainstorm` | Full workflow: plan → TDD → quality gates → PR |
+| **Build hands-free** | `/sk:autopilot` | All 8 steps, auto-skip, auto-advance, auto-commit |
 | **Full-stack feature (parallel)** | `/sk:team` | Parallel domain agents (backend + frontend + QA) |
 | **Make a small change** | `/sk:fast-track` | Skip planning, keep all quality gates |
 | **Fix a bug** | `/sk:debug` | Investigate → regression test → fix → gates → PR |
@@ -74,20 +74,13 @@ That's it. `/sk:setup-claude` creates your project scaffolding: planning files, 
 | Step | Command | What it does | Phase |
 |------|---------|-------------|-------|
 | 1 | `/sk:brainstorm` | Explore requirements, propose approaches | Think |
-| 2 | `/sk:frontend-design` | *Optional* — UI mockup (`--pencil` for visual) | Think |
-| 3 | `/sk:api-design` | *Optional* — API contracts | Think |
-| 4 | `/sk:accessibility` | *Optional* — WCAG 2.1 AA audit on design | Think |
-| 5 | `/sk:write-plan` | Write decision-complete plan | Think |
-| 6 | `/sk:branch` | Create feature branch | Build |
-| 7 | `/sk:schema-migrate` | *Optional* — auto-skips if no migrations | Build |
-| 8 | `/sk:write-tests` | TDD red — write failing tests | Build |
-| 9 | `/sk:execute-plan` | TDD green — make tests pass | Build |
-| 10 | `/sk:smart-commit` | Conventional commit | Build |
-| 11 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
-| 12 | `/sk:update-task` | Mark done | Ship |
-| 13 | `/sk:finish-feature` | Changelog + PR | Ship |
-| 14 | `/sk:features` | Sync feature specs | Ship |
-| 15 | `/sk:release` | *Optional* — version bump + tag | Ship |
+| 2 | `/sk:frontend-design` or `/sk:api-design` | *Optional* — UI mockup or API contracts (includes accessibility) | Think |
+| 3 | `/sk:write-plan` | Write decision-complete plan | Think |
+| 4 | `/sk:branch` | Create feature branch | Build |
+| 5 | `/sk:write-tests` + `/sk:execute-plan` | TDD: write failing tests, then implement | Build |
+| 6 | `/sk:smart-commit` | Conventional commit | Build |
+| 7 | `/sk:gates` | All 6 quality gates (parallel batches) | Verify |
+| 8 | `/sk:finish-feature` | Update task, changelog, PR, feature sync, release | Ship |
 
 ---
 
@@ -97,14 +90,11 @@ That's it. `/sk:setup-claude` creates your project scaffolding: planning files, 
 
 | Step | Command | What it does | Phase |
 |------|---------|-------------|-------|
-| ~~1~~ | ~~/sk:brainstorm~~ | **Skipped** | — |
-| ~~2~~ | ~~/sk:write-plan~~ | **Skipped** | — |
-| ~~3~~ | ~~/sk:write-tests~~ | **Skipped** | — |
-| 4 | `/sk:branch` | Create feature branch | Build |
-| 5 | implement directly | No TDD — write code | Build |
-| 6 | `/sk:smart-commit` | Conventional commit | Build |
-| 7 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
-| 8 | `/sk:finish-feature` | Changelog + PR | Ship |
+| 1 | `/sk:branch` | Create feature branch | Build |
+| 2 | implement directly | No TDD — write code | Build |
+| 3 | `/sk:smart-commit` | Conventional commit | Build |
+| 4 | `/sk:gates` | All quality gates (parallel batches) | Verify |
+| 5 | `/sk:finish-feature` | Changelog + PR | Ship |
 
 Guard rails: warns if diff > 300 lines or > 5 new files.
 
@@ -116,15 +106,13 @@ Guard rails: warns if diff > 300 lines or > 5 new files.
 
 | Step | Command | What it does | Phase |
 |------|---------|-------------|-------|
-| ~~1~~ | ~~/sk:brainstorm~~ | **Skipped** | — |
-| ~~2~~ | ~~/sk:write-plan~~ | **Skipped** | — |
-| 3 | `/sk:debug` | Reproduce, isolate, hypothesize, verify | Think |
-| 4 | `/sk:branch` | Create fix branch | Build |
-| 5 | `/sk:write-tests` | Regression test that reproduces the bug | Build |
-| 6 | implement the fix | Make regression test pass | Build |
-| 7 | `/sk:smart-commit` | Commit fix + test | Build |
-| 8 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
-| 9 | `/sk:finish-feature` | Changelog + PR | Ship |
+| 1 | `/sk:debug` | Reproduce, isolate, hypothesize, verify | Think |
+| 2 | `/sk:branch` | Create fix branch | Build |
+| 3 | `/sk:write-tests` | Regression test that reproduces the bug | Build |
+| 4 | implement the fix | Make regression test pass | Build |
+| 5 | `/sk:smart-commit` | Commit fix + test | Build |
+| 6 | `/sk:gates` | All quality gates (parallel batches) | Verify |
+| 7 | `/sk:finish-feature` | Changelog + PR | Ship |
 
 ---
 
@@ -134,16 +122,12 @@ Guard rails: warns if diff > 300 lines or > 5 new files.
 
 | Step | Command | What it does | Phase |
 |------|---------|-------------|-------|
-| ~~1~~ | ~~/sk:brainstorm~~ | **Skipped** | — |
-| ~~2~~ | ~~/sk:write-plan~~ | **Skipped** | — |
-| ~~3~~ | ~~/sk:write-tests~~ | **Skipped** | — |
-| 4 | `/sk:debug` | Root-cause analysis | Think |
-| 5 | `/sk:branch` | Create hotfix branch | Build |
-| 6 | implement directly | Fix the issue | Build |
-| 7 | run existing tests | Must still pass | Build |
-| 8 | `/sk:smart-commit` | Commit the fix | Build |
-| 9 | `/sk:gates` | All 6 quality gates (parallel) | Verify |
-| 10 | `/sk:finish-feature` | Changelog + PR (marked as hotfix) | Ship |
+| 1 | `/sk:debug` | Root-cause analysis | Think |
+| 2 | `/sk:branch` | Create hotfix branch | Build |
+| 3 | implement directly | Fix the issue | Build |
+| 4 | `/sk:smart-commit` | Commit the fix | Build |
+| 5 | `/sk:gates` | All quality gates (parallel batches) | Verify |
+| 6 | `/sk:finish-feature` | Changelog + PR (marked as hotfix) | Ship |
 
 After merging: add regression test + lesson to `tasks/lessons.md`.
 
@@ -172,7 +156,7 @@ One command runs all 6 gates in parallel batches:
 | **3** | code review | Needs deep understanding |
 | **4** | E2E Tests | Needs review fixes |
 
-Each gate auto-fixes, auto-commits, and re-runs until clean. If a gate fails 3 times, it stops and asks for help.
+Each gate auto-fixes and re-runs until clean. Fixes are squashed into one commit per gate pass. If a gate fails 3 times, it stops and asks for help.
 
 Pre-existing issues are logged to `tasks/tech-debt.md` — not fixed inline.
 
@@ -265,7 +249,7 @@ Use these anytime — they're not part of any workflow.
 
 | Topic | Where |
 |-------|-------|
-| Detailed workflow steps (21-step table) | [DOCUMENTATION.md](.claude/docs/DOCUMENTATION.md) |
+| Detailed workflow steps (8-step flow) | [DOCUMENTATION.md](.claude/docs/DOCUMENTATION.md) |
 | Feature specifications | [docs/FEATURES.md](docs/FEATURES.md) |
 | Model routing profiles & config | [DOCUMENTATION.md — Config](.claude/docs/DOCUMENTATION.md#config-reference) |
 | Infrastructure (hooks, agents, rules) | [DOCUMENTATION.md — Setup](.claude/docs/DOCUMENTATION.md#what-gets-created) |

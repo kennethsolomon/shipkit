@@ -30,10 +30,10 @@ Read the task description from arguments. Scan for signal keywords to determine 
 
 | Signal Keywords | Detected Flow |
 |----------------|---------------|
-| bug, fix, broken, error, regression, failing, crash, wrong | `debug` (11 steps) |
-| urgent, prod down, hotfix, emergency, critical, production, incident | `hotfix` (11 steps) |
-| config, bump, typo, copy, rename, dependency, upgrade, version, docs | `fast-track` (10 steps) |
-| *(default — no special signals)* | `feature` (21 steps) |
+| bug, fix, broken, error, regression, failing, crash, wrong | `debug` (7 steps) |
+| urgent, prod down, hotfix, emergency, critical, production, incident | `hotfix` (6 steps) |
+| config, bump, typo, copy, rename, dependency, upgrade, version, docs | `fast-track` (5 steps) |
+| *(default — no special signals)* | `feature` (8 steps) |
 
 **Scope detection:**
 
@@ -60,7 +60,7 @@ Present the classification and recommendation:
 ```
 Detected: [Full-stack feature / Backend bug fix / Frontend hotfix / Small config change / etc.]
 Recommended:
-  Flow:   [feature (21 steps) / debug (11 steps) / hotfix (11 steps) / fast-track (10 steps)]
+  Flow:   [feature (8 steps) / debug (7 steps) / hotfix (6 steps) / fast-track (5 steps)]
   Mode:   [autopilot / manual]
   Agents: [team (backend + frontend + QA) / solo]
 
@@ -84,12 +84,10 @@ Wait for user response:
 
 ### Step 3 — Route (enters the chosen flow)
 
-1. Reset `tasks/workflow-status.md`:
-   - Set all steps to `not yet`
-   - Add metadata to the tracker header:
-     ```
-     > Mode: [autopilot/manual] | Agents: [team/solo] | Flow: [feature/debug/hotfix/fast-track]
-     ```
+1. Log the routing decision to terminal:
+   ```
+   Mode: [autopilot/manual] | Agents: [team/solo] | Flow: [feature/debug/hotfix/fast-track]
+   ```
 
 2. Dispatch to the chosen flow:
 

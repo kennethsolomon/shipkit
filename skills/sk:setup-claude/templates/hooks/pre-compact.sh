@@ -4,17 +4,6 @@
 
 echo "=== Pre-Compaction State Snapshot ==="
 
-# Workflow status
-if [ -f "tasks/workflow-status.md" ]; then
-    echo ""
-    echo "--- workflow-status.md ---"
-    cat "tasks/workflow-status.md" 2>/dev/null | head -30
-    TOTAL_LINES=$(wc -l < "tasks/workflow-status.md" 2>/dev/null | tr -d ' ')
-    if [ "$TOTAL_LINES" -gt 30 ]; then
-        echo "  ... ($TOTAL_LINES total lines)"
-    fi
-fi
-
 # Git status
 echo ""
 echo "--- Uncommitted Changes ---"
@@ -38,7 +27,7 @@ fi
 
 echo ""
 echo "--- Recovery ---"
-echo "Read tasks/workflow-status.md to restore current step."
+echo "Read tasks/todo.md for current task and progress."
 echo "Read tasks/progress.md for recent work."
 echo "==================================="
 exit 0

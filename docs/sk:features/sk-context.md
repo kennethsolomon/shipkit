@@ -18,7 +18,6 @@ Session initializer that loads all project context files into the conversation a
 | Input | Source | Required |
 |-------|--------|----------|
 | `tasks/todo.md` | Project planning file | No — shows "No active task" if missing |
-| `tasks/workflow-status.md` | Workflow tracker | No — shows "Workflow not started" if missing |
 | `tasks/progress.md` | Work log (last 50 lines only) | No — shows "No progress logged yet" if missing |
 | `tasks/findings.md` | Current task decisions | No — shows "none" for Open Qs if missing |
 | `tasks/lessons.md` | Past corrections (read in full) | No — shows "0 active" if missing |
@@ -45,9 +44,8 @@ Session initializer that loads all project context files into the conversation a
 ╚══════════════════════════════════════════╝
 Branch:     feature/xxx
 Task:       Task name from todo.md
-Step:       10 Implement → run `/sk:execute-plan`
+Progress:   12/19 checkboxes done in todo.md
 Last done:  Last progress.md entry summary
-Pending:    5 checkboxes remaining in todo.md
 Lessons:    7 active — most critical 1-liner
 Open Qs:    none
 Tech Debt:  3 unresolved — highest: high (src/auth.ts:42)
@@ -64,9 +62,8 @@ Product:    value prop from vision.md
 3. **Extract fields:**
    - **Branch:** `git branch --show-current`
    - **Task:** First `# TODO —` line, text after last em dash `—`
-   - **Step:** Row containing `>> next <<` in workflow-status.md table; extract step #, name, command
+   - **Progress:** Count `[x]` and `[ ]` checkboxes in todo.md; report as "done/total checkboxes"
    - **Last done:** Most recent entry from progress.md (1-line summary)
-   - **Pending:** Count `- [ ]` lines in todo.md; stop at `## Verification`, `## Acceptance Criteria`, or `## Risks` headings
    - **Lessons:** Count `### [` headings in lessons.md; show count + **Prevention:** line from most recent
    - **Open Qs:** `## Open Questions` section in findings.md, or "none"
    - **Tech Debt:** Count entries in tech-debt.md with no `Resolved:` line; report count + highest severity + file. "none logged" if file missing, "none" if 0 unresolved.
@@ -92,7 +89,6 @@ Product:    value prop from vision.md
 | Scenario | Behavior |
 |----------|----------|
 | No `tasks/todo.md` | Shows "No active task — ready to start fresh" |
-| No `tasks/workflow-status.md` | Shows "Workflow not started" for Step field |
 | No `tasks/progress.md` | Shows "No progress logged yet" for Last done |
 | No `tasks/findings.md` | Shows "none" for Open Qs |
 | No `tasks/lessons.md` | Shows "0 active" for Lessons |
@@ -101,7 +97,6 @@ Product:    value prop from vision.md
 | No `tasks/tech-debt.md` | Shows "none logged" for Tech Debt |
 | `tasks/tech-debt.md` exists, 0 unresolved | Shows "none" for Tech Debt |
 | All checkboxes done in todo.md | Shows "Task complete — 0 pending" |
-| No `>> next <<` in workflow-status.md | Shows "Workflow complete" or "Not started" |
 
 ---
 
@@ -139,7 +134,6 @@ CLI tool — no mobile or web platform. Works in any project that uses ShipKit's
 
 - `skills/sk:context/SKILL.md` — full implementation spec and model routing
 - `tasks/todo.md` — primary data source for task and progress info
-- `tasks/workflow-status.md` — primary data source for workflow step status
 - `tasks/lessons.md` — loaded in full and applied as session constraints
 - `docs/decisions.md` — ADR log (created by sk:brainstorming)
 - `docs/vision.md` — product context (created by sk:mvp Step 9)

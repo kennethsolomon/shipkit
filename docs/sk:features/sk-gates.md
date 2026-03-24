@@ -2,7 +2,7 @@
 
 > **Status:** Shipped
 > **Type:** Skill
-> **Workflow Position:** Steps 12-17 (replaces individual gate commands)
+> **Workflow Position:** Step 7 (replaces individual gate commands)
 > **Command:** `/sk:gates`
 > **Skill file:** `skills/sk:gates/SKILL.md`
 
@@ -19,7 +19,7 @@ Run all quality gates (lint, test, security, perf, review, e2e) in optimized par
 | Input | Source | Required |
 |-------|--------|----------|
 | Committed implementation code | Working tree (post-commit, step 11) | Yes |
-| `tasks/workflow-status.md` | Gate step tracking | Yes |
+| `tasks/todo.md` | Task progress tracking | No |
 | `tasks/progress.md` | Failure logging | Yes |
 | `.shipkit/config.json` | Model routing profile | No |
 
@@ -30,9 +30,8 @@ Run all quality gates (lint, test, security, perf, review, e2e) in optimized par
 | Output | Destination | Notes |
 |--------|-------------|-------|
 | Gate results summary | Terminal (stdout) | Pass/fail status with attempt counts |
-| `tasks/workflow-status.md` updates | Steps 12-17 marked done with attempt counts | Updated per gate |
 | `tasks/progress.md` entries | Failure logs on 3-strike | Appended on failure |
-| Auto-fix commits | Git history | Each gate handles its own fix-commit loop |
+| Auto-fix commits | Git history | One squash commit per gate pass |
 
 ---
 
@@ -60,10 +59,10 @@ Run all quality gates (lint, test, security, perf, review, e2e) in optimized par
 
 ## Hard Rules
 
-- Each agent handles its own fix -> auto-commit -> re-run loop internally
+- Each agent handles its own fix -> re-run loop internally
+- Squash gate commits: one `fix(<gate>): ...` commit per gate pass, not per individual fix
 - Do NOT proceed to the next batch if the current batch has unresolved failures
 - 3-Strike Protocol: if any single gate fails 3 times, stop the entire gates process
-- Update `tasks/workflow-status.md` for each gate as it completes (steps 12-17)
 - Review (Batch 3) must run in main context, not as an agent
 - Performance gate follows the optional gate rules — can be skipped with user confirmation
 - All other gates are hard gates that cannot be skipped
@@ -76,7 +75,7 @@ Run all quality gates (lint, test, security, perf, review, e2e) in optimized par
 |----------|----------|
 | No changes to lint/test | Gates still run — confirm clean state |
 | Lint auto-formats code | Batch 2 (tests) picks up formatted code automatically |
-| Performance gate skipped | Mark step 15 as "skipped" in workflow-status.md; proceed to Batch 3 |
+| Performance gate skipped | Log "Auto-skipped: Performance"; proceed to Batch 3 |
 | One Batch 1 agent fails while others pass | Wait for all Batch 1 agents to finish, then handle failures before Batch 2 |
 
 ---

@@ -12,7 +12,7 @@ By default, this checks only files changed on the current branch. Use `--all` to
 
 ## Hard Rules
 
-- **Fix all in-scope findings** (files in `git diff main..HEAD --name-only`) immediately after the audit. auto-commit with `fix(security): resolve [severity] security findings`. Re-run the audit until 0 findings remain.
+- **Fix all in-scope findings** (files in `git diff main..HEAD --name-only`) immediately after the audit. Re-run the audit until 0 findings remain. Once clean, make ONE squash commit: `fix(security): resolve security findings`.
 - **Pre-existing findings** (files outside the current branch diff): log to `tasks/tech-debt.md` using this format — do NOT fix inline:
   ```
   ### [YYYY-MM-DD] Found during: sk:security-check
@@ -20,7 +20,7 @@ By default, this checks only files changed on the current branch. Use `--all` to
   Issue: description of the vulnerability
   Severity: critical | high | medium | low
   ```
-- **Gates own their commits** — the fix-commit-rerun loop is fully internal. No manual commit step needed after this gate.
+- **Squash gate commits** — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
 - **DO NOT skip checks** because the project is small or simple. Production is production.
 - **Every finding must cite a specific file and line number.**
 - **Every finding must reference the standard it violates** (OWASP, CWE, NIST, etc.).

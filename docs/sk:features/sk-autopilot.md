@@ -2,7 +2,7 @@
 
 > **Status:** Shipped
 > **Type:** Skill
-> **Workflow Position:** Standalone (wraps entire 21-step workflow)
+> **Workflow Position:** Standalone (wraps entire 8-step workflow)
 > **Command:** `/sk:autopilot`
 > **Skill file:** `skills/sk:autopilot/SKILL.md`
 
@@ -10,7 +10,7 @@
 
 ## Overview
 
-Hands-free workflow mode that executes all 21 steps with auto-skip, auto-advance, and auto-commit. Same quality gates as manual mode. Stops only for direction approval (after brainstorm), 3-strike failures, and PR push confirmation.
+Hands-free workflow mode that executes all 8 steps with auto-skip, auto-advance, and auto-commit. Same quality gates as manual mode. Stops only for direction approval (after brainstorm), 3-strike failures, and PR push confirmation.
 
 ---
 
@@ -34,15 +34,14 @@ Hands-free workflow mode that executes all 21 steps with auto-skip, auto-advance
 | Feature branch | Git | Auto-named from task |
 | Tests + implementation | Working tree | TDD red-green |
 | Conventional commit | Git history | Auto-committed, no approval |
-| Gate results | Terminal + `tasks/workflow-status.md` | All gates enforced |
+| Gate results | Terminal | All gates enforced |
 | PR | GitHub | Created after user confirms push |
 
 ---
 
 ## Business Logic
 
-1. Auto-reset workflow tracker if stale
-2. Load context files (auto, no prompt)
+1. Load context files (auto, no prompt)
 3. Run brainstorm — present direction summary — **STOP for user approval**
 4. On approval: auto-plan, auto-branch, auto-skip detection
 5. Write tests (TDD red) → implement (TDD green) → auto-commit
@@ -54,7 +53,7 @@ Hands-free workflow mode that executes all 21 steps with auto-skip, auto-advance
 
 ## Hard Rules
 
-- ALL 21 steps execute in order (same as manual)
+- ALL 8 steps execute in order (same as manual)
 - ALL quality gates enforced (lint, test, security, perf, review, e2e)
 - 100% test coverage required on new code
 - 0 security issues required

@@ -43,9 +43,10 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/sk:lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
-- **Outdated workflow** — checks if the workflow matches the current 21-step TDD flow with hard gates
+- **Outdated workflow** — checks if the workflow matches the current 8-step flow with `/sk:gates` as single gate step
 - **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team` in the Commands table
 - **Auto-skip rules** — checks for auto-skip detection rules in the workflow section
+- **Stale tracker references** — checks for `tasks/workflow-status.md` references (removed — progress tracked via git branch + todo.md checkboxes)
 
 Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
@@ -53,17 +54,17 @@ Reports findings before proceeding. If issues are found, they inform subsequent 
 
 If the workflow section is outdated or missing, replace it with the latest version:
 
-**Current workflow (21 steps, TDD with hard gates):**
+**Current workflow (8 steps, TDD with `/sk:gates` as single gate step):**
 ```
-Read → Explore → Design → Accessibility → Plan → Branch → Migrate → Write Tests → Implement → Lint → Verify Tests → Security → Performance → Review → E2E Tests → Finish → Sync Features
+Explore → Design → Plan → Branch → Write Tests + Implement → Commit → Gates → Finalize
 ```
 
 **What gets updated:**
-- Workflow table (21 steps with correct commands: `/sk:write-tests`, `/sk:lint`, `/sk:test`, `/sk:accessibility`, `/sk:perf`, `/sk:e2e`, `/sk:start`, `/sk:autopilot`, `/sk:team`)
+- Workflow table (8 steps — `/sk:brainstorm`, `/sk:frontend-design` or `/sk:api-design`, `/sk:write-plan`, `/sk:branch`, `/sk:write-tests` + `/sk:execute-plan`, `/sk:smart-commit`, `/sk:gates`, `/sk:finish-feature`)
 - Step details (TDD red/green/verify descriptions)
-- Tracker rules (hard gates at 12, 14, 16, 20, 17; optional steps 4, 5, 8, 18, 21)
-- Step completion summary rule (NON-NEGOTIABLE)
-- Bug fix flow section
+- Workflow rules (auto-advance, conditional summary, auto-skip, squash gate commits)
+- Bug fix flow section (7 steps)
+- Hotfix flow section (6 steps)
 - Sub-Agent Patterns section (if missing)
 - Cross-Platform Tracking section (if missing)
 - Project Memory section (if missing)
@@ -73,6 +74,7 @@ Read → Explore → Design → Accessibility → Plan → Branch → Migrate �
 - Fix & Retest Protocol section (if missing)
 - Requirement Change Flow section (if missing)
 - Auto-skip detection rules (if missing)
+- Remove `tasks/workflow-status.md` references (tracker removed)
 
 **What gets preserved:**
 - Everything marked with `<!-- LOCK -->` is never touched
