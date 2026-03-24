@@ -53,6 +53,31 @@ Read the task description from arguments. Scan for signal keywords to determine 
 | `backend` only | `solo` |
 | `unknown` | `solo` (default) |
 
+### Step 1.5 — Missing Context Detection (automatic, no prompt)
+
+After classification, scan the task description for gaps. This is informational only — does NOT block.
+
+**Critical context checks:**
+
+| Check | How to detect | Auto-resolve |
+|-------|--------------|--------------|
+| Tech stack specified? | Look for framework/language keywords | Auto-detect from package.json, composer.json, go.mod, Cargo.toml |
+| Acceptance criteria present? | Look for "should", "must", "when", "given" | Cannot auto-resolve — flag for user |
+| Scope boundaries stated? | Look for "only", "not", "exclude", "just" | Cannot auto-resolve — flag for user |
+| Security requirements? | Check if task involves auth, user data, payments, tokens | Flag: "This touches auth/user data — consider security requirements" |
+| Testing expectations? | Look for "test", "coverage", "spec" | Default: 100% coverage on new code (per workflow) |
+
+**If 3+ critical items are missing**, include in the recommendation output:
+
+```
+Missing Context (3 items — consider clarifying):
+  - No acceptance criteria detected
+  - No scope boundaries stated (what should NOT change?)
+  - Task involves user data but no security requirements mentioned
+```
+
+This check runs silently. If <3 items missing, no output.
+
 ### Step 2 — Recommend (one prompt, user confirms or overrides)
 
 Present the classification and recommendation:

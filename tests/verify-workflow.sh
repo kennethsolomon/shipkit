@@ -1576,6 +1576,300 @@ assert_contains \
   "$REPO/skills/sk:setup-optimizer/SKILL.md" \
   "auto-skip"
 
+# ── ECC Intelligence Upgrade: Hook Templates ────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: Hook Templates ---"
+
+assert_file_exists \
+  "config-protection hook exists" \
+  "$REPO/skills/sk:setup-claude/templates/hooks/config-protection.sh"
+
+assert_file_exists \
+  "post-edit-format hook exists" \
+  "$REPO/skills/sk:setup-claude/templates/hooks/post-edit-format.sh"
+
+assert_file_exists \
+  "console-log-warning hook exists" \
+  "$REPO/skills/sk:setup-claude/templates/hooks/console-log-warning.sh"
+
+assert_file_exists \
+  "cost-tracker hook exists" \
+  "$REPO/skills/sk:setup-claude/templates/hooks/cost-tracker.sh"
+
+assert_file_exists \
+  "suggest-compact hook exists" \
+  "$REPO/skills/sk:setup-claude/templates/hooks/suggest-compact.sh"
+
+assert_file_exists \
+  "safety-guard hook exists" \
+  "$REPO/skills/sk:setup-claude/templates/hooks/safety-guard.sh"
+
+assert_contains \
+  "settings.json.template has config-protection hook" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "config-protection"
+
+assert_contains \
+  "settings.json.template has console-log hook" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "console-log"
+
+assert_contains \
+  "settings.json.template has post-edit-format hook" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "post-edit-format"
+
+assert_contains \
+  "settings.json.template has cost-tracker hook" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "cost-tracker"
+
+assert_contains \
+  "settings.json.template has suggest-compact hook" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "suggest-compact"
+
+assert_contains \
+  "settings.json.template has safety-guard hook" \
+  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "safety-guard"
+
+# ── ECC Intelligence: /sk:learn ──────────────────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: /sk:learn ---"
+
+assert_file_exists \
+  "sk:learn skill exists" \
+  "$REPO/skills/sk:learn/SKILL.md"
+
+assert_file_exists \
+  "sk:learn command exists" \
+  "$REPO/commands/sk/learn.md"
+
+assert_contains \
+  "sk:learn mentions patterns" \
+  "$REPO/skills/sk:learn/SKILL.md" \
+  "pattern"
+
+assert_contains \
+  "sk:learn mentions confidence" \
+  "$REPO/skills/sk:learn/SKILL.md" \
+  "confidence"
+
+# ── ECC Intelligence: /sk:context-budget ─────────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: /sk:context-budget ---"
+
+assert_file_exists \
+  "sk:context-budget skill exists" \
+  "$REPO/skills/sk:context-budget/SKILL.md"
+
+assert_file_exists \
+  "sk:context-budget command exists" \
+  "$REPO/commands/sk/context-budget.md"
+
+assert_contains \
+  "sk:context-budget mentions tokens" \
+  "$REPO/skills/sk:context-budget/SKILL.md" \
+  "token"
+
+assert_contains \
+  "sk:context-budget mentions MCP" \
+  "$REPO/skills/sk:context-budget/SKILL.md" \
+  "MCP"
+
+assert_contains \
+  "sk:context-budget mentions overhead" \
+  "$REPO/skills/sk:context-budget/SKILL.md" \
+  "overhead"
+
+# ── ECC Intelligence: /sk:health ─────────────────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: /sk:health ---"
+
+assert_file_exists \
+  "sk:health skill exists" \
+  "$REPO/skills/sk:health/SKILL.md"
+
+assert_file_exists \
+  "sk:health command exists" \
+  "$REPO/commands/sk/health.md"
+
+assert_contains \
+  "sk:health mentions scorecard" \
+  "$REPO/skills/sk:health/SKILL.md" \
+  "scorecard"
+
+assert_contains \
+  "sk:health mentions context" \
+  "$REPO/skills/sk:health/SKILL.md" \
+  "Context Efficiency"
+
+assert_contains \
+  "sk:health mentions gates" \
+  "$REPO/skills/sk:health/SKILL.md" \
+  "Quality Gates"
+
+# ── ECC Intelligence: /sk:save-session + /sk:resume-session ──────────────────
+
+echo ""
+echo "--- ECC Intelligence: Session Management ---"
+
+assert_file_exists \
+  "sk:save-session skill exists" \
+  "$REPO/skills/sk:save-session/SKILL.md"
+
+assert_file_exists \
+  "sk:resume-session skill exists" \
+  "$REPO/skills/sk:resume-session/SKILL.md"
+
+assert_file_exists \
+  "sk:save-session command exists" \
+  "$REPO/commands/sk/save-session.md"
+
+assert_file_exists \
+  "sk:resume-session command exists" \
+  "$REPO/commands/sk/resume-session.md"
+
+assert_contains \
+  "sk:save-session references .claude/sessions/" \
+  "$REPO/skills/sk:save-session/SKILL.md" \
+  ".claude/sessions/"
+
+assert_contains \
+  "sk:resume-session references .claude/sessions/" \
+  "$REPO/skills/sk:resume-session/SKILL.md" \
+  ".claude/sessions/"
+
+# ── ECC Intelligence: /sk:safety-guard ───────────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: /sk:safety-guard ---"
+
+assert_file_exists \
+  "sk:safety-guard skill exists" \
+  "$REPO/skills/sk:safety-guard/SKILL.md"
+
+assert_file_exists \
+  "sk:safety-guard command exists" \
+  "$REPO/commands/sk/safety-guard.md"
+
+assert_contains \
+  "sk:safety-guard mentions freeze" \
+  "$REPO/skills/sk:safety-guard/SKILL.md" \
+  "freeze"
+
+assert_contains \
+  "sk:safety-guard mentions careful" \
+  "$REPO/skills/sk:safety-guard/SKILL.md" \
+  "careful"
+
+assert_contains \
+  "sk:safety-guard mentions destructive" \
+  "$REPO/skills/sk:safety-guard/SKILL.md" \
+  "destructive"
+
+# ── ECC Intelligence: /sk:eval ───────────────────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: /sk:eval ---"
+
+assert_file_exists \
+  "sk:eval skill exists" \
+  "$REPO/skills/sk:eval/SKILL.md"
+
+assert_file_exists \
+  "sk:eval command exists" \
+  "$REPO/commands/sk/eval.md"
+
+assert_contains \
+  "sk:eval mentions pass@k" \
+  "$REPO/skills/sk:eval/SKILL.md" \
+  "pass@"
+
+assert_contains \
+  "sk:eval mentions capability" \
+  "$REPO/skills/sk:eval/SKILL.md" \
+  "capability"
+
+assert_contains \
+  "sk:eval mentions regression" \
+  "$REPO/skills/sk:eval/SKILL.md" \
+  "regression"
+
+assert_contains \
+  "sk:eval mentions grader" \
+  "$REPO/skills/sk:eval/SKILL.md" \
+  "grader"
+
+# ── ECC Intelligence: Enriched /sk:start ─────────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: Enriched /sk:start ---"
+
+assert_contains \
+  "sk:start has missing context detection" \
+  "$REPO/skills/sk:start/SKILL.md" \
+  "Missing Context"
+
+# ── ECC Intelligence: Search-first in brainstorm ─────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: Search-first in brainstorm ---"
+
+assert_contains \
+  "brainstorm has search-first phase" \
+  "$REPO/skills/sk:brainstorming/SKILL.md" \
+  "search-first\|Search-First\|Search First\|search first"
+
+# ── ECC Intelligence: Codebase onboarding in setup-claude ────────────────────
+
+echo ""
+echo "--- ECC Intelligence: Codebase onboarding ---"
+
+assert_contains \
+  "setup-claude has reconnaissance phase" \
+  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "Reconnaissance\|reconnaissance"
+
+# ── ECC Intelligence: Documentation ──────────────────────────────────────────
+
+echo ""
+echo "--- ECC Intelligence: Documentation ---"
+
+for cmd in learn context-budget health save-session resume-session safety-guard eval; do
+  assert_contains \
+    "CLAUDE.md lists /sk:${cmd}" \
+    "$REPO/CLAUDE.md" \
+    "sk:${cmd}"
+
+  assert_contains \
+    "README.md lists /sk:${cmd}" \
+    "$REPO/README.md" \
+    "sk:${cmd}"
+done
+
+# ── ECC Intelligence: Setup-optimizer knows new commands ─────────────────────
+
+echo ""
+echo "--- ECC Intelligence: Setup-optimizer awareness ---"
+
+for cmd in learn context-budget health save-session resume-session safety-guard eval; do
+  assert_contains \
+    "setup-optimizer knows about sk:${cmd}" \
+    "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+    "sk:${cmd}"
+done
+
+assert_contains \
+  "setup-optimizer handles hooks" \
+  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "hooks"
+
 echo ""
 
 # ── Summary ──────────────────────────────────────────────────────────────────

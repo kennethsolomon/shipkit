@@ -166,15 +166,46 @@ Pre-existing issues are logged to `tasks/tech-debt.md` — not fixed inline.
 
 Use these anytime — they're not part of any workflow.
 
+### Intelligence
+
+| Command | When to use |
+|---------|------------|
+| `/sk:learn` | After a session — extract reusable patterns with confidence scoring |
+| `/sk:context-budget` | Setup feels slow — audit token consumption, find bloat, get savings |
+| `/sk:health` | Periodic checkup — scorecard across 7 categories (0-70) |
+| `/sk:eval` | Before coding — define evals; during — check progress; after — report results |
+
+### Session Management
+
+| Command | When to use |
+|---------|------------|
+| `/sk:save-session` | End of day — save branch, task, progress, open questions to `.claude/sessions/` |
+| `/sk:resume-session` | Start of day — pick up exactly where you left off |
+| `/sk:context` | Session start — load all project context (automatic via hooks) |
+
+### Safety
+
+| Command | When to use |
+|---------|------------|
+| `/sk:safety-guard` | Autonomous work — `careful` blocks destructive commands, `freeze --dir src/` locks edits to a directory, `guard` = both |
+
+### Code Quality
+
 | Command | When to use |
 |---------|------------|
 | `/sk:scope-check` | Mid-implementation — detect scope creep (On Track / Minor / Significant / Out of Control) |
 | `/sk:retro` | After shipping — analyze velocity, blockers, patterns, generate action items |
+| `/sk:seo-audit` | Web projects — SEO audit with source + dev server scanning |
+
+### Documentation & Setup
+
+| Command | When to use |
+|---------|------------|
 | `/sk:reverse-doc` | Inherited codebase — generate architecture/design docs from existing code |
+| `/sk:setup-optimizer` | Maintenance — diagnose, update workflow, enrich CLAUDE.md |
+| `/sk:mvp` | New idea — generate a complete MVP app from a single prompt |
 | `/sk:status` | Quick view of workflow and task status |
 | `/sk:dashboard` | Visual Kanban board across all git worktrees |
-| `/sk:mvp` | Generate a complete MVP app from a single idea prompt |
-| `/sk:seo-audit` | SEO audit for web projects |
 
 ---
 
@@ -193,7 +224,7 @@ Use these anytime — they're not part of any workflow.
 ## All Commands
 
 <details>
-<summary><strong>38 commands</strong> — click to expand</summary>
+<summary><strong>51 commands</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---------|---------|
@@ -205,33 +236,42 @@ Use these anytime — they're not part of any workflow.
 | `/sk:change` | Handle mid-workflow requirement changes |
 | `/sk:config` | View/edit project config |
 | `/sk:context` | Load project context (automatic via hooks) |
+| `/sk:context-budget` | Audit context window token consumption |
 | `/sk:dashboard` | Live Kanban board — sk:dashboard across worktrees |
 | `/sk:debug` | Structured bug investigation |
 | `/sk:e2e` | E2E Tests — behavioral verification |
+| `/sk:eval` | Define, run, and report evals for agent reliability |
 | `/sk:execute-plan` | Execute plan checkboxes in batches |
 | `/sk:fast-track` | Small changes — skip planning, keep gates |
 | `/sk:features` | Sync feature specs with codebase |
 | `/sk:finish-feature` | Changelog + PR |
 | `/sk:frontend-design` | UI mockup + optional Pencil visual design |
 | `/sk:gates` | All quality gates in parallel batches |
+| `/sk:health` | Harness self-audit scorecard |
 | `/sk:help` | Show all commands |
 | `/sk:hotfix` | Emergency fix workflow |
 | `/sk:laravel-init` | Configure existing Laravel project |
 | `/sk:laravel-new` | Scaffold fresh Laravel app |
+| `/sk:learn` | Extract reusable patterns from sessions |
 | `/sk:lint` | Auto-detect and run all linters |
 | `/sk:mvp` | Generate MVP app from a prompt |
 | `/sk:perf` | Performance audit |
 | `/sk:plan` | Create/refresh planning files |
 | `/sk:release` | Version bump + tag (`--android` / `--ios` for store audit) |
+| `/sk:resume-session` | Resume a previously saved session |
 | `/sk:retro` | Post-ship retrospective |
 | `/sk:reverse-doc` | Generate docs from existing code |
 | `/sk:review` | 7-dimension code review |
+| `/sk:safety-guard` | Protect against destructive ops |
+| `/sk:save-session` | Save session state for continuity |
 | `/sk:schema-migrate` | Database schema change analysis |
 | `/sk:scope-check` | Detect scope creep mid-implementation |
 | `/sk:security-check` | OWASP security audit |
-| `/sk:seo-audit` | sk:seo-audit for web projects |
+| `/sk:seo-audit` | SEO audit for web projects |
 | `/sk:set-profile` | Switch model routing profile |
 | `/sk:setup-claude` | Bootstrap project scaffolding |
+| `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
+| `/sk:skill-creator` | Create or improve skills |
 | `/sk:smart-commit` | Conventional commit with approval |
 | `/sk:start` | Smart entry point — classifies task, routes to optimal flow |
 | `/sk:status` | Show workflow + task status |

@@ -193,3 +193,72 @@ When hook behavior or settings.json format changes, update:
 1. `CLAUDE.md` — workflow tracker rules section
 2. `skills/sk:setup-claude/templates/CLAUDE.md.template` — same rules
 3. `skills/sk:setup-optimizer/SKILL.md` — auto-skip detection reference
+
+### [2026-03-25] New skills (batch 3 — ECC intelligence) — update docs when any of these skills change
+**Bug:** 7 new skills added as part of ECC intelligence upgrade.
+**Root cause:** New skills need tracking entries for dependent files.
+**Prevention:** When any of these skills change, update ALL listed files in the same commit:
+
+**sk:learn:**
+1. `skills/sk:learn/SKILL.md`
+2. `commands/sk/learn.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+6. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+
+**sk:context-budget:**
+1. `skills/sk:context-budget/SKILL.md`
+2. `commands/sk/context-budget.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+6. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+
+**sk:health:**
+1. `skills/sk:health/SKILL.md`
+2. `commands/sk/health.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+6. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+
+**sk:save-session:**
+1. `skills/sk:save-session/SKILL.md`
+2. `commands/sk/save-session.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+6. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+
+**sk:resume-session:**
+1. `skills/sk:resume-session/SKILL.md`
+2. `commands/sk/resume-session.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+6. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+
+**sk:safety-guard:**
+1. `skills/sk:safety-guard/SKILL.md`
+2. `commands/sk/safety-guard.md`
+3. `skills/sk:setup-claude/templates/hooks/safety-guard.sh`
+4. `CLAUDE.md` — commands table
+5. `README.md` — commands section
+6. `.claude/docs/DOCUMENTATION.md` — skills section
+7. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+
+**sk:eval:**
+1. `skills/sk:eval/SKILL.md`
+2. `commands/sk/eval.md`
+3. `CLAUDE.md` — commands table
+4. `README.md` — commands section
+5. `.claude/docs/DOCUMENTATION.md` — skills section
+6. `skills/sk:setup-claude/templates/CLAUDE.md.template`
+
+**Enhanced hooks:**
+When enhanced hook behavior changes, update:
+1. All 6 enhanced hook scripts in `skills/sk:setup-claude/templates/hooks/`
+2. `skills/sk:setup-claude/templates/.claude/settings.json.template`
+3. `skills/sk:setup-claude/SKILL.md`
+4. `skills/sk:setup-optimizer/SKILL.md`

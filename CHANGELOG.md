@@ -8,6 +8,26 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.11.0] — 2026-03-25 — ECC Intelligence Upgrade
+
+### Added
+- **`sk:learn`** — extract reusable patterns from sessions into learned instincts with confidence scoring (0.3-0.9), project/global scoping, and export/import for sharing
+- **`sk:context-budget`** — audit context window token consumption across agents, skills, rules, MCP tools, and CLAUDE.md; detect bloat; recommend top 3 optimizations with token savings
+- **`sk:health`** — harness self-audit scorecard across 7 categories (Tool Coverage, Context Efficiency, Quality Gates, Memory Persistence, Eval Coverage, Security Guardrails, Cost Efficiency), scored 0-70
+- **`sk:save-session`** — save current session state (branch, task, progress, findings) to `.claude/sessions/` for cross-session continuity
+- **`sk:resume-session`** — list and restore saved sessions with full context injection
+- **`sk:safety-guard`** — destructive operation protection with 3 modes: careful (block destructive commands), freeze (lock edits to directory), guard (both combined)
+- **`sk:eval`** — eval-driven development with capability/regression evals, code-based/model-based/human graders, pass@k and pass^k metrics
+- **Enhanced hooks** — 6 new hook scripts: `config-protection.sh` (block linter config edits), `post-edit-format.sh` (auto-format after edits), `console-log-warning.sh` (warn on debug statements), `cost-tracker.sh` (session metadata logging), `suggest-compact.sh` (suggest /compact at 50+ tool calls), `safety-guard.sh` (freeze/careful mode enforcement)
+
+### Changed
+- **`sk:start`** — added Missing Context Detection phase (flags missing acceptance criteria, scope boundaries, security requirements)
+- **`sk:brainstorm`** — added search-first research phase (check repo, package registries, existing skills before proposing custom solutions)
+- **`sk:setup-claude`** — added Phase 0 Reconnaissance for first-time setup (directory scan, entry point detection, architecture classification, data flow trace); enhanced hooks now prompt for opt-in installation
+- **`sk:setup-optimizer`** — added hooks detection and installation prompting; now checks for all 7 new commands in CLAUDE.md
+- **`settings.json.template`** — wired 6 new hooks (config-protection, post-edit-format, suggest-compact, safety-guard, console-log-warning, cost-tracker)
+- **`set-profile`** — added model routing for 7 new skills
+
 ## [3.10.2] — 2026-03-24 — UX/UI Design Intelligence Upgrade
 
 ### Changed

@@ -281,26 +281,33 @@ Create entries in: `[ARCH_CHANGELOG_DIR]`
 | `/sk:accessibility` | WCAG 2.1 AA audit — runs after design, before implementation |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) before implementation |
 | `/sk:autopilot` | Hands-free workflow — all 8 steps, auto-skip, auto-advance, auto-commit |
-| `/sk:brainstorm` | Explore requirements and design |
+| `/sk:brainstorm` | Explore requirements and design (includes search-first research) |
 | `/sk:branch` | Create feature branch auto-named from current task |
 | `/sk:change` | Handle mid-workflow requirement changes — re-enter at correct step |
 | `/sk:context` | Load all context files + output session brief for fast session start |
+| `/sk:context-budget` | Audit context window token consumption and find savings |
 | `/sk:dashboard` | Read-only workflow Kanban board — localhost server, multi-worktree |
 | `/sk:debug` | Investigate and debug issues (bug fix entry point) |
 | `/sk:e2e` | E2E behavioral verification using agent-browser (final quality gate) |
+| `/sk:eval` | Define, run, and report on evaluations for agent reliability |
 | `/sk:execute-plan` | Execute `tasks/todo.md` checkboxes in batches |
 | `/sk:fast-track` | Abbreviated workflow for small changes — skip planning, keep all gates |
 | `/sk:features` | Sync feature specs with shipped implementation |
 | `/sk:finish-feature` | Changelog + PR creation |
 | `/sk:frontend-design` | UI mockup before implementation. Prompts to create Pencil visual mockup |
 | `/sk:gates` | Run all quality gates in optimized parallel batches |
+| `/sk:health` | Harness self-audit scorecard (7 categories, 0-70) |
 | `/sk:hotfix` | Emergency fix workflow — skip design/TDD, quality gates enforced |
+| `/sk:learn` | Extract reusable patterns from sessions into learned instincts |
 | `/sk:lint` | Auto-detect and run all project linters + dependency audits |
 | `/sk:perf` | Performance audit — bundle, N+1, Core Web Vitals, memory |
 | `/sk:release` | Version bump + changelog + tag |
+| `/sk:resume-session` | Resume a previously saved session with full context restoration |
 | `/sk:retro` | Post-ship retrospective: velocity, blockers, action items |
 | `/sk:reverse-doc` | Generate architecture/design docs from existing code |
 | `/sk:review` | Self-review with simplify pre-pass + multi-dimensional review |
+| `/sk:safety-guard` | Protect against destructive ops (careful/freeze/guard modes) |
+| `/sk:save-session` | Save current session state for cross-session continuity |
 | `/sk:scope-check` | Compare implementation against plan, detect scope creep |
 | `/sk:security-check` | OWASP security audit on changed files |
 | `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix |

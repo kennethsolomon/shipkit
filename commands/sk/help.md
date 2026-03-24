@@ -65,35 +65,55 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 |---------|-------------|
 | `/sk:accessibility` | WCAG 2.1 AA audit on frontend code |
 | `/sk:api-design` | Design REST/GraphQL contracts before implementation |
-| `/sk:brainstorm` | Explore requirements, no code |
+| `/sk:autopilot` | Hands-free workflow — auto-skip, auto-advance, auto-commit |
+| `/sk:brainstorm` | Explore requirements and design (includes search-first research) |
 | `/sk:branch` | Create branch from current task |
-| `/sk:change` | Handle mid-workflow requirement change — re-enter at the right step |
+| `/sk:change` | Handle mid-workflow requirement change |
+| `/sk:config` | View and edit project config |
+| `/sk:context` | Load project context (automatic via hooks) |
+| `/sk:context-budget` | Audit context window token consumption and find savings |
+| `/sk:dashboard` | Read-only workflow Kanban board |
 | `/sk:debug` | Structured bug investigation |
+| `/sk:e2e` | E2E behavioral verification |
+| `/sk:eval` | Define, run, and report evals for agent reliability |
 | `/sk:execute-plan` | Implement plan in batches |
+| `/sk:fast-track` | Small changes — skip planning, keep gates |
 | `/sk:features` | Sync docs/sk:features/ specs with codebase |
 | `/sk:finish-feature` | Changelog + PR creation |
-| `/sk:frontend-design` | UI mockup + design spec before implementation. Add `--pencil` to also generate a Pencil visual mockup (requires Pencil app + MCP) |
+| `/sk:frontend-design` | UI mockup + optional Pencil visual mockup |
+| `/sk:gates` | All quality gates in parallel batches |
+| `/sk:health` | Harness self-audit scorecard (7 categories, 0-70) |
 | `/sk:hotfix` | Emergency fix workflow (skips design/TDD) |
 | `/sk:laravel-init` | Configure existing Laravel project |
 | `/sk:laravel-new` | Scaffold new Laravel project |
+| `/sk:learn` | Extract reusable patterns from sessions |
 | `/sk:lint` | Auto-detect and run all linters |
+| `/sk:mvp` | Generate MVP app from a prompt |
 | `/sk:perf` | Performance audit |
 | `/sk:plan` | Create/refresh task planning files |
-| `/sk:release` | Automate releases: bump version, update CHANGELOG, create tag, push to GitHub. Use --android and/or --ios flags for App Store / Play Store readiness audit |
-| `/sk:review` | Blast-radius-aware self-review of branch changes |
+| `/sk:release` | Version bump + tag (`--android` / `--ios` for store audit) |
+| `/sk:resume-session` | Resume a previously saved session |
+| `/sk:retro` | Post-ship retrospective |
+| `/sk:reverse-doc` | Generate docs from existing code |
+| `/sk:review` | 7-dimension self-review of branch changes |
+| `/sk:safety-guard` | Protect against destructive ops (careful/freeze/guard) |
+| `/sk:save-session` | Save session state for cross-session continuity |
 | `/sk:schema-migrate` | Multi-ORM schema change analysis |
+| `/sk:scope-check` | Detect scope creep mid-implementation |
 | `/sk:security-check` | OWASP security audit |
+| `/sk:seo-audit` | SEO audit for web projects |
+| `/sk:set-profile` | Switch model routing profile |
 | `/sk:setup-claude` | Bootstrap project scaffolding |
-| `/sk:setup-optimizer` | Enrich CLAUDE.md by scanning codebase |
+| `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 | `/sk:skill-creator` | Create or improve skills |
 | `/sk:smart-commit` | Conventional commit with approval |
+| `/sk:start` | Smart entry point — classifies task, routes to optimal flow |
 | `/sk:status` | Show workflow and task status |
+| `/sk:team` | Parallel domain agents for full-stack tasks |
 | `/sk:test` | Auto-detect and verify all tests pass |
 | `/sk:update-task` | Mark task done, log completion |
 | `/sk:write-plan` | Write plan to `tasks/todo.md` |
 | `/sk:write-tests` | TDD: write failing tests first |
-| `/sk:config` | View and edit project config |
-| `/sk:set-profile` | Switch model routing profile |
 
 ---
 
@@ -113,9 +133,13 @@ ShipKit routes each skill to the right model automatically. Set once per project
 | brainstorm, write-plan, debug, execute-plan, review | opus | opus | sonnet | sonnet |
 | write-tests, frontend-design, api-design, security-check | opus | sonnet | sonnet | sonnet |
 | change | opus | sonnet | sonnet | sonnet |
+| autopilot, team | opus | opus | sonnet | sonnet |
 | perf, schema-migrate, accessibility | opus | sonnet | sonnet | haiku |
+| eval | sonnet | sonnet | sonnet | haiku |
 | lint, test | sonnet | sonnet | haiku | haiku |
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
+| start, learn, context-budget, health | haiku | haiku | haiku | haiku |
+| save-session, resume-session, safety-guard | haiku | haiku | haiku | haiku |
 
 `opus` = inherit (uses your current session model).
 Config lives in `.shipkit/config.json` — per project, gitignored by default.
