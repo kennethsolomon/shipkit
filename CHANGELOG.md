@@ -8,6 +8,20 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.10.1] — 2026-03-24 — Security & Quality Fixes
+
+### Fixed
+- **Command injection** — replaced `shell=True` with `shlex.split()` in `sk:debug` step_runner.py subprocess calls
+- **Path traversal** — added symlink check before packaging in `sk:skill-creator` package_skill.py
+- **TOCTOU race** — atomic write via tempfile+rename in `sk:setup-claude` apply_setup_claude.py
+- **Silent error handling** — replaced bare `except Exception` with specific types (`OSError`, `UnicodeDecodeError`, `json.JSONDecodeError`) across 5 files; added context to error messages
+- **Naming mismatch** — replaced all "writing-plans" references with `/sk:write-plan` in `sk:brainstorming` SKILL.md
+- **Dead code** — removed unused `_save_progress()` method, `sys` import, and `Tuple` import
+- **Python compatibility** — added `from __future__ import annotations` to 6 files using Python 3.10+ union syntax
+
+### Changed
+- **Model routing** — upgraded `full-sail` and `quality` profiles from `sonnet` to `opus (inherit)` in `sk:lint` and `sk:test`
+
 ## [3.10.0] — 2026-03-23 — Workflow Acceleration
 
 ### Added
