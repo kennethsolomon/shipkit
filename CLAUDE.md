@@ -9,7 +9,7 @@ Custom Claude Code skills and commands for bootstrapping and maintaining project
 | Tech | Details |
 |------|---------|
 | **Language** | JavaScript (Node.js >= 16.7.0) |
-| **Package** | `@kennethsolomon/shipkit` v3.10.2 |
+| **Package** | `@kennethsolomon/shipkit` v3.11.0 |
 | **Testing** | Shell-based (`tests/verify-workflow.sh`) |
 
 ## Key Directories
