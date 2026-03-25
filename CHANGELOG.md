@@ -8,6 +8,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [3.11.1] — 2026-03-25 — Documentation
+
+### Changed
+- Fixed command count in README from 51 to 52
+- Expanded on-demand tools section in DOCUMENTATION.md with high-ROI usage guide (before/during/after workflow)
+
 ## [3.11.0] — 2026-03-25 — ECC Intelligence Upgrade
 
 ### Added
