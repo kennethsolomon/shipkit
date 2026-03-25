@@ -681,9 +681,37 @@ Single command runs all 6 gates in 4 parallel batches. Each gate auto-fixes + au
 
 ### On-Demand Tools
 
-- `/sk:scope-check` — detect scope creep mid-implementation (4-tier: On Track → Out of Control)
-- `/sk:retro` — post-ship retrospective: velocity, blockers, action items
-- `/sk:reverse-doc` — generate docs from existing code
+These commands are not part of any workflow step — use them any time. Below is a prioritized guide on when each tool delivers the most value.
+
+#### Before the workflow
+
+| Command | Why it's high ROI |
+|---------|-------------------|
+| `/sk:context` | Loads all project context files into one session brief (`findings.md`, `lessons.md`, `todo.md`, etc.). Prevents Claude from missing constraints or repeating past mistakes. Run this first in every new session. |
+| `/sk:health` | Scorecard across 7 categories (tools, context, gates, memory, evals, security, cost). Surfaces gaps in your harness before you start — catch problems once, not mid-feature. |
+| `/sk:reverse-doc` | If you're new to a codebase or resuming after a long break, generates architecture and design docs from existing code. Saves hours of manual reading. |
+| `/sk:setup-optimizer` | Keeps your `CLAUDE.md` current with the latest workflow changes. Run after any ShipKit update or when the harness feels stale. |
+
+#### During the workflow
+
+| Command | When | Why |
+|---------|------|-----|
+| `/sk:scope-check` | Mid-implementation (~30% done) | Catches scope creep before it compounds. Rates On Track / Minor / Significant / Out of Control. Especially valuable on large tasks. |
+| `/sk:safety-guard careful` | Before any risky work | Blocks destructive commands (`rm -rf`, force push, etc.) for the session. One-time setup, protects all subsequent operations. |
+| `/sk:save-session` | Long tasks or end of day | Saves branch, task, progress, and open questions for cross-session continuity. Without it, context is lost and you re-explain everything next session. |
+
+#### After shipping
+
+| Command | Why |
+|---------|-----|
+| `/sk:learn` | Extracts reusable patterns from the session with confidence scores (0.3–0.9). Each session makes the next one faster — this is the compounding one. |
+| `/sk:retro` | Surfaces velocity patterns and blockers, generates action items. Run after every non-trivial feature to improve future iterations. |
+
+#### Top 3 if you only adopt a few
+
+1. `/sk:context` — start of every session, non-negotiable
+2. `/sk:learn` — end of every session, builds up compound value over time
+3. `/sk:scope-check` — mid-implementation, prevents the most common workflow failure (drifting off-plan)
 
 ### Workflow Modes
 
