@@ -48,6 +48,44 @@ That's it. `/sk:setup-claude` creates your project scaffolding: planning files, 
 
 `/sk:start` is the recommended entry point — it classifies your task and routes you to the optimal flow automatically. You can also jump directly to `/sk:brainstorm`, `/sk:debug`, or any other flow entry point.
 
+### Updating ShipKit
+
+```bash
+# Update the package
+npm install -g @kennethsolomon/shipkit && shipkit
+
+# Then in each project, update CLAUDE.md + deploy new hooks:
+/sk:setup-optimizer
+```
+
+`shipkit` re-installs all skills and commands globally. `/sk:setup-optimizer` updates each project's CLAUDE.md with new commands and deploys any missing hooks.
+
+---
+
+## Lifecycle Hooks
+
+`/sk:setup-claude` installs lifecycle hooks that automate common tasks. Core hooks are always installed; enhanced hooks are opt-in.
+
+**Core hooks (always installed):**
+| Hook | Event | What it does |
+|------|-------|-------------|
+| `session-start` | SessionStart | Loads branch, recent commits, tech debt, code health |
+| `session-stop` | Stop | Logs session accomplishments to `tasks/progress.md` |
+| `pre-compact` | PreCompact | Saves git state before context compression |
+| `validate-commit` | PreToolUse (git commit) | Validates conventional commit format, detects secrets |
+| `validate-push` | PreToolUse (git push) | Warns before pushing to protected branches |
+| `log-agent` | SubagentStart | Logs sub-agent invocations to `tasks/agent-audit.log` |
+
+**Enhanced hooks (opt-in via `/sk:setup-claude` or `/sk:setup-optimizer`):**
+| Hook | Event | What it does |
+|------|-------|-------------|
+| `config-protection` | PreToolUse (Edit/Write) | Blocks modifications to linter/formatter configs |
+| `post-edit-format` | PostToolUse (Edit) | Auto-formats with Biome/Prettier/Pint/gofmt after edits |
+| `console-log-warning` | Stop | Warns about `console.log`, `dd()`, `var_dump()` in modified files |
+| `suggest-compact` | PreToolUse (Edit/Write) | Suggests `/compact` after 50+ tool calls |
+| `cost-tracker` | Stop | Logs session metadata to `.claude/sessions/cost-log.jsonl` |
+| `safety-guard` | PreToolUse (Bash/Edit/Write) | Enforces `/sk:safety-guard` freeze/careful mode |
+
 ---
 
 ## Pick Your Flow
@@ -168,26 +206,36 @@ Use these anytime — they're not part of any workflow.
 
 ### Intelligence
 
-| Command | When to use |
-|---------|------------|
-| `/sk:learn` | After a session — extract reusable patterns with confidence scoring |
-| `/sk:context-budget` | Setup feels slow — audit token consumption, find bloat, get savings |
-| `/sk:health` | Periodic checkup — scorecard across 7 categories (0-70) |
-| `/sk:eval` | Before coding — define evals; during — check progress; after — report results |
+| Command | Usage | What it does |
+|---------|-------|-------------|
+| `/sk:learn` | `/sk:learn` | Extract reusable patterns from the session with confidence scoring (0.3-0.9) |
+| `/sk:learn` | `/sk:learn --list` | Show all learned patterns |
+| `/sk:context-budget` | `/sk:context-budget` | Audit token consumption across skills, agents, MCP tools, CLAUDE.md |
+| `/sk:context-budget` | `/sk:context-budget --verbose` | Per-file token breakdown |
+| `/sk:health` | `/sk:health` | Scorecard across 7 categories (0-70): tools, context, gates, memory, evals, security, cost |
+| `/sk:eval` | `/sk:eval define auth` | Define eval criteria before coding |
+| `/sk:eval` | `/sk:eval check auth` | Run evals during implementation |
+| `/sk:eval` | `/sk:eval report` | Summary of all eval results with pass@k metrics |
 
 ### Session Management
 
-| Command | When to use |
-|---------|------------|
-| `/sk:save-session` | End of day — save branch, task, progress, open questions to `.claude/sessions/` |
-| `/sk:resume-session` | Start of day — pick up exactly where you left off |
-| `/sk:context` | Session start — load all project context (automatic via hooks) |
+| Command | Usage | What it does |
+|---------|-------|-------------|
+| `/sk:save-session` | `/sk:save-session` | Save branch, task, progress, open questions to `.claude/sessions/` |
+| `/sk:save-session` | `/sk:save-session --name "auth-flow"` | Save with a custom name |
+| `/sk:resume-session` | `/sk:resume-session` | List saved sessions and pick one to restore |
+| `/sk:resume-session` | `/sk:resume-session --latest` | Auto-pick most recent session |
+| `/sk:context` | `/sk:context` | Load all project context (automatic via hooks on session start) |
 
 ### Safety
 
-| Command | When to use |
-|---------|------------|
-| `/sk:safety-guard` | Autonomous work — `careful` blocks destructive commands, `freeze --dir src/` locks edits to a directory, `guard` = both |
+| Command | Usage | What it does |
+|---------|-------|-------------|
+| `/sk:safety-guard` | `/sk:safety-guard careful` | Block destructive commands (rm -rf, force push, etc.) |
+| `/sk:safety-guard` | `/sk:safety-guard freeze --dir src/` | Lock edits to `src/` only |
+| `/sk:safety-guard` | `/sk:safety-guard guard --dir src/` | Both careful + freeze combined |
+| `/sk:safety-guard` | `/sk:safety-guard off` | Disable all guards |
+| `/sk:safety-guard` | `/sk:safety-guard status` | Show current mode + blocked action count |
 
 ### Code Quality
 
@@ -202,7 +250,7 @@ Use these anytime — they're not part of any workflow.
 | Command | When to use |
 |---------|------------|
 | `/sk:reverse-doc` | Inherited codebase — generate architecture/design docs from existing code |
-| `/sk:setup-optimizer` | Maintenance — diagnose, update workflow, enrich CLAUDE.md |
+| `/sk:setup-optimizer` | Maintenance — diagnose, update workflow, deploy hooks, enrich CLAUDE.md |
 | `/sk:mvp` | New idea — generate a complete MVP app from a single prompt |
 | `/sk:status` | Quick view of workflow and task status |
 | `/sk:dashboard` | Visual Kanban board across all git worktrees |
@@ -270,7 +318,7 @@ Use these anytime — they're not part of any workflow.
 | `/sk:seo-audit` | SEO audit for web projects |
 | `/sk:set-profile` | Switch model routing profile |
 | `/sk:setup-claude` | Bootstrap project scaffolding |
-| `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
+| `/sk:setup-optimizer` | Diagnose + update workflow + deploy hooks + enrich CLAUDE.md |
 | `/sk:skill-creator` | Create or improve skills |
 | `/sk:smart-commit` | Conventional commit with approval |
 | `/sk:start` | Smart entry point — classifies task, routes to optimal flow |
