@@ -377,6 +377,33 @@ Deployed from `templates/.claude/rules/` based on detected stack:
 | `laravel.md.template` | Laravel detected in framework |
 | `react.md.template` | React or Next.js detected in framework |
 
+### LSP Integration
+
+After stack detection, check and configure LSP tooling:
+
+1. **Enable LSP tool** — ensure `"env": { "ENABLE_LSP_TOOL": "1" }` is present in `~/.claude/settings.json` (global settings, not project-level). Add if missing — merge additively, never overwrite existing keys.
+
+2. **Detect language server** — based on detected stack:
+
+   | Stack | Language Server | Install Command |
+   |-------|----------------|-----------------|
+   | JavaScript / TypeScript | `typescript-language-server` | `npm install -g typescript typescript-language-server` |
+   | PHP / Laravel | `intelephense` | `npm install -g intelephense` |
+   | Python | `pyright` | `npm install -g pyright` |
+   | Go | `gopls` | `go install golang.org/x/tools/gopls@latest` |
+   | Rust | `rust-analyzer` | `rustup component add rust-analyzer` |
+   | Swift | `sourcekit-lsp` | pre-installed with Xcode — no install needed |
+
+3. **Check if installed** — run `which <server>` to verify. If missing, install automatically.
+
+4. **Report:**
+   ```
+   LSP: typescript-language-server ✓ installed
+   ENABLE_LSP_TOOL=1 in ~/.claude/settings.json ✓
+   ```
+
+**Idempotency:** Skip install if the server is already present. Skip settings update if `ENABLE_LSP_TOOL` is already set.
+
 ### Settings Generation (`.claude/settings.json`)
 
 Rendered from `templates/.claude/settings.json.template`. Contains:

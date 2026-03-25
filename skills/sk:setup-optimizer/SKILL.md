@@ -135,7 +135,38 @@ After updating the workflow, check and deploy hooks:
      ~ Updated .claude/settings.json with new hook wiring
    ```
 
-**If no:** skip hook deployment, continue to Step 2.
+**If no:** skip hook deployment, continue to Step 1.6.
+
+### Step 1.6: LSP Integration Check
+
+After hooks deployment, check and configure LSP tooling:
+
+1. **Check `ENABLE_LSP_TOOL`** — verify `~/.claude/settings.json` has `"env": { "ENABLE_LSP_TOOL": "1" }`. If missing, add it.
+
+2. **Detect stack language server** — based on the project's detected language:
+
+   | Stack | Language Server | Install Command |
+   |-------|----------------|-----------------|
+   | JavaScript / TypeScript | `typescript-language-server` | `npm install -g typescript typescript-language-server` |
+   | PHP / Laravel | `intelephense` | `npm install -g intelephense` |
+   | Python | `pyright` | `npm install -g pyright` |
+   | Go | `gopls` | `go install golang.org/x/tools/gopls@latest` |
+   | Rust | `rust-analyzer` | `rustup component add rust-analyzer` |
+   | Swift | `sourcekit-lsp` | pre-installed with Xcode — no install needed |
+
+3. **Check if installed** — run `which <server>` or `<server> --version`
+
+4. **Install if missing** — run the install command for the detected stack
+
+5. **Report status:**
+   ```
+   LSP: typescript-language-server ✓ installed
+   ENABLE_LSP_TOOL=1 in ~/.claude/settings.json ✓
+   ```
+
+**If no language server needed** (e.g. Swift with Xcode), skip install — report status only.
+
+**Idempotency:** Never overwrite existing `env` keys — merge additively.
 
 **Idempotency:** Never overwrite existing hook files — the user may have customized them. Only deploy hooks that don't exist yet. For settings.json, merge additively.
 
