@@ -65,6 +65,11 @@
 - **Testing**: `[TEST_COMMAND]`
 - **Linting**: `[LINT_COMMAND]`
 
+## Code Navigation
+
+- Prefer LSP over Grep for code navigation (go-to-definition, find-references, hover, diagnostics)
+- Use `rg` only when LSP is unavailable or for arbitrary text/pattern matching
+
 ## Important Context
 
 - The project uses [LANGUAGE] with [FRAMEWORK]

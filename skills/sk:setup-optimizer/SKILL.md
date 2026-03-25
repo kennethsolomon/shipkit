@@ -40,7 +40,7 @@ The single command to keep your entire ShipKit project infrastructure current. D
 
 Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 
-- **Missing sections** — checks for essential sections (Workflow, Sub-Agent Patterns, Cross-Platform Tracking, Project Memory, Lessons Capture, Testing, Commands, etc.)
+- **Missing sections** — checks for essential sections (Code Navigation, Workflow, Sub-Agent Patterns, Cross-Platform Tracking, Project Memory, Lessons Capture, Testing, Commands, etc.)
 - **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/sk:lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
@@ -88,7 +88,7 @@ Explore → Design → Plan → Branch → Write Tests + Implement → Commit �
 1. Read the latest workflow template from `~/.claude/skills/sk:setup-claude/templates/CLAUDE.md.template`
 2. Compare with the current CLAUDE.md workflow section
 3. If different, replace the workflow section (between `## Workflow` and the next `##` that isn't a workflow subsection)
-4. Insert missing sections (Sub-Agent Patterns, Project Memory, etc.) in their correct positions
+4. Insert missing sections (Code Navigation, Sub-Agent Patterns, Project Memory, etc.) in their correct positions — Code Navigation (`<!-- BEGIN:code-navigation -->`) goes before `## Workflow`; Sub-Agent Patterns goes after `## Workflow` and before `## Commands`
 5. Preserve all `<!-- LOCK -->` and project-specific sections
 
 ### Step 1.5: Hooks Deployment
