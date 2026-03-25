@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [Unreleased]
+## [3.12.0] — 2026-03-26 — LSP Integration
 
 ### Added
 - **LSP integration** — `ENABLE_LSP_TOOL=1` added to global `~/.claude/settings.json`; `typescript-language-server` installed for JS/TS projects
