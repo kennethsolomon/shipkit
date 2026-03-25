@@ -32,6 +32,12 @@ node bin/shipkit.js            # run CLI
 bash tests/verify-workflow.sh  # run workflow verification
 ```
 
+## Code Navigation
+<!-- BEGIN:code-navigation -->
+- Prefer LSP over Grep for code navigation (go-to-definition, find-references, hover, diagnostics)
+- Use `rg` only when LSP is unavailable or for arbitrary text/pattern matching
+<!-- END:code-navigation -->
+
 ## Workflow — Follow This Order
 <!-- LOCK -->
 
