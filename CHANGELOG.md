@@ -8,6 +8,15 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+### Added
+- **LSP integration** — `ENABLE_LSP_TOOL=1` added to global `~/.claude/settings.json`; `typescript-language-server` installed for JS/TS projects
+- **`sk:setup-claude`** — new LSP Integration step: detects stack, checks and installs the appropriate language server (TypeScript, PHP, Python, Go, Rust, Swift)
+- **`sk:setup-optimizer`** — new Step 1.6 LSP Integration Check: verifies `ENABLE_LSP_TOOL` env, installs missing language server per detected stack
+- **Code Navigation section** — added to `CLAUDE.md.template` (both setup-claude and setup-optimizer), `CLAUDE.md` (this project), and `~/.claude/CLAUDE.md` (global); setup-claude and setup-optimizer insert/update this section on every run
+
+### Changed
+- `settings.json.template` — includes `ENABLE_LSP_TOOL=1` env block so all bootstrapped projects have LSP enabled
+
 ## [3.11.1] — 2026-03-25 — Documentation
 
 ### Changed
