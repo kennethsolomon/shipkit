@@ -272,7 +272,7 @@ Use these anytime — they're not part of any workflow.
 ## All Commands
 
 <details>
-<summary><strong>51 commands</strong> — click to expand</summary>
+<summary><strong>52 commands</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---------|---------|
