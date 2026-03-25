@@ -1,6 +1,6 @@
 ---
 name: sk:setup-optimizer
-description: "Diagnose, update workflow, enrich, and maintain CLAUDE.md. The single command to keep any CLAUDE.md current."
+description: "Diagnose, update workflow, deploy hooks, enrich CLAUDE.md, and keep project infrastructure current. The single command for ongoing ShipKit maintenance."
 triggers:
   - optimize claude
   - optimize setup
@@ -20,14 +20,15 @@ allowed-tools:
 
 ## Overview
 
-The single command to keep your CLAUDE.md current. Diagnoses problems, updates the workflow to the latest version, scans your codebase, and enriches with project context — all while preserving your customizations.
+The single command to keep your entire ShipKit project infrastructure current. Diagnoses problems, updates the workflow, deploys missing hooks, scans your codebase, and enriches CLAUDE.md with project context — all while preserving your customizations.
 
 ### What It Does
 
 1. **Diagnoses** — finds missing sections, stale info, inconsistencies, and gaps
 2. **Updates workflow** — refreshes the workflow section to the latest template version
-3. **Discovers** — scans project structure, docs, and workflows
-4. **Enriches** — merges discoveries into CLAUDE.md while preserving your edits
+3. **Deploys hooks** — installs missing hooks and updates settings.json wiring
+4. **Discovers** — scans project structure, docs, and workflows
+5. **Enriches** — merges discoveries into CLAUDE.md while preserving your edits
 
 ## Usage
 
@@ -90,22 +91,53 @@ Explore → Design → Plan → Branch → Write Tests + Implement → Commit �
 4. Insert missing sections (Sub-Agent Patterns, Project Memory, etc.) in their correct positions
 5. Preserve all `<!-- LOCK -->` and project-specific sections
 
-### Step 1.5: Hooks Check
+### Step 1.5: Hooks Deployment
 
-After updating the workflow, check hooks status:
+After updating the workflow, check and deploy hooks:
 
-1. **Check if `.claude/hooks/` exists** — if not, hooks were never installed
+1. **Check if `.claude/hooks/` exists** — if not, create it
 2. **Check for core hooks** — `session-start.sh`, `session-stop.sh`, `pre-compact.sh`, `validate-commit.sh`, `validate-push.sh`, `log-agent.sh`
 3. **Check for enhanced hooks** — `config-protection.sh`, `post-edit-format.sh`, `console-log-warning.sh`, `cost-tracker.sh`, `suggest-compact.sh`, `safety-guard.sh`
-4. **Check `settings.json`** — verify hooks are wired correctly
+4. **Check `.claude/settings.json`** — verify hooks are wired correctly
 
-**If hooks are missing or outdated**, prompt:
+**Report status and prompt:**
 
-> "Hooks status: [X core, Y enhanced installed out of 6/6]
-> Install/update hooks? [y/n]"
+> "Hooks: [X/6 core, Y/6 enhanced] installed
+> Install missing hooks? [y/n]"
 
-If yes: deploy missing hooks from templates, update settings.json.
-If no: skip.
+**If yes:**
+
+1. **Locate templates** — resolve the ShipKit templates directory:
+   - `~/.claude/skills/sk:setup-claude/templates/hooks/` (symlinked install)
+   - Or the npm global path if installed via `npm install -g`
+
+2. **Deploy missing hook scripts** (create-if-missing, never overwrite existing):
+   ```bash
+   # For each missing hook file:
+   cp "$TEMPLATE_DIR/hooks/<hook>.sh" ".claude/hooks/<hook>.sh"
+   chmod +x ".claude/hooks/<hook>.sh"
+   ```
+
+3. **Update `.claude/settings.json`** — read the latest `settings.json.template` and merge new hook entries into the existing settings.json:
+   - **Preserve** existing hooks, permissions, statusline config
+   - **Add** only missing hook entries (new PreToolUse, PostToolUse, Stop entries)
+   - **Never remove** existing entries — additive merge only
+
+4. **Report what was deployed:**
+   ```
+   Deployed hooks:
+     + config-protection.sh (PreToolUse — blocks linter config edits)
+     + post-edit-format.sh (PostToolUse — auto-format after edits)
+     + console-log-warning.sh (Stop — warn on debug statements)
+     + cost-tracker.sh (Stop — session metadata logging)
+     + suggest-compact.sh (PreToolUse — compact suggestions)
+     + safety-guard.sh (PreToolUse — freeze/careful mode)
+     ~ Updated .claude/settings.json with new hook wiring
+   ```
+
+**If no:** skip hook deployment, continue to Step 2.
+
+**Idempotency:** Never overwrite existing hook files — the user may have customized them. Only deploy hooks that don't exist yet. For settings.json, merge additively.
 
 ### Step 2: Scan & Enrich
 
@@ -201,10 +233,11 @@ This content will never be regenerated.
 
 ## When to Use
 
-✅ **Use `/optimize-claude` when:**
+✅ **Use `/sk:setup-optimizer` when:**
+- ShipKit was updated and your project needs the latest hooks/commands
 - You've added new directories to your project
 - You've created documentation files
 - You want to refresh project context
-- Monthly maintenance of CLAUDE.md
+- Monthly maintenance of CLAUDE.md and hooks
 
-✅ **Safe to run multiple times during development** - Your customizations are always preserved!
+✅ **Safe to run multiple times** — existing customizations and hook files are never overwritten.
