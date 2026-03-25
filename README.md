@@ -269,6 +269,27 @@ Use these anytime — they're not part of any workflow.
 
 ---
 
+## Code Navigation (LSP)
+
+ShipKit configures LSP (Language Server Protocol) automatically — giving Claude Code go-to-definition, find-references, hover, and diagnostics instead of plain text search.
+
+**`/sk:setup-claude`** and **`/sk:setup-optimizer`** both run an LSP Integration step that:
+- Sets `ENABLE_LSP_TOOL=1` in `~/.claude/settings.json`
+- Detects your stack and installs the appropriate language server
+
+| Stack | Language Server |
+|-------|----------------|
+| TypeScript / JavaScript | `typescript-language-server` |
+| PHP | `intelephense` |
+| Python | `pylsp` |
+| Go | `gopls` |
+| Rust | `rust-analyzer` |
+| Swift | `sourcekit-lsp` |
+
+**Rule:** Prefer LSP over `rg`/Grep for code navigation. Use `rg` only when LSP is unavailable or for arbitrary text/pattern matching.
+
+---
+
 ## All Commands
 
 <details>
