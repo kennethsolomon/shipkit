@@ -10,3 +10,11 @@ __pycache__/
 *.pyc
 release-workspace/
 .shipkit/
+
+# Deployed hooks and runtime (generated from templates, project-local)
+.claude/hooks/
+.claude/statusline.sh
+.claude/settings.json
+.claude/sessions/
+.claude/safety-guard.json
+.claude/safety-guard.log
