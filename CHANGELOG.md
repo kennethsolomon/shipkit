@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.13.0] — 2026-03-26 — MCP Plugins & Docs
+
+### Added
+- **Sequential Thinking MCP** — added to `sk:setup-claude` and `sk:setup-optimizer` installation steps
+- **Context7 MCP** — added to `sk:setup-claude` and `sk:setup-optimizer` for up-to-date library docs
+- **ccstatusline** — added to `sk:setup-claude` and `sk:setup-optimizer` for session status line
+
+### Changed
+- `install.sh` — added `sk:seo-audit` and `sk:dashboard` to post-install summary
+- `CLAUDE.md` — fixed `sk:resume-session` ordering in Commands table (alphabetical)
+
 ## [3.12.0] — 2026-03-26 — LSP Integration
 
 ### Added
