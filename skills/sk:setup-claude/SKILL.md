@@ -405,6 +405,63 @@ After stack detection, check and configure LSP tooling:
 
 **Idempotency:** Skip install if the server is already present. Skip settings update if `ENABLE_LSP_TOOL` is already set.
 
+### MCP Servers & Plugins
+
+After LSP setup, prompt the user to install three recommended tools that enhance Claude Code with structured reasoning, live documentation, and session visibility:
+
+> "Install recommended MCP servers & plugins? (Sequential Thinking, Context7, ccstatusline) [y/n]"
+
+If yes, install each — skip any already configured.
+
+#### 1. Sequential Thinking MCP
+
+Gives Claude a structured scratchpad for complex multi-step reasoning (architecture decisions, debugging chains, multi-constraint problems) without cluttering the conversation context.
+
+**Check:** grep `~/.mcp.json` for `sequential-thinking`. If missing, add the entry:
+
+```json
+{
+  "sequential-thinking": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+  }
+}
+```
+
+Merge additively into `~/.mcp.json` — never overwrite existing entries. Create the file if it doesn't exist.
+
+Report: `+ sequential-thinking MCP added to ~/.mcp.json`
+
+#### 2. Context7
+
+Fetches live, version-accurate library documentation and injects it into Claude's context — eliminating stale knowledge cutoff issues when working with rapidly evolving frameworks (Tailwind 4, React 19, Next.js 15, etc.).
+
+**Check:** grep `~/.claude/settings.json` for `context7`. If missing, add to `enabledPlugins`:
+
+```json
+"enabledPlugins": {
+  "context7@claude-plugins-official": true
+}
+```
+
+Merge additively — never overwrite other `enabledPlugins` entries.
+
+Report: `+ context7 plugin enabled in ~/.claude/settings.json`
+
+#### 3. ccstatusline
+
+Configures a persistent Claude Code statusline showing context window %, active model, git branch, and current task — always visible without running `/sk:status`.
+
+**Check:** look for an existing `statusline` config in `~/.claude/settings.json`. If not already configured by ccstatusline:
+
+```bash
+npx ccstatusline@latest
+```
+
+Report: `+ ccstatusline configured`
+
+**Idempotency:** Skip each install if already present. Never overwrite existing MCP entries, plugin flags, or statusline config.
+
 ### Settings Generation (`.claude/settings.json`)
 
 Rendered from `templates/.claude/settings.json.template`. Contains:

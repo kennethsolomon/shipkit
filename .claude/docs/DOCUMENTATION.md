@@ -799,6 +799,11 @@ Bootstrap or repair Claude Code infrastructure on any project.
 
 **Supported stacks:** Next.js + Drizzle, Next.js + Prisma, Next.js + Supabase, Laravel + Eloquent, Supabase (any framework), Python + FastAPI, Generic
 
+**Additional setup steps (opt-in prompts):**
+- **Lifecycle hooks** — core 6 (always) + enhanced 6 (opt-in): auto-format, config protection, compact suggestions, cost tracking
+- **LSP** — installs the language server for your stack (`typescript-language-server`, `intelephense`, `pyright`, etc.)
+- **MCP Servers & Plugins** — opt-in installation of Sequential Thinking MCP (`~/.mcp.json`), Context7 plugin (`~/.claude/settings.json`), and ccstatusline (`npx ccstatusline@latest`)
+
 **Usage:** Open any project in Claude Code and run:
 ```
 /setup-claude
@@ -873,6 +878,9 @@ Diagnose, update workflow, and enrich CLAUDE.md. The single command to keep any 
 - Auto-discovers project structure, docs, and workflows
 - Compares documented vs actual content
 - Updates CLAUDE.md without losing customizations
+- Deploys missing hooks (core + enhanced, opt-in)
+- Checks and configures LSP for the detected stack
+- Checks and installs MCP servers & plugins (Sequential Thinking, Context7, ccstatusline) — opt-in, idempotent
 - Safe to re-run during development
 
 ---

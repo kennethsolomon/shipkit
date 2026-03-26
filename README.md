@@ -290,6 +290,42 @@ ShipKit configures LSP (Language Server Protocol) automatically — giving Claud
 
 ---
 
+## MCP Servers & Plugins
+
+Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools that enhance Claude Code's reasoning, knowledge, and session visibility. All are opt-in and idempotent.
+
+### Sequential Thinking MCP
+
+**Why it exists:** Complex problems — architecture decisions, multi-step debugging, tasks with many constraints — benefit from structured reasoning. Without it, Claude works through hard problems in a single pass, which can miss steps or lose track of constraints.
+
+**What it does:** Gives Claude a dedicated reasoning scratchpad. It thinks through steps sequentially before responding, without cluttering your conversation with the intermediate work.
+
+**Benefit:** More coherent, thorough responses on hard problems. Especially useful during `/sk:brainstorm`, `/sk:debug`, and `/sk:review`.
+
+**How it's installed:** Adds `@modelcontextprotocol/server-sequential-thinking` to `~/.mcp.json` (global, applies to all projects).
+
+### Context7
+
+**Why it exists:** Claude's training has a knowledge cutoff. When you're working with libraries that release frequently — React, Next.js, Tailwind, shadcn/ui — Claude's suggestions can reference outdated APIs, deprecated methods, or patterns that no longer apply.
+
+**What it does:** Fetches current, version-accurate documentation for libraries you're using and injects it into Claude's context at the moment it's needed.
+
+**Benefit:** Accurate code suggestions for the actual version you're running. No more `useEffect` patterns from React 17 when you're on React 19.
+
+**How it's installed:** Enables `context7@claude-plugins-official` in `~/.claude/settings.json`.
+
+### ccstatusline
+
+**Why it exists:** Knowing your context window %, active model, and current branch at a glance matters. Without it, you have to run `/sk:status` or guess when to `/compact`.
+
+**What it does:** Adds a persistent statusline to the Claude Code CLI showing context window usage, active model, git branch, and current task.
+
+**Benefit:** Always-visible session state. Know when you're approaching context limits before it becomes a problem.
+
+**How it's installed:** Runs `npx ccstatusline@latest` which writes the statusline config to `~/.claude/settings.json`.
+
+---
+
 ## All Commands
 
 <details>

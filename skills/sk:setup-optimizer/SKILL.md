@@ -170,6 +170,31 @@ After hooks deployment, check and configure LSP tooling:
 
 **Idempotency:** Never overwrite existing hook files — the user may have customized them. Only deploy hooks that don't exist yet. For settings.json, merge additively.
 
+### Step 1.7: MCP Servers & Plugin Check
+
+After LSP check, verify the three recommended tools are configured:
+
+1. **Sequential Thinking MCP** — grep `~/.mcp.json` for `sequential-thinking`
+2. **Context7 plugin** — grep `~/.claude/settings.json` for `context7@claude-plugins-official` in `enabledPlugins`
+3. **ccstatusline** — check `~/.claude/settings.json` for a `statusline` entry set by ccstatusline
+
+**Report status and prompt:**
+
+> "MCP/Plugins: [X/3] configured
+>   sequential-thinking: [✓ configured / ✗ missing]
+>   context7:            [✓ configured / ✗ missing]
+>   ccstatusline:        [✓ configured / ✗ missing]
+> Install missing? [y/n]"
+
+**If yes:** Follow the same install steps as `sk:setup-claude` MCP Servers & Plugins section:
+- Sequential Thinking: merge entry into `~/.mcp.json`
+- Context7: add `context7@claude-plugins-official: true` to `~/.claude/settings.json` enabledPlugins
+- ccstatusline: run `npx ccstatusline@latest`
+
+**If no:** skip, continue to Step 2.
+
+**Idempotency:** Never overwrite existing MCP entries, plugin flags, or statusline config — additive merge only.
+
 ### Step 2: Scan & Enrich
 
 After workflow update, proceeds with codebase discovery and enrichment:
