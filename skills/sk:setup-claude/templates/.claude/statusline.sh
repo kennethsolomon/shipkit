@@ -26,10 +26,10 @@ fi
 # Branch
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "none")
 
-# Task name from todo.md
+# Active task — first unchecked item in todo.md
 TASK="—"
 if [ -f "tasks/todo.md" ]; then
-    TASK=$(head -1 "tasks/todo.md" 2>/dev/null | sed 's/^# TODO.*— //' | cut -c1-40)
+    TASK=$(grep -m1 '^\- \[ \]' "tasks/todo.md" 2>/dev/null | sed 's/^- \[ \] //' | cut -c1-40)
 fi
 
 # Output single line

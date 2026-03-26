@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.13.1] — 2026-03-26 — Hook & Template Fixes
+
+### Fixed
+- **`session-start.sh`** — now surfaces the first unchecked `- [ ]` item from `tasks/todo.md` at session start instead of showing nothing
+- **`statusline.sh`** — active task now shows the first unchecked checkbox instead of the document title (`head -1`)
+- **`validate-commit.sh`** — now blocks commits (`exit 2`) on violations (bad format, debug statements, secrets) instead of warning and allowing through
+- **`settings.json`** — `PostToolUse` matcher changed from `"Edit"` to `"Edit|Write"` so auto-formatting fires when new files are created, not only when existing files are edited
+- All 4 fixes synced to `sk:setup-claude` templates so new bootstrapped projects get the corrected versions
+
 ## [3.13.0] — 2026-03-26 — MCP Plugins & Docs
 
 ### Added

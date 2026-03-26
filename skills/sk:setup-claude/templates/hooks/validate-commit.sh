@@ -73,9 +73,10 @@ if [ -n "$STAGED" ]; then
     fi
 fi
 
-# Print warnings (non-blocking) and allow commit
+# Block commit if any violations found
 if [ -n "$WARNINGS" ]; then
-    echo -e "=== Commit Validation Warnings ===$WARNINGS\n================================" >&2
+    echo -e "=== Commit Blocked ===$WARNINGS\n\nFix the above issues before committing." >&2
+    exit 2
 fi
 
 exit 0

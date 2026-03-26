@@ -38,5 +38,14 @@ if [ -d "src" ]; then
     fi
 fi
 
+# Current task — first unchecked item in tasks/todo.md
+if [ -f "tasks/todo.md" ]; then
+    CURRENT_TASK=$(grep -m1 '^\- \[ \]' "tasks/todo.md" 2>/dev/null | sed 's/^- \[ \] //')
+    if [ -n "$CURRENT_TASK" ]; then
+        echo ""
+        echo "Current task: $CURRENT_TASK"
+    fi
+fi
+
 echo "==================================="
 exit 0
