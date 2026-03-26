@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.13.2] — 2026-03-26 — Branding
+
+### Added
+- **ShipKit logo** — added to README header
+
 ## [3.13.1] — 2026-03-26 — Hook & Template Fixes
 
 ### Fixed
