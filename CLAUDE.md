@@ -23,6 +23,8 @@ Custom Claude Code skills and commands for bootstrapping and maintaining project
 | `docs/` | Feature specs, design docs |
 | `.claude/docs/` | Architectural change log, guides |
 | `assets/` | Static assets |
+| `tests/` | Workflow verification tests |
+| `.shipkit/` | ShipKit project config (`config.json`) |
 
 ## Build & Run
 
