@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/shipkit-logo.png" alt="ShipKit" width="260" />
+
 # SHIPKIT
 
 **A structured, quality-gated workflow system for Claude Code.**
