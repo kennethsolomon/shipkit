@@ -311,9 +311,9 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:lint` | Auto-detect and run all project linters + dependency audits |
 | `/sk:perf` | Performance audit — bundle, N+1, Core Web Vitals, memory |
 | `/sk:release` | Version bump + changelog + tag |
+| `/sk:resume-session` | Resume a previously saved session with full context restoration |
 | `/sk:retro` | Post-ship retrospective: velocity, blockers, action items |
 | `/sk:reverse-doc` | Generate architecture/design docs from existing code |
-| `/sk:resume-session` | Resume a previously saved session with full context restoration |
 | `/sk:review` | Self-review with simplify pre-pass + multi-dimensional review |
 | `/sk:safety-guard` | Protect against destructive ops (careful/freeze/guard modes) |
 | `/sk:save-session` | Save current session state for cross-session continuity |
