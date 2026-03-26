@@ -1872,6 +1872,56 @@ assert_contains \
 
 echo ""
 
+# ── MCP Servers & Plugins ────────────────────────────────────────────────────
+
+echo ""
+echo "--- MCP Servers & Plugins ---"
+
+assert_contains \
+  "setup-claude mentions Sequential Thinking MCP" \
+  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "Sequential Thinking"
+
+assert_contains \
+  "setup-claude mentions context7" \
+  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "context7"
+
+assert_contains \
+  "setup-claude mentions ccstatusline" \
+  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "ccstatusline"
+
+assert_contains \
+  "setup-optimizer mentions Sequential Thinking MCP" \
+  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "Sequential Thinking"
+
+assert_contains \
+  "setup-optimizer mentions context7" \
+  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "context7"
+
+assert_contains \
+  "setup-optimizer mentions ccstatusline" \
+  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "ccstatusline"
+
+assert_contains \
+  "README mentions Sequential Thinking MCP" \
+  "$REPO/README.md" \
+  "Sequential Thinking"
+
+assert_contains \
+  "README mentions context7" \
+  "$REPO/README.md" \
+  "context7"
+
+assert_contains \
+  "README mentions ccstatusline" \
+  "$REPO/README.md" \
+  "ccstatusline"
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 echo "=== Results: $PASS passed, $FAIL failed ==="
