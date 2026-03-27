@@ -1,7 +1,6 @@
 ---
 name: sk:retro
 description: Post-ship retrospective analyzing velocity, blockers, and patterns to generate actionable improvements
-user_invocable: true
 allowed_tools: Read, Glob, Grep, Bash, Write
 ---
 
