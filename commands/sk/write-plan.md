@@ -44,6 +44,44 @@ Create a decision-complete plan **before** writing code.
    - **Verification** commands (exact commands + expected outcomes)
    - **Acceptance criteria** (clear "done" conditions)
    - **Risks/unknowns** (anything still ambiguous)
+3b. **Contracts-first check:** Scan the written plan in `tasks/todo.md` for these keywords: `API`, `endpoint`, `route`, `controller`, `backend`, `service`, `request`, `response`. If any are found, auto-generate `tasks/contracts.md` with:
+
+   ```markdown
+   # API Contracts — [task name]
+
+   ## Endpoints
+
+   | Method | Path | Auth | Description |
+   |--------|------|------|-------------|
+   | POST   | /api/example | Bearer | Description |
+
+   ## Request / Response Shapes
+
+   ### POST /api/example
+   **Request:**
+   ```json
+   { "field": "type" }
+   ```
+   **Response (200):**
+   ```json
+   { "field": "type" }
+   ```
+   **Errors:** 400 (validation), 401 (unauthorized), 404 (not found)
+
+   ## Auth Requirements
+
+   [Describe auth method — Bearer token, session, API key, etc.]
+
+   ## Mocking Boundary
+
+   **Frontend mocks:** [what the frontend stubs out during isolated development]
+   **Backend owns:** [what the backend implements — source of truth]
+   ```
+
+   Fill in the contract based on what the plan describes. If the plan is too vague for a specific field, write `[TBD — clarify before implementation]`.
+
+   This file is the mandatory handshake for `/sk:team`. If no API keywords are found, skip this step silently.
+
 4. Verify the plan against requirements:
    - Cross-check every requirement from `tasks/findings.md` — does the plan
      address what brainstorm decided? Flag any requirement with no matching task.

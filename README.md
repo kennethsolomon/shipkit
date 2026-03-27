@@ -338,7 +338,7 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 | `/sk:accessibility` | WCAG 2.1 AA audit |
 | `/sk:api-design` | Design API contracts before implementation |
 | `/sk:autopilot` | Hands-free workflow — auto-skip, auto-advance, auto-commit |
-| `/sk:brainstorm` | Explore requirements and design |
+| `/sk:brainstorm` | Explore requirements and design; extracts requirements checklist |
 | `/sk:branch` | Create feature branch from current task |
 | `/sk:change` | Handle mid-workflow requirement changes |
 | `/sk:config` | View/edit project config |
@@ -348,12 +348,12 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 | `/sk:debug` | Structured bug investigation |
 | `/sk:e2e` | E2E Tests — behavioral verification |
 | `/sk:eval` | Define, run, and report evals for agent reliability |
-| `/sk:execute-plan` | Execute plan checkboxes in batches |
+| `/sk:execute-plan` | Execute plan checkboxes in batches with status checkpoints |
 | `/sk:fast-track` | Small changes — skip planning, keep gates |
 | `/sk:features` | Sync feature specs with codebase |
 | `/sk:finish-feature` | Changelog + PR |
 | `/sk:frontend-design` | UI mockup + optional Pencil visual design |
-| `/sk:gates` | All quality gates in parallel batches |
+| `/sk:gates` | All quality gates in parallel batches with batch checkpoints |
 | `/sk:health` | Harness self-audit scorecard |
 | `/sk:help` | Show all commands |
 | `/sk:hotfix` | Emergency fix workflow |
@@ -368,12 +368,12 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 | `/sk:resume-session` | Resume a previously saved session |
 | `/sk:retro` | Post-ship retrospective |
 | `/sk:reverse-doc` | Generate docs from existing code |
-| `/sk:review` | 7-dimension code review |
+| `/sk:review` | 7-dimension code review with `<think>` reasoning and exhaustiveness |
 | `/sk:safety-guard` | Protect against destructive ops |
 | `/sk:save-session` | Save session state for continuity |
 | `/sk:schema-migrate` | Database schema change analysis |
 | `/sk:scope-check` | Detect scope creep mid-implementation |
-| `/sk:security-check` | OWASP security audit |
+| `/sk:security-check` | OWASP security audit with content isolation and CVSS scoring |
 | `/sk:seo-audit` | SEO audit for web projects |
 | `/sk:set-profile` | Switch model routing profile |
 | `/sk:setup-claude` | Bootstrap project scaffolding |
@@ -385,7 +385,7 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 | `/sk:team` | Parallel domain agents for full-stack tasks |
 | `/sk:test` | Run all test suites |
 | `/sk:update-task` | Mark task done |
-| `/sk:write-plan` | Write plan to `tasks/todo.md` |
+| `/sk:write-plan` | Write plan to `tasks/todo.md`; auto-generates `tasks/contracts.md` for API tasks |
 | `/sk:write-tests` | TDD: write failing tests first |
 
 </details>

@@ -48,6 +48,19 @@ Explore design and clarify requirements **before** any code is written.
 
 5. **Get alignment** — Ask the user which approach they prefer (or if they want a hybrid). Do not proceed without explicit approval on the direction.
 
+5b. **requirements checklist:** After the user approves an approach, extract all requirements into an explicit numbered checklist:
+
+   ```
+   ## Requirements Checklist
+   1. [ ] [Requirement extracted from discussion]
+   2. [ ] [Requirement extracted from discussion]
+   ...
+   ```
+
+   Then ask: *"Are all requirements captured? Any implicit assumptions or missing edge cases?"*
+
+   Do not proceed to step 6 until the checklist is confirmed complete. When writing to `tasks/findings.md` in step 6, include this checklist as a `## Requirements Checklist` section.
+
 6. **Record findings** — Write discoveries and the agreed-upon direction to `tasks/findings.md`:
    - Problem statement
    - Key decisions made

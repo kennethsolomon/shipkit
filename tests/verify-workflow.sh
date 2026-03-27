@@ -1922,6 +1922,56 @@ assert_contains \
   "$REPO/README.md" \
   "ccstatusline"
 
+# ── Prompt Engineering Upgrades ──────────────────────────────────────────────
+
+echo ""
+echo "--- Prompt Engineering Upgrades ---"
+
+assert_contains \
+  "sk:review has <think> reasoning blocks" \
+  "$REPO/skills/sk:review/SKILL.md" \
+  "<think>"
+
+assert_contains \
+  "sk:review has exhaustiveness commitment" \
+  "$REPO/skills/sk:review/SKILL.md" \
+  "exhaustiveness"
+
+assert_contains \
+  "sk:review uses rich file:line:symbol references" \
+  "$REPO/skills/sk:review/SKILL.md" \
+  ":symbol"
+
+assert_contains \
+  "sk:security-check has content isolation rule" \
+  "$REPO/commands/sk/security-check.md" \
+  "content isolation"
+
+assert_contains \
+  "sk:security-check has CVSS scoring" \
+  "$REPO/commands/sk/security-check.md" \
+  "CVSS"
+
+assert_contains \
+  "sk:write-plan generates contracts.md" \
+  "$REPO/commands/sk/write-plan.md" \
+  "contracts.md"
+
+assert_contains \
+  "sk:brainstorm extracts requirements checklist" \
+  "$REPO/commands/sk/brainstorm.md" \
+  "requirements checklist"
+
+assert_contains \
+  "sk:execute-plan has status checkpoints" \
+  "$REPO/commands/sk/execute-plan.md" \
+  "Checkpoint"
+
+assert_contains \
+  "sk:gates has batch checkpoints" \
+  "$REPO/skills/sk:gates/SKILL.md" \
+  "Checkpoint"
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 echo "=== Results: $PASS passed, $FAIL failed ==="
