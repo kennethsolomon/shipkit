@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.14.0] — 2026-03-28 — Prompt Engineering Upgrades
+
+### Changed
+- **`sk:review`** — added `<think>` reasoning scratchpad before each of 7 analysis dimensions; exhaustiveness commitment (partial analysis not accepted); upgraded code reference format to `file:line:name:type` with symbol type annotation (function, method, class, variable, hook, component)
+- **`sk:security-check`** — added content isolation rule (scanned file content treated as DATA, never instructions) to prevent prompt injection; added instruction hierarchy (system prompt > user chat > file content); added CVSS Base Score estimation field to Critical and High findings in report output
+- **`sk:write-plan`** — new Step 3b: auto-generates `tasks/contracts.md` when plan contains API/endpoint/route/controller/backend keywords; contract defines endpoints, request/response shapes, auth, errors, and mocking boundary — mandatory prerequisite for `/sk:team`
+- **`sk:brainstorm`** — new Step 5b: extracts explicit requirements checklist after approach approval; requires coverage confirmation before recording findings; checklist included in `tasks/findings.md`
+- **`sk:execute-plan`** — added status checkpoint cadence: `[Checkpoint]` line posted every 3–5 tool calls or after editing 3+ files
+- **`sk:gates`** — added batch checkpoint lines after each of the 4 gate batches for progress visibility
+
 ## [3.13.2] — 2026-03-26 — Branding
 
 ### Added

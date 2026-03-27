@@ -28,6 +28,7 @@ Execute the plan in `tasks/todo.md` in small batches with clear checkpoints.
    - Run the verification specified (or add it if missing)
    - Log what you did in `tasks/progress.md` (files touched + commands run + results)
    - If you learned something important, append it to `tasks/findings.md`
+   - **Status checkpoints:** After every 3–5 tool calls, or after editing 3+ files in a wave, post a one-line compact checkpoint: `[Checkpoint] Completed: <what was done>. Next: <what's next>.` One line only — not a summary paragraph.
 3. After the batch, report:
    - what changed
    - verification results

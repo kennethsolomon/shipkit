@@ -12,6 +12,8 @@
 
 Run all quality gates (lint, test, security, perf, review, e2e) in optimized parallel batches. Replaces manually invoking 6 separate commands by orchestrating them in 4 dependency-aware batches with automatic fix-commit-rerun loops.
 
+Each batch completion posts a one-line `[Checkpoint]` status line (`[Checkpoint] Batch N complete: <gates>. Next: Batch N+1 — <gates>.`) for progress visibility during long-running gate runs.
+
 ---
 
 ## Inputs
