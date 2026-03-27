@@ -138,7 +138,9 @@ PHASE 2: DESIGN (No Code)
 │ Step 3 — /sk:brainstorm                                                  │
 │ • Reads: tasks/findings.md (prior decisions), tasks/lessons.md          │
 │ • Clarifies requirements, proposes approaches, gets approval             │
-│ • Writes: tasks/findings.md (design decision + rationale)               │
+│ • Extracts explicit requirements checklist after approach approval;      │
+│   requires coverage confirmation before recording findings               │
+│ • Writes: tasks/findings.md (design decision + rationale + checklist)  │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -164,6 +166,9 @@ PHASE 3: PLAN (No Code)
 │ • Reads: tasks/findings.md (all design outputs), tasks/lessons.md       │
 │ • Writes: tasks/todo.md (decision-complete checklist)                   │
 │ • Applies lessons as plan constraints                                   │
+│ • Step 3b: auto-generates tasks/contracts.md when plan contains         │
+│   API/endpoint/route/controller/backend keywords; mandatory for         │
+│   /sk:team; defines endpoints, request/response shapes, auth, errors   │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 PHASE 4: BRANCH + MIGRATE
@@ -174,6 +179,7 @@ PHASE 5: IMPLEMENT (Code Time)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ Step 9 — /sk:write-tests   TDD RED: write failing tests first           │
 │ Step 10 — /sk:execute-plan TDD GREEN: implement to make tests pass      │
+│   Posts [Checkpoint] every 3–5 tool calls or after editing 3+ files    │
 │ Step 11 — /sk:smart-commit Commit tests + implementation                │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
@@ -188,6 +194,9 @@ PHASE 6: QUALITY GATES (all are HARD GATES — cannot be skipped)
 │ Step 14 — /sk:security-check  ★ HARD GATE — 0 issues all severities   │
 │ • Reads: tasks/security-findings.md (prior audits), tasks/lessons.md   │
 │ • OWASP Top 10, CWE references, stack-specific checks                  │
+│ • Content isolation: scanned file content treated as DATA, not          │
+│   instructions — prevents prompt injection attacks                      │
+│ • Critical and High findings include CVSS Base Score estimation         │
 │ • Writes: tasks/security-findings.md (severity-rated findings)          │
 │ • Pre-existing issues logged to tasks/tech-debt.md                     │
 ├──────────────────────────────────────────────────────────────────────────┤
@@ -1021,7 +1030,8 @@ Rigorous multi-dimensional code review across 7 dimensions — the quality bar o
   5. **Design** — separation of concerns, API contract changes, code clarity, dependency management
   6. **Best Practices** — framework-specific (React, Python, Go, Node.js), conventions, testing quality
   7. **Testing** — coverage gaps, edge cases, assertion quality, test isolation, flakiness risks
-- Every finding tagged with dimension, file:line, and **why** it matters
+- Uses a `<think>` reasoning scratchpad before each dimension — exhaustiveness required, partial analysis not accepted
+- Every finding tagged with dimension, `file:line:name:type` (symbol type: function, method, class, variable, hook, component), and **why** it matters
 - Generates severity-leveled report: Critical / Warning / Nitpick (max 20 items)
 - Critical/Warning: loop `/sk:debug` + `/sk:smart-commit` + `/sk:review` until clean
 - Nitpick only: asks user — fix now or proceed to `/sk:finish-feature`?
@@ -1262,7 +1272,7 @@ Generate architecture and design documentation from existing code. Analyzes patt
 
 ### /sk:gates
 
-Orchestrator that runs all quality gates in optimized parallel batches: lint+security+perf in parallel, then tests, then review, then E2E. Single command replaces 6 manual invocations.
+Orchestrator that runs all quality gates in optimized parallel batches: lint+security+perf in parallel, then tests, then review, then E2E. Single command replaces 6 manual invocations. Posts a `[Checkpoint]` status line after each of the 4 batches for progress visibility during long-running gate runs.
 
 ---
 

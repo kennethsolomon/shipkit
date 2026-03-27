@@ -1,7 +1,6 @@
 ---
 name: sk:team
 description: Parallel domain agents for full-stack implementation — spawns Backend, Frontend, and QA agents in isolated worktrees.
-user_invocable: true
 allowed_tools: Read, Write, Bash, Glob, Grep, Agent
 ---
 

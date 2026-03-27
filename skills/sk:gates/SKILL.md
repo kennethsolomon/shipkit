@@ -1,7 +1,6 @@
 ---
 name: sk:gates
 description: Run all quality gates in optimized parallel batches — one command instead of six
-user_invocable: true
 allowed_tools: Agent, Read, Write, Bash, Glob, Grep
 ---
 
@@ -28,24 +27,28 @@ Launch 3 agents simultaneously:
 These 3 have no dependencies on each other. Run them in parallel using the Agent tool.
 
 Wait for all 3 to complete. Collect results.
+Post checkpoint: `[Checkpoint] Batch 1 complete: lint + security + perf. Next: Batch 2 — test.`
 
 ### Batch 2 — Test Agent (sequential, needs lint fixes)
 
 After Batch 1 completes (lint may have auto-formatted code):
 
 4. **Test runner agent** — runs all test suites, ensures 100% coverage on new code
+Post checkpoint: `[Checkpoint] Batch 2 complete: test. Next: Batch 3 — review.`
 
 ### Batch 3 — Review (main context, needs test confirmation)
 
 After Batch 2 completes:
 
 5. **Review** — runs `/sk:review` in the main context (NOT as an agent) because review needs deep code understanding and access to the full conversation history
+Post checkpoint: `[Checkpoint] Batch 3 complete: review. Next: Batch 4 — e2e.`
 
 ### Batch 4 — E2E Agent (needs review fixes)
 
 After Batch 3 completes:
 
 6. **E2E tester agent** — runs full E2E verification
+Post checkpoint: `[Checkpoint] Batch 4 complete: e2e. All gates done.`
 
 ## Gate Results
 

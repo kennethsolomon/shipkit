@@ -1,7 +1,6 @@
 ---
 name: sk:reverse-doc
 description: Generate architecture and design documentation from existing code by analyzing patterns and asking clarifying questions
-user_invocable: true
 allowed_tools: Read, Glob, Grep, Write, Agent
 ---
 

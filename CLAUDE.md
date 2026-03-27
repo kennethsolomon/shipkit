@@ -290,7 +290,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:accessibility` | WCAG 2.1 AA audit — runs after design, before implementation |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) before implementation |
 | `/sk:autopilot` | Hands-free workflow — all 8 steps, auto-skip, auto-advance, auto-commit |
-| `/sk:brainstorm` | Explore requirements and design (includes search-first research) |
+| `/sk:brainstorm` | Explore requirements and design; extracts requirements checklist before recording findings |
 | `/sk:branch` | Create feature branch auto-named from current task |
 | `/sk:change` | Handle mid-workflow requirement changes — re-enter at correct step |
 | `/sk:context` | Load all context files + output session brief for fast session start |
@@ -299,12 +299,12 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:debug` | Investigate and debug issues (bug fix entry point) |
 | `/sk:e2e` | E2E behavioral verification using agent-browser (final quality gate) |
 | `/sk:eval` | Define, run, and report on evaluations for agent reliability |
-| `/sk:execute-plan` | Execute `tasks/todo.md` checkboxes in batches |
+| `/sk:execute-plan` | Execute `tasks/todo.md` checkboxes in batches with status checkpoints |
 | `/sk:fast-track` | Abbreviated workflow for small changes — skip planning, keep all gates |
 | `/sk:features` | Sync feature specs with shipped implementation |
 | `/sk:finish-feature` | Changelog + PR creation |
 | `/sk:frontend-design` | UI mockup before implementation. Prompts to create Pencil visual mockup |
-| `/sk:gates` | Run all quality gates in optimized parallel batches |
+| `/sk:gates` | Run all quality gates in optimized parallel batches with batch checkpoint cadence |
 | `/sk:health` | Harness self-audit scorecard (7 categories, 0-70) |
 | `/sk:hotfix` | Emergency fix workflow — skip design/TDD, quality gates enforced |
 | `/sk:learn` | Extract reusable patterns from sessions into learned instincts |
@@ -314,11 +314,11 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:resume-session` | Resume a previously saved session with full context restoration |
 | `/sk:retro` | Post-ship retrospective: velocity, blockers, action items |
 | `/sk:reverse-doc` | Generate architecture/design docs from existing code |
-| `/sk:review` | Self-review with simplify pre-pass + multi-dimensional review |
+| `/sk:review` | Self-review: simplify pre-pass + 7-dimension analysis with `<think>` reasoning and exhaustiveness commitment |
 | `/sk:safety-guard` | Protect against destructive ops (careful/freeze/guard modes) |
 | `/sk:save-session` | Save current session state for cross-session continuity |
 | `/sk:scope-check` | Compare implementation against plan, detect scope creep |
-| `/sk:security-check` | OWASP security audit on changed files |
+| `/sk:security-check` | OWASP security audit with content isolation, CVSS scoring, and instruction hierarchy |
 | `/sk:seo-audit` | SEO audit — dual-mode (source templates + dev server), ask-before-fix, checklist output to `tasks/seo-findings.md` |
 | `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 | `/sk:smart-commit` | Conventional commit with approval |
@@ -327,5 +327,5 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:team` | Parallel domain agents (backend + frontend + QA) for full-stack tasks |
 | `/sk:test` | Auto-detect and run all project test suites |
 | `/sk:update-task` | Mark task done and log completion |
-| `/sk:write-plan` | Write decision-complete plan into `tasks/todo.md` |
+| `/sk:write-plan` | Write decision-complete plan into `tasks/todo.md`; auto-generates `tasks/contracts.md` for API tasks |
 | `/sk:write-tests` | TDD: Write failing tests before implementation |

@@ -1,7 +1,6 @@
 ---
 name: sk:scope-check
 description: Compare current implementation against the plan to detect scope creep
-user_invocable: true
 allowed_tools: Read, Glob, Grep, Bash
 ---
 

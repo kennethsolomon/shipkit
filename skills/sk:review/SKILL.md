@@ -13,6 +13,8 @@ Perform a rigorous, multi-dimensional review of all changes on the current branc
 
 This is a **report-only** step. If Critical or Warning issues are found, the user loops back to `/sk:debug` → `/sk:smart-commit` → `/sk:review` until the branch is clean. Once clean, the user runs `/sk:finish-feature` to finalize and create the PR.
 
+**exhaustiveness commitment:** Partial completion is unacceptable. Every dimension (Steps 3–9) must be fully analyzed before generating the report. If you find nothing wrong in a dimension, state it explicitly (`"No issues found"`) — do not skip or leave it blank. Skipping a dimension is a failure.
+
 ## Allowed Tools
 
 Bash, Read, Glob, Grep, Skill
@@ -171,6 +173,8 @@ Do **not** read unchanged files outside the blast radius.
 
 Carry the blast-radius mapping (symbol → dependents) forward into Steps 3-9. When analyzing a changed function, always cross-reference its dependents.
 
+> Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
+
 ### 3. Analyze — Correctness & Bugs
 
 The most important dimension. A bug that ships is worse than ugly code that works.
@@ -210,6 +214,8 @@ The most important dimension. A bug that ships is worse than ugly code that work
 - Unicode/special characters in user input
 - Concurrent access to shared resources
 
+> Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
+
 ### 4. Analyze — Security
 
 Load `references/security-checklist.md` and apply its grep patterns against the **diff and blast-radius files** (not the entire codebase). Only flag patterns **newly introduced** in the diff — pre-existing issues are out of scope unless they interact with the changed code.
@@ -245,6 +251,8 @@ Check for:
 - Overly permissive CORS (`origin: '*'`)
 - Debug mode enabled in production paths
 - Missing rate limiting on auth/sensitive endpoints
+
+> Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
 
 ### 5. Analyze — Performance
 
@@ -282,6 +290,8 @@ Think about what happens at 10x, 100x current scale. Performance bugs are often 
 - Large file processing without streaming
 - Closures capturing large scopes unnecessarily
 
+> Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
+
 ### 6. Analyze — Reliability & Error Handling
 
 Production code must handle failure gracefully. The question isn't "does it work?" but "what happens when things go wrong?"
@@ -312,6 +322,8 @@ Production code must handle failure gracefully. The question isn't "does it work
 - Missing loading/error/empty states in UI
 - Optimistic updates without rollback on failure
 
+> Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
+
 ### 7. Analyze — Design & Best Practices
 
 Think about the next engineer who reads this code. Is the intent clear? Does the design scale with the codebase?
@@ -339,6 +351,8 @@ Think about the next engineer who reads this code. Is the intent clear? Does the
 - New dependencies added — are they necessary? Well-maintained? License-compatible?
 - Are there lighter alternatives for heavy imports?
 - Lock file updated when dependencies change?
+
+> Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
 
 ### 8. Analyze — Framework-Specific
 
@@ -378,6 +392,8 @@ Based on what the project uses:
 - Inconsistent error response format across endpoints
 - Magic numbers/strings that should be named constants
 
+> Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
+
 ### 9. Analyze — Testing (if tests are included in the diff)
 
 If the diff includes test files, review them with the same rigor as production code.
@@ -403,24 +419,26 @@ Format findings with severity levels and review dimensions:
 **Review dimensions:** Correctness, Security, Performance, Reliability, Design, Best Practices, Testing, Blast Radius
 
 ### Critical (must fix before merge)
-- **[Correctness]** [FILE:LINE] Description of critical issue
+- **[Correctness]** [src/checkout/cart.ts:42:processOrder:function] Description of critical issue
   **Why:** Explanation of impact — what breaks, who is affected, how likely
-- **[Security]** [FILE:LINE] Description
+- **[Security]** [FILE:LINE:SYMBOL] Description
   **Why:** ...
 
 ### Warning (should fix)
-- **[Performance]** [FILE:LINE] Description
+- **[Performance]** [FILE:LINE:SYMBOL] Description
   **Why:** Explanation of risk — what degrades, under what conditions
-- **[Reliability]** [FILE:LINE] Description
+- **[Reliability]** [FILE:LINE:SYMBOL] Description
   **Why:** ...
 
 ### Nitpick (consider for next time)
-- **[Design]** [FILE:LINE] Description
+- **[Design]** [FILE:LINE:SYMBOL] Description
   **Why:** Explanation of improvement — readability, maintainability, conventions
 
 ### What Looks Good
 - Brief acknowledgment of well-done aspects (1-3 bullet points max)
 ```
+
+**Symbol format:** `file:line:name:type` — use `:symbol` as placeholder in examples. Type is one of: `function`, `method`, `class`, `variable`, `hook`, `component`
 
 **Severity guidelines:**
 - **Critical:** Will cause bugs in production, security vulnerability, data loss, or crash. Must fix.
@@ -431,7 +449,7 @@ Format findings with severity levels and review dimensions:
 - Maximum 20 items total (prioritize by severity, then by category)
 - Every item must tag its review dimension: `[Correctness]`, `[Security]`, `[Performance]`, `[Reliability]`, `[Design]`, `[Best Practices]`, `[Testing]`, `[Blast Radius]`
 - Use `[Blast Radius]` for issues found in dependent files — callers broken by changed signatures, importers affected by removed exports, tests that no longer cover the changed behavior
-- Every item must reference a specific file and line
+- Every item must reference a specific file, line, and symbol using `[FILE:LINE:SYMBOL]` format
 - Every item must explain **why** it matters — the impact, not just the symptom
 - Include a brief "What Looks Good" section (2-3 items) — acknowledge strong patterns so they're reinforced. This isn't cheerleading — it's calibrating signal.
 - If you genuinely find nothing wrong after all 7 dimensions, say so — but that's rare

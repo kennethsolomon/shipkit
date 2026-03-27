@@ -1,7 +1,6 @@
 ---
 name: sk:fast-track
 description: Abbreviated workflow for small, clear changes — skip planning ceremony, keep all quality gates
-user_invocable: true
 allowed_tools: Read, Write, Bash, Glob, Grep, Agent, Skill
 ---
 

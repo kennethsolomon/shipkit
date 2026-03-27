@@ -1,7 +1,6 @@
 ---
 name: sk:autopilot
 description: Hands-free workflow — runs all 8 steps with auto-skip, auto-advance, auto-commit. Stops only for direction approval, 3-strike failures, and PR push.
-user_invocable: true
 allowed_tools: Read, Write, Bash, Glob, Grep, Agent, Skill
 ---
 
