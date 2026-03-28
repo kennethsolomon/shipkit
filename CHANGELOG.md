@@ -6,6 +6,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.15.0] — 2026-03-28 — sk:website Client Website Builder
+
+### Added
+- **`/sk:website`** — New skill for building complete, client-deliverable multi-page marketing websites from a brief, URL, or one sentence. Ports the best of website-studio into shipkit, making shipkit the all-in-one tool.
+  - Brief extraction from Google Maps URL, existing site URL, or plain text
+  - Real copy generation — no Lorem ipsum, no `[placeholder]` headlines
+  - Parallel research agents: strategy + copy + art direction spawn simultaneously
+  - WhatsApp / Messenger floating CTA: auto-detected for local businesses in PH/SEA
+  - Lighthouse 90+ enforcement loop before client handoff
+  - Client handoff package: `HANDOFF.md`, `DEPLOY.md`, `CONTENT-GUIDE.md`
+  - Revision mode (`/sk:website --revise`) for targeted client feedback iterations
+  - 15 niche reference guides: cafe, restaurant, law firm, dentist, gym, real estate, accountant, med-spa, home-services, wedding, agency, portfolio, ecommerce, SaaS, local-business
+  - Art direction reference with 7 aesthetic directions
+  - Content & SEO reference with local SEO guidance (Philippines / SEA focus)
+  - Launch checklist with blocker vs. polish classification
+  - WhatsApp CTA implementation guide with Next.js component code
+  - Comprehensive guide: `docs/guides/sk-website-guide.md`
+  - Feature spec: `docs/sk:features/sk-website.md`
+
 ## [3.14.0] — 2026-03-28 — Prompt Engineering Upgrades
 
 ### Changed

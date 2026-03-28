@@ -327,5 +327,6 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:team` | Parallel domain agents (backend + frontend + QA) for full-stack tasks |
 | `/sk:test` | Auto-detect and run all project test suites |
 | `/sk:update-task` | Mark task done and log completion |
+| `/sk:website` | Build a complete, client-deliverable multi-page marketing website from a brief, URL, or one sentence |
 | `/sk:write-plan` | Write decision-complete plan into `tasks/todo.md`; auto-generates `tasks/contracts.md` for API tasks |
 | `/sk:write-tests` | TDD: Write failing tests before implementation |
