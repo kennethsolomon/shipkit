@@ -292,3 +292,16 @@ When any agent definition changes, update ALL of:
 
 **When adding a new agent:**
 Also update `CLAUDE.md` — update the count in Sub-Agent Patterns section if applicable.
+
+### [2026-03-29] Duplicate slash commands from skills + command files coexisting
+**Bug:** Commands like `/sk:security-check` and `/sk:start` appeared 2–3 times in autocomplete. `/sk:security-check` appeared 3 times: once as a global skill (`~/.claude/skills/sk:security-check/`), once as a global command file (`~/.claude/commands/sk/security-check.md`), and once as a project-level command (`commands/sk/security-check.md` at the project root).
+**Root cause:** Three registration sources exist for the same command name:
+1. `~/.claude/skills/sk:X/` — installed skill (registered as `/sk:X`)
+2. `~/.claude/commands/sk/X.md` — installed command file (also registered as `/sk:X`)
+3. Project root `commands/sk/X.md` — Claude Code loads this as a project-level command too
+
+The install script had logic to SKIP copying command files when a skill exists, but it did not CLEAN UP previously installed command files that were later superseded by skills.
+**Prevention:**
+- Never have both `commands/sk/X.md` AND `skills/sk:X/SKILL.md` for the same command — delete the command file when a skill covers it.
+- The install script (`bin/shipkit.js`) now includes a cleanup pass after installing skills that removes any `~/.claude/commands/sk/X.md` where `~/.claude/skills/sk:X/` exists.
+- When adding a new skill that replaces an existing command: (1) delete `commands/sk/<name>.md` from the project, (2) run `node bin/shipkit.js` to re-install and trigger cleanup.

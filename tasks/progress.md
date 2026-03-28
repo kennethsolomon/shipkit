@@ -1,5 +1,12 @@
 # Progress Log
 
+### [2026-03-29] Fix duplicate slash commands — COMPLETED
+- Root cause: 3 registration sources — `~/.claude/skills/sk:X/`, `~/.claude/commands/sk/X.md`, and project `commands/sk/X.md`
+- Fix 1: Removed 12 stale command files from `~/.claude/commands/sk/` that were superseded by skills
+- Fix 2: Removed `commands/sk/security-check.md` from project (covered by `skills/sk:security-check/`)
+- Fix 3: Updated `bin/shipkit.js` install to clean up stale command files after skills are installed
+- Fix 4: Added lesson to `tasks/lessons.md`
+
 ### [2026-03-24] Workflow Acceleration (Features 11-14) — COMPLETED
 - Branch: `feature/auto-skip-autopilot-team-start`
 - Changes: 4 features implemented — auto-skip intelligence, /sk:autopilot, /sk:team, /sk:start
@@ -673,3 +680,27 @@
 ### [2026-03-29 03:05:01] Session ended
 - Branch: main
 - Commits this session: 5
+
+### [2026-03-29 03:10:08] Session ended
+- Branch: main
+- Commits this session: 7
+
+### [2026-03-29 03:24:49] Session ended
+- Branch: main
+- Commits this session: 7
+
+### [2026-03-29 03:25:54] Session ended
+- Branch: main
+- Commits this session: 6
+
+### [2026-03-29 03:29:05] Session ended
+- Branch: main
+- Commits this session: 6
+
+### [2026-03-29 03:29:54] Session ended
+- Branch: main
+- Commits this session: 6
+
+### [2026-03-29 03:37:33] Session ended
+- Branch: main
+- Commits this session: 4

@@ -154,6 +154,22 @@ function install() {
     console.log(`  ${yellow}!${reset} skills/ not found — skipping`);
   }
 
+  // Clean up stale command files superseded by skills (prevents duplicate slash commands)
+  if (fs.existsSync(commandsDest) && fs.existsSync(skillsDest)) {
+    let cleaned = 0;
+    for (const entry of fs.readdirSync(commandsDest, { withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
+      const skillName = 'sk:' + entry.name.replace(/\.md$/, '');
+      if (fs.existsSync(path.join(skillsDest, skillName))) {
+        fs.rmSync(path.join(commandsDest, entry.name));
+        cleaned++;
+      }
+    }
+    if (cleaned > 0) {
+      console.log(`  ${green}✓${reset} Cleaned ${cleaned} stale command(s) superseded by skills`);
+    }
+  }
+
   console.log(`\n  ${green}Done!${reset} Run ${cyan}/sk:help${reset} to get started.\n`);
 }
 
