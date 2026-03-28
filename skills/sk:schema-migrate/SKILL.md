@@ -1,6 +1,7 @@
 ---
 name: sk:schema-migrate
 description: "/sk:schema-migrate — Multi-ORM Schema Change Analysis"
+allowed-tools: Read, Glob, Grep, Bash, Agent
 ---
 
 # /sk:schema-migrate — Multi-ORM Schema Change Analysis
@@ -42,7 +43,16 @@ Scan the output for migration-related files:
 
 Exit cleanly. Do not ask the user. Do not proceed to Phase 1.
 
-**If migration-related files ARE found:** proceed to Phase 1 (ORM Detection) below.
+**If migration-related files ARE found:** invoke the **`database-architect` agent** before proceeding to Phase 1:
+
+```
+Task: "Read tasks/findings.md, tasks/lessons.md, and the migration files in this diff.
+Perform a migration safety analysis: flag breaking changes, missing indexes, NULL violations,
+orphan rows, and data-loss risks. Recommend safe migration order and any needed index additions.
+Read-only — no code changes."
+```
+
+Incorporate the `database-architect`'s safety report into your Phase 2-4 risk analysis. Then proceed to Phase 1 (ORM Detection) below.
 
 ---
 

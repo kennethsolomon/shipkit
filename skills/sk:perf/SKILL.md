@@ -3,6 +3,7 @@ name: sk:perf
 description: Performance audit. Use before /sk:review to catch performance issues: bundle size, N+1 queries, slow DB queries, Core Web Vitals, memory leaks, caching opportunities. Auto-detects stack. Fixes critical/high in-scope findings and auto-commits. Logs pre-existing issues to tech-debt.
 license: Complete terms in LICENSE.txt
 model: sonnet
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Agent
 ---
 
 ## Purpose
@@ -169,6 +170,18 @@ Write findings to `tasks/perf-findings.md`:
 **Never overwrite** `tasks/perf-findings.md` — append new audits with a date header.
 
 The report is written first, then fixes are applied to in-scope critical/high findings.
+
+## Fix Critical/High Findings via Agent
+
+If Critical or High findings exist, invoke the **`performance-optimizer` agent** to apply fixes:
+
+```
+Task: "Read tasks/perf-findings.md. Fix all Critical and High in-scope findings
+(files in git diff main..HEAD). Run tests before and after each fix — tests must
+pass before AND after. Commit: fix(perf): resolve performance findings"
+```
+
+The `performance-optimizer` agent works in worktree isolation and runs tests around every fix. After it completes, merge its worktree branch and verify the fix in `tasks/perf-findings.md`.
 
 ## When Done
 

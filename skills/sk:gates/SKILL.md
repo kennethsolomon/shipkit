@@ -21,12 +21,12 @@ Gates are organized into 4 batches for maximum parallelism while respecting depe
 Launch 3 agents simultaneously:
 
 1. **Linter agent** — runs all formatters, analyzers, dep audits
-2. **Security auditor agent** — OWASP audit on changed files
-3. **Performance auditor agent** — bundle, N+1, Core Web Vitals, memory
+2. **`security-reviewer` agent** — OWASP audit on changed files (read-only; reports findings, does not fix)
+3. **`performance-optimizer` agent** — bundle, N+1, Core Web Vitals, memory (worktree isolation — finds AND fixes critical/high issues)
 
 These 3 have no dependencies on each other. Run them in parallel using the Agent tool.
 
-Wait for all 3 to complete. Collect results.
+Wait for all 3 to complete. Collect results. Apply security fixes from `security-reviewer` findings in the main context. `performance-optimizer` commits its own fixes from its worktree — merge them in.
 Post checkpoint: `[Checkpoint] Batch 1 complete: lint + security + perf. Next: Batch 2 — test.`
 
 ### Batch 2 — Test Agent (sequential, needs lint fixes)
@@ -40,14 +40,14 @@ Post checkpoint: `[Checkpoint] Batch 2 complete: test. Next: Batch 3 — review.
 
 After Batch 2 completes:
 
-5. **Review** — runs `/sk:review` in the main context (NOT as an agent) because review needs deep code understanding and access to the full conversation history
+5. **`code-reviewer` agent** — 7-dimension review (correctness, security, performance, reliability, design, best practices, testing). Read-only — reports findings. Main context applies fixes and re-runs.
 Post checkpoint: `[Checkpoint] Batch 3 complete: review. Next: Batch 4 — e2e.`
 
 ### Batch 4 — E2E Agent (needs review fixes)
 
 After Batch 3 completes:
 
-6. **E2E tester agent** — runs full E2E verification
+6. **E2E tester agent** — runs full E2E verification using scenarios written by `qa-engineer` during implementation
 Post checkpoint: `[Checkpoint] Batch 4 complete: e2e. All gates done.`
 
 ## Gate Results

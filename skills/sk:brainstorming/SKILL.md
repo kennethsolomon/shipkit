@@ -1,6 +1,7 @@
 ---
 name: sk:brainstorming
 description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+allowed-tools: Read, Write, Glob, Grep, Bash, Agent
 ---
 
 # Brainstorming Ideas Into Designs
@@ -73,6 +74,19 @@ digraph brainstorming {
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
 - Focus on understanding: purpose, constraints, success criteria
+
+**Architecture Assessment (before proposing approaches — complex tasks only):**
+
+After exploring the project context, check if this task is architecturally complex:
+- Does it span multiple systems, services, or bounded contexts?
+- Does it require decisions about data modeling, API contracts, or system boundaries?
+- Does it involve 3+ major components being added or changed?
+- Does it touch auth, billing, or other sensitive infrastructure?
+
+If YES to any of the above, invoke the **`architect` agent** before proposing approaches:
+> Task: "Read tasks/findings.md, tasks/lessons.md, tasks/tech-debt.md, and explore the relevant code areas. Propose 2-3 architecturally sound approaches for [task description] with explicit trade-offs. Read-only — no code."
+
+Incorporate the architect's recommendations into step 3 (propose approaches). If the task is simple and narrow, skip this step.
 
 **Search-First Research (before proposing approaches):**
 Before proposing custom solutions, check if the problem is already solved:

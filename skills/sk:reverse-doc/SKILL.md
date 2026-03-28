@@ -63,7 +63,18 @@ The distinction between "what the code does" and "what the developer intended" i
 
 ### Phase 3: Draft
 
-Based on analysis + user answers, generate the document:
+Invoke the **`tech-writer` agent** to generate the document:
+
+```
+Task: "Generate a [architecture|design|api] document for [target path].
+Context: [paste synthesis from Phase 1 + user answers from Phase 2].
+Never invent behavior — read the source files first.
+Output a complete draft ready for review."
+```
+
+The `tech-writer` agent reads all relevant source files before writing a single word. After it returns the draft, review it for accuracy before proceeding to Phase 4.
+
+Based on analysis + user answers, the document includes:
 
 **Architecture docs include:**
 - System overview and purpose

@@ -60,15 +60,19 @@ If no API contract is found, team mode warns and falls back to single-agent sequ
 
 Launch all 3 agents simultaneously using the Agent tool:
 
-**Backend Agent** (`isolation: "worktree"`):
+**`backend-dev` Agent** (`isolation: "worktree"`):
 - Task: "Read the API contract in tasks/todo.md. Write backend tests for all endpoints (controller tests, model tests, validation tests). Then implement: migrations, models, services, controllers, routes. Make all tests pass. Commit with `feat(backend): [description]`."
 - Receives: full plan from `tasks/todo.md`, `tasks/lessons.md`
 
-**Frontend Agent** (`isolation: "worktree"`):
+**`frontend-dev` Agent** (`isolation: "worktree"`):
 - Task: "Read the API contract in tasks/todo.md. Write frontend tests for all components/pages (component tests, interaction tests, form tests). Mock API endpoints using contract shapes. Then implement: API client, composables/hooks, components, pages, routes. Make all tests pass. Commit with `feat(frontend): [description]`."
 - Receives: full plan from `tasks/todo.md`, `tasks/lessons.md`
 
-**QA Agent** (`run_in_background: true`):
+**`mobile-dev` Agent** (`isolation: "worktree"`) — only when mobile scope detected (React Native / Expo / Flutter keywords in plan):
+- Task: "Read tasks/todo.md and tasks/cross-platform.md. Write mobile tests then implement: screens, navigation, native modules, platform-specific patterns. Make all tests pass. Commit with `feat(mobile): [description]`."
+- Receives: full plan from `tasks/todo.md`, `tasks/lessons.md`, `tasks/cross-platform.md`
+
+**`qa-engineer` Agent** (`run_in_background: true`):
 - Task: "Read the plan in tasks/todo.md. Write E2E test scenarios covering all user flows. Do NOT run them — they'll be executed after merge. Report scenario count and coverage summary."
 - Receives: full plan from `tasks/todo.md`
 

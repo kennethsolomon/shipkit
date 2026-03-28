@@ -34,6 +34,19 @@ For GitHub Actions, ask:
 For option 1 (direct API), proceed to Step 3.
 For options 2 or 3, follow the Enterprise Setup section below.
 
+## Agent Delegation
+
+Once provider, auth method, and workflow selections are confirmed, invoke the **`devops-engineer` agent** to generate and implement the workflow files:
+
+```
+Task: "Generate and implement CI/CD workflows for [github|gitlab].
+Auth: [direct API | bedrock | vertex].
+Workflows: [list of selected workflow types].
+Work in worktree isolation. Create workflow files, commit with feat(ci): add [provider] workflows."
+```
+
+The `devops-engineer` agent works in worktree isolation so the generated files can be reviewed before merging. After it completes, review the generated files, then merge and add secrets per the After Setup section below.
+
 ## Step 3 — Choose Workflows
 
 Present a checklist. Ask the user which they want:

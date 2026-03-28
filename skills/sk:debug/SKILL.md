@@ -24,7 +24,28 @@ Do NOT jump to fixing code before you understand the bug. No code changes until 
 
 ## Allowed Tools
 
-Bash, Read, Write, Edit, Glob, Grep, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_network_requests, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_snapshot
+Agent, Bash, Read, Write, Edit, Glob, Grep, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_network_requests, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_snapshot
+
+## Agent Delegation
+
+Delegate investigation to the **`debugger` agent**. Provide full problem context:
+
+```
+Task: "Investigate this bug: [error message / symptom].
+Expected: [what should happen]. Actual: [what happens].
+Trigger: [when does it occur].
+Recent changes: [any commits near the bug onset].
+Follow the reproduce → isolate → hypothesize → verify → fix protocol.
+Log findings to tasks/findings.md."
+```
+
+The `debugger` agent handles the full investigation (steps 1–10 below) autonomously. After it completes:
+- Review `tasks/findings.md` for root cause and proposed fix
+- If fix is approved, proceed with the Bug Fix Flow: branch → write-tests → implement → gates
+
+If `debugger` agent hits a 3-strike failure, fall back to manual steps below.
+
+---
 
 ## Steps
 
