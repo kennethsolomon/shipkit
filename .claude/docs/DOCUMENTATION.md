@@ -4,6 +4,14 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
 
 ## What's New (March 2026)
 
+**v3.16.0** — Formal agent definitions, path-scoped rules upgrade, and 2 new skills:
+- **6 formal `.claude/agents/`** — backend-dev, frontend-dev, qa-engineer, security-reviewer, code-reviewer, debugger — deployed by `/sk:setup-claude`. All include `memory`, `model`, `tools`, and `isolation: worktree` (where appropriate).
+- **`.claude/rules/` with `paths:` frontmatter** — 6 rule files now auto-activate in Claude Code when editing matching file patterns (no manual context loading). Stack-detected and deployed by `/sk:setup-claude` and `/sk:setup-optimizer`.
+- `/sk:ci` — GitHub Actions + GitLab CI workflow templates (PR review, issue triage, nightly audit, release). Supports AWS Bedrock OIDC and Google Vertex AI enterprise setups.
+- `/sk:plugin` — Package project-level skills, agents, and hooks as a distributable Claude Code plugin.
+- **Skill frontmatter upgrades** — model routing, `disable-model-invocation`, `context: fork` on expensive standalone skills.
+- **Bug fix** — `allowed_tools` → `allowed-tools` fixed in 7 skills + all 8 agent templates.
+
 **v3.8.0** — Lifecycle hooks, gate agents, path-scoped rules, and new commands:
 - **Lifecycle hooks** — 6 hooks auto-deployed by `/sk:setup-claude` (pre-commit, post-commit, etc.)
 - **Gate agents** — 5 agents for parallel gate execution (lint, test, security, review, e2e)
@@ -1317,6 +1325,45 @@ Orchestrator that runs all quality gates in optimized parallel batches: lint+sec
 
 ---
 
+### /sk:ci
+
+Set up Claude Code CI workflows for GitHub Actions or GitLab CI. Single command generates ready-to-use workflow files for the five most common Claude Code automation patterns.
+
+**What it does:**
+- Generates `.github/workflows/claude.yml` or `.gitlab-ci.yml` based on detected platform
+- 5 workflow templates: `@claude` mention trigger, auto PR review on open, issue triage, nightly security audit, release automation
+- Enterprise setup: AWS Bedrock via OIDC, Google Vertex AI via Workload Identity Federation
+- Custom GitHub App support for higher rate limits
+- All workflows use `anthropics/claude-code-action@v1`
+
+**Usage:**
+```
+/sk:ci
+```
+
+---
+
+### /sk:plugin
+
+Package your project-level customizations (skills, agents, hooks) as a distributable Claude Code plugin.
+
+**What it does:**
+- Creates `.claude-plugin/plugin.json` manifest with name, version, description, and capability declarations
+- Moves project skills from `.claude/skills/` → `plugin-name/skills/`
+- Converts hooks from `settings.json` → `hooks/hooks.json`
+- Moves agents from `.claude/agents/` → `plugin-name/agents/`
+- Validates plugin structure against the Claude Code plugin schema
+- Generates `README.md` with install instructions
+
+**Note:** ShipKit itself is distributed via npm (not as a plugin) to support global `/sk:*` prefixed commands and `settings.json` hook control. Use `/sk:plugin` to package *your project's own customizations* — team-specific skills, domain agents, or specialized hooks you want to share across projects or with teammates.
+
+**Usage:**
+```
+/sk:plugin
+```
+
+---
+
 ### /sk:fast-track
 
 Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, and write-tests but enforces all quality gates via /sk:gates. Guard rails warn on large diffs (>300 lines).
@@ -1336,7 +1383,7 @@ Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, a
 | `.claude/commands/plan.md` | `/plan` — create/refresh planning files |
 | `.claude/commands/status.md` | `/status` — show task progress summary |
 | `.claude/hooks/` | 6 lifecycle hook scripts (pre-commit, post-commit, etc.) |
-| `.claude/agents/` | 5 gate agent definitions (lint, test, security, review, e2e) |
+| `.claude/agents/` | 6 domain agent definitions (backend-dev, frontend-dev, qa-engineer, security-reviewer, code-reviewer, debugger) + 5 gate agents (lint, test, security, review, e2e) |
 | `.claude/rules/` | Path-scoped coding rules (stack-dependent, auto-activate per directory) |
 | `.claude/settings.json` | Hook config, permissions, statusline |
 | `.claude/statusline.sh` | Persistent CLI status (context %, model, workflow step, branch) |

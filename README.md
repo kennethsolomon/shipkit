@@ -21,6 +21,19 @@ npm install -g @kennethsolomon/shipkit && shipkit
 
 ---
 
+## What's New (v3.16.0 — March 2026)
+
+**Formal Agent Definitions, Path-Scoped Rules, and 2 new skills:**
+
+- **`.claude/agents/`** — 6 formal agent definitions (backend-dev, frontend-dev, qa-engineer, security-reviewer, code-reviewer, debugger) with `memory: project`, `isolation: worktree`, and `background: true` where appropriate. `/sk:setup-claude` deploys these to every new project.
+- **`.claude/rules/`** — 6 path-scoped rule files that auto-activate in Claude Code when you edit matching files: `laravel.md`, `react.md`, `vue.md`, `tests.md`, `api.md`, `migrations.md`. Stack-relevant rules are deployed by `/sk:setup-claude` automatically.
+- **`/sk:ci`** — Set up GitHub Actions or GitLab CI with Claude Code workflows: auto PR review, issue triage, nightly security audit, release automation. Supports enterprise setups (AWS Bedrock OIDC, Google Vertex AI Workload Identity).
+- **`/sk:plugin`** — Package your project-level customizations (skills, agents, hooks) into a distributable Claude Code plugin with a `.claude-plugin/plugin.json` manifest.
+- **Skill frontmatter upgrades** — model routing (`haiku` for lightweight skills, `sonnet` for analysis), `disable-model-invocation: true` on side-effect skills (commit, release, branch), `context: fork` on expensive standalone skills (seo-audit, accessibility, reverse-doc).
+- **Bug fix** — `allowed_tools` → `allowed-tools` (underscore typo silently ignored by Claude Code) fixed in 7 skills + all agent templates.
+
+---
+
 ## What is ShipKit?
 
 ShipKit turns Claude Code into a disciplined development partner. Instead of "write some code," every feature goes through:
@@ -87,6 +100,40 @@ npm install -g @kennethsolomon/shipkit && shipkit
 | `suggest-compact` | PreToolUse (Edit/Write) | Suggests `/compact` after 50+ tool calls |
 | `cost-tracker` | Stop | Logs session metadata to `.claude/sessions/cost-log.jsonl` |
 | `safety-guard` | PreToolUse (Bash/Edit/Write) | Enforces `/sk:safety-guard` freeze/careful mode |
+
+---
+
+## Formal Agent Definitions
+
+`/sk:setup-claude` deploys 6 agent definitions to `.claude/agents/` — specialized sub-agents with `memory`, `model`, `tools`, and `isolation` pre-configured.
+
+| Agent | Model | Memory | Isolation | What it does |
+|-------|-------|--------|-----------|-------------|
+| `backend-dev` | sonnet | project | worktree | Backend implementation — API, data layer, migrations |
+| `frontend-dev` | sonnet | project | worktree | Frontend implementation — components, routing, state |
+| `qa-engineer` | sonnet | project | background | QA and E2E test writing |
+| `code-reviewer` | sonnet | project | — | 7-dimension code review (read-only) |
+| `debugger` | sonnet | project | — | Root-cause analysis and structured investigation |
+| `security-reviewer` | sonnet | user | — | OWASP security audit (read-only, memory: user) |
+
+`memory: project` means agents accumulate knowledge across sessions for that project. `isolation: worktree` means the agent works in a separate git worktree — no risk of clobbering your working tree. `background: true` on qa-engineer means it runs without blocking the main conversation.
+
+---
+
+## Path-Scoped Rules
+
+`/sk:setup-claude` installs coding rule files in `.claude/rules/` that Claude Code auto-activates when you open or edit matching files — no manual context loading needed.
+
+| Rule file | Activates when editing | What it enforces |
+|-----------|----------------------|-----------------|
+| `laravel.md` | `app/**/*.php`, `routes/**`, `config/**` | Laravel conventions, service containers, Eloquent patterns |
+| `react.md` | `**/*.tsx`, `**/*.jsx`, `src/**/*.ts` | Hooks rules, component patterns, TypeScript strictness |
+| `vue.md` | `**/*.vue`, `resources/js/**/*.ts` | Composition API only, `<script setup>`, Pinia patterns |
+| `tests.md` | `tests/**`, `**/*.test.*`, `**/*.spec.*` | TDD standards, assertion quality, test isolation |
+| `api.md` | `routes/api.php`, `app/Http/Controllers/**` | RESTful conventions, auth patterns, error response shapes |
+| `migrations.md` | `database/migrations/**`, `prisma/**` | Migration safety rules, reversibility, index naming |
+
+Stack-relevant rules are detected and deployed automatically during `/sk:setup-claude` and `/sk:setup-optimizer`.
 
 ---
 
@@ -333,7 +380,7 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 ## All Commands
 
 <details>
-<summary><strong>52 commands</strong> — click to expand</summary>
+<summary><strong>54 commands</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---------|---------|
