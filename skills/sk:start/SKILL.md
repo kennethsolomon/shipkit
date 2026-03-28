@@ -1,7 +1,7 @@
 ---
 name: sk:start
 description: Smart entry point — classifies your task, detects scope, and routes to the optimal flow (feature/debug/hotfix/fast-track), mode (manual/autopilot), and agent strategy (solo/team).
-allowed_tools: Read, Write, Bash, Glob, Grep, Agent, Skill
+allowed-tools: Read, Write, Bash, Glob, Grep, Agent, Skill
 ---
 
 # Smart Start

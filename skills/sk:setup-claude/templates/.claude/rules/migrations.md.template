@@ -1,0 +1,24 @@
+---
+paths:
+  - "database/migrations/**"
+  - "prisma/**"
+  - "**/*.migration.ts"
+  - "db/migrate/**"
+  - "db/schema.rb"
+---
+
+# Database Migration Standards
+
+## Rules
+
+- All migrations must be reversible — always implement `down()` or rollback
+- Never modify a merged migration — create a new one
+- Adding columns to existing tables: nullable or with default — never NOT NULL without default
+- Dropping columns in production: 3-step (stop writing + deploy → drop column → clean code)
+- Always add indexes on foreign key columns
+- Naming: `create_users_table`, `add_email_to_users`, `drop_legacy_tokens_from_users`
+- Wrap destructive operations in transactions
+- Run `migrate:fresh` (or equivalent) in CI to catch issues early
+- Seed data in seeders/fixtures — never hardcoded inside migrations
+- Backfilling large tables: use batched updates — never update millions of rows at once
+- Explicit index naming: `idx_users_email` — do not rely on auto-generated names

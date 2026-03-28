@@ -1,5 +1,6 @@
 ---
 description: "Emergency fix workflow for production issues. Skips brainstorm, design, and TDD setup. Goes straight to: investigate → branch → fix → gates → ship."
+disable-model-invocation: true
 ---
 
 # /sk:hotfix

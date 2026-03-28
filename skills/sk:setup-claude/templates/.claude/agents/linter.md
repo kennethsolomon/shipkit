@@ -2,7 +2,7 @@
 name: linter
 model: haiku
 description: Run all project linters and dependency audits. Auto-fix issues, auto-commit fixes, and re-run until clean.
-allowed_tools: Bash, Read, Edit, Write, Glob, Grep
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
 ---
 
 # Linter Agent

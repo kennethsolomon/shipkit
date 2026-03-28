@@ -1,5 +1,6 @@
 ---
 description: "Finalize a feature/bug-fix: changelog, arch log, verification, and PR creation."
+disable-model-invocation: true
 ---
 
 # /sk:finish-feature

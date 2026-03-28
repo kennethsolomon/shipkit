@@ -1,5 +1,6 @@
 ---
 description: "Create a feature branch from the current task in tasks/todo.md."
+disable-model-invocation: true
 ---
 
 # /sk:branch

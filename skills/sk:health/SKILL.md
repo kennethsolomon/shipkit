@@ -1,6 +1,7 @@
 ---
 name: sk:health
 description: "Run harness self-audit and produce a health scorecard."
+model: haiku
 ---
 
 # /sk:health — Harness Self-Audit Scorecard

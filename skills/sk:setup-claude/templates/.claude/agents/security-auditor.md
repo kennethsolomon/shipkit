@@ -2,7 +2,8 @@
 name: security-auditor
 model: sonnet
 description: Audit changed code for OWASP Top 10 and security best practices. Fix findings and auto-commit.
-allowed_tools: Bash, Read, Edit, Write, Glob, Grep
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
+memory: user
 ---
 
 # Security Auditor Agent

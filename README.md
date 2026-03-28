@@ -253,6 +253,8 @@ Use these anytime — they're not part of any workflow.
 |---------|------------|
 | `/sk:reverse-doc` | Inherited codebase — generate architecture/design docs from existing code |
 | `/sk:setup-optimizer` | Maintenance — diagnose, update workflow, deploy hooks, enrich CLAUDE.md |
+| `/sk:ci` | Team — set up GitHub Actions / GitLab CI with PR review, issue triage, nightly audits |
+| `/sk:plugin` | Distribution — package custom skills/agents/hooks as a shareable Claude Code plugin |
 | `/sk:mvp` | New idea — generate a complete MVP app from a single prompt |
 | `/sk:status` | Quick view of workflow and task status |
 | `/sk:dashboard` | Visual Kanban board across all git worktrees |
@@ -374,6 +376,8 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 | `/sk:schema-migrate` | Database schema change analysis |
 | `/sk:scope-check` | Detect scope creep mid-implementation |
 | `/sk:security-check` | OWASP security audit with content isolation and CVSS scoring |
+| `/sk:ci` | Set up Claude Code GitHub Actions or GitLab CI — PR review, issue triage, nightly audits, release automation |
+| `/sk:plugin` | Package custom skills, agents, and hooks as a distributable Claude Code plugin |
 | `/sk:seo-audit` | SEO audit for web projects |
 | `/sk:set-profile` | Switch model routing profile |
 | `/sk:website` | Build a complete, client-deliverable multi-page marketing website from a brief or URL. Supports `--stack nuxt`, `--stack laravel`, `--deploy`, `--revise`. Full guide: `docs/guides/sk-website-guide.md` |

@@ -1,6 +1,7 @@
 ---
 name: sk:smart-commit
 description: "Analyze staged changes, auto-detect commit type, and generate conventional commit messages with approval workflow."
+disable-model-invocation: true
 ---
 
 # Smart Conventional Commits

@@ -1359,8 +1359,8 @@ assert_contains \
   "quality gate"
 
 assert_file_exists \
-  "sk:autopilot command shortcut exists" \
-  "$REPO/commands/sk/autopilot.md"
+  "sk:autopilot skill exists" \
+  "$REPO/skills/sk:autopilot/SKILL.md"
 
 echo ""
 
@@ -1430,8 +1430,8 @@ assert_contains \
   "E2E"
 
 assert_file_exists \
-  "sk:team command shortcut exists" \
-  "$REPO/commands/sk/team.md"
+  "sk:team skill exists" \
+  "$REPO/skills/sk:team/SKILL.md"
 
 echo ""
 
@@ -1489,8 +1489,8 @@ assert_contains \
   "\-\-manual"
 
 assert_file_exists \
-  "sk:start command shortcut exists" \
-  "$REPO/commands/sk/start.md"
+  "sk:start skill exists" \
+  "$REPO/skills/sk:start/SKILL.md"
 
 echo ""
 
@@ -1645,8 +1645,8 @@ assert_file_exists \
   "$REPO/skills/sk:learn/SKILL.md"
 
 assert_file_exists \
-  "sk:learn command exists" \
-  "$REPO/commands/sk/learn.md"
+  "sk:learn skill exists" \
+  "$REPO/skills/sk:learn/SKILL.md"
 
 assert_contains \
   "sk:learn mentions patterns" \
@@ -1668,8 +1668,8 @@ assert_file_exists \
   "$REPO/skills/sk:context-budget/SKILL.md"
 
 assert_file_exists \
-  "sk:context-budget command exists" \
-  "$REPO/commands/sk/context-budget.md"
+  "sk:context-budget skill exists" \
+  "$REPO/skills/sk:context-budget/SKILL.md"
 
 assert_contains \
   "sk:context-budget mentions tokens" \
@@ -1696,8 +1696,8 @@ assert_file_exists \
   "$REPO/skills/sk:health/SKILL.md"
 
 assert_file_exists \
-  "sk:health command exists" \
-  "$REPO/commands/sk/health.md"
+  "sk:health skill exists" \
+  "$REPO/skills/sk:health/SKILL.md"
 
 assert_contains \
   "sk:health mentions scorecard" \
@@ -1728,12 +1728,12 @@ assert_file_exists \
   "$REPO/skills/sk:resume-session/SKILL.md"
 
 assert_file_exists \
-  "sk:save-session command exists" \
-  "$REPO/commands/sk/save-session.md"
+  "sk:save-session skill exists" \
+  "$REPO/skills/sk:save-session/SKILL.md"
 
 assert_file_exists \
-  "sk:resume-session command exists" \
-  "$REPO/commands/sk/resume-session.md"
+  "sk:resume-session skill exists" \
+  "$REPO/skills/sk:resume-session/SKILL.md"
 
 assert_contains \
   "sk:save-session references .claude/sessions/" \
@@ -1755,8 +1755,8 @@ assert_file_exists \
   "$REPO/skills/sk:safety-guard/SKILL.md"
 
 assert_file_exists \
-  "sk:safety-guard command exists" \
-  "$REPO/commands/sk/safety-guard.md"
+  "sk:safety-guard skill exists" \
+  "$REPO/skills/sk:safety-guard/SKILL.md"
 
 assert_contains \
   "sk:safety-guard mentions freeze" \
@@ -1783,8 +1783,8 @@ assert_file_exists \
   "$REPO/skills/sk:eval/SKILL.md"
 
 assert_file_exists \
-  "sk:eval command exists" \
-  "$REPO/commands/sk/eval.md"
+  "sk:eval skill exists" \
+  "$REPO/skills/sk:eval/SKILL.md"
 
 assert_contains \
   "sk:eval mentions pass@k" \

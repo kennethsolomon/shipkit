@@ -2,6 +2,9 @@
 name: sk:seo-audit
 description: "SEO audit for web projects. Dual-mode: scans source templates + optionally fetches from running dev server. Ask-before-fix for mechanical issues. Outputs checklist findings to tasks/seo-findings.md."
 license: Complete terms in LICENSE.txt
+model: haiku
+context: fork
+agent: general-purpose
 ---
 
 # /sk:seo-audit

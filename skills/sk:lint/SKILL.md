@@ -1,6 +1,7 @@
 ---
 name: sk:lint
 description: "Auto-detect and run all linting tools: formatters first (sequential), then analyzers in parallel. Fix and re-run until clean."
+model: haiku
 ---
 
 # /sk:lint

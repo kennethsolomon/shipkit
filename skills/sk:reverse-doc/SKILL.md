@@ -1,7 +1,9 @@
 ---
 name: sk:reverse-doc
 description: Generate architecture and design documentation from existing code by analyzing patterns and asking clarifying questions
-allowed_tools: Read, Glob, Grep, Write, Agent
+allowed-tools: Read, Glob, Grep, Write, Agent
+context: fork
+agent: general-purpose
 ---
 
 # Reverse Document

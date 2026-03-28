@@ -2,7 +2,9 @@
 name: qa-engineer
 model: sonnet
 description: QA engineer agent — writes E2E test scenarios based on the plan while other agents implement.
-allowed_tools: Bash, Read, Write, Glob, Grep
+allowed-tools: Bash, Read, Write, Glob, Grep
+memory: project
+background: true
 ---
 
 # QA Engineer Agent

@@ -2,6 +2,7 @@
 name: sk:perf
 description: Performance audit. Use before /sk:review to catch performance issues: bundle size, N+1 queries, slow DB queries, Core Web Vitals, memory leaks, caching opportunities. Auto-detects stack. Fixes critical/high in-scope findings and auto-commits. Logs pre-existing issues to tech-debt.
 license: Complete terms in LICENSE.txt
+model: sonnet
 ---
 
 ## Purpose
