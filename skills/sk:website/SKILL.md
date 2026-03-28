@@ -36,6 +36,27 @@ Turn a brief, URL, or one sentence into a production-ready multi-page marketing 
 |---|---|
 | `/sk:website` | Full build mode (Steps 1–7) |
 | `/sk:website --revise` | Revision mode (Steps R1–R6) |
+| `/sk:website --stack nuxt` | Full build mode using Nuxt 3 + Vue 3 |
+| `/sk:website --stack laravel` | Full build mode using Laravel 11 + Blade |
+| `/sk:website --deploy` | Full build mode + Step 8 (deploy to Vercel/Netlify after build) |
+| Flags combine freely | e.g., `--stack nuxt --deploy`, `--stack laravel --revise` |
+
+---
+
+## Stack Detection
+
+Determines which stack reference file to load in Step 3.
+
+| Priority | Signal | Stack |
+|---|---|---|
+| 1 | `--stack nuxt` flag | Nuxt 3 + Vue 3 + Tailwind → `references/stacks/nuxt.md` |
+| 2 | `--stack laravel` flag | Laravel 11 + Blade + Tailwind → `references/stacks/laravel.md` |
+| 3 | `package.json` contains `"nuxt"` | Nuxt 3 (existing project) |
+| 4 | `composer.json` exists | Laravel (existing project) |
+| 5 | `package.json` contains `"next"` | Next.js (existing project) |
+| 6 | No signals | Default: Next.js App Router → `references/stacks/nextjs.md` |
+
+Read the matched stack reference at the start of Step 3 before writing any code.
 
 ---
 
@@ -66,6 +87,7 @@ Services: [list]
 CTA: [primary action]
 Pages: [inferred page set]
 Style: [inferred from type + location]
+Stack: [detected stack — Next.js / Nuxt 3 / Laravel]
 
 Building...
 ```
@@ -121,10 +143,11 @@ Collect all 3 agent outputs before proceeding to Step 3.
 Implement the full site using all 3 agent outputs as inputs.
 
 **3a. Project setup**
+- Run stack detection (see Stack Detection table above). Read the matched `references/stacks/[stack].md` file before writing any code.
 - Detect existing framework. If present, work within it and preserve conventions.
-- If no framework: scaffold Next.js App Router + Tailwind CSS (TypeScript).
-- Apply the custom color palette from the art direction spec to `tailwind.config.js`.
-- Configure typography (Google Fonts via `next/font`, or direct import).
+- If no framework: scaffold using the detected stack reference (Next.js by default, or Nuxt/Laravel if flagged).
+- Apply the custom color palette from the art direction spec to `tailwind.config.js` / `tailwind.config.ts`.
+- Configure typography (Google Fonts — see stack reference for the correct import method per stack).
 
 **3b. Site configuration**
 - Create a typed site config file (`content/site.ts` or equivalent) with all pages, copy, and metadata from the research agents.
@@ -149,8 +172,14 @@ Conditions for injection (ANY of these):
 - Business is local type AND location is unknown (default to inject with placeholder)
 - User explicitly mentioned WhatsApp in the brief
 
-Implementation:
-- Use the component pattern from `references/whatsapp-cta.md`
+Implementation — use the stack-appropriate pattern:
+
+| Stack | Component pattern |
+|---|---|
+| Next.js | `components/WhatsAppButton.tsx` (React TSX `'use client'` component) — see `references/stacks/nextjs.md` |
+| Nuxt 3 | `components/WhatsAppButton.vue` (Vue SFC with `defineProps`) — see `references/stacks/nuxt.md` |
+| Laravel | `resources/views/components/whatsapp-button.blade.php` (Blade partial with `@props`) — see `references/stacks/laravel.md` |
+
 - Wire to extracted phone number (E.164 without `+`: e.g., `639171234567`), or use `[PHONE]` placeholder with a clear note for the client
 - Position: fixed bottom-right floating button
 
@@ -258,6 +287,77 @@ Generate 3 files at the project root using the templates:
 
 ### Still needs
 - [ ] [specific placeholders — e.g., hero photo, WhatsApp number, GA4 ID]
+```
+
+---
+
+### Step 8 — Deploy (only when `--deploy` flag is provided)
+
+**Skip this step entirely if `--deploy` was NOT passed.** DEPLOY.md covers manual deploy for all cases.
+
+**8a. Detect deploy tool**
+
+Check for Vercel CLI first, then Netlify CLI as fallback:
+
+```
+vercel --version  → if found: use Vercel
+netlify --version → if found: use Netlify
+neither found     → skip deploy, instruct user (see 8c)
+```
+
+**8b. Confirm before deploying**
+
+ALWAYS ask before running any deploy command — this is a visible external action:
+
+```
+Ready to deploy to [Vercel/Netlify]? (y/n)
+
+This will push the site live. Make sure:
+- HANDOFF.md placeholders are replaced (or noted)
+- Environment variables are configured
+- The client has approved the build
+```
+
+Wait for explicit `y`. Never auto-deploy without user confirmation.
+
+**8c. If no CLI found**
+
+```
+Vercel CLI not found. To deploy manually:
+1. Run: npm install -g vercel
+2. Run: vercel --prod
+   (or follow DEPLOY.md for Netlify or other hosts)
+
+DEPLOY.md has been generated with full step-by-step instructions.
+```
+
+**8d. Deploy**
+
+For Vercel:
+```bash
+vercel --prod
+```
+
+For Netlify:
+```bash
+netlify deploy --prod
+```
+
+For Laravel (no Vercel/Netlify support): output the recommended hosts and point to DEPLOY.md.
+
+**8e. After successful deploy**
+
+1. Display the live URL.
+2. Update `HANDOFF.md`: append a "Live URL" section with the URL and deploy date.
+3. Update `DEPLOY.md`: mark step as "Deployed" with the live URL.
+
+```
+## [Business Name] — Deployed
+
+Live URL: https://[project].vercel.app
+Deployed: [date]
+
+Update HANDOFF.md with the final custom domain once DNS is configured.
 ```
 
 ---

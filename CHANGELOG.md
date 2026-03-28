@@ -6,6 +6,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.15.1] — 2026-03-28 — sk:website Extensions (multi-stack + deploy)
+
+### Added
+- **`/sk:website --stack nuxt`** — Build client marketing sites with Nuxt 3 + Vue 3 + Tailwind instead of Next.js
+- **`/sk:website --stack laravel`** — Build client marketing sites with Laravel 11 + Blade + Tailwind + Alpine.js
+- **`/sk:website --deploy`** — Optional deploy step after build: detects Vercel CLI, falls back to Netlify CLI, always confirms before deploying, updates HANDOFF.md with live URL
+- **`skills/sk:website/references/stacks/nextjs.md`** — Next.js App Router reference: multi-page file structure, site config pattern, per-page SEO metadata, contact API route, sitemap/robots, WhatsApp React component, dev/build commands
+- **`skills/sk:website/references/stacks/nuxt.md`** — Nuxt 3 reference: multi-page file structure, site config, `useSeoMeta` per-page SEO, contact server route, WhatsApp Vue SFC component, dev/build commands
+- **`skills/sk:website/references/stacks/laravel.md`** — Laravel 11 + Blade reference: multi-page views, `config/site.php` config, per-page SEO in layouts, contact controller with honeypot, sitemap route, WhatsApp Blade partial, deploy host options
+
+### Changed
+- **`skills/sk:website/SKILL.md`** — Added Mode Detection rows for `--stack` and `--deploy` flags; added Stack Detection table (flag → auto-detect → default Next.js priority order); Step 1 now shows detected stack in confirmation block; Step 3a now reads matched stack reference before scaffolding; Step 3d WhatsApp section now stack-aware (React TSX / Vue SFC / Blade partial); added Step 8 Deploy (flag-gated, always confirms before deploying)
+- **`commands/sk/website.md`** — Updated description and usage examples with `--stack` and `--deploy` flags; added stack comparison table
+- **`docs/guides/sk-website-guide.md`** — Added "Choosing a Stack" section with comparison table and auto-detection rules; added "Using the Deploy Flag" section with requirements, flow, and safety note; updated Quick Start with new flag examples; updated WhatsApp section with stack-specific replacement instructions; updated Related Commands table
+
 ## [3.15.0] — 2026-03-28 — sk:website Client Website Builder
 
 ### Added

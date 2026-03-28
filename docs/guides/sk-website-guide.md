@@ -50,6 +50,38 @@ CTA: Reserve a Spot
 Corner Brew — specialty coffee shop in BGC, Taguig. CTA: Reserve a Spot
 ```
 
+### Build with Nuxt 3 (Vue 3)
+```
+/sk:website --stack nuxt
+
+Corner Brew — specialty coffee shop in BGC, Taguig, Philippines.
+CTA: Reserve a Spot
+```
+
+### Build with Laravel + Blade
+```
+/sk:website --stack laravel
+
+Luto — modern Filipino restaurant in Poblacion, Makati.
+CTA: Book a Table
+```
+
+### Build and deploy immediately
+```
+/sk:website --deploy
+
+BrightSmile Dental Clinic — family dentist in Tomas Morato, QC.
+CTA: Book an Appointment
+```
+
+### Build with Nuxt and deploy
+```
+/sk:website --stack nuxt --deploy
+
+Metro Aircon Services — aircon installation and repair in Metro Manila.
+CTA: Get a Free Quote
+```
+
 ### Revision after build
 ```
 /sk:website --revise
@@ -299,21 +331,108 @@ Inspiration: [URL] for clean project framing
 
 ---
 
+---
+
+## Choosing a Stack
+
+By default, `/sk:website` builds with **Next.js App Router + TypeScript + Tailwind**. Use the `--stack` flag to override.
+
+### Stack comparison
+
+| | Next.js (default) | Nuxt 3 | Laravel |
+|---|---|---|---|
+| **Language** | TypeScript + React | TypeScript + Vue 3 | PHP + Blade |
+| **Deploy** | Vercel (one-click) | Vercel / Netlify | Laravel Cloud / Forge |
+| **Best for** | Modern JS teams, Vercel workflow | Vue teams, Vue ecosystem | PHP shops, existing Laravel infra |
+| **WhatsApp** | TSX component | Vue SFC | Blade partial |
+| **Routing** | App Router (file-based) | File-based (`pages/`) | `routes/web.php` |
+| **Contact form** | API route (`app/api/contact/`) | Server route (`server/api/`) | Controller + `web.php` |
+
+### When to use each
+
+**Next.js (default):** Most client website builds. Excellent Vercel integration, strong SEO support via App Router metadata API, works well with TypeScript.
+
+**Nuxt 3:** Client or team prefers Vue. Works with the same Vercel/Netlify deployment flow. `useSeoMeta` makes per-page SEO ergonomic.
+
+**Laravel:** Client already has a Laravel app (adding a marketing front-end), or the team works primarily in PHP. Contact forms and server logic feel natural in Blade + controllers.
+
+### Stack detection (automatic)
+
+If no `--stack` flag is given, the skill detects the stack from the existing project:
+- `package.json` contains `"nuxt"` → Nuxt 3
+- `composer.json` exists → Laravel
+- `package.json` contains `"next"` → Next.js
+- No signals → Next.js (default)
+
+### Using an existing project
+
+Passing `--stack` with an existing project is not usually needed — the skill detects the framework automatically. Use `--stack` only to override (e.g., you want to migrate an existing Laravel site to Next.js).
+
+---
+
+## Using the Deploy Flag
+
+Add `--deploy` to run a deployment step after the build completes.
+
+### What it does
+
+1. Detects Vercel CLI (`vercel --version`)
+2. Falls back to Netlify CLI if Vercel not found
+3. **Asks for confirmation before deploying** — never auto-deploys
+4. Runs `vercel --prod` (or `netlify deploy --prod`)
+5. Displays the live URL
+6. Updates `HANDOFF.md` and `DEPLOY.md` with the live URL
+
+### Requirements
+
+- Vercel CLI: `npm install -g vercel` + logged in via `vercel login`
+- Netlify CLI: `npm install -g netlify-cli` + logged in via `netlify login`
+- For Laravel: no Vercel/Netlify support — the skill will output host recommendations and point to `DEPLOY.md`
+
+### If no CLI is found
+
+The skill outputs:
+```
+Vercel CLI not found. To deploy manually:
+1. npm install -g vercel
+2. vercel --prod
+   (or follow DEPLOY.md for full options)
+```
+
+The `DEPLOY.md` in the project root always has step-by-step instructions regardless of whether `--deploy` was used.
+
+### Safety note
+
+The deploy step **always confirms before pushing live**. This is a visible, external action and can't be undone from Claude. The confirmation prompt includes a checklist:
+- HANDOFF.md placeholders replaced (or documented)
+- Environment variables configured
+- Client has approved the build
+
+---
+
 ## Understanding WhatsApp CTA
 
 The skill auto-injects a floating WhatsApp button when:
 - Business is a local type (cafe, restaurant, service, clinic, etc.)
 - Location signals are in the Philippines, Singapore, Malaysia, Indonesia, Thailand, Vietnam, or Hong Kong
 
-**If your phone number isn't in the brief**, a `[PHONE]` placeholder is used. Replace it in `app/layout.tsx`:
+**If your phone number isn't in the brief**, a `[PHONE]` placeholder is used. Replace it in the layout file for your stack:
 
+**Next.js** — `src/app/layout.tsx`:
 ```tsx
-// Find this in app/layout.tsx and replace [PHONE] with your number
-// Format: country code + number, no + symbol
-// Philippines: 639171234567 (63 + mobile number)
-// Singapore: 6591234567
-
+// Replace [PHONE] with E.164 format without +
+// Philippines: 639171234567 | Singapore: 6591234567
 <WhatsAppButton phone="639171234567" />
+```
+
+**Nuxt 3** — `layouts/default.vue`:
+```vue
+<WhatsAppButton phone="639171234567" message="Hi! I found you on your website." />
+```
+
+**Laravel** — `resources/views/layouts/site.blade.php`:
+```blade
+<x-whatsapp-button phone="{{ config('site.phone') }}" message="Hi! I found you on your website." />
 ```
 
 **To disable WhatsApp CTA**, mention it in your brief:
@@ -463,6 +582,9 @@ To connect Playwright MCP: enable `playwright@claude-plugins-official` in Claude
 | Command | When to use |
 |---|---|
 | `/sk:website --revise` | Client has feedback on the initial build |
+| `/sk:website --stack nuxt` | Build with Nuxt 3 + Vue 3 instead of Next.js |
+| `/sk:website --stack laravel` | Build with Laravel 11 + Blade instead of Next.js |
+| `/sk:website --deploy` | Build + deploy to Vercel/Netlify in one run |
 | `/sk:seo-audit` | After launch — audit an existing live site for SEO gaps |
 | `/sk:frontend-design` | When you want to design UI for a feature (not a full site build) |
 | `/sk:mvp` | When you're validating a product idea, not delivering to a client |
