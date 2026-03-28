@@ -52,6 +52,8 @@ Use WebFetch to extract facts from any URL the user provides:
 - **Existing website URL** → name, tagline, services list, contact details, current copy, page structure
 - **Facebook/Instagram business page** → name, description, contact, category
 
+If WebFetch fails (JS-only page, redirect, paywall): fall back to Option B immediately. Don't retry.
+
 **Option B: Plain text / one sentence**
 
 Extract: business name, type, location, services, CTA intent. Infer reasonable defaults for anything missing.
@@ -105,6 +107,11 @@ Launch 3 agents simultaneously using the Agent tool (all in a single message, `s
   - Motion stance
 - Output a complete design spec for the build step.
 
+Each agent writes its output to a temp doc before returning:
+- Agent 1 → structured sitemap + per-page section outline (markdown)
+- Agent 2 → all copy, organized by page and section (markdown)
+- Agent 3 → aesthetic direction, signature moves, typography, palette hex codes, motion stance (markdown)
+
 Collect all 3 agent outputs before proceeding to Step 3.
 
 ---
@@ -144,7 +151,7 @@ Conditions for injection (ANY of these):
 
 Implementation:
 - Use the component pattern from `references/whatsapp-cta.md`
-- Wire to extracted phone number, or use `+[PHONE]` placeholder with a clear note for the client
+- Wire to extracted phone number (E.164 without `+`: e.g., `639171234567`), or use `[PHONE]` placeholder with a clear note for the client
 - Position: fixed bottom-right floating button
 
 If Messenger is preferred (user mentioned it, or location is Philippines): implement Messenger alternative from reference.
@@ -238,7 +245,7 @@ Generate 3 files at the project root using the templates:
 **Stack:** [framework] + Tailwind CSS
 **Pages:** [list all pages]
 **Style:** [aesthetic direction] — [2-4 signature moves]
-**WhatsApp CTA:** [included at wa.me/[PHONE] / not applicable]
+**WhatsApp CTA:** [included — wa.me/[PHONE_NUMBER] / not applicable]
 **Quality:** [Lighthouse 90+ on all pages / static checks passed]
 
 ### Run locally
