@@ -6,24 +6,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [3.16.0] — 2026-03-29 — Claude Code Infrastructure Upgrade
+## [3.16.0] — 2026-03-29 — Claude Code Infrastructure Upgrade + 13 Formal Agents
 
 ### Added
-- **`.claude/agents/`** — 6 formal agent definitions with `memory`, `model`, `tools`, and `isolation` frontmatter:
-  `backend-dev`, `frontend-dev`, `qa-engineer`, `security-reviewer`, `code-reviewer`, `debugger`
+- **13 formal agent definitions** — deployed by `/sk:setup-claude` to every project:
+  - *Implementation:* `backend-dev`, `frontend-dev`, `mobile-dev` (React Native/Expo/Flutter)
+  - *Quality:* `qa-engineer`, `code-reviewer`, `security-reviewer`, `performance-optimizer`
+  - *Design:* `architect` (pre-plan system design), `database-architect` (migration safety)
+  - *Operations:* `devops-engineer`, `debugger`, `refactor-specialist`, `tech-writer`
 - **`.claude/rules/`** — 6 path-scoped coding rule files that auto-activate per directory:
   `laravel.md`, `react.md`, `vue.md`, `tests.md`, `api.md`, `migrations.md`
 - **`/sk:ci`** — GitHub Actions + GitLab CI integration: PR review, issue triage, nightly audit, release automation workflows. Supports AWS Bedrock (OIDC) and Google Vertex AI (Workload Identity)
 - **`/sk:plugin`** — Package project-level customizations (skills, agents, hooks) as a distributable Claude Code plugin with `.claude-plugin/plugin.json` manifest
 - **`skills/sk:security-check/SKILL.md`** — security-check promoted to a full skill with upgraded frontmatter (`model: sonnet`, `disable-model-invocation: true`)
-- **`skills/sk:setup-claude/templates/.claude/agents/`** — added `code-reviewer.md`, `debugger.md` templates; upgraded all 8 existing agent templates with `memory`, `isolation`, and `background` frontmatter
 - **`skills/sk:setup-claude/templates/.claude/rules/`** — added `vue.md.template`, `migrations.md.template`; added proper `paths:` frontmatter to all 5 existing templates
+- **README — Highest ROI Workflow** — comprehensive guide showing how every feature works together, with a "which tool for which situation" reference table
+- **DOCUMENTATION.md — Formal Agents reference** — full invocation guide for all 13 agents with `when to use` + example invocations
+- **DOCUMENTATION.md — sk:ci and sk:reverse-doc** — proper "when and how to use" sections with workflow context
 
 ### Changed
 - **Skill frontmatter — model routing:** `model: haiku` → sk:lint, sk:context, sk:health, sk:seo-audit, sk:accessibility; `model: sonnet` → sk:review, sk:perf, sk:e2e, sk:security-check
 - **Skill frontmatter — side-effect guard:** `disable-model-invocation: true` added to sk:smart-commit, sk:release, sk:safety-guard, sk:branch, sk:finish-feature, sk:hotfix
 - **Skill frontmatter — isolated context:** `context: fork` added to sk:seo-audit, sk:accessibility, sk:reverse-doc
-- **`/sk:setup-optimizer`** — updated to check for 6 core agents, 6 rule files, and stale agent frontmatter in addition to existing checks
+- **`/sk:setup-optimizer`** — updated to check for 13 core agents (was 6), 6 rule files, and stale agent frontmatter
 
 ### Fixed
 - **`allowed_tools` → `allowed-tools`** — fixed underscore typo (silently ignored by Claude Code) in sk:gates, sk:team, sk:scope-check, sk:start, sk:fast-track, sk:retro, sk:autopilot, sk:reverse-doc, and all 8 agent templates in sk:setup-claude
