@@ -617,6 +617,8 @@ RESULT: Bug fixed + lesson learned. Next time you work on email validation,
 | **Ready for review** | `/sk:review` | 7-dimension self-review. 0 issues required. Hard gate. |
 | **Production emergency** | `/sk:hotfix` | Skips design/TDD, quality gates still enforced. |
 | **Review clean, ready to ship** | `/sk:finish-feature` | Changelog + arch log + security gate + create PR. |
+| **Client needs a website** | `/sk:website` | Full website from brief/URL to client handoff. Real copy, WhatsApp CTA, Lighthouse 90+. |
+| **Client has feedback on the site** | `/sk:website --revise` | Targeted edits from feedback. Never rebuilds the full site. |
 
 ### Scenario 4: Lessons Compounding Over Time
 
@@ -1192,6 +1194,45 @@ Performance audit — auto-detects stack and checks both frontend and backend.
 ```
 /sk:perf
 ```
+
+---
+
+### /sk:website
+
+Build a complete, client-deliverable multi-page marketing website from a brief, URL, or one sentence. Runs autonomously from intake to client handoff package — no manual steps required.
+
+**What it does:**
+- Extracts business facts from a Google Maps URL, existing website URL, or plain-text brief
+- Launches 3 parallel research agents: Strategy (sitemap + sections), Copy (real business-specific copy), Art Direction (aesthetic direction + palette + typography)
+- Builds a full multi-page site: Home, About, Services/Menu, Contact + niche extras (Next.js + Tailwind by default)
+- Auto-injects a floating WhatsApp CTA for local businesses in PH/SEA (Messenger alternative available)
+- Enforces Lighthouse 90+ on all pages before proceeding (with Playwright MCP) or runs a static quality pass
+- Generates a complete client handoff package: `HANDOFF.md` (project summary), `DEPLOY.md` (Vercel/Netlify deploy guide), `CONTENT-GUIDE.md` (non-technical editing guide)
+
+**Revision mode:** `/sk:website --revise` applies targeted edits from client feedback. Never rebuilds the full site for small changes.
+
+**15 niche guides included:** cafe, restaurant, law firm, dentist, gym, real estate, accountant, med-spa, home-services, wedding, agency, portfolio, ecommerce, SaaS, local-business.
+
+**This is NOT sk:mvp** — sk:website produces a real deliverable with real copy. sk:mvp produces a validation prototype with fake data.
+
+```
+# Minimal — from a URL
+/sk:website
+https://maps.google.com/?q=Your+Business
+Goal: [goal]. CTA: [action]
+
+# From a one-liner
+/sk:website
+[Business name] — [type] in [city]. CTA: [action]
+
+# Revision
+/sk:website --revise
+Changes: [list in plain language]
+```
+
+See `docs/guides/sk-website-guide.md` for the full guide with prompt templates for 8 business types.
+
+Run standalone — not part of the numbered 8-step workflow.
 
 ---
 
