@@ -105,17 +105,37 @@ function install() {
   // Install commands/sk/
   const commandsSrc  = path.join(pkgDir, 'commands', 'sk');
   const commandsDest = path.join(claudeDir, 'commands', 'sk');
+  const skillsSrc    = path.join(pkgDir, 'skills');
 
   if (fs.existsSync(commandsSrc)) {
-    copyDir(commandsSrc, commandsDest);
-    const count = countFiles(commandsSrc, '.md');
-    console.log(`  ${green}✓${reset} Installed commands/sk ${dim}(${count} commands)${reset}`);
+    fs.mkdirSync(commandsDest, { recursive: true });
+    let cmdCount = 0;
+    let skipped  = 0;
+    for (const entry of fs.readdirSync(commandsSrc, { withFileTypes: true })) {
+      const srcPath  = path.join(commandsSrc, entry.name);
+      const destPath = path.join(commandsDest, entry.name);
+      if (entry.isDirectory()) {
+        copyDir(srcPath, destPath);
+      } else if (entry.name.endsWith('.md')) {
+        // Skip command file if a corresponding skill directory already exists
+        const skillName = 'sk:' + entry.name.replace(/\.md$/, '');
+        if (fs.existsSync(path.join(skillsSrc, skillName))) {
+          skipped++;
+          continue;
+        }
+        fs.copyFileSync(srcPath, destPath);
+        cmdCount++;
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+    const skipNote = skipped ? ` ${dim}(${skipped} skipped — covered by skills)${reset}` : '';
+    console.log(`  ${green}✓${reset} Installed commands/sk ${dim}(${cmdCount} commands)${reset}${skipNote}`);
   } else {
     console.log(`  ${yellow}!${reset} commands/sk not found — skipping`);
   }
 
   // Install skills/sk:*/
-  const skillsSrc  = path.join(pkgDir, 'skills');
   const skillsDest = path.join(claudeDir, 'skills');
   let skillCount = 0;
 
