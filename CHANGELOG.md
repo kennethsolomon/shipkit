@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.15.3] — 2026-03-28 — Fix duplicate skill/command registrations
+
+### Fixed
+- **`commands/sk/`** — Removed 11 thin command wrappers (`autopilot`, `context-budget`, `eval`, `health`, `learn`, `resume-session`, `safety-guard`, `save-session`, `start`, `team`, `website`) that duplicated corresponding `skills/sk:*/SKILL.md` entries, causing each to appear multiple times in the Claude Code command picker
+- **`bin/shipkit.js`** — Added deduplication guard: install now skips any `commands/sk/<name>.md` file when a corresponding `skills/sk:<name>/` directory exists, preventing the issue from recurring when new skills are added
+
 ## [3.15.2] — 2026-03-28 — Fix duplicate /sk:website command
 
 ### Fixed
