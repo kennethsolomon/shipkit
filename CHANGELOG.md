@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.16.1] — 2026-03-29 — Fix duplicate slash commands
+
+### Fixed
+- **Duplicate slash commands** — `/sk:security-check`, `/sk:start`, and others appeared 2–3× in autocomplete. Root cause: three registration sources (global skill, global command file, project-level command file). Removed 12 stale command files from `~/.claude/commands/sk/` superseded by skills, deleted `commands/sk/security-check.md` from the project, and added a cleanup pass in `bin/shipkit.js install()` that removes stale command files after skills are installed — preventing recurrence on future installs.
+
 ## [3.16.0] — 2026-03-29 — Claude Code Infrastructure Upgrade + 13 Formal Agents
 
 ### Added
