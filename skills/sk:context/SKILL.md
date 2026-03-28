@@ -1,6 +1,7 @@
 ---
 name: sk:context
 description: "Session initializer — loads all project context files and outputs a formatted session brief. Run this at the start of every conversation to orient the AI and yourself."
+model: haiku
 ---
 
 # /sk:context — Session Brief + Context Loader

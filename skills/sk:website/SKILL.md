@@ -1,6 +1,7 @@
 ---
 name: sk:website
 description: Build a complete, client-deliverable multi-page marketing website from a brief, URL, or one sentence. NOT a prototype — a real site you hand to a client. Auto-builds from intake to handoff package. Use --revise for change iterations after initial build.
+argument-hint: "[--revise] [URL or brief]"
 ---
 
 # /sk:website — Client Website Builder

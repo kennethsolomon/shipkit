@@ -2,6 +2,9 @@
 name: sk:accessibility
 description: WCAG 2.1 AA accessibility audit. Use after /sk:frontend-design or on existing frontend code to catch accessibility issues before implementation or before shipping. Reports findings — does NOT fix code.
 license: Complete terms in LICENSE.txt
+model: haiku
+context: fork
+agent: general-purpose
 ---
 
 ## Purpose

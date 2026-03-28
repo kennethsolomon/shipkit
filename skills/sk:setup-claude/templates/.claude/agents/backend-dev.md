@@ -2,7 +2,9 @@
 name: backend-dev
 model: sonnet
 description: Backend development agent — writes backend tests and implements API/services/models against the API contract.
-allowed_tools: Bash, Read, Edit, Write, Glob, Grep
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
+memory: project
+isolation: worktree
 ---
 
 # Backend Development Agent

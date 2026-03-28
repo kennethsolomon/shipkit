@@ -1,6 +1,8 @@
 ---
 name: sk:release
 description: "Automate releases: bump version, update CHANGELOG, create git tag, push to GitHub. Supports --android and --ios flags to run a full App Store / Play Store readiness audit before release — checks configs, permissions, signing, icons, store listing requirements, and guides you step-by-step through fixes. Use this whenever someone wants to release, publish, deploy, or submit an app to the App Store, Play Store, Google Play, or Apple App Store."
+disable-model-invocation: true
+argument-hint: "[android|ios]"
 ---
 
 # Release Automation Skill

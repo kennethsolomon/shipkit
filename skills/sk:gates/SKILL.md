@@ -1,7 +1,7 @@
 ---
 name: sk:gates
 description: Run all quality gates in optimized parallel batches — one command instead of six
-allowed_tools: Agent, Read, Write, Bash, Glob, Grep
+allowed-tools: Agent, Read, Write, Bash, Glob, Grep
 ---
 
 # Gates Orchestrator

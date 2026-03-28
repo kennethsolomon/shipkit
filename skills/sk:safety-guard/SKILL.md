@@ -1,6 +1,7 @@
 ---
 name: sk:safety-guard
 description: "Protect against destructive operations with careful, freeze, and guard modes."
+disable-model-invocation: true
 ---
 
 # /sk:safety-guard — Destructive Operation Protection

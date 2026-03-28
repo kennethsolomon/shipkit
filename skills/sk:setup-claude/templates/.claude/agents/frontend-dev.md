@@ -2,7 +2,9 @@
 name: frontend-dev
 model: sonnet
 description: Frontend development agent — writes frontend tests and implements UI/components/pages using mocked API contract.
-allowed_tools: Bash, Read, Edit, Write, Glob, Grep
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
+memory: project
+isolation: worktree
 ---
 
 # Frontend Development Agent

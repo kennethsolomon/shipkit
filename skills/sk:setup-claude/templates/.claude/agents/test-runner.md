@@ -2,7 +2,8 @@
 name: test-runner
 model: sonnet
 description: Run all project test suites, fix failures, ensure 100% coverage on new code.
-allowed_tools: Bash, Read, Edit, Write, Glob, Grep
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
+memory: project
 ---
 
 # Test Runner Agent

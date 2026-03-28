@@ -45,7 +45,10 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 8-step flow with `/sk:gates` as single gate step
-- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval` in the Commands table
+- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin` in the Commands table
+- **Missing agents** — checks if `.claude/agents/` exists and contains the 6 core agents: `backend-dev`, `frontend-dev`, `qa-engineer`, `code-reviewer`, `debugger`, `security-reviewer`
+- **Missing rules** — checks if `.claude/rules/` exists and contains the project-relevant rule files based on detected stack (laravel.md, react.md, vue.md, tests.md, api.md, migrations.md)
+- **Stale agent frontmatter** — checks that existing agent files use the new `memory`, `model`, and `tools` frontmatter fields (agents without `memory` are degraded)
 - **Auto-skip rules** — checks for auto-skip detection rules in the workflow section
 - **Stale tracker references** — checks for `tasks/workflow-status.md` references (removed — progress tracked via git branch + todo.md checkboxes)
 - **Missing hooks** — checks if `.claude/hooks/` exists and contains both core and enhanced hooks
@@ -191,9 +194,53 @@ After LSP check, verify the three recommended tools are configured:
 - Context7: add `context7@claude-plugins-official: true` to `~/.claude/settings.json` enabledPlugins
 - ccstatusline: run `npx ccstatusline@latest`
 
-**If no:** skip, continue to Step 2.
+**If no:** skip, continue to Step 1.8.
 
 **Idempotency:** Never overwrite existing MCP entries, plugin flags, or statusline config — additive merge only.
+
+### Step 1.8: Agents & Rules Check
+
+After MCP check, verify the project has formal agent definitions and path-scoped rules:
+
+**Agents check:**
+
+1. Check if `.claude/agents/` directory exists
+2. Check for the 6 core agents: `backend-dev.md`, `frontend-dev.md`, `qa-engineer.md`, `code-reviewer.md`, `debugger.md`, `security-reviewer.md`
+3. For each existing agent, check if it has `memory:` and `model:` in frontmatter (older agents may be missing these)
+
+**Rules check:**
+
+1. Check if `.claude/rules/` directory exists
+2. Detect project stack from `CLAUDE.md`, `package.json`, `composer.json`
+3. Check for relevant rule files based on detected stack:
+   - Laravel/PHP detected → check for `laravel.md`, `api.md`, `migrations.md`
+   - React/Next.js detected → check for `react.md`, `tests.md`, `api.md`
+   - Vue/Nuxt detected → check for `vue.md`, `tests.md`, `api.md`
+   - Any stack → check for `tests.md`
+
+**Report status and prompt:**
+
+> "Agents: [X/6] core agents found
+>   backend-dev:       [✓ / ✗ missing]
+>   frontend-dev:      [✓ / ✗ missing]
+>   qa-engineer:       [✓ / ✗ missing]
+>   code-reviewer:     [✓ / ✗ missing]
+>   debugger:          [✓ / ✗ missing]
+>   security-reviewer: [✓ / ✗ missing]
+>
+> Rules: [X/N] stack-relevant rules found
+>   [list relevant rules with ✓/✗]
+>
+> Deploy missing agents and rules? [y/n]"
+
+**If yes:**
+- Copy missing agent files from `~/.claude/skills/sk:setup-claude/templates/.claude/agents/`
+- Copy missing rule files from `~/.claude/skills/sk:setup-claude/templates/.claude/rules/`
+- Only deploy agents/rules that don't exist yet — never overwrite existing customized files
+
+**If no:** skip, continue to Step 2.
+
+**Idempotency:** Never overwrite existing agent or rule files.
 
 ### Step 2: Scan & Enrich
 

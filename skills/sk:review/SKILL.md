@@ -1,6 +1,7 @@
 ---
 name: sk:review
 description: "Rigorous self-review of all branch changes across 7 dimensions: correctness, security, performance, reliability, design quality, best practices, and testing. Report-only — no PR creation (that's /sk:finish-feature's job). Use when code is complete and ready for review before merging."
+model: sonnet
 ---
 
 # Self-Review

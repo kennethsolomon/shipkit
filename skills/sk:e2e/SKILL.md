@@ -1,6 +1,7 @@
 ---
 name: sk:e2e
 description: "Run E2E behavioral verification as the final quality gate before finalize. Prefers Playwright CLI when playwright.config.ts is detected; falls back to agent-browser otherwise. Tests the complete, reviewed, secure implementation from a user's perspective."
+model: sonnet
 ---
 
 # /sk:e2e
