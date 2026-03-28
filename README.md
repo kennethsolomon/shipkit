@@ -376,7 +376,7 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 | `/sk:security-check` | OWASP security audit with content isolation and CVSS scoring |
 | `/sk:seo-audit` | SEO audit for web projects |
 | `/sk:set-profile` | Switch model routing profile |
-| `/sk:website` | Build a complete, client-deliverable multi-page marketing website from a brief or URL |
+| `/sk:website` | Build a complete, client-deliverable multi-page marketing website from a brief or URL. Supports `--stack nuxt`, `--stack laravel`, `--deploy`, `--revise`. Full guide: `docs/guides/sk-website-guide.md` |
 | `/sk:setup-claude` | Bootstrap project scaffolding |
 | `/sk:setup-optimizer` | Diagnose + update workflow + deploy hooks + enrich CLAUDE.md |
 | `/sk:skill-creator` | Create or improve skills |
