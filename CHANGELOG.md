@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [3.15.2] — 2026-03-28 — Fix duplicate /sk:website command
+
+### Fixed
+- **`commands/sk/website.md`** — Replaced full content with thin wrapper (matches autopilot pattern), eliminating the duplicate `/sk:website` entry in Claude Code command autocomplete
+
 ## [3.15.1] — 2026-03-28 — sk:website Extensions (multi-stack + deploy)
 
 ### Added
