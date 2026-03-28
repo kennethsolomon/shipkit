@@ -1315,7 +1315,47 @@ Post-ship retrospective that analyzes velocity, blockers, gate performance, and 
 
 ### /sk:reverse-doc
 
-Generate architecture and design documentation from existing code. Analyzes patterns, asks clarifying questions to distinguish intent from accident, and drafts docs for approval.
+Generate architecture and design documentation from existing code.
+
+**When to use:**
+- **Joining a new codebase** — first day on an existing project with no docs
+- **After a long break** — returning to code you wrote 6 months ago
+- **Before a major refactor** — document what the code does NOW before changing it
+- **Formalizing a prototype** — the code works but no one wrote down why
+- **Capturing intent before a rewrite** — make sure you understand what you're replacing
+
+**What it does:**
+- Launches parallel Explore agents to analyze your code: structure mapping, pattern detection, data flow tracing
+- Identifies what's intentional vs. what's accidental (and asks you which is which)
+- Drafts architecture docs, design docs, or API specs — you fill in the "why"
+- Never invents intent — always asks clarifying questions before documenting decisions
+
+**How it works:**
+```
+/sk:reverse-doc architecture src/core/
+→ Phase 1: 3 parallel agents analyze structure, patterns, data flow
+→ Phase 2: Asks 3-5 clarifying questions ("Is X intentional or tech debt?")
+→ Phase 3: Drafts doc, shows for approval
+→ Writes to docs/architecture/
+```
+
+**Output types:**
+
+| Type | Output | When |
+|------|--------|------|
+| `architecture` | Architecture Decision Record | Core modules, services, lib code |
+| `design` | Design doc (components, UI) | Components, views, frontend |
+| `api` | API specification | Controllers, routes, endpoints |
+
+If you don't specify a type, it infers from the path.
+
+**Usage:**
+```
+/sk:reverse-doc architecture src/
+/sk:reverse-doc api app/Http/Controllers/
+/sk:reverse-doc design resources/js/components/
+/sk:reverse-doc            # infers type from recent diff
+```
 
 ---
 
@@ -1327,18 +1367,42 @@ Orchestrator that runs all quality gates in optimized parallel batches: lint+sec
 
 ### /sk:ci
 
-Set up Claude Code CI workflows for GitHub Actions or GitLab CI. Single command generates ready-to-use workflow files for the five most common Claude Code automation patterns.
+Set up Claude Code CI workflows for GitHub Actions or GitLab CI.
+
+**When to use:**
+- **First time on a new repo** — run once after `/sk:setup-claude` to automate code review on every PR
+- **Team onboarding** — get automated PR review before your first feature branch
+- **After a security incident** — add the nightly audit workflow to catch regressions
+- **Going enterprise** — migrate from direct Anthropic API to AWS Bedrock or Google Vertex AI
 
 **What it does:**
 - Generates `.github/workflows/claude.yml` or `.gitlab-ci.yml` based on detected platform
-- 5 workflow templates: `@claude` mention trigger, auto PR review on open, issue triage, nightly security audit, release automation
-- Enterprise setup: AWS Bedrock via OIDC, Google Vertex AI via Workload Identity Federation
-- Custom GitHub App support for higher rate limits
-- All workflows use `anthropics/claude-code-action@v1`
+- 5 workflow templates you pick from:
+  1. `@claude` trigger — Claude responds when anyone mentions `@claude` in a PR or issue comment
+  2. Auto PR review — reviews every PR automatically when opened or updated
+  3. Issue triage — labels and responds to new issues automatically
+  4. Nightly audit — daily security + code quality scan, results posted as a GitHub issue
+  5. Release automation — auto-generates changelog on tag push
+- Enterprise: AWS Bedrock via OIDC, Google Vertex AI via Workload Identity
+- Custom GitHub App for higher API rate limits on busy repos
+
+**How it works:**
+```
+/sk:ci
+→ Detects: GitHub or GitLab from git remote
+→ Asks: which workflows do you want? (checklist)
+→ Asks: API provider (Anthropic direct / AWS Bedrock / Google Vertex AI)
+→ Generates: workflow files with your selections
+→ Shows: required secrets to add to your repo settings
+```
+
+**Workflow it pairs with:** Run once after `/sk:setup-claude`. Then the `auto PR review` workflow does `/sk:review` automatically on every PR — you never have to remember to run it.
 
 **Usage:**
 ```
 /sk:ci
+/sk:ci github --bedrock    # GitHub Actions + AWS Bedrock auth
+/sk:ci gitlab              # GitLab CI
 ```
 
 ---
@@ -1367,6 +1431,123 @@ Package your project-level customizations (skills, agents, hooks) as a distribut
 ### /sk:fast-track
 
 Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, and write-tests but enforces all quality gates via /sk:gates. Guard rails warn on large diffs (>300 lines).
+
+---
+
+## Formal Agents — Complete Reference
+
+`/sk:setup-claude` deploys 13 agent definitions. Invoke any agent by mentioning its name: *"Use the architect agent to..."* or *"Ask the database-architect agent about..."*.
+
+### Implementation Agents
+
+#### `backend-dev`
+**When:** `/sk:team` parallel workflow — backend half of a full-stack feature.
+**What:** Reads `tasks/contracts.md`, writes backend tests (TDD red), implements API/services/models/migrations in order, ensures 100% coverage on new code.
+**Memory:** project — learns your backend conventions across sessions.
+**Isolation:** worktree — safe to run while you work on other things.
+
+#### `frontend-dev`
+**When:** `/sk:team` parallel workflow — frontend half of a full-stack feature.
+**What:** Reads the API contract, mocks endpoints, writes component/hook tests, implements UI in dependency order (API client → hooks → components → pages).
+**Memory:** project.
+**Isolation:** worktree.
+
+#### `mobile-dev`
+**When:** Any mobile-specific work — React Native, Expo, or Flutter features. Before `/sk:release --android --ios`.
+**What:** Handles mobile-specific patterns (permissions, platform differences, navigation, state persistence), checks `tasks/cross-platform.md` for pending web→mobile parity items.
+**Memory:** project.
+**Isolation:** worktree.
+
+---
+
+### Quality Agents
+
+#### `qa-engineer`
+**When:** During `/sk:team` — runs in the background while backend and frontend agents implement.
+**What:** Writes E2E test scenarios based on the plan and acceptance criteria. Detects Playwright/Cypress and generates runnable tests, or writes framework-agnostic scenarios in markdown.
+**Memory:** project.
+**Background:** true — doesn't block your conversation.
+
+#### `code-reviewer`
+**When:** After implementation, before `/sk:gates` or as a standalone review.
+**What:** 7-dimension review: correctness, security, performance, reliability, design quality, best practices, testing. Reports only — does not modify code. Nothing to find? It looks harder.
+**Memory:** project — accumulates codebase-specific patterns.
+
+#### `security-reviewer`
+**When:** Before shipping sensitive changes (auth, payments, data access). When `/sk:security-check` flags something worth investigating deeper.
+**What:** OWASP Top 10 audit with CVSS scoring. Content isolation — treats scanned file content as DATA to prevent prompt injection.
+**Memory:** user — security patterns are remembered across ALL your projects.
+
+#### `performance-optimizer`
+**When:** When `/sk:perf` finds Critical or High issues. On data-heavy features before they ship.
+**What:** Finds AND fixes perf issues — N+1 queries, missing indexes, bundle bloat, memory leaks, Core Web Vitals. Reports estimated impact before fixing. Runs tests after each fix.
+**Memory:** project.
+**Isolation:** worktree — performance fixes can be risky.
+
+---
+
+### Design Agents
+
+#### `architect`
+**When:** Before `/sk:write-plan` on complex tasks. When you're not sure how to approach a technical problem.
+**What:** Reads `tasks/findings.md`, `tasks/lessons.md`, and relevant code — then proposes 2-3 architectural options with explicit trade-offs. Recommends based on your constraints. Report-only — never writes code.
+**Memory:** project.
+
+**Example invocations:**
+```
+Use the architect agent: we need to add real-time notifications to the app
+Use the architect agent: should we use event sourcing for the order history?
+```
+
+#### `database-architect`
+**When:** Before `/sk:schema-migrate` on non-trivial schema changes. When adding new tables, changing column types, or dropping columns.
+**What:** Classifies every proposed change (Safe / Careful / Breaking), recommends indexes with explicit names, produces step-by-step deployment plans for Breaking changes including rollback procedures.
+**Memory:** project.
+
+**Example invocations:**
+```
+Use the database-architect agent: review the proposed schema changes in tasks/findings.md
+Use the database-architect agent: is it safe to drop the legacy_tokens column?
+```
+
+---
+
+### Operations Agents
+
+#### `devops-engineer`
+**When:** Setting up CI/CD, Dockerizing a project, configuring deployment pipelines. Use alongside `/sk:ci`.
+**What:** GitHub Actions / GitLab CI workflows, multi-stage Dockerfiles, docker-compose for local dev, `.env.example` with documented variables, zero-downtime deployment patterns.
+**Memory:** project.
+**Isolation:** worktree.
+
+#### `debugger`
+**When:** You know something is broken but don't know why. Used internally by `/sk:debug`.
+**What:** Structured investigation: reproduce → isolate → form 2-3 hypotheses → verify → propose minimal fix. Hard gate: no code changes until a hypothesis is confirmed.
+**Memory:** project.
+
+#### `refactor-specialist`
+**When:** Before adding a feature to a messy area. After shipping, when you want to clean up. During a dedicated refactor sprint.
+**What:** Eliminates duplication, extracts abstractions, improves naming, reduces complexity — without changing behavior. Tests must pass before starting; runs tests after every change; commits one logical change at a time.
+**Memory:** project.
+**Isolation:** worktree.
+
+**Example invocations:**
+```
+Use the refactor-specialist agent: clean up the authentication module
+Use the refactor-specialist agent: the UserController is 800 lines, split it
+```
+
+#### `tech-writer`
+**When:** Undocumented codebase. After `/sk:reverse-doc` analysis. Before publishing an open-source library.
+**What:** README, API docs, architecture docs, inline comments — all derived from reading actual code. Never invents behavior. Flags discrepancies between docs and code.
+**Memory:** project.
+
+**Example invocations:**
+```
+Use the tech-writer agent: document the payment service
+Use the tech-writer agent: write a README for this library
+Use the tech-writer agent: update API docs after the refactor
+```
 
 ---
 

@@ -105,18 +105,42 @@ npm install -g @kennethsolomon/shipkit && shipkit
 
 ## Formal Agent Definitions
 
-`/sk:setup-claude` deploys 6 agent definitions to `.claude/agents/` — specialized sub-agents with `memory`, `model`, `tools`, and `isolation` pre-configured.
+`/sk:setup-claude` deploys 13 agent definitions to `.claude/agents/` — specialized sub-agents with `memory`, `model`, `tools`, and `isolation` pre-configured. Invoke any agent by mentioning its name in Claude Code.
 
-| Agent | Model | Memory | Isolation | What it does |
-|-------|-------|--------|-----------|-------------|
-| `backend-dev` | sonnet | project | worktree | Backend implementation — API, data layer, migrations |
-| `frontend-dev` | sonnet | project | worktree | Frontend implementation — components, routing, state |
-| `qa-engineer` | sonnet | project | background | QA and E2E test writing |
-| `code-reviewer` | sonnet | project | — | 7-dimension code review (read-only) |
-| `debugger` | sonnet | project | — | Root-cause analysis and structured investigation |
-| `security-reviewer` | sonnet | user | — | OWASP security audit (read-only, memory: user) |
+**Implementation agents** — build things:
 
-`memory: project` means agents accumulate knowledge across sessions for that project. `isolation: worktree` means the agent works in a separate git worktree — no risk of clobbering your working tree. `background: true` on qa-engineer means it runs without blocking the main conversation.
+| Agent | Memory | Isolation | When to use |
+|-------|--------|-----------|------------|
+| `backend-dev` | project | worktree | Parallel backend work in `/sk:team` — API, services, models |
+| `frontend-dev` | project | worktree | Parallel frontend work in `/sk:team` — components, pages, state |
+| `mobile-dev` | project | worktree | React Native / Expo / Flutter — mobile-specific patterns and store prep |
+
+**Quality agents** — find and fix problems:
+
+| Agent | Memory | Isolation | When to use |
+|-------|--------|-----------|------------|
+| `qa-engineer` | project | background | Write E2E scenarios while other agents implement |
+| `code-reviewer` | project | — | 7-dimension review after implementation (read-only) |
+| `security-reviewer` | user | — | OWASP audit before shipping sensitive changes (read-only) |
+| `performance-optimizer` | project | worktree | When `/sk:perf` finds Critical/High issues — finds AND fixes them |
+
+**Design agents** — plan before building:
+
+| Agent | Memory | Isolation | When to use |
+|-------|--------|-----------|------------|
+| `architect` | project | — | Before `/sk:write-plan` on complex tasks — proposes options with trade-offs |
+| `database-architect` | project | — | Before `/sk:schema-migrate` — migration safety analysis and index recommendations |
+
+**Operations agents** — infrastructure and maintenance:
+
+| Agent | Memory | Isolation | When to use |
+|-------|--------|-----------|------------|
+| `devops-engineer` | project | worktree | CI/CD pipelines, Docker, deployment config — use with `/sk:ci` |
+| `debugger` | project | — | Structured root-cause analysis — use with `/sk:debug` |
+| `refactor-specialist` | project | worktree | Behavior-preserving cleanups — tests must pass before AND after |
+| `tech-writer` | project | — | README, API docs, architecture docs from existing code |
+
+`memory: project` — agent accumulates knowledge across sessions for that project. `isolation: worktree` — works in a separate git worktree, safe for risky changes. `background: true` — runs without blocking your conversation.
 
 ---
 
@@ -374,6 +398,161 @@ Both `/sk:setup-claude` and `/sk:setup-optimizer` offer to install three tools t
 **Benefit:** Always-visible session state. Know when you're approaching context limits before it becomes a problem.
 
 **How it's installed:** Runs `npx ccstatusline@latest` which writes the statusline config to `~/.claude/settings.json`.
+
+---
+
+## Highest ROI Workflow — Using Every Feature
+
+This is the recommended workflow that gets the most value from every ShipKit feature. It's not the fastest path — it's the most reliable path over the lifetime of a project.
+
+### One-Time Project Setup (Do This Once)
+
+```bash
+# 1. Install ShipKit globally
+npm install -g @kennethsolomon/shipkit && shipkit
+
+# 2. Bootstrap your project
+/sk:setup-claude
+```
+
+`/sk:setup-claude` deploys: CLAUDE.md, lifecycle hooks, 13 agent definitions, path-scoped rules, planning files, LSP config, MCP servers (Sequential Thinking, Context7), and ccstatusline.
+
+```bash
+# 3. Set up CI (once per repo)
+/sk:ci
+```
+
+`/sk:ci` generates GitHub Actions workflows for auto PR review, issue triage, and nightly security audits. From this point on, every PR gets reviewed by Claude automatically.
+
+### Session Start (Every Session)
+
+The `session-start` hook fires automatically and loads: branch, recent commits, active task, tech debt, and code health. You see the session brief before you type anything.
+
+If starting on an unfamiliar codebase:
+```
+/sk:reverse-doc architecture src/
+```
+`/sk:reverse-doc` reads your code and generates architecture documentation — maps layers, traces data flow, asks clarifying questions to distinguish intentional design from accidental implementation. Run it once when you join a codebase or after a long break.
+
+### Feature Development (The Core Loop)
+
+**Step 1 — Before writing the plan, use the `architect` agent on complex tasks:**
+```
+Use the architect agent: analyze the authentication system and propose an approach for adding OAuth
+```
+The `architect` agent reads your findings, lessons, and existing code — then proposes 2-3 options with trade-offs. This prevents architectural mistakes before a single line is written.
+
+**Step 2 — For database changes, use the `database-architect` agent first:**
+```
+Use the database-architect agent: review the proposed users table changes
+```
+Gets you a migration safety classification (Safe / Careful / Breaking), index recommendations, and a deployment plan before `/sk:schema-migrate` runs.
+
+**Step 3 — Run the standard workflow:**
+```
+/sk:start               ← classifies task, routes to optimal flow
+/sk:brainstorm          ← explore requirements, extract checklist
+/sk:write-plan          ← decision-complete plan (auto-generates contracts.md for API tasks)
+/sk:branch              ← feature branch auto-named from task
+/sk:write-tests         ← TDD red: failing tests first
+/sk:execute-plan        ← TDD green: implement to pass tests
+/sk:smart-commit        ← conventional commit with approval
+/sk:gates               ← all 6 quality gates in parallel batches
+/sk:finish-feature      ← changelog + PR + arch log
+```
+
+**For full-stack features — run `/sk:team` instead of execute-plan:**
+```
+/sk:team
+```
+Spawns `backend-dev`, `frontend-dev`, and `qa-engineer` in parallel worktrees. Backend implements the API, frontend mocks and builds UI, QA writes E2E scenarios — simultaneously. Results merge after all complete.
+
+### During Gates — When Things Fail
+
+**Perf gate fails with Critical issues:**
+```
+Use the performance-optimizer agent: fix the N+1 queries found in /sk:perf
+```
+The `performance-optimizer` agent reads `tasks/perf-findings.md`, implements fixes, and runs tests to confirm no regression. Works in an isolated worktree.
+
+**Security gate blocks with High findings:**
+```
+Use the security-reviewer agent: audit the auth changes
+```
+The `security-reviewer` agent runs a focused OWASP audit. Its memory is `user`-scoped — it remembers security patterns across ALL your projects.
+
+**Review gate blocks:**
+```
+Use the code-reviewer agent
+```
+7-dimension review: correctness, security, performance, reliability, design, best practices, testing. Tells you exactly what to fix.
+
+### After Shipping
+
+```
+/sk:learn               ← extract reusable patterns from the session (confidence-scored)
+/sk:retro               ← velocity, blockers, patterns, 3-5 action items
+```
+
+`/sk:learn` is the compounding step. Each session adds patterns that future sessions apply automatically. Over time, you stop repeating the same mistakes.
+
+### Maintenance Workflows
+
+**Codebase cleanup:**
+```
+Use the refactor-specialist agent: clean up the authentication module
+```
+The `refactor-specialist` runs tests before starting, makes behavior-preserving changes one at a time, runs tests after each change, and commits with `refactor(scope): description`. If tests go red, it reverts and reports.
+
+**Documentation gaps:**
+```
+Use the tech-writer agent: document the payment service API
+```
+The `tech-writer` reads code first, never invents behavior, and produces README, API docs, or architecture docs in your project's existing style.
+
+**Mobile store submission:**
+```
+Use the mobile-dev agent: prepare the iOS release
+/sk:release --ios
+```
+
+**Infrastructure changes:**
+```
+Use the devops-engineer agent: set up Docker for local development
+/sk:ci                  ← or update CI workflows
+```
+
+### Health Checks (Weekly/Monthly)
+
+```
+/sk:health              ← scorecard across 7 categories (0-70)
+/sk:setup-optimizer     ← update CLAUDE.md, deploy missing agents/rules/hooks
+```
+
+`/sk:health` scores your project setup. `< 50` means you're leaving significant reliability on the table. `/sk:setup-optimizer` fixes the gaps.
+
+---
+
+### Summary: Which Tool for Which Situation
+
+| Situation | What to reach for |
+|-----------|------------------|
+| Starting a feature | `/sk:start` → `/sk:brainstorm` |
+| Complex architecture decision | `architect` agent before `/sk:write-plan` |
+| Database schema change | `database-architect` agent before `/sk:schema-migrate` |
+| Full-stack feature | `/sk:team` (parallel agents) |
+| Performance issues | `performance-optimizer` agent |
+| Security review | `security-reviewer` agent |
+| Code review | `code-reviewer` agent |
+| Bug investigation | `/sk:debug` + `debugger` agent |
+| Codebase cleanup | `refactor-specialist` agent |
+| Missing docs | `tech-writer` agent + `/sk:reverse-doc` |
+| CI/CD setup | `/sk:ci` + `devops-engineer` agent |
+| Mobile feature | `mobile-dev` agent |
+| New to a codebase | `/sk:reverse-doc` first |
+| Session start | Hooks auto-run, or `/sk:context` |
+| After shipping | `/sk:learn` + `/sk:retro` |
+| Monthly maintenance | `/sk:health` + `/sk:setup-optimizer` |
 
 ---
 

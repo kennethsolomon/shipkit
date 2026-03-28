@@ -105,7 +105,7 @@ Additionally, if new gate skills are added (like sk:e2e):
 **Prevention:** When the tech-debt.md entry format changes, update ALL of these files in the same commit:
 1. `skills/sk:lint/SKILL.md`
 2. `skills/sk:test/SKILL.md`
-3. `commands/sk/security-check.md`
+3. `skills/sk:security-check/SKILL.md` (moved from commands/sk/security-check.md as of v3.16.0)
 4. `skills/sk:perf/SKILL.md`
 5. `skills/sk:review/SKILL.md`
 6. `skills/sk:e2e/SKILL.md`
@@ -262,3 +262,33 @@ When enhanced hook behavior changes, update:
 2. `skills/sk:setup-claude/templates/.claude/settings.json.template`
 3. `skills/sk:setup-claude/SKILL.md`
 4. `skills/sk:setup-optimizer/SKILL.md`
+
+### [2026-03-29] New skills (batch 4 — infra upgrade) — update docs when any of these change
+**Bug:** sk:ci and sk:plugin added without tracking entries. 7 new agents added without tracking entries.
+**Root cause:** Lesson list not updated when new skills/agents were created.
+**Prevention:** When any of these change, update ALL listed files in the same commit:
+
+**sk:ci:**
+1. `skills/sk:ci/SKILL.md`
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section, Highest ROI Workflow section
+4. `.claude/docs/DOCUMENTATION.md` — sk:ci section
+5. `install.sh` — commands echo block
+
+**sk:plugin:**
+1. `skills/sk:plugin/SKILL.md`
+2. `CLAUDE.md` — commands table
+3. `README.md` — commands section
+4. `.claude/docs/DOCUMENTATION.md` — sk:plugin section
+5. `install.sh` — commands echo block
+
+**Agents (architect, performance-optimizer, database-architect, devops-engineer, tech-writer, refactor-specialist, mobile-dev):**
+When any agent definition changes, update ALL of:
+1. `.claude/agents/<agent>.md` — the root agent (for ShipKit development)
+2. `skills/sk:setup-claude/templates/.claude/agents/<agent>.md` — the template (for user projects)
+3. `README.md` — Formal Agent Definitions table
+4. `.claude/docs/DOCUMENTATION.md` — Formal Agents section
+5. `skills/sk:setup-optimizer/SKILL.md` — agent check list (Step 1.8 and Step 0 diagnose)
+
+**When adding a new agent:**
+Also update `CLAUDE.md` — update the count in Sub-Agent Patterns section if applicable.

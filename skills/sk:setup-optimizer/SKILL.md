@@ -46,7 +46,7 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 8-step flow with `/sk:gates` as single gate step
 - **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin` in the Commands table
-- **Missing agents** — checks if `.claude/agents/` exists and contains the 6 core agents: `backend-dev`, `frontend-dev`, `qa-engineer`, `code-reviewer`, `debugger`, `security-reviewer`
+- **Missing agents** — checks if `.claude/agents/` exists and contains the 13 core agents: `backend-dev`, `frontend-dev`, `mobile-dev`, `qa-engineer`, `code-reviewer`, `security-reviewer`, `performance-optimizer`, `architect`, `database-architect`, `devops-engineer`, `debugger`, `refactor-specialist`, `tech-writer`
 - **Missing rules** — checks if `.claude/rules/` exists and contains the project-relevant rule files based on detected stack (laravel.md, react.md, vue.md, tests.md, api.md, migrations.md)
 - **Stale agent frontmatter** — checks that existing agent files use the new `memory`, `model`, and `tools` frontmatter fields (agents without `memory` are degraded)
 - **Auto-skip rules** — checks for auto-skip detection rules in the workflow section
@@ -205,7 +205,12 @@ After MCP check, verify the project has formal agent definitions and path-scoped
 **Agents check:**
 
 1. Check if `.claude/agents/` directory exists
-2. Check for the 6 core agents: `backend-dev.md`, `frontend-dev.md`, `qa-engineer.md`, `code-reviewer.md`, `debugger.md`, `security-reviewer.md`
+2. Check for the 13 core agents:
+   - **Implementation:** `backend-dev.md`, `frontend-dev.md`, `mobile-dev.md`
+   - **Quality:** `qa-engineer.md`, `code-reviewer.md`, `security-reviewer.md`, `performance-optimizer.md`
+   - **Design:** `architect.md`, `database-architect.md`
+   - **Operations:** `devops-engineer.md`
+   - **Maintenance:** `debugger.md`, `refactor-specialist.md`, `tech-writer.md`
 3. For each existing agent, check if it has `memory:` and `model:` in frontmatter (older agents may be missing these)
 
 **Rules check:**
@@ -220,13 +225,20 @@ After MCP check, verify the project has formal agent definitions and path-scoped
 
 **Report status and prompt:**
 
-> "Agents: [X/6] core agents found
->   backend-dev:       [✓ / ✗ missing]
->   frontend-dev:      [✓ / ✗ missing]
->   qa-engineer:       [✓ / ✗ missing]
->   code-reviewer:     [✓ / ✗ missing]
->   debugger:          [✓ / ✗ missing]
->   security-reviewer: [✓ / ✗ missing]
+> "Agents: [X/13] core agents found
+>   backend-dev:           [✓ / ✗ missing]
+>   frontend-dev:          [✓ / ✗ missing]
+>   mobile-dev:            [✓ / ✗ missing]
+>   qa-engineer:           [✓ / ✗ missing]
+>   code-reviewer:         [✓ / ✗ missing]
+>   security-reviewer:     [✓ / ✗ missing]
+>   performance-optimizer: [✓ / ✗ missing]
+>   architect:             [✓ / ✗ missing]
+>   database-architect:    [✓ / ✗ missing]
+>   devops-engineer:       [✓ / ✗ missing]
+>   debugger:              [✓ / ✗ missing]
+>   refactor-specialist:   [✓ / ✗ missing]
+>   tech-writer:           [✓ / ✗ missing]
 >
 > Rules: [X/N] stack-relevant rules found
 >   [list relevant rules with ✓/✗]
