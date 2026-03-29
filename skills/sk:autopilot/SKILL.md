@@ -64,6 +64,13 @@ Create feature branch auto-named from the task. Do NOT ask for confirmation.
 - Run `/sk:execute-plan` (TDD green phase)
 - Auto-advance when done
 
+### 5.5. Scope Check (auto-advance)
+
+Run `/sk:scope-check` to compare the implementation against `tasks/todo.md`.
+
+- If scope creep detected: log findings, trim the excess, re-commit
+- If on-scope: auto-advance silently
+
 ### 6. Commit (auto-commit)
 
 Auto-commit with conventional commit format. Do NOT ask for commit message approval.
@@ -96,6 +103,20 @@ After confirmation:
 - Sync features (`/sk:features`)
 - Ask about release (never auto-skipped)
 
+### 8.5. Learn (auto-advance)
+
+Run `/sk:learn` to extract reusable patterns from this session.
+
+- Patterns are saved to `~/.claude/skills/learned/` automatically
+- Auto-advance after saving — no confirmation needed in autopilot
+
+### 8.6. Retro (auto-advance)
+
+Run `/sk:retro` to capture velocity, blockers, and action items for this feature.
+
+- Output is brief — 3-5 bullets covering what went well, what slowed down, and next actions
+- Appended to `tasks/progress.md`
+
 ## 3-Strike Protocol
 
 If any step fails 3 times:
@@ -111,6 +132,7 @@ If any step fails 3 times:
 | Direction approval | After brainstorm (step 1) | User must approve the approach |
 | 3-strike failure | Any step fails 3x | Needs human judgment |
 | PR push | Before creating PR (step 8) | Visible to others — always confirm |
+| Release | After step 8.6 | Never auto-skipped — always ask |
 
 Everything else auto-advances.
 

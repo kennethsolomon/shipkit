@@ -55,9 +55,12 @@ Progress is tracked via git branch + `tasks/todo.md` checkboxes.
 | 3 | Plan | `/sk:write-plan` | required |
 | 4 | Branch | `/sk:branch` | required |
 | 5 | Write Tests + Implement | `/sk:write-tests` then `/sk:execute-plan` | required |
+| 5.5 | Scope Check | `/sk:scope-check` | required |
 | 6 | Commit | `/sk:smart-commit` | required |
 | 7 | Gates | `/sk:gates` | required (hard gate) |
 | 8 | Finalize | `/sk:finish-feature` | required |
+| 8.5 | Learn | `/sk:learn` | required |
+| 8.6 | Retro | `/sk:retro` | required |
 
 ### Step Details
 
@@ -66,9 +69,12 @@ Progress is tracked via git branch + `tasks/todo.md` checkboxes.
 3.  **Plan** — run `/sk:write-plan` to write a decision-complete plan into `tasks/todo.md`. No code in this step. After the plan is written, auto-skip detection runs for step 2 if not already done.
 4.  **Branch** — run `/sk:branch` to create a feature branch auto-named from the current task.
 5.  **Write Tests + Implement** — run `/sk:write-tests` (TDD red phase), then `/sk:execute-plan` (TDD green phase). Includes `/sk:schema-migrate` if database keywords detected in the plan. Log progress to `tasks/progress.md`.
+5.5. **Scope Check** — run `/sk:scope-check` to compare implementation against `tasks/todo.md`. Trim scope creep before committing.
 6.  **Commit** — run `/sk:smart-commit` to commit tests + implementation.
 7.  **Gates** — run `/sk:gates` to execute all quality gates in optimized parallel batches (lint, test, security, perf, review, e2e). This is a **hard gate** — blocks all forward progress until every check passes. Individual gate commands (`/sk:lint`, `/sk:test`, `/sk:security-check`, `/sk:perf`, `/sk:review`, `/sk:e2e`) are still available standalone.
 8.  **Finalize** — run `/sk:finish-feature` for changelog, PR creation, `/sk:update-task`, `/sk:features` sync. Ask about `/sk:release` (never auto-skipped).
+8.5. **Learn** — run `/sk:learn` to extract reusable patterns from the session into `~/.claude/skills/learned/`.
+8.6. **Retro** — run `/sk:retro` for a brief post-ship retrospective (velocity, blockers, next actions).
 
 ### Workflow Rules
 

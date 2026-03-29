@@ -155,6 +155,20 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
 
    e) Report the PR URL to the user.
 
+8. **Capture Patterns** (`/sk:learn`)
+
+   After the PR is created, run `/sk:learn` to extract reusable patterns from this session.
+   Present extracted patterns and ask: "Save patterns? (all / 1,3 / none)"
+
+9. **Retrospective** (`/sk:retro`)
+
+   Run `/sk:retro` to capture a brief post-ship retrospective:
+   - What went well
+   - What slowed things down
+   - Top action items for next time
+
+   Output is appended to `tasks/progress.md`.
+
 ## When Done
 
 > "Feature finalized and PR created! Run `/sk:release` when ready to tag and publish."
