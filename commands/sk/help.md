@@ -21,21 +21,24 @@ Run these commands in order for a complete, quality-gated feature build.
 
 ## Feature Workflow
 
-| Command | Purpose |
-|---------|---------|
-| `/sk:brainstorm` | Explore requirements and design — **no code yet** |
-| `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |
-| `/sk:branch` | Create a feature branch from the current task |
-| `/sk:schema-migrate` | Analyze schema changes *(skip if no DB changes)* |
-| `/sk:write-tests` | TDD red: write failing tests first |
-| `/sk:execute-plan` | TDD green: implement until tests pass |
-| `/sk:smart-commit` | Conventional commit with approval |
-| `/sk:lint` | **GATE** — all linters must pass |
-| `/sk:test` | **GATE** — 100% coverage on new code |
-| `/sk:security-check` | **GATE** — 0 security issues |
-| `/sk:review` | **GATE** — blast-radius-aware self-review across 7 dimensions + cross-file impact |
-| `/sk:update-task` | Mark task done, log completion |
-| `/sk:finish-feature` | Changelog + PR creation |
+| # | Command | Purpose |
+|---|---------|---------|
+| 1 | `/sk:brainstorm` | Explore requirements and design — **no code yet** |
+| 2 | `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |
+| 3 | `/sk:branch` | Create a feature branch from the current task |
+| 4 | `/sk:schema-migrate` | Analyze schema changes *(skip if no DB changes)* |
+| 5 | `/sk:write-tests` | TDD red: write failing tests first |
+| 5 | `/sk:execute-plan` | TDD green: implement until tests pass |
+| 5.5 | `/sk:scope-check` | Trim scope creep — compare implementation to plan |
+| 6 | `/sk:smart-commit` | Conventional commit with approval |
+| 7 | `/sk:lint` | **GATE** — all linters must pass |
+| 7 | `/sk:test` | **GATE** — 100% coverage on new code |
+| 7 | `/sk:security-check` | **GATE** — 0 security issues |
+| 7 | `/sk:review` | **GATE** — blast-radius-aware self-review across 7 dimensions |
+| 7 | `/sk:e2e` | **GATE** — E2E behavioral verification (final gate) |
+| 8 | `/sk:finish-feature` | Changelog + PR creation |
+| 8.5 | `/sk:learn` | Extract reusable patterns from this session |
+| 8.6 | `/sk:retro` | Post-ship retrospective — velocity, blockers, next actions |
 
 ## Requirement Change Flow
 

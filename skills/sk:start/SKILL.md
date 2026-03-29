@@ -32,7 +32,7 @@ Read the task description from arguments. Scan for signal keywords to determine 
 | bug, fix, broken, error, regression, failing, crash, wrong | `debug` (7 steps) |
 | urgent, prod down, hotfix, emergency, critical, production, incident | `hotfix` (6 steps) |
 | config, bump, typo, copy, rename, dependency, upgrade, version, docs | `fast-track` (5 steps) |
-| *(default — no special signals)* | `feature` (8 steps) |
+| *(default — no special signals)* | `feature` (8 phases + scope check, learn, retro) |
 
 **Scope detection:**
 
@@ -84,7 +84,7 @@ Present the classification and recommendation:
 ```
 Detected: [Full-stack feature / Backend bug fix / Frontend hotfix / Small config change / etc.]
 Recommended:
-  Flow:   [feature (8 steps) / debug (7 steps) / hotfix (6 steps) / fast-track (5 steps)]
+  Flow:   [feature (8 phases) / debug (7 steps) / hotfix (6 steps) / fast-track (5 steps)]
   Mode:   [autopilot / manual]
   Agents: [team (backend + frontend + QA) / solo]
 

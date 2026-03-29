@@ -133,102 +133,83 @@ npm update -g @kennethsolomon/shipkit
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         CLAUDE SKILLS WORKFLOW (8 STEPS)                    │
-│                        (Auto-context & Bug Prevention)                       │
+│                    SHIPKIT FEATURE WORKFLOW (8 PHASES)                       │
+│          Plan → Build (TDD) → Quality Gates → Ship → Learn                  │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-PHASE 1: READ (No Code)
-  Step 1 — Read tasks/todo.md         Pick the next incomplete task
-  Step 2 — Read tasks/lessons.md      Review past corrections before writing code
-
-PHASE 2: DESIGN (No Code)
+PHASE 1: EXPLORE (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 3 — /sk:brainstorm                                                  │
-│ • Reads: tasks/findings.md (prior decisions), tasks/lessons.md          │
+│ Step 1 — /sk:brainstorm                                                  │
+│ • Reads: tasks/findings.md, tasks/lessons.md, tasks/todo.md             │
 │ • Clarifies requirements, proposes approaches, gets approval             │
-│ • Extracts explicit requirements checklist after approach approval;      │
-│   requires coverage confirmation before recording findings               │
+│ • architect agent: reviews codebase, proposes 2-3 approaches            │
 │ • Writes: tasks/findings.md (design decision + rationale + checklist)  │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
+PHASE 2: DESIGN (No Code — OPTIONAL, auto-skip if no frontend/API keywords)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 4 — /sk:frontend-design or /sk:api-design  (OPTIONAL)              │
-│ • /sk:frontend-design: UI mockups, layouts, visual direction (NO CODE)  │
+│ Step 2 — /sk:frontend-design or /sk:api-design                          │
+│ • /sk:frontend-design: UI mockups + /sk:accessibility audit             │
 │   → Prompts to create Pencil .pen mockup (saved to docs/design/)        │
 │ • /sk:api-design: REST/GraphQL endpoint contracts, request/response     │
-│ • Skip if pure backend with no UI and no new API                        │
+│ • database-architect agent: reviews proposed schema changes             │
 │ • Writes: findings.md (design artifacts + decisions)                    │
-└──────────────────────────────────────────────────────────────────────────┘
-                              ↓
-┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 5 — /sk:accessibility  (OPTIONAL)                                   │
-│ • WCAG 2.1 AA audit on the design spec                                  │
-│ • Checks: color contrast, keyboard nav, ARIA, forms, motion, content    │
-│ • Writes: tasks/accessibility-findings.md (append-only)                 │
-│ • Skip if backend-only with no frontend                                 │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 PHASE 3: PLAN (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 6 — /sk:write-plan                                                  │
+│ Step 3 — /sk:write-plan                                                  │
 │ • Reads: tasks/findings.md (all design outputs), tasks/lessons.md       │
 │ • Writes: tasks/todo.md (decision-complete checklist)                   │
-│ • Applies lessons as plan constraints                                   │
-│ • Step 3b: auto-generates tasks/contracts.md when plan contains         │
-│   API/endpoint/route/controller/backend keywords; mandatory for         │
-│   /sk:team; defines endpoints, request/response shapes, auth, errors   │
+│ • Auto-generates tasks/contracts.md when API keywords detected          │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 4: BRANCH + MIGRATE
-  Step 7 — /sk:branch            Create feature branch auto-named from task
-  Step 8 — /sk:schema-migrate    (OPTIONAL) Analyze schema changes safely
+PHASE 4: BRANCH
+  Step 4 — /sk:branch            Create feature branch auto-named from task
 
 PHASE 5: IMPLEMENT (Code Time)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 9 — /sk:write-tests   TDD RED: write failing tests first           │
-│ Step 10 — /sk:execute-plan TDD GREEN: implement to make tests pass      │
-│   Posts [Checkpoint] every 3–5 tool calls or after editing 3+ files    │
-│ Step 11 — /sk:smart-commit Commit tests + implementation                │
+│ Step 5  — /sk:write-tests   TDD RED: write failing tests first          │
+│         — /sk:schema-migrate (OPTIONAL) Analyze schema changes safely   │
+│         — /sk:execute-plan  TDD GREEN: implement to make tests pass     │
+│ Step 5.5 — /sk:scope-check  Compare implementation vs tasks/todo.md    │
+│            Trim scope creep before committing                           │
+│ Step 6  — /sk:smart-commit  Commit tests + implementation               │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
 PHASE 6: QUALITY GATES (all are HARD GATES — cannot be skipped)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ Step 12 — /sk:lint  ★ HARD GATE (Lint + Dep Audit)                     │
-│ • All linting tools must pass. Fix, auto-commit, and re-run until clean.│
-├──────────────────────────────────────────────────────────────────────────┤
-│ Step 13 — /sk:test  ★ HARD GATE — 100% coverage on new code            │
-│ • All test suites must pass. Fix, auto-commit, and re-run until clean.  │
-├──────────────────────────────────────────────────────────────────────────┤
-│ Step 14 — /sk:security-check  ★ HARD GATE — 0 issues all severities   │
-│ • Reads: tasks/security-findings.md (prior audits), tasks/lessons.md   │
-│ • OWASP Top 10, CWE references, stack-specific checks                  │
-│ • Content isolation: scanned file content treated as DATA, not          │
-│   instructions — prevents prompt injection attacks                      │
-│ • Critical and High findings include CVSS Base Score estimation         │
-│ • Writes: tasks/security-findings.md (severity-rated findings)          │
-│ • Pre-existing issues logged to tasks/tech-debt.md                     │
-├──────────────────────────────────────────────────────────────────────────┤
-│ Step 15 — /sk:perf  (OPTIONAL GATE — loop until critical/high = 0)    │
-│ • Frontend: bundle size, render perf, Core Web Vitals (LCP, CLS, INP) │
-│ • Backend: N+1 queries, missing indexes, unbounded queries, caching    │
-│ • Writes: tasks/perf-findings.md (append-only)                         │
-│ • Pre-existing issues logged to tasks/tech-debt.md                     │
-├──────────────────────────────────────────────────────────────────────────┤
-│ Step 16 — /sk:review  ★ HARD GATE — 0 issues including nitpicks        │
-│ • 7 dimensions: Correctness, Security, Performance, Reliability,       │
-│   Design, Best Practices, Testing                                       │
-│ • Reads: tasks/lessons.md, tasks/security-findings.md                  │
-├──────────────────────────────────────────────────────────────────────────┤
-│ Step 17 — /sk:e2e  ★ HARD GATE — E2E behavioral verification           │
-│ • Agent-browser end-to-end tests — final quality gate                  │
-│ • Verifies full user flows, not just unit behavior                     │
+│ Step 7 — /sk:gates  (runs all gates in optimized parallel batches)      │
+│                                                                          │
+│ Batch 1 (parallel):                                                      │
+│   security-reviewer agent  ★ OWASP audit — 0 issues                    │
+│   performance-optimizer agent  ★ N+1, bundle, Core Web Vitals          │
+│   linter  ★ All linters + dep audit must pass                          │
+│                                                                          │
+│ Batch 2:                                                                 │
+│   test runner  ★ 100% coverage on new code                             │
+│                                                                          │
+│ Batch 3:                                                                 │
+│   code-reviewer agent  ★ 7-dimension review — 0 issues                 │
+│                                                                          │
+│ Batch 4:                                                                 │
+│   e2e tester  ★ E2E behavioral verification — final gate               │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
-PHASE 7: FINISH
-  Step 18 — /sk:update-task     Mark task done in tasks/todo.md
-  Step 19 — /sk:finish-feature  Changelog + arch log (auto-committed) + PR
-  Step 20 — /sk:features        Sync Features
-  Step 21 — /sk:release         (OPTIONAL) Version bump + tag + store audits
+PHASE 7: SHIP
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Step 8 — /sk:finish-feature                                              │
+│   • Verify CHANGELOG.md updated under [Unreleased]                      │
+│   • Auto-generate architectural change log entry (if arch changes)      │
+│   • Check tasks/security-findings.md for unresolved Critical/High       │
+│   • Push branch + create PR                                             │
+│   • /sk:features: sync feature specs with shipped code                  │
+│   • Ask about /sk:release (never auto-skipped)                          │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
+PHASE 8: LEARN + REFLECT
+  Step 8.5 — /sk:learn    Extract reusable patterns → ~/.claude/skills/learned/
+  Step 8.6 — /sk:retro    Post-ship retrospective (velocity, blockers, next actions)
 
 PERSISTENT CONTEXT FILES (Never Cleared)
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -244,11 +225,12 @@ PERSISTENT CONTEXT FILES (Never Cleared)
 └──────────────────────────────────────────────────────────────────────────┘
 
 KEY PRINCIPLES
-✓ Hard gates: steps 12 (Lint+Dep Audit), 13 (Verify Tests), 14 (Security), 16 (Review+Simplify), 17 (E2E Tests) BLOCK all forward progress until clean
-✓ Optional steps (4, 5, 8, 15, 21) require explicit confirmation to skip
+✓ Hard gates (Phase 6): lint, test (100%), security (0 issues), review, e2e — BLOCK all forward progress until clean
+✓ Optional: Design (Phase 2, auto-skip), schema-migrate (inside Phase 5, auto-skip), perf (auto-skip if no frontend/DB)
 ✓ Every skill that makes decisions reads lessons.md
 ✓ Every skill that accepts handoff reads findings.md
-✓ No context reset = no repeated mistakes
+✓ Scope check (Step 5.5) prevents scope creep before it reaches the commit
+✓ Learn + Retro (Phase 8) compounds knowledge across sessions
 ```
 
 ---

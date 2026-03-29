@@ -63,7 +63,7 @@ npm install -g @kennethsolomon/shipkit && shipkit  # update globally
 | I want to... | Start here | Flow |
 |---|---|---|
 | **Not sure — just describe my task** | `/sk:start <description>` | Auto-classified |
-| **Build a new feature** | `/sk:start add <feature>` | Feature (8 steps) |
+| **Build a new feature** | `/sk:start add <feature>` | Feature (8 phases + scope check, learn, retro) |
 | **Build a full-stack feature (backend + frontend + mobile)** | `/sk:start --team add <feature>` | Feature with parallel agents |
 | **Make a small change** (config, copy, dependency bump) | `/sk:start bump lodash` | Fast-track (5 steps) |
 | **Fix a bug** | `/sk:start fix <description>` | Debug (7 steps) |
@@ -129,6 +129,9 @@ qa-engineer  (background) → writes 14 Playwright E2E scenarios while others im
 
 Backend and frontend work in isolated worktrees — zero conflicts. Results merge when both complete.
 
+**Step 5.5 — Scope Check** (`/sk:scope-check`)
+Compares everything that was implemented against `tasks/todo.md`. Flags anything that crept in beyond the plan — extra features, unrequested refactors, new files not in scope. Trims or defers the excess before committing.
+
 **Step 6 — Commit** (`/sk:smart-commit`)
 Presents the diff. You approve. Commits.
 
@@ -155,6 +158,18 @@ Each failure auto-fixes and re-runs. One squash commit per gate pass.
 
 **Step 8 — Finalize** (`/sk:finish-feature`)
 Changelog updated. PR created. Feature spec synced. Asks about release.
+
+**Step 8.5 — Learn** (`/sk:learn`)
+Extracts reusable patterns from this session:
+> "Rate limiting must be applied to all auth endpoints — security-reviewer flagged POST /login"
+
+Saved to `~/.claude/skills/learned/` — available in future sessions across all projects.
+
+**Step 8.6 — Retro** (`/sk:retro`)
+Brief post-ship retrospective — 3-5 bullets:
+- What went well (gates caught rate-limit issue before PR)
+- What slowed down (schema index discovery required re-migration)
+- Next action (add rate-limit check to write-tests template)
 
 ---
 
