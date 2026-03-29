@@ -8,12 +8,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- _Upcoming features and improvements will be listed here_
+
+### Changed
+- _Behavioral changes will be listed here_
+
+### Deprecated
+- _Features being phased out will be listed here_
+
+### Removed
+- _Features being removed will be listed here_
+
+### Fixed
+- _Bug fixes will be listed here_
+
+### Security
+- _Security fixes will be listed here_
+
+---
+
+## [v3.19.0] - 2026-03-29
+
+
+### Added
 - `sk:laravel-deploy` — new skill for deploying Laravel apps to Laravel Cloud via the `cloud` CLI; gates must pass before any deploy
 - `sk:laravel-init` now suggests installing official Laravel plugins (`laravel-simplifier` + `laravel-cloud`) after setup with a `[y/n]` prompt
 - `sk:setup-claude` Laravel Detection: added "Laravel Official Plugins" subsection prompting plugin install, "Code Refinement" sub-agent pattern referencing `laravel-simplifier` after `/sk:execute-plan`, and "Laravel Commands" section that injects `sk:laravel-deploy`/`sk:laravel-init`/`sk:laravel-new` into generated CLAUDE.md command tables
 - `laravel.md.template` — added "Code Refinement" standing rule documenting `laravel-simplifier` usage for all ShipKit-scaffolded Laravel projects
 
+
 ---
+
 
 ## [v3.18.0] - 2026-03-29
 
