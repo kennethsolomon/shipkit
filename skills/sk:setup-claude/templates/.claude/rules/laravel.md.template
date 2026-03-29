@@ -18,3 +18,14 @@ paths:
 - **Migrations**: One logical change per migration. Never modify a published migration.
 - **Config**: Access config via `config()` helper, never `env()` outside config files.
 - **Strict mode**: Models use strict mode (prevent lazy loading, silently discarding attributes, accessing missing attributes).
+
+## Code Refinement
+
+After running `/sk:execute-plan`, use the `laravel-simplifier` agent to refine recently modified PHP/Laravel code:
+- Applies PSR-12 standards and Laravel conventions
+- Reduces unnecessary nesting and complexity — prefer `match` over nested ternaries
+- Improves variable and method naming for readability
+- Never changes behavior — refine only
+
+Install once: `/plugin install laravel-simplifier@laravel`
+Invoke: "Review recent changes using the laravel-simplifier agent"

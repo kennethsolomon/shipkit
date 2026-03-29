@@ -314,6 +314,9 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:gates` | Run all quality gates in optimized parallel batches with batch checkpoint cadence |
 | `/sk:health` | Harness self-audit scorecard (7 categories, 0-70) |
 | `/sk:hotfix` | Emergency fix workflow — skip design/TDD, quality gates enforced |
+| `/sk:laravel-deploy` | Deploy Laravel app to Laravel Cloud (gates must pass first) |
+| `/sk:laravel-init` | Configure existing Laravel project with production-ready conventions |
+| `/sk:laravel-new` | Scaffold a fresh Laravel app with production-ready conventions |
 | `/sk:learn` | Extract reusable patterns from sessions into learned instincts |
 | `/sk:lint` | Auto-detect and run all project linters + dependency audits |
 | `/sk:perf` | Performance audit — bundle, N+1, Core Web Vitals, memory |
