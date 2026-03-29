@@ -6,37 +6,26 @@ license: Complete terms in LICENSE.txt
 
 ## CRITICAL: Design Phase Only — NO CODE
 
-**This skill is a design phase, not an implementation phase.**
+This skill produces design artifacts only. Implementation happens in `/sk:execute-plan`.
 
-- **DO NOT** write, edit, or generate any code (no React, no HTML/CSS/JS, no file edits)
-- **DO NOT** use file editing tools (Edit, Write, Bash)
-- **Pencil MCP tools ARE allowed** — they create visual design artifacts, not code
-- **DO produce** design direction, ASCII mockups, layout specs, component structure descriptions, color/typography decisions, and interaction notes
-- Implementation happens in `/sk:execute-plan` — not here
-
-This skill guides the design of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Output is a design artifact: a clear, decision-complete visual specification that `/sk:write-plan` and `/sk:execute-plan` can use to implement.
-
-The user provides frontend requirements: a component, page, application, or interface to design. They may include context about the purpose, audience, or technical constraints.
+- No code: no React, HTML/CSS/JS, file edits, or use of Edit/Write/Bash tools
+- Pencil MCP tools ARE allowed — they create visual design artifacts, not code
+- Produce: design direction, ASCII mockups, layout specs, component structure, color/typography decisions, interaction notes
 
 ## Before You Start
 
-1. If `tasks/findings.md` exists and has content, read it in full. Use the agreed
-   approach and requirements as the design brief — this replaces the need to ask the
-   user to re-explain what was already decided in brainstorming.
-
-2. If `tasks/lessons.md` exists, read it in full. Apply every active lesson as a
-   constraint during design — particularly any patterns flagged under **Bug** that
-   relate to frontend structure, component architecture, or styling conventions.
+1. If `tasks/findings.md` exists and has content, read it in full — use the agreed approach as the design brief.
+2. If `tasks/lessons.md` exists, read it in full — apply every active lesson as a constraint, especially Bug entries related to frontend structure, component architecture, or styling conventions.
 
 ## Design Thinking
 
-Before coding, understand the context and commit to a BOLD aesthetic direction:
+Before designing, commit to a BOLD aesthetic direction:
 - **Purpose**: What problem does this interface solve? Who uses it?
-- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
+- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc.
 - **Constraints**: Technical requirements (framework, performance, accessibility).
 - **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
 
-**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
+**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work — the key is intentionality, not intensity.
 
 Then produce a **design artifact** — not code — that includes:
 - ASCII or text-based layout mockups for key screens/states
@@ -48,24 +37,19 @@ Then produce a **design artifact** — not code — that includes:
 
 ## Frontend Aesthetics Guidelines
 
-Focus on:
-- **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
+- **Typography**: Choose beautiful, unique, unexpected fonts. Avoid generic families (Arial, Inter, Roboto, Space Grotesk). Pair a distinctive display font with a refined body font.
 - **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
-- **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
+- **Motion**: Animate for micro-interactions and effects. Prefer CSS-only for HTML; use Motion library for React. One well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
 - **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
-- **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
+- **Backgrounds & Visual Details**: Create atmosphere and depth. Add gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, grain overlays — match the aesthetic.
 
-NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
+NEVER use generic AI aesthetics: overused fonts (Inter, Roboto, Arial, system fonts, Space Grotesk), cliched purple-gradient-on-white color schemes, predictable layouts, or cookie-cutter patterns. Vary between light/dark themes, different fonts, and different aesthetics across generations.
 
-Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
-
-**IMPORTANT**: Match design detail to the aesthetic vision. Maximalist designs need elaborate layout descriptions, rich animation notes, and dense component specs. Minimalist designs need precise spacing rules, restrained color notes, and careful typographic ratios. Elegance comes from committing to the vision fully.
-
-Remember: Claude is capable of extraordinary creative thinking. Don't hold back on the design direction — show what can be envisioned when thinking outside the box and committing fully to a distinctive aesthetic.
+**IMPORTANT**: Match design detail to the aesthetic vision. Maximalist designs need elaborate layout descriptions, rich animation notes, and dense component specs. Minimalist designs need precise spacing rules, restrained color notes, and careful typographic ratios. Commit to the vision fully.
 
 ## UX Quality Constraints
 
-Apply these rules as hard constraints during design. They are organized by priority — address CRITICAL issues first, then HIGH, then MEDIUM. Skip categories irrelevant to the current design (e.g., Charts for a landing page).
+Hard constraints during design, ordered by priority. Skip categories irrelevant to the current design (e.g., Charts for a landing page).
 
 | Priority | Category | Impact | Key Rule |
 |---|---|---|---|
@@ -217,7 +201,7 @@ Apply these rules as hard constraints during design. They are organized by prior
 
 ## Professional UI Anti-Patterns
 
-These are frequently overlooked issues that make UI look unprofessional. Flag any of these in the design spec so implementation avoids them.
+Frequently overlooked issues that make UI look unprofessional. Flag any of these in the design spec.
 
 ### Icons & Visual Elements
 - **No emoji as icons** — use Heroicons, Lucide, or equivalent SVG sets
