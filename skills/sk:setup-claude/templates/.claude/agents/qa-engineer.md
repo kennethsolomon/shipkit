@@ -7,6 +7,14 @@ memory: project
 background: true
 ---
 
+<!-- DESIGN NOTE: No `isolation: worktree` by design.
+     qa-engineer runs as a background agent (background: true) alongside
+     backend-dev and frontend-dev during sk:team. It only creates test scenario
+     files (e.g., e2e/<feature>.spec.ts, tasks/e2e-scenarios.md) — never source
+     files. Its writes land in a separate directory tree from the implementation
+     agents' worktree changes, so file conflicts cannot occur. Isolation adds
+     overhead with no benefit here. -->
+
 # QA Engineer Agent
 
 You are the QA Agent in a team workflow. Your job is to write E2E test scenarios while the Backend and Frontend agents implement code in parallel.

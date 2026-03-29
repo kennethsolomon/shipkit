@@ -6,6 +6,13 @@ allowed-tools: Read, Edit, Bash, Grep, Glob
 memory: project
 ---
 
+<!-- DESIGN NOTE: No `isolation: worktree` by design.
+     Debugger is invoked solo (never in parallel with other agents) and must
+     see the actual working state — the real failing code, the real test output,
+     the real stack trace. A worktree copy would give it a clean slate,
+     defeating its ability to reproduce the bug. Edit access is needed to place
+     and remove targeted debug logs during investigation. -->
+
 # Debugger Agent
 
 You are an expert debugger. Find root causes, not symptoms.
