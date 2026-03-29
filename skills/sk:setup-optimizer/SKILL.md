@@ -55,6 +55,78 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 
 Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
+### Step 0.5: Re-detect Stack + Sync Skills/Agents/Rules
+
+After diagnosis, re-detect the project stack and sync installed skills, agents, and rules.
+
+**Reference:** Read `~/.claude/skills/sk:setup-claude/references/skill-profiles.md` for the categorization matrix.
+
+#### 1. Re-detect stack
+
+Run the same detection logic as `sk:setup-claude` Phase 0.5:
+- Scan for stack indicators (composer.json, package.json, go.mod, etc.)
+- Sub-detect database capability (Prisma, Drizzle, Laravel migrations, etc.)
+- Compare new detection against `.shipkit/config.json` current values
+
+#### 2. Diff and display changes
+
+If the detected stack or capabilities changed, display a diff:
+
+```
+Stack re-detection:
+  Stack: nextjs (unchanged)
+  Capabilities: web → web, database (prisma/schema.prisma detected)
+
+Skill changes:
+  + sk:schema-migrate  (database capability detected)
+  No removals.
+
+Agent changes:
+  + database-architect  (database capability detected)
+  No removals.
+
+Rule changes:
+  + migrations.md  (database paths)
+  No removals.
+
+Apply changes? (y/n)
+```
+
+If no changes detected, report `Stack: [stack] — no changes detected` and skip to Step 1.
+
+#### 3. Sync on confirmation
+
+If the user confirms:
+
+**Skills sync:**
+- Add newly relevant skills: copy from `~/.claude/skills/` to `.claude/skills/` in the project
+- Remove stale skills: delete from `.claude/skills/` in the project if they no longer match the detected stack
+- Never touch skills in `config.skills.extra` (user manually added)
+- Never touch skills in `config.skills.disabled` (user manually excluded)
+
+**Agent sync:**
+- Add newly relevant agents: copy from `~/.claude/agents/` to `.claude/agents/` in the project
+- Remove stale agents: delete from `.claude/agents/` in the project if they no longer match
+- Never remove user-customized agents (detect via content that differs from the template — check if file hash differs from template hash, or if file contains `<!-- EDITED -->` marker)
+
+**Rule sync:**
+- Add newly relevant rules: copy from `~/.claude/rules/` to `.claude/rules/` in the project
+- Remove stale rules: delete from `.claude/rules/` in the project if they no longer match
+- Never remove user-customized rules (same detection as agents)
+
+**Config update:**
+- Update `.shipkit/config.json` with new `stack.detected`, `stack.detected_at`, `stack.capabilities`
+
+**CLAUDE.md commands table:**
+- Regenerate the Commands table to list only currently installed skills
+
+#### 4. Upgrade path handling
+
+- If project has no `stack` field in config → treat as auto-detect (backwards compatible)
+- If capabilities expanded (e.g., added database) → suggest new skills
+- If capabilities reduced (e.g., removed a dependency) → suggest removing irrelevant skills
+- Display: `Capabilities changed: [old] → [new]. [N] skills affected. Apply? (y/n)`
+
 ### Step 1: Update Workflow
 
 If the workflow section is outdated or missing, replace it with the latest version:
@@ -200,28 +272,27 @@ After LSP check, verify the three recommended tools are configured:
 
 ### Step 1.8: Agents & Rules Check
 
-After MCP check, verify the project has formal agent definitions and path-scoped rules:
+After MCP check, verify the project has the correct agents and rules for its detected stack.
+
+**Reference:** Read `~/.claude/skills/sk:setup-claude/references/skill-profiles.md` for agent→stack and rule→stack mappings.
 
 **Agents check:**
 
 1. Check if `.claude/agents/` directory exists
-2. Check for the 13 core agents:
-   - **Implementation:** `backend-dev.md`, `frontend-dev.md`, `mobile-dev.md`
-   - **Quality:** `qa-engineer.md`, `code-reviewer.md`, `security-reviewer.md`, `performance-optimizer.md`
-   - **Design:** `architect.md`, `database-architect.md`
-   - **Operations:** `devops-engineer.md`
-   - **Maintenance:** `debugger.md`, `refactor-specialist.md`, `tech-writer.md`
-3. For each existing agent, check if it has `memory:` and `model:` in frontmatter (older agents may be missing these)
+2. Read detected stack from `.shipkit/config.json` (or re-detect if not present)
+3. Using the agent→stack mapping from `skill-profiles.md`, determine which agents this project should have:
+   - Universal agents (all projects): architect, qa-engineer, debugger, code-reviewer, security-reviewer, performance-optimizer, refactor-specialist, tech-writer, devops-engineer
+   - Stack-specific: backend-dev (backend stacks), frontend-dev (web stacks), mobile-dev (mobile stacks), database-architect (database capability)
+4. For each expected agent, check if it exists in `.claude/agents/`
+5. For each existing agent, check if it has `memory:` and `model:` in frontmatter (older agents may be missing these)
 
 **Rules check:**
 
 1. Check if `.claude/rules/` directory exists
-2. Detect project stack from `CLAUDE.md`, `package.json`, `composer.json`
-3. Check for relevant rule files based on detected stack:
-   - Laravel/PHP detected → check for `laravel.md`, `api.md`, `migrations.md`
-   - React/Next.js detected → check for `react.md`, `tests.md`, `api.md`
-   - Vue/Nuxt detected → check for `vue.md`, `tests.md`, `api.md`
-   - Any stack → check for `tests.md`
+2. Using the rule→stack mapping from `skill-profiles.md`, determine which rules this project should have:
+   - Universal rules (all projects): tests.md, api.md
+   - Stack-specific: laravel.md (Laravel), react.md (React/Next.js), vue.md (Vue/Nuxt), migrations.md (database capability)
+3. Check for each expected rule file
 
 **Report status and prompt:**
 

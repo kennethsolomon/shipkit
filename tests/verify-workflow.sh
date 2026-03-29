@@ -144,7 +144,7 @@ assert_contains \
 
 assert_contains \
   "sk:security-check has Fix & Retest Protocol" \
-  "$REPO/commands/sk/security-check.md" \
+  "$REPO/skills/sk:security-check/SKILL.md" \
   "Fix & Retest Protocol"
 
 assert_contains \
@@ -314,9 +314,9 @@ assert_contains \
 # Command templates — breadcrumb flow lines
 for tpl in brainstorm write-plan execute-plan security-check finish-feature; do
   assert_contains \
-    "templates/commands/${tpl}.md.template breadcrumb has E2E Tests" \
+    "templates/commands/${tpl}.md.template breadcrumb has Gates" \
     "$REPO/skills/sk:setup-claude/templates/commands/${tpl}.md.template" \
-    "E2E Tests"
+    "Gates"
 done
 
 # DOCUMENTATION.md
@@ -456,12 +456,12 @@ assert_contains \
 
 assert_contains \
   "sk:security-check report uses checkbox format" \
-  "$REPO/commands/sk/security-check.md" \
+  "$REPO/skills/sk:security-check/SKILL.md" \
   "\- \[ \]"
 
 assert_contains \
   "sk:security-check report has Passed Checks section" \
-  "$REPO/commands/sk/security-check.md" \
+  "$REPO/skills/sk:security-check/SKILL.md" \
   "Passed Checks"
 
 # ── Milestone 5: sk:dashboard Skill ──────────────────────────────────────────
@@ -730,7 +730,7 @@ assert_contains \
 
 assert_contains \
   "sk:security-check fix loop includes squash commit" \
-  "$REPO/commands/sk/security-check.md" \
+  "$REPO/skills/sk:security-check/SKILL.md" \
   "squash"
 
 assert_contains \
@@ -756,7 +756,7 @@ assert_contains \
 
 assert_contains \
   "sk:security-check references tasks/tech-debt.md" \
-  "$REPO/commands/sk/security-check.md" \
+  "$REPO/skills/sk:security-check/SKILL.md" \
   "tech-debt.md"
 
 assert_contains \
@@ -1944,12 +1944,12 @@ assert_contains \
 
 assert_contains \
   "sk:security-check has content isolation rule" \
-  "$REPO/commands/sk/security-check.md" \
+  "$REPO/skills/sk:security-check/SKILL.md" \
   "content isolation"
 
 assert_contains \
   "sk:security-check has CVSS scoring" \
-  "$REPO/commands/sk/security-check.md" \
+  "$REPO/skills/sk:security-check/SKILL.md" \
   "CVSS"
 
 assert_contains \

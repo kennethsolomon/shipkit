@@ -6,7 +6,7 @@ argument-hint: "[--revise] [URL or brief]"
 
 # /sk:website — Client Website Builder
 
-Turn a brief, URL, or one sentence into a production-ready multi-page marketing website with real copy, real SEO, and a full client handoff package. Runs autonomously from intake to delivery.
+Turn a brief, URL, or one sentence into a production-ready multi-page marketing website with real copy, real SEO, and a full client handoff package.
 
 ## This is NOT sk:mvp
 
@@ -20,7 +20,7 @@ Turn a brief, URL, or one sentence into a production-ready multi-page marketing 
 
 ## Hard Rules
 
-- **Real copy always** — never Lorem ipsum, never `[Your Headline Here]`. Extract real facts and write specific copy.
+- **Real copy always** — never Lorem ipsum, never `[Your Headline Here]`. Extract real facts, write specific copy.
 - **Multi-page by default** — Home, About, Services/Menu, Contact + niche-specific extras.
 - **Default stack: Next.js + Tailwind** — always respect existing project stack.
 - **WhatsApp is default contact for local businesses in PH/SEA** — auto-detect and inject.
@@ -39,14 +39,12 @@ Turn a brief, URL, or one sentence into a production-ready multi-page marketing 
 | `/sk:website --revise` | Revision mode (Steps R1–R6) |
 | `/sk:website --stack nuxt` | Full build mode using Nuxt 3 + Vue 3 |
 | `/sk:website --stack laravel` | Full build mode using Laravel 11 + Blade |
-| `/sk:website --deploy` | Full build mode + Step 8 (deploy to Vercel/Netlify after build) |
+| `/sk:website --deploy` | Full build mode + Step 8 (deploy after build) |
 | Flags combine freely | e.g., `--stack nuxt --deploy`, `--stack laravel --revise` |
 
 ---
 
 ## Stack Detection
-
-Determines which stack reference file to load in Step 3.
 
 | Priority | Signal | Stack |
 |---|---|---|
@@ -67,20 +65,16 @@ Read the matched stack reference at the start of Step 3 before writing any code.
 
 Accept any input. Never block on a missing detail — infer and proceed.
 
-**Option A: URL input**
-
-Use WebFetch to extract facts from any URL the user provides:
-- **Google Maps URL** → business name, category, address, phone, hours, rating count, description
-- **Existing website URL** → name, tagline, services list, contact details, current copy, page structure
-- **Facebook/Instagram business page** → name, description, contact, category
+**Option A: URL input** — Use WebFetch to extract:
+- Google Maps URL → business name, category, address, phone, hours, rating count, description
+- Existing website URL → name, tagline, services, contact details, copy, page structure
+- Facebook/Instagram business page → name, description, contact, category
 
 If WebFetch fails (JS-only page, redirect, paywall): fall back to Option B immediately. Don't retry.
 
-**Option B: Plain text / one sentence**
+**Option B: Plain text / one sentence** — Extract: business name, type, location, services, CTA intent. Infer reasonable defaults for anything missing.
 
-Extract: business name, type, location, services, CTA intent. Infer reasonable defaults for anything missing.
-
-**After extraction**, display a compact confirmation and auto-proceed:
+**After extraction**, display and auto-proceed:
 
 ```
 [Business Name] — [Type], [Location]
@@ -93,49 +87,28 @@ Stack: [detected stack — Next.js / Nuxt 3 / Laravel]
 Building...
 ```
 
-Do NOT wait for approval — auto-advance unless extracted facts are clearly ambiguous or contradictory.
+Auto-advance unless extracted facts are clearly ambiguous or contradictory.
 
 ---
 
 ### Step 2 — Parallel Research
 
-Launch 3 agents simultaneously using the Agent tool (all in a single message, `subagent_type="general-purpose"`):
+Launch 3 agents simultaneously via Agent tool (all in one message, `subagent_type="general-purpose"`):
 
 **Agent 1 — Strategy Agent**
-- Detect niche from business type using the niche detection table at the bottom of this file.
-- Read `references/niche/[detected-niche].md`.
-- Plan: final page set, sitemap, per-page section structure, CTA flow across all pages, shared nav/footer structure.
-- Output a structured plan with all pages + section outlines.
+- Detect niche using the niche detection table below. Read `references/niche/[detected-niche].md`.
+- Output: final page set, sitemap, per-page section structure, CTA flow, shared nav/footer structure.
 
 **Agent 2 — Copy Agent**
-- Read `references/content-seo.md`.
-- Read `references/niche/[detected-niche].md` for industry-specific messaging rules.
-- Write real copy using ONLY facts from Step 1. Never invent:
-  - Hero headline + subheadline (specific to this business)
-  - About section copy
-  - Services/offerings copy (use real service names from the brief)
-  - CTA copy aligned with the primary action
-  - Footer tagline
-  - Page title tag + meta description for every page
-  - H1 for every page
-- Output all copy ready to inject directly into the build.
+- Read `references/content-seo.md` and `references/niche/[detected-niche].md`.
+- Write real copy using ONLY facts from Step 1. Never invent.
+- Output (ready to inject): hero headline + subheadline, about section, services copy, CTA copy, footer tagline, title tag + meta description + H1 for every page.
 
 **Agent 3 — Art Direction Agent**
 - Read `references/art-direction.md`.
-- Based on business type + location + tone keywords in the brief, determine:
-  - Dominant aesthetic direction (one of 7 — see reference)
-  - 2–4 signature design moves
-  - Typography pairing (display + body, not system fonts)
-  - Custom color palette (NOT default Tailwind palette colors)
-  - Motion stance
-- Output a complete design spec for the build step.
+- Output: dominant aesthetic direction (one of 7), 2–4 signature design moves, typography pairing (display + body, not system fonts), custom color palette (NOT default Tailwind colors), motion stance.
 
-Each agent writes its output to a temp doc before returning:
-- Agent 1 → structured sitemap + per-page section outline (markdown)
-- Agent 2 → all copy, organized by page and section (markdown)
-- Agent 3 → aesthetic direction, signature moves, typography, palette hex codes, motion stance (markdown)
-
-Collect all 3 agent outputs before proceeding to Step 3.
+Each agent writes output to a temp doc. Collect all 3 before proceeding.
 
 ---
 
@@ -144,82 +117,70 @@ Collect all 3 agent outputs before proceeding to Step 3.
 Implement the full site using all 3 agent outputs as inputs.
 
 **3a. Project setup**
-- Run stack detection (see Stack Detection table above). Read the matched `references/stacks/[stack].md` file before writing any code.
-- Detect existing framework. If present, work within it and preserve conventions.
-- If no framework: scaffold using the detected stack reference (Next.js by default, or Nuxt/Laravel if flagged).
-- Apply the custom color palette from the art direction spec to `tailwind.config.js` / `tailwind.config.ts`.
-- Configure typography (Google Fonts — see stack reference for the correct import method per stack).
+- Run stack detection (see table above). Read `references/stacks/[stack].md` before writing any code.
+- If existing framework: work within it, preserve conventions.
+- If no framework: scaffold using detected stack reference.
+- Apply custom color palette to `tailwind.config.js` / `tailwind.config.ts`.
+- Configure typography (Google Fonts — see stack reference for correct import method).
 
 **3b. Site configuration**
-- Create a typed site config file (`content/site.ts` or equivalent) with all pages, copy, and metadata from the research agents.
-- Organize for easy future editing — named fields, not magic strings.
+- Create typed site config (`content/site.ts` or equivalent) with all pages, copy, and metadata from research agents. Named fields, not magic strings.
 
-**3c. Page generation**
-For each page in the sitemap:
-1. Implement with semantic HTML (landmarks, heading hierarchy, descriptive links).
-2. Inject real copy from the Copy Agent — no placeholders anywhere.
+**3c. Page generation** — for each page in the sitemap:
+1. Semantic HTML (landmarks, heading hierarchy, descriptive links).
+2. Inject real copy from Copy Agent — no placeholders.
 3. Apply visual system from Art Direction Agent (typography, palette, design moves).
-4. Add per-page SEO: unique title tag, meta description, canonical, OG/Twitter tags.
-5. Add structured data where appropriate (LocalBusiness, Organization, BreadcrumbList).
-6. Ensure responsiveness: mobile, tablet, desktop.
+4. Per-page SEO: unique title tag, meta description, canonical, OG/Twitter tags.
+5. Structured data where appropriate (LocalBusiness, Organization, BreadcrumbList).
+6. Responsive: mobile, tablet, desktop.
 
 **3d. WhatsApp CTA injection**
-Read `references/whatsapp-cta.md`.
+Read `references/whatsapp-cta.md`. Auto-detect SEA local business using the detection table below.
 
-Auto-detect SEA local business using the detection table at the bottom of this file.
-
-Conditions for injection (ANY of these):
-- Location explicitly in PH/SEA signals table AND business is local type
-- Business is local type AND location is unknown (default to inject with placeholder)
+Inject when ANY of:
+- Location in PH/SEA signals table AND business is local type
+- Business is local type AND location is unknown (inject with placeholder)
 - User explicitly mentioned WhatsApp in the brief
-
-Implementation — use the stack-appropriate pattern:
 
 | Stack | Component pattern |
 |---|---|
-| Next.js | `components/WhatsAppButton.tsx` (React TSX `'use client'` component) — see `references/stacks/nextjs.md` |
-| Nuxt 3 | `components/WhatsAppButton.vue` (Vue SFC with `defineProps`) — see `references/stacks/nuxt.md` |
-| Laravel | `resources/views/components/whatsapp-button.blade.php` (Blade partial with `@props`) — see `references/stacks/laravel.md` |
+| Next.js | `components/WhatsAppButton.tsx` (`'use client'`) — see `references/stacks/nextjs.md` |
+| Nuxt 3 | `components/WhatsAppButton.vue` (`defineProps`) — see `references/stacks/nuxt.md` |
+| Laravel | `resources/views/components/whatsapp-button.blade.php` (`@props`) — see `references/stacks/laravel.md` |
 
-- Wire to extracted phone number (E.164 without `+`: e.g., `639171234567`), or use `[PHONE]` placeholder with a clear note for the client
-- Position: fixed bottom-right floating button
-
-If Messenger is preferred (user mentioned it, or location is Philippines): implement Messenger alternative from reference.
+- Wire to extracted phone (E.164 without `+`: e.g., `639171234567`), or use `[PHONE]` placeholder with client note.
+- Position: fixed bottom-right floating button.
+- If Messenger preferred (user mentioned it, or location is Philippines): implement Messenger alternative from reference.
 
 **3e. Contact handling**
 
-Choose based on business type:
-- **Local hospitality** (cafe, restaurant): WhatsApp button + simple reservation/inquiry form
-- **Service business**: inquiry form with honeypot protection + WhatsApp fallback
-- **Professional services**: consultation booking form
-- **SaaS/product**: contact form + optional demo CTA
-- **Portfolio**: minimal contact form or email link
+| Business type | Contact implementation |
+|---|---|
+| Local hospitality (cafe, restaurant) | WhatsApp button + reservation/inquiry form |
+| Service business | Inquiry form with honeypot + WhatsApp fallback |
+| Professional services | Consultation booking form |
+| SaaS/product | Contact form + optional demo CTA |
+| Portfolio | Minimal contact form or email link |
 
 **3f. Sitemap + robots**
-Generate `sitemap.xml` and `robots.txt` where the framework supports it (Next.js: `app/sitemap.ts`, `app/robots.ts`).
+Generate `sitemap.xml` and `robots.txt` (Next.js: `app/sitemap.ts`, `app/robots.ts`).
 
 ---
 
 ### Step 4 — Lighthouse Enforcement Loop
 
 **If Playwright MCP is available:**
-1. Start the dev server.
-2. Run Lighthouse on each page.
-3. Target: Performance ≥ 90, Accessibility ≥ 90, SEO ≥ 90, Best Practices ≥ 90.
-4. For any page failing:
-   - Read the specific failing audit items.
-   - Fix: image sizing, missing meta tags, contrast, heading order, font loading, etc.
-   - Re-run Lighthouse on that page only.
-5. Repeat until all pages pass all 4 categories.
-6. Maximum 3 fix iterations per page. If still failing after 3: flag specific issues to the user and proceed.
+1. Start dev server.
+2. Run Lighthouse on each page. Target: Performance ≥ 90, Accessibility ≥ 90, SEO ≥ 90, Best Practices ≥ 90.
+3. For any failing page: read failing audit items, fix (image sizing, missing meta, contrast, heading order, font loading), re-run that page only.
+4. Repeat until all pages pass all 4 categories. Max 3 fix iterations per page — if still failing, flag to user and proceed.
 
-**If Playwright MCP is NOT available:**
-Run a static quality pass instead:
-- Every page has a unique title and meta description ✓
+**If Playwright MCP is NOT available** — static quality pass:
+- Every page has unique title and meta description ✓
 - No duplicate H1s, no skipped heading levels ✓
 - All images have descriptive alt text ✓
-- Color contrast is not obviously broken (verify palette choices) ✓
-- Sitemap + robots.txt are generated ✓
+- Color contrast not obviously broken ✓
+- Sitemap + robots.txt generated ✓
 - `next build` (or equivalent) passes without errors ✓
 
 Report: `Quality: [N] issues fixed. Build passing.`
@@ -228,9 +189,7 @@ Report: `Quality: [N] issues fixed. Build passing.`
 
 ### Step 5 — Launch Audit
 
-Read `references/launch-checklist.md`.
-
-Run through all 5 audit categories:
+Read `references/launch-checklist.md`. Run all 5 audit categories:
 1. Search and metadata
 2. Conversion and content
 3. Accessibility and UX
@@ -243,24 +202,21 @@ Fix all blockers immediately. Log medium-priority and optional polish items for 
 
 ### Step 6 — Handoff Package
 
-Read `references/handoff-template.md`.
+Read `references/handoff-template.md`. Generate 3 files at project root:
 
-Generate 3 files at the project root using the templates:
-
-**`HANDOFF.md`** — Client-facing project summary:
+**`HANDOFF.md`** — Client-facing:
 - What was built (pages, features, integrations)
 - What needs replacing (image placeholders, phone numbers, API keys)
 - How to make simple content edits with specific file paths
 - Contact for technical help
 
 **`DEPLOY.md`** — Deployment guide:
-- Vercel one-click deploy + CLI steps
-- Netlify as alternative
+- Vercel one-click deploy + CLI steps; Netlify as alternative
 - Required environment variables with descriptions
 - Domain configuration steps
 - Estimated monthly cost (Vercel free tier, domain ~$12/yr)
 
-**`CONTENT-GUIDE.md`** — Non-technical editing guide (written FOR the client):
+**`CONTENT-GUIDE.md`** — Non-technical editing (written FOR the client):
 - Plain language: "To change your opening hours, open `content/site.ts` and find `hours:`"
 - Covers: business name, tagline, contact details, services list, hours, social links
 - No developer jargon
@@ -294,22 +250,16 @@ Generate 3 files at the project root using the templates:
 
 ### Step 8 — Deploy (only when `--deploy` flag is provided)
 
-**Skip this step entirely if `--deploy` was NOT passed.** DEPLOY.md covers manual deploy for all cases.
+Skip entirely if `--deploy` was NOT passed. DEPLOY.md covers manual deploy for all cases.
 
 **8a. Detect deploy tool**
-
-Check for Vercel CLI first, then Netlify CLI as fallback:
-
 ```
 vercel --version  → if found: use Vercel
 netlify --version → if found: use Netlify
 neither found     → skip deploy, instruct user (see 8c)
 ```
 
-**8b. Confirm before deploying**
-
-ALWAYS ask before running any deploy command — this is a visible external action:
-
+**8b. Confirm before deploying** — ALWAYS ask before running any deploy command:
 ```
 Ready to deploy to [Vercel/Netlify]? (y/n)
 
@@ -318,39 +268,27 @@ This will push the site live. Make sure:
 - Environment variables are configured
 - The client has approved the build
 ```
-
-Wait for explicit `y`. Never auto-deploy without user confirmation.
+Wait for explicit `y`. Never auto-deploy.
 
 **8c. If no CLI found**
-
 ```
 Vercel CLI not found. To deploy manually:
 1. Run: npm install -g vercel
 2. Run: vercel --prod
    (or follow DEPLOY.md for Netlify or other hosts)
-
-DEPLOY.md has been generated with full step-by-step instructions.
 ```
 
 **8d. Deploy**
-
-For Vercel:
 ```bash
-vercel --prod
+vercel --prod        # Vercel
+netlify deploy --prod  # Netlify
 ```
-
-For Netlify:
-```bash
-netlify deploy --prod
-```
-
-For Laravel (no Vercel/Netlify support): output the recommended hosts and point to DEPLOY.md.
+For Laravel (no Vercel/Netlify support): output recommended hosts and point to DEPLOY.md.
 
 **8e. After successful deploy**
-
 1. Display the live URL.
-2. Update `HANDOFF.md`: append a "Live URL" section with the URL and deploy date.
-3. Update `DEPLOY.md`: mark step as "Deployed" with the live URL.
+2. Update `HANDOFF.md`: append "Live URL" section with URL and deploy date.
+3. Update `DEPLOY.md`: mark as "Deployed" with live URL.
 
 ```
 ## [Business Name] — Deployed
@@ -365,36 +303,30 @@ Update HANDOFF.md with the final custom domain once DNS is configured.
 
 ## Revision Mode (`--revise`)
 
-Use after the initial build when the client has feedback.
-
 ### Step R1 — Read current state
-- Read existing site files.
-- Read `HANDOFF.md` if it exists for context on what was built.
+- Read existing site files and `HANDOFF.md` (if exists) for build context.
 
 ### Step R2 — Collect changes
-
-If not already provided in the invocation, ask:
+If not provided in the invocation, ask:
 > **What changes does the client want?**
 > Plain language — e.g., "make the hero warmer", "add a gallery section", "update the CTA to Book a Table", "the mobile nav is broken"
 
 ### Step R3 — Classify and apply
 
-For each change, identify type and act:
-
 | Type | Examples | Action |
 |---|---|---|
 | Copy change | Updated headline, new CTA text, service names | Direct edit to config/content file |
 | Style change | Warmer colors, bigger fonts, more spacing | Targeted Tailwind/CSS edit only |
-| Structure change | New section, new page, reordering sections | Implement using existing component patterns |
+| Structure change | New section, new page, reordering | Implement using existing component patterns |
 | Feature change | Gallery, new contact form, WhatsApp, map | Implement + update handoff docs |
 
-**Rule: never rebuild the whole site for targeted feedback.** Edit only what changed.
+Never rebuild the whole site for targeted feedback. Edit only what changed.
 
 ### Step R4 — Quality re-check
-Run the same Lighthouse/quality checks from Step 4. Fix any regressions introduced by the changes.
+Run same Lighthouse/quality checks from Step 4. Fix any regressions.
 
 ### Step R5 — Update handoff docs
-If the structure changed (new page, new section), update `HANDOFF.md` and `CONTENT-GUIDE.md` with new file references and editing instructions.
+If structure changed (new page, new section), update `HANDOFF.md` and `CONTENT-GUIDE.md` with new file references and editing instructions.
 
 ### Step R6 — Summarize
 ```
@@ -411,7 +343,7 @@ If the structure changed (new page, new section), update `HANDOFF.md` and `CONTE
 
 ## Niche Detection
 
-Auto-detect from brief text. Read the matched reference file in Step 2.
+Auto-detect from brief text. Read matched reference file in Step 2.
 
 | Business type signals | Reference file |
 |---|---|
@@ -435,10 +367,10 @@ Auto-detect from brief text. Read the matched reference file in Step 2.
 
 ## SEA Location Detection
 
-Used in Step 3d to determine WhatsApp CTA injection.
+Used in Step 3d for WhatsApp CTA injection.
 
 Inject when ALL of:
-1. Business is a local business (not SaaS, not portfolio, not ecommerce-only)
+1. Business is local (not SaaS, not portfolio, not ecommerce-only)
 2. Location matches any signal below OR location is unknown
 
 | Location signals | Region |
@@ -457,9 +389,9 @@ When location is unknown and business is local: inject with `+[PHONE]` placehold
 
 ## Model Routing
 
-Read `.shipkit/config.json` from the project root if it exists.
+Read `.shipkit/config.json` from project root if it exists.
 
-- If `model_overrides["sk:website"]` is set, use that model — it takes precedence.
+- If `model_overrides["sk:website"]` is set, use that model — takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.
 
 | Profile | Orchestrator | Research agents (Step 2) | Build agent (Step 3) |

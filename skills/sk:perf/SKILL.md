@@ -8,31 +8,28 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Agent
 
 ## Purpose
 
-Audit the implementation for performance issues before the final review. This skill identifies issues, produces a findings report, fixes in-scope critical/high findings immediately, and auto-commits. Pre-existing findings outside the branch diff are logged to `tasks/tech-debt.md`.
-
-Run this skill after implementing and passing lint/tests, but before `/sk:review`.
+Audit the implementation for performance issues before `/sk:review`. Produces a findings report, fixes in-scope critical/high findings, auto-commits. Pre-existing findings (outside branch diff) are logged to `tasks/tech-debt.md`.
 
 ## Hard Rules
 
-- **Fix all critical and high in-scope findings** (files in `git diff main..HEAD --name-only`) immediately after the audit. Re-run the audit until critical/high = 0. Once clean, make ONE squash commit: `fix(perf): resolve performance findings`.
-- **Medium/low in-scope findings:** fix them in the same pass if straightforward, otherwise log to `tasks/tech-debt.md`.
-- **Pre-existing findings** (files outside the current branch diff): log to `tasks/tech-debt.md` using this format — do NOT fix inline:
+- Fix all critical and high in-scope findings (files in `git diff main..HEAD --name-only`). Re-run until critical/high = 0. ONE squash commit: `fix(perf): resolve performance findings`.
+- Medium/low in-scope: fix if straightforward, otherwise log to `tasks/tech-debt.md`.
+- Pre-existing findings (outside branch diff): log only — do NOT fix inline:
   ```
   ### [YYYY-MM-DD] Found during: sk:perf
   File: path/to/file.ext:line
   Issue: description of the performance issue
   Severity: critical | high | medium | low
   ```
-- **Squash gate commits** — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
-- **Every finding must cite a specific file and line number.**
-- **Every finding must include an estimated impact** (high/medium/low) and a recommendation.
-- **Auto-detect the stack** — only run checks relevant to what's present.
+- Squash gate commits — one commit per pass, not per fix.
+- Every finding must cite a specific file:line, estimated impact (high/medium/low), and a recommendation.
+- Auto-detect stack — only run checks relevant to what's present.
 
 ## Before You Start
 
-1. Detect the stack: read `CLAUDE.md`, check for `package.json`, `composer.json`, `go.mod`, `requirements.txt`, `Cargo.toml`, etc.
-2. Determine scope: `git diff main..HEAD --name-only` to find changed files.
-3. If `tasks/perf-findings.md` exists, read it — check if prior findings have been addressed.
+1. Detect stack: read `CLAUDE.md`, check for `package.json`, `composer.json`, `go.mod`, `requirements.txt`, `Cargo.toml`.
+2. Determine scope: `git diff main..HEAD --name-only`.
+3. If `tasks/perf-findings.md` exists, read it — check if prior findings were addressed.
 4. If `tasks/lessons.md` exists, read it — apply performance-related lessons.
 
 ## Stack Detection
@@ -120,7 +117,7 @@ Run this skill after implementing and passing lint/tests, but before `/sk:review
 
 ## Generate Report
 
-Write findings to `tasks/perf-findings.md`:
+Write findings to `tasks/perf-findings.md` (never overwrite — append with date header):
 
 ```markdown
 # Performance Audit — YYYY-MM-DD
@@ -167,13 +164,11 @@ Write findings to `tasks/perf-findings.md`:
 | **Total** | **N** | **N**            |
 ```
 
-**Never overwrite** `tasks/perf-findings.md` — append new audits with a date header.
-
-The report is written first, then fixes are applied to in-scope critical/high findings.
+Write the report first, then apply fixes.
 
 ## Fix Critical/High Findings via Agent
 
-If Critical or High findings exist, invoke the **`performance-optimizer` agent** to apply fixes:
+Invoke the **`performance-optimizer`** agent:
 
 ```
 Task: "Read tasks/perf-findings.md. Fix all Critical and High in-scope findings
@@ -181,40 +176,26 @@ Task: "Read tasks/perf-findings.md. Fix all Critical and High in-scope findings
 pass before AND after. Commit: fix(perf): resolve performance findings"
 ```
 
-The `performance-optimizer` agent works in worktree isolation and runs tests around every fix. After it completes, merge its worktree branch and verify the fix in `tasks/perf-findings.md`.
+Agent works in worktree isolation. After completion, merge its worktree branch and verify fixes in `tasks/perf-findings.md`.
+
+## Fix & Retest Protocol
+
+| Fix type | Action |
+|----------|--------|
+| Config/infrastructure (cache headers, compression, CDN config, pool size) | Commit → re-run `/sk:perf`. No test update needed. |
+| Logic change (N+1 fix, algorithm refactor, pagination, data structure) | 1) Update/add failing tests 2) `/sk:test` at 100% 3) Commit tests+fix together 4) Re-run `/sk:perf` |
+
+Logic changes include: N+1 fix (query count/data shape), algorithm change (output correctness), pagination (result set size). Tests must verify the optimized path produces correct results.
 
 ## When Done
-
-Tell the user:
 
 > "Performance audit complete. Findings saved to `tasks/perf-findings.md`.
 > - **Critical:** N | **High:** N | **Medium:** N | **Low:** N
 >
 > All critical/high in-scope findings have been fixed and committed. Pre-existing issues logged to `tasks/tech-debt.md`. Run `/sk:review` to proceed."
 
-If there are no critical or high findings:
+If no critical/high findings:
 > "No critical or high performance issues found. N medium/low findings noted in `tasks/perf-findings.md`. Run `/sk:review` to proceed."
-
----
-
-## Fix & Retest Protocol
-
-When applying a performance fix, classify it before committing:
-
-**a. Config/infrastructure change** (adding cache headers, enabling compression, changing CDN config, adjusting connection pool size) → commit and re-run `/sk:perf`. No test update needed.
-
-**b. Logic change** (fixing N+1 query by changing data-fetching logic, refactoring algorithm, modifying data structure, changing pagination logic) → trigger protocol:
-1. Update or add failing unit tests for the new optimized behavior
-2. Re-run `/sk:test` — must pass at 100% coverage
-3. Commit (tests + fix together in one commit)
-4. Re-run `/sk:perf` to verify the fix resolved the finding
-
-**Common logic-change performance fixes:**
-- N+1 fix: changes how related data is fetched → update tests that assert on query count or data shape
-- Algorithm change: O(n²) → O(n log n) → update tests that assert on output correctness
-- Pagination: adding LIMIT/offset → update tests that assert on result set size
-
-**Why:** Performance fixes often change how data is fetched or processed. Tests must verify the optimized path produces correct results.
 
 ---
 

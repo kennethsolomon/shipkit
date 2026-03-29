@@ -1634,6 +1634,84 @@ When templates improve (e.g., new guidance in `/sk:finish-feature`), running `/r
 
 ---
 
+## Config Reference
+
+ShipKit stores project configuration in `.shipkit/config.json`. This file is created by `/sk:setup-claude` and updated by `/sk:setup-optimizer`.
+
+### Schema
+
+```json
+{
+  "profile": "full-sail",
+  "stack": {
+    "detected": "nextjs",
+    "detected_at": "2026-03-29",
+    "capabilities": ["web", "database"]
+  },
+  "skills": {
+    "extra": [],
+    "disabled": ["sk:website"]
+  }
+}
+```
+
+### Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `profile` | string | Model routing profile: `full-sail`, `quality`, `balanced`, `budget` |
+| `stack.detected` | string | Auto-detected stack: `laravel`, `nextjs`, `nuxt`, `react`, `vue`, `svelte`, `expo`, `react-native`, `flutter`, `express`, `go`, `rust`, `python`, `rails` |
+| `stack.detected_at` | string | ISO date of last detection |
+| `stack.capabilities` | array | Derived capabilities: `web`, `database`, `api`, `mobile`, `laravel` |
+| `skills.extra` | array | Force-add skills not auto-detected (never overwritten by re-detection) |
+| `skills.disabled` | array | Force-remove skills from installation (never overwritten by re-detection) |
+
+### Stack Detection Priority
+
+Detection checks files in priority order (first match wins):
+
+| Priority | Signal | Stack | Capabilities |
+|----------|--------|-------|-------------|
+| 1 | `composer.json` + `laravel/framework` | laravel | web, database, api |
+| 2 | `package.json` + `next` | nextjs | web |
+| 3 | `package.json` + `nuxt` | nuxt | web |
+| 4 | `package.json` + `react` (no next) | react | web |
+| 5 | `package.json` + `vue` (no nuxt) | vue | web |
+| 6 | `app.json` or `app.config.ts` | expo | mobile |
+| 7 | `react-native.config.js` | react-native | mobile |
+| 8 | `pubspec.yaml` | flutter | mobile |
+| 9 | `package.json` + `express` | express | api |
+| 10 | `go.mod` | go | api |
+| 11 | `Cargo.toml` | rust | api |
+| 12 | `pyproject.toml` / `requirements.txt` | python | api |
+| 13 | `Gemfile` + `rails` | rails | web, database, api |
+
+Database capability is added automatically when ORM config files are detected (Prisma, Drizzle, Laravel migrations, Alembic, Rails migrations).
+
+### Model Routing Profiles
+
+Each profile maps to a model per skill:
+
+| Profile | Planning skills | Gate skills | Utility skills |
+|---------|----------------|-------------|----------------|
+| `full-sail` | opus (inherit) | opus (inherit) | opus (inherit) |
+| `quality` | opus (inherit) | sonnet | sonnet |
+| `balanced` | sonnet | sonnet | haiku |
+| `budget` | sonnet | haiku | haiku |
+
+Individual skills can be overridden via `model_overrides`:
+```json
+{
+  "model_overrides": {
+    "sk:review": "opus"
+  }
+}
+```
+
+See [skill-profiles.md](../../skills/sk:setup-claude/references/skill-profiles.md) for the full skill/agent/rule mapping per stack.
+
+---
+
 ## Requirements
 
 - [Claude Code CLI](https://claude.ai/code) installed and configured

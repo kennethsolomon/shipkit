@@ -7,16 +7,9 @@ description: "Sync docs/sk:features/ specs with the current codebase. Auto-detec
 
 # /sk:features
 
-Keep feature specifications in `docs/sk:features/` in sync with the actual codebase.
-Works with **any project** — framework-agnostic, auto-discovers source structure.
+Keep feature specifications in `docs/sk:features/` in sync with the actual codebase. Framework-agnostic, auto-discovers source structure.
 
-## What This Does
-
-Maintains `docs/sk:features/` as a platform-agnostic feature specification system —
-the single source of truth shared between web, mobile, and any other platform
-that uses the same backend. Each spec covers: DB schema, business logic, API
-contract, permissions, edge cases, error states, web/mobile UI behavior, and
-platform divergences.
+Maintains `docs/sk:features/` as a platform-agnostic feature specification system — single source of truth for web, mobile, and any other platform sharing the same backend. Each spec covers: DB schema, business logic, API contract, permissions, edge cases, error states, web/mobile UI behavior, and platform divergences.
 
 ---
 
@@ -24,33 +17,23 @@ platform divergences.
 
 ### Step 1: Detect Project State
 
-Check what exists:
-
 ```bash
 ls docs/sk:features/ 2>/dev/null && echo "EXISTS" || echo "MISSING"
 ls docs/FEATURES.md 2>/dev/null && echo "INDEX_EXISTS" || echo "INDEX_MISSING"
 ```
 
-**If `docs/sk:features/` does not exist:**
-Ask the user: "No feature specification system found. Create one from scratch?"
-- Yes → jump to **[Create From Scratch](#create-from-scratch)** below
-- No → stop
-
-**If `docs/sk:features/` exists:**
-Continue to Step 2.
+- `docs/sk:features/` **missing** → ask user: "No feature specification system found. Create one from scratch?" → Yes: jump to [Create From Scratch](#create-from-scratch) / No: stop
+- `docs/sk:features/` **exists** → continue to Step 2
 
 ---
 
 ### Step 2: Determine Update Scope
 
-Present three options:
+Present three options and wait for choice:
 
-> **What would you like to update?**
 > **A. Auto-detect** *(recommended)* — scan recent git changes, update only affected specs
-> **B. Select features** — pick which specs to update from the list
+> **B. Select features** — pick which specs to update
 > **C. Refresh all** — update every spec from current source code
-
-Wait for the user's choice.
 
 ---
 
@@ -60,24 +43,15 @@ Wait for the user's choice.
 git log --since="7 days ago" --name-only --pretty=format: | grep -v '^$' | sort -u
 ```
 
-Map changed file paths to feature specs using these rules:
-
-1. **Read `docs/FEATURES.md`** to get the list of all spec files and their names.
-2. For each changed file, determine which spec it belongs to:
-   - Match by **feature name similarity**: if the spec is `expenses.md`, look for changed files containing `expense` in their path.
-   - Match by **directory**: if the spec is `budgets.md`, match files under any `budgets/` or `budget/` directory.
-   - Match by **schema files**: if any migration file, `schema.sql`, `schema.prisma`, `database.ts`, or similar schema file changed → mark ALL specs as potentially affected (schema changes ripple everywhere).
-3. Deduplicate the affected spec list.
-4. Report which specs will be updated and ask for confirmation.
-
----
+Map changed files to specs:
+1. Read `docs/FEATURES.md` for the spec list.
+2. For each changed file, match by feature name similarity (e.g., `expenses.md` ↔ paths containing `expense`) or by directory (`budgets.md` ↔ `budgets/` or `budget/`).
+3. If any migration, `schema.sql`, `schema.prisma`, `database.ts`, or similar schema file changed → mark ALL specs as potentially affected.
+4. Deduplicate and report; ask for confirmation.
 
 ### Step 3B: User Selects Features
 
-List all `.md` files in `docs/sk:features/` (excluding `_template.md`).
-Let the user pick which ones to update.
-
----
+List all `.md` files in `docs/sk:features/` (excluding `_template.md`). Let user pick.
 
 ### Step 3C: Refresh All
 
@@ -87,93 +61,72 @@ Set update list = all `.md` files in `docs/sk:features/` (excluding `_template.m
 
 ### Step 4: Update Each Affected Spec
 
-For each spec file to update, follow this sequence:
+#### 4a. Read existing spec — understand current content and section structure.
 
-#### 4a. Read the existing spec
-Understand its current content and section structure.
+#### 4b. Discover relevant source files (three-step, no hardcoded paths):
 
-#### 4b. Discover relevant source files
-
-Use a three-step lookup — no hardcoded paths:
-
-1. **Name-based search**: the feature name from the spec filename (e.g., `expenses.md` → feature name `expenses`). Search the repo:
+1. **Name-based search** — e.g., `expenses.md` → keyword `expenses`:
    ```bash
-   # Find files whose name contains the feature keyword
    find . -type f \( -name "*expense*" -o -name "*expenses*" \) \
      ! -path "*/node_modules/*" ! -path "*/.git/*" ! -path "*/docs/*" \
      2>/dev/null | head -30
    ```
-   Adjust the keyword to match the feature name.
+2. **Related Docs section** — read previously referenced files listed in `## Related Docs`.
+3. **DB schema hint** — read table names from `## Database Schema`; search migrations/schema files for those names.
 
-2. **Related Docs in spec**: read the `## Related Docs` section of the existing spec — it lists previously referenced files. Read those files too.
+#### 4c. Read all discovered source files.
 
-3. **DB schema hint**: read the `## Database Schema` section — it names tables. Search migrations and schema files for those table names.
-
-#### 4c. Read the source files
-Read all discovered source files to understand the current implementation.
-
-#### 4d. Identify what changed
-Compare the current source code against what the spec describes:
-- New or removed DB columns / tables / constraints
-- Changed business logic rules or state transitions
+#### 4d. Identify what changed — compare source vs spec:
+- New/removed DB columns, tables, constraints
+- Changed business logic or state transitions
 - New/changed API payloads or query patterns
 - Updated permission keys or tier requirements
 - New edge cases, error codes, or recovery paths
 
-#### 4e. Update only changed sections
-Rewrite only the sections that are out of date. **Preserve all unchanged sections verbatim.**
-Update the `> Status` block if the implementation status on either platform changed.
+#### 4e. Rewrite only out-of-date sections. Preserve unchanged sections verbatim. Update `> Status` block if platform implementation status changed.
 
 ---
 
 ### Step 5: Handle New Features
 
-If source code has a clear new feature (new hook, new route group, new major component) with no corresponding spec:
+If source has a new feature (hook, route group, major component) with no spec:
 
-1. Create `docs/sk:features/<feature-name>.md` using `docs/sk:features/_template.md` as base.
-   If `_template.md` doesn't exist, use this 11-section structure:
+1. Create `docs/sk:features/<feature-name>.md` using `_template.md`, or this 11-section structure if template missing:
    ```
    Status → Overview → Database Schema → Business Logic → API Contract
    → Permissions & Access Control → Edge Cases → Error States
    → UI/UX Behavior (### Web + ### Mobile) → Platform Notes → Related Docs
    ```
-2. Fill all 11 sections from current source code.
-3. Add the new spec to `docs/FEATURES.md` under the appropriate section.
+2. Fill all 11 sections from source code.
+3. Add to `docs/FEATURES.md` under the appropriate section.
 
 ---
 
 ### Step 6: Update Master Index
 
-Review `docs/FEATURES.md`:
-- Add links for any new specs
-- Update status columns (Web / Mobile) if implementation status changed
-- Update any tier/feature tables if permissions changed
+Review `docs/FEATURES.md` — add links for new specs, update status columns (Web/Mobile), update tier/feature tables if permissions changed.
 
 ---
 
 ### Step 7: Report and Commit
 
-Show a summary:
-- ✅ **Updated**: `spec-name.md` — what changed (1 sentence each)
-- ➕ **Added**: any new spec files
-- ⏭️ **Skipped**: specs with no detected changes
+Summary format:
+- Updated: `spec-name.md` — what changed (1 sentence)
+- Added: new spec files
+- Skipped: specs with no detected changes
 
 Ask: **"Commit the updated specs?"**
-- Yes → stage only files under `docs/` and commit:
-  `docs(features): update feature specs to reflect current implementation`
-- No → leave changes unstaged for the user to review
+- Yes → stage only `docs/` files and commit: `docs(features): update feature specs to reflect current implementation`
+- No → leave unstaged for review
 
 ---
 
 ## Create From Scratch
 
-When `docs/sk:features/` doesn't exist, discover and document all features:
-
 ### Discovery Phase
 
-1. **Detect source structure** — find where feature logic lives:
+1. **Detect source structure:**
    ```bash
-   # Look for hooks, services, controllers, models, routes
    ls src/ lib/ app/ 2>/dev/null
    find . -maxdepth 4 -type f \
      \( -name "use-*.ts" -o -name "use-*.js" \
@@ -182,7 +135,7 @@ When `docs/sk:features/` doesn't exist, discover and document all features:
      ! -path "*/node_modules/*" ! -path "*/.git/*" 2>/dev/null | head -50
    ```
 
-2. **Detect schema files** — migrations, ORM schemas:
+2. **Detect schema files:**
    ```bash
    find . -maxdepth 5 \
      \( -name "schema.sql" -o -name "*.schema.prisma" \
@@ -192,21 +145,15 @@ When `docs/sk:features/` doesn't exist, discover and document all features:
    ls prisma/ 2>/dev/null
    ```
 
-3. **Identify feature domains** from the discovered files — group related files into named features.
-
-4. **Report discovered features** and ask the user to confirm/adjust the list before creating anything.
+3. Group related files into named feature domains.
+4. Report discovered features; ask user to confirm/adjust before creating anything.
 
 ### Creation Phase
 
-For each confirmed feature:
-1. Read all relevant source files.
-2. Create `docs/sk:features/<feature-name>.md` with all 11 sections — based entirely on source code.
+For each confirmed feature: read all relevant source files, create `docs/sk:features/<feature-name>.md` with all 11 sections from source code.
 
 Also create:
-- `docs/FEATURES.md` — master index with:
-  - How-to-use section (web path + mobile path via `../project-name/docs/`)
-  - Feature table grouped by domain
-  - Tier/subscription overview (if the project has tiers)
+- `docs/FEATURES.md` — master index (how-to-use, feature table by domain, tier/subscription overview if applicable)
 - `docs/sk:features/_template.md` — 11-section template for future specs
 
 Commit: `docs: add feature specification system`
@@ -215,16 +162,14 @@ Commit: `docs: add feature specification system`
 
 ## Quality Rules (Always Apply)
 
-- **Source-verified only** — every claim must be findable in source code; never invent behavior
+- **Source-verified only** — every claim must be findable in source; never invent behavior
 - **No placeholders** — no `// TODO`, no `false // will be computed`, no assumed values
-- **Surgical updates** — only rewrite what changed; preserve unchanged sections verbatim
-- **Numeric JSX coercion** — when documenting frontend behavior, note `!!value` (not `value &&`) for numerics to avoid rendering `0` as text in React/React Native
-- **Local date, not UTC** — for any time-bounded query (current month, today, etc.), document that implementations must use local `new Date()`, not `toISOString()` which returns UTC and causes off-by-one for users in non-UTC timezones
+- **Surgical updates** — only rewrite changed sections; preserve unchanged sections verbatim
+- **Numeric JSX coercion** — note `!!value` (not `value &&`) for numerics to avoid rendering `0` as text in React/React Native
+- **Local date, not UTC** — time-bounded queries must use local `new Date()`, not `toISOString()` (UTC causes off-by-one for non-UTC users)
 - **All 11 sections required** — mark "N/A" only if genuinely not applicable
 
-## Source Discovery Heuristics (Reference)
-
-When locating source files for a feature named `<name>`:
+## Source Discovery Heuristics
 
 | What to look for | Search pattern |
 |---|---|

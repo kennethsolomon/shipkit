@@ -315,7 +315,7 @@ Agents are specialized sub-agents deployed to `.claude/agents/` by `/sk:setup-cl
 | **1** (parallel) | lint + `security-reviewer` + `performance-optimizer` | Independent — run simultaneously |
 | **2** | tests (100% coverage on new code) | Needs lint fixes first |
 | **3** | `code-reviewer` (7-dimension) | Needs test confirmation |
-| **4** | E2E (Playwright or agent-browser) | Uses scenarios from `qa-engineer` |
+| **4** | E2E Tests (Playwright or agent-browser) | Uses scenarios from `qa-engineer` |
 
 Each gate auto-fixes and re-runs until clean. One squash commit per gate pass. If a gate fails 3 times it stops and asks for help. Pre-existing issues are logged to `tasks/tech-debt.md` — never fixed inline.
 
@@ -370,7 +370,7 @@ Installed optionally by `/sk:setup-claude` and `/sk:setup-optimizer`.
 | Server | What it does | Best for |
 |---|---|---|
 | **Sequential Thinking** | Structured reasoning scratchpad — Claude thinks through hard problems step-by-step without cluttering the conversation | `/sk:brainstorm`, `/sk:debug`, `/sk:review` |
-| **Context7** | Fetches current, version-accurate docs for libraries you're using — no stale API suggestions | React 19, Next.js 15, Tailwind v4, shadcn/ui |
+| **context7** | Fetches current, version-accurate docs for libraries you're using — no stale API suggestions | React 19, Next.js 15, Tailwind v4, shadcn/ui |
 | **ccstatusline** | Persistent statusline: context window %, model, git branch, current task | Every session |
 
 ---
@@ -431,11 +431,33 @@ Use these anytime outside of the main workflow.
 
 | Area | Supported |
 |---|---|
-| **Frameworks** | Laravel, Next.js, Nuxt, React, Vue, Node.js |
+| **Frameworks** | Laravel, Next.js, Nuxt, React, Vue, Node.js, Go, Rust, Python, Rails |
 | **Linters** | Pint, ESLint, PHPStan, Rector, Prettier, Biome |
 | **Test runners** | Pest, PHPUnit, Jest, Vitest, Playwright |
 | **Schema / ORM** | Prisma, Drizzle, Eloquent, SQLAlchemy, ActiveRecord |
 | **Release** | npm, Composer, iOS (App Store), Android (Play Store) |
+
+### Stack-Aware Skill Filtering
+
+When you run `/sk:setup-claude`, ShipKit auto-detects your project's stack and installs only the skills, agents, and rules relevant to that stack at the project level (`.claude/skills/`, `.claude/agents/`, `.claude/rules/`).
+
+For example, a **Next.js** project gets web skills (frontend-design, accessibility, seo-audit) but not Laravel skills. A **mobile** project skips Playwright E2E and SEO audits.
+
+Detection is automatic — no config needed. To override:
+
+```json
+// .shipkit/config.json
+{
+  "skills": {
+    "extra": ["sk:schema-migrate"],   // force-add skills
+    "disabled": ["sk:website"]        // force-remove skills
+  }
+}
+```
+
+Run `/sk:setup-optimizer` to re-detect and sync when your stack changes (e.g., adding a database ORM later). ShipKit also suggests activating relevant skills when it detects code changes in disabled skill domains.
+
+See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for the full mapping of skills/agents/rules per stack.
 
 ---
 

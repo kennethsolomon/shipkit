@@ -124,6 +124,109 @@ On **first-time setup** (no existing `CLAUDE.md` or `tasks/findings.md`), run a 
 
 Skip this phase on re-runs (when `tasks/findings.md` already contains "Reconnaissance").
 
+## Phase 0.5: Stack Detection + Project-Level Skill Installation
+
+After reconnaissance, detect the project stack and install only relevant skills, agents, and rules at the project level.
+
+**Reference:** Read `${CLAUDE_SKILL_DIR}/references/skill-profiles.md` for the full categorization matrix.
+
+### Step 1: Detect Stack
+
+Scan project root for stack indicators (in priority order):
+
+| Priority | Signal | Stack | Capabilities |
+|----------|--------|-------|-------------|
+| 1 | `composer.json` + `laravel/framework` | laravel | web, database, api |
+| 2 | `package.json` + `next` | nextjs | web |
+| 3 | `package.json` + `nuxt` | nuxt | web |
+| 4 | `package.json` + `react` (no next) | react | web |
+| 5 | `package.json` + `vue` (no nuxt) | vue | web |
+| 6 | `app.json` or `app.config.ts` | expo | mobile |
+| 7 | `react-native.config.js` | react-native | mobile |
+| 8 | `pubspec.yaml` | flutter | mobile |
+| 9 | `package.json` + `express` | express | api |
+| 10 | `go.mod` | go | api |
+| 11 | `Cargo.toml` | rust | api |
+| 12 | `pyproject.toml` / `requirements.txt` | python | api |
+| 13 | `Gemfile` + `rails` | rails | web, database, api |
+
+Sub-detect database capability (within any stack):
+- `prisma/schema.prisma` → add `database` capability
+- `drizzle.config.ts` / `.js` → add `database` capability
+- `database/migrations/` (Laravel) → add `database` capability
+- `alembic/` → add `database` capability
+- `db/migrate/` (Rails) → add `database` capability
+
+Display result and allow override:
+```
+Detected: [stack] — capabilities: [web, database, api]
+[N] skills, [N] agents, [N] rules will be installed.
+Override? (enter to accept, or type capabilities to add/remove)
+```
+
+### Step 2: Write Config
+
+Write detection results to `.shipkit/config.json` (merge additively, preserve existing fields like `profile`):
+
+```json
+{
+  "stack": {
+    "detected": "<stack>",
+    "detected_at": "<YYYY-MM-DD>",
+    "capabilities": ["web", "database"]
+  },
+  "skills": {
+    "extra": [],
+    "disabled": []
+  }
+}
+```
+
+### Step 3: Install Project-Level Skills
+
+Using the categorization from `skill-profiles.md`, determine the install set:
+
+```
+installed = universal_skills + capability_add_ons(capabilities) + extra - disabled - mobile_exclusions
+```
+
+Copy matching skills from `~/.claude/skills/` to `.claude/skills/` in the project:
+- Only copy skill directories that match the install set
+- Skip skills that already exist in the project's `.claude/skills/`
+- If a skill exists in project but is NOT in the install set and NOT in `extra`, leave it (don't remove on first setup — only `setup-optimizer` removes)
+
+### Step 4: Install Project-Level Agents + Rules
+
+**Agents** — copy from `~/.claude/agents/` to `.claude/agents/` in the project:
+
+| Stack | Agents to install |
+|-------|------------------|
+| all | architect, qa-engineer, debugger, code-reviewer, security-reviewer, performance-optimizer, refactor-specialist, tech-writer, devops-engineer |
+| laravel, express, go, python, rust, rails | + backend-dev |
+| react, nextjs, vue, nuxt, svelte | + frontend-dev |
+| expo, react-native, flutter | + mobile-dev |
+| any with `database` capability | + database-architect |
+
+**Rules** — copy from `~/.claude/rules/` to `.claude/rules/` in the project:
+
+| Stack | Rules to install |
+|-------|-----------------|
+| all | tests.md, api.md |
+| laravel | + laravel.md |
+| react, nextjs | + react.md |
+| vue, nuxt | + vue.md |
+| any with `database` capability | + migrations.md |
+
+### Step 5: Generate CLAUDE.md Commands Table
+
+When generating CLAUDE.md, the Commands table should only list installed skills (not all 44+). Read the installed skills from `.claude/skills/` in the project and generate the table dynamically.
+
+Display installation summary:
+```
+Installed: [N] skills, [N] agents, [N] rules for [stack] stack.
+[M] opt-in skills available (activate via .shipkit/config.json "extra" field).
+```
+
 ## Generation Inputs
 
 This skill detects:

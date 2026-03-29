@@ -5,160 +5,105 @@ description: "TDD: Auto-detect BE + FE testing stacks, write failing tests befor
 
 # Test Generation (TDD)
 
-## Overview
+Auto-detect backend AND frontend testing frameworks, read `tasks/todo.md`, write comprehensive failing tests BEFORE implementation. Tests define expected behavior — implementation makes them pass.
 
-Auto-detect the project's backend AND frontend testing frameworks, read the plan from `tasks/todo.md`, and write comprehensive failing tests BEFORE implementation. Tests define the expected behavior — implementation makes them pass.
-
-> **Requirements changed mid-workflow?** Run `/sk:change` first. It will classify the scope and tell you whether to update tests (Tier 1), revise the plan (Tier 2), or re-brainstorm (Tier 3). Never update tests based on a changed requirement without going through `/sk:change` first.
+> **Requirements changed mid-workflow?** Run `/sk:change` first. Never update tests based on a changed requirement without going through `/sk:change` first.
 
 ## Allowed Tools
 
 Bash, Read, Write, Edit, Glob, Grep
 
-**When the detected framework is `@playwright/sk:test`**, also use:
+**When detected framework is `@playwright/sk:test`**, also use:
 mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_run_code, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_take_screenshot
 
-## Steps
-
-You MUST complete these steps in order:
+## Steps (complete in order)
 
 ### 0. Check Project Lessons
 
-If `tasks/lessons.md` exists, read it before doing anything else. Apply every active lesson as a standing constraint. Look for:
-- Known flaky test patterns in this project
-- Mocking approaches that caused issues before
-- Framework-specific gotchas
-- File location conventions that broke in the past
+If `tasks/lessons.md` exists, read it first. Apply every active lesson as a standing constraint. Look for: flaky test patterns, mocking approaches that caused issues, framework-specific gotchas, file location conventions that broke.
 
 ### 1. Read the Plan
 
-- Read `tasks/todo.md` to understand what will be implemented
-- Read `tasks/progress.md` for context from brainstorm/design steps
-- Identify all code that will be created or modified
-- This is the **source of truth** for what tests to write
+Read `tasks/todo.md` (source of truth for what to test) and `tasks/progress.md` for brainstorm/design context. Identify all code to be created or modified.
 
 ### 2. Detect ALL Testing Frameworks
 
-Scan for **both backend and frontend** testing stacks:
-
-**Backend detection:**
+**Backend:**
 ```bash
-cat composer.json 2>/dev/null       # PHPUnit / Pest
-cat pyproject.toml 2>/dev/null      # pytest
-cat go.mod 2>/dev/null              # Go testing
-cat Cargo.toml 2>/dev/null          # Rust #[cfg(test)]
-cat Gemfile 2>/dev/null             # RSpec / Minitest
-cat build.gradle 2>/dev/null        # JUnit
+cat composer.json 2>/dev/null   # PHPUnit / Pest
+cat pyproject.toml 2>/dev/null  # pytest
+cat go.mod 2>/dev/null          # Go testing
+cat Cargo.toml 2>/dev/null      # Rust #[cfg(test)]
+cat Gemfile 2>/dev/null         # RSpec / Minitest
+cat build.gradle 2>/dev/null    # JUnit
 ```
 
-**Frontend detection:**
+**Frontend:**
 ```bash
-cat package.json 2>/dev/null        # Jest, Vitest, Mocha, Cypress, Playwright
+cat package.json 2>/dev/null    # Jest, Vitest, Mocha, Cypress, Playwright
 ```
 
-Check for framework-specific config:
-- `vitest.config.ts` / `vite.config.ts` (Vitest)
-- `jest.config.js` / `jest.config.ts` (Jest)
-- `phpunit.xml` / `pest` in composer.json (PHPUnit / Pest)
-- `pytest.ini` / `conftest.py` (pytest)
-- `cypress.config.ts` (Cypress)
-- `playwright.config.ts` (Playwright)
+Check for config files: `vitest.config.ts`, `jest.config.js`, `phpunit.xml`, `pytest.ini`, `conftest.py`, `cypress.config.ts`, `playwright.config.ts`.
 
-Report ALL detected frameworks:
+Report all detected frameworks:
 ```
 Backend:  [framework] ([language]) — [test runner command]
 Frontend: [framework] ([language]) — [test runner command]
 ```
 
-If only one stack exists (e.g., API-only with no FE, or FE-only SPA), report that and proceed with what's available.
+If only one stack exists, report that and proceed.
 
 ### 3. Check Existing Tests
 
-- Find existing tests related to the code being changed
-- If modifying existing behavior: **update those tests first** to expect the new behavior
-- If adding new code: identify what test files need to be created
-- Report: "Updating X existing test files, creating Y new test files"
+Find tests related to code being changed. If modifying existing behavior: update those tests first to expect the new behavior. Report: "Updating X existing test files, creating Y new test files."
 
 ### 4. Learn Project Test Conventions
 
-Find and read 1-2 existing test files **per stack** to learn patterns:
-
-From existing tests, learn:
-- Import style and aliases
-- Test structure (describe/it, test(), func TestX)
-- Assertion library and patterns
-- Mocking approach
-- Setup/teardown patterns
-- File naming convention
-- Test file location (co-located vs `tests/` directory)
-
-If **no existing tests** are found, use `references/patterns.md` for framework-appropriate templates.
+Read 1–2 existing test files per stack. Learn: import style, test structure, assertion library, mocking approach, setup/teardown, file naming, file location. If no existing tests, use `references/patterns.md`.
 
 ### 5. Analyze Target Code from Plan
 
-Based on the plan in `tasks/todo.md`, identify test cases for each piece of planned code:
+**Backend test cases:**
+- Happy path, edge cases (empty/boundary/null), error handling, authorization, validation
 
-**Backend tests:**
-- **Happy path**: Normal expected behavior for each endpoint/function
-- **Edge cases**: Empty inputs, boundary values, null/undefined
-- **Error handling**: Invalid inputs, thrown exceptions, error responses
-- **Authorization**: Ensure policies/guards are tested
-- **Validation**: All form request / input validation rules
-
-**Frontend tests:**
-- **Component rendering**: Correct output for given props
-- **User interactions**: Click, type, submit, navigate
-- **Conditional rendering**: Show/hide based on state
-- **Error states**: Loading, empty, error displays
-- **Form handling**: Validation, submission, reset
+**Frontend test cases:**
+- Component rendering, user interactions, conditional rendering, error/loading/empty states, form handling
 
 ### 6. Determine Test File Locations
 
-Follow the project's existing convention:
-
 | Convention | Pattern | Example |
-|-----------|---------|---------|
-| Co-located | Same directory as source | `src/auth/login.test.ts` |
-| Mirror `tests/` | Parallel directory structure | `tests/auth/login.test.ts` |
-| `__tests__/` | Jest/Vitest convention | `src/auth/__tests__/login.test.ts` |
-| `test_` prefix | Python convention | `tests/test_login.py` |
-| `_test` suffix | Go convention | `auth/login_test.go` |
-| `tests/Feature/` + `tests/Unit/` | Laravel/Pest convention | `tests/Feature/ServerTest.php` |
+|---|---|---|
+| Co-located | Same dir as source | `src/auth/login.test.ts` |
+| Mirror `tests/` | Parallel structure | `tests/auth/login.test.ts` |
+| `__tests__/` | Jest/Vitest | `src/auth/__tests__/login.test.ts` |
+| `test_` prefix | Python | `tests/test_login.py` |
+| `_test` suffix | Go | `auth/login_test.go` |
+| `tests/Feature/` + `tests/Unit/` | Laravel/Pest | `tests/Feature/ServerTest.php` |
 
 ### 7. Write Backend Test Files
 
-Generate complete test files matching the project's style:
 - One test per behavior, not per line of code
-- Descriptive test names that explain expected behavior
+- Descriptive names that explain expected behavior
 - Arrange-Act-Assert pattern
 - Mock external dependencies, not the code under test
 - Test behavior, not implementation details
 
 ### 8. Write Frontend Test Files
 
-If a frontend stack was detected, generate FE test files:
-- Component tests for every new/modified component
-- Page tests for every new/modified page
-- Hook tests for custom hooks
-- Mock framework helpers (e.g., Inertia's `useForm`, Next.js `useRouter`, SvelteKit `goto`)
-- Use `@testing-library` conventions: prefer `getByRole`, `getByText`, `getByLabelText`
-
-Skip this step if no FE stack was detected.
+If a frontend stack was detected: component tests, page tests, hook tests, mock framework helpers (Inertia `useForm`, Next.js `useRouter`, SvelteKit `goto`). Use `@testing-library` conventions: prefer `getByRole`, `getByText`, `getByLabelText`. Skip if no FE stack.
 
 ### 8b. Write E2E Spec Files (conditional)
 
-**Only if `playwright.config.ts` or `playwright.config.js` is detected in the project root:**
+**Only if `playwright.config.ts` or `playwright.config.js` is in the project root.**
 
-Write `e2e/<feature>.spec.ts` files covering the acceptance criteria from `tasks/todo.md`. Follow these rules:
-
-- Use `test.describe` / `test` blocks — not `describe`/`it`
-- Use role-based locators: `getByRole`, `getByLabel`, `getByText`, `getByPlaceholder` — never CSS selectors
-- Use `test.beforeEach` for shared setup (auth, navigation)
-- Use `test.skip(!email, 'ENV_VAR not set — skipping')` guards for credential-dependent tests
-- Auth credentials from env vars via `e2e/helpers/auth.ts` — never hardcode credentials
+Write `e2e/<feature>.spec.ts` files covering acceptance criteria from `tasks/todo.md`:
+- Use `test.describe` / `test` blocks (not `describe`/`it`)
+- Role-based locators only: `getByRole`, `getByLabel`, `getByText`, `getByPlaceholder` — never CSS selectors
+- `test.beforeEach` for shared setup (auth, navigation)
+- `test.skip(!email, 'ENV_VAR not set — skipping')` guards for credential-dependent tests
+- Auth credentials from env vars via `e2e/helpers/auth.ts` — never hardcode
 - Soft assertions (`expect.soft`) for non-critical checks; hard `expect` for gate conditions
 
-E2E spec example structure:
 ```ts
 import { test, expect } from '@playwright/test'
 import { signIn, TEST_USERS } from './helpers/auth'
@@ -179,32 +124,21 @@ test.describe('[Feature] — [scenario]', () => {
 
 Create `e2e/helpers/auth.ts` if it doesn't exist (see `/sk:e2e` Playwright Setup Reference).
 
-**Run the E2E spec to confirm tests fail or skip** (they should fail until implementation, or skip if env vars aren't set — both are acceptable for the RED phase):
+Run to confirm RED phase:
 ```bash
 npx playwright test e2e/<feature>.spec.ts --reporter=list
 ```
 
 ### 8c. Playwright MCP Inspection (optional)
 
-**Only if the Playwright MCP plugin is active in the session AND live selectors are needed:**
-
-Use the Playwright MCP plugin to inspect live page state for more accurate selectors:
-
-1. Navigate to target URL
-2. Capture accessibility snapshot for role-based selectors
-3. Screenshot for visual reference
+Only if Playwright MCP plugin is active AND live selectors are needed: navigate to target URL, capture accessibility snapshot, screenshot for visual reference.
 
 ### 9. Verify Tests Fail (Red Phase)
 
-Run both suites to confirm tests fail as expected:
-
-- **Tests SHOULD fail** — this confirms they're testing the right thing
-- If tests pass without implementation, they're not testing anything useful — rewrite them
-- Report which tests fail and why (missing class, missing route, missing component, etc.)
+Run both suites. Tests SHOULD fail — this confirms they test the right thing. If tests pass without implementation, rewrite them. Report which tests fail and why.
 
 ### 10. Report
 
-Output:
 ```
 BE tests written: X tests in Y files ([framework])
 FE tests written: X tests in Y files ([framework])  ← omit if no FE stack
@@ -215,7 +149,7 @@ Status: RED (tests fail as expected — ready for implementation)
 
 ## Key Principle
 
-Tests define the **expected behavior**. Implementation makes them pass. If you're unsure what a piece of code should do, the test is where you decide.
+Tests define **expected behavior**. Implementation makes them pass. If unsure what code should do, the test is where you decide.
 
 ---
 

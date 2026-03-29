@@ -30,96 +30,76 @@ Scan the project root for config files. Enable every matching stack:
 | `Cargo.toml` | Rust | `cargo fmt` | `cargo clippy` |
 
 Detection logic:
-- For `composer.json`: read `require-dev` keys for `laravel/pint`, `phpstan/phpstan`, `rector/rector`
-- For `package.json`: read `devDependencies` keys for `eslint`, `prettier`
-- For `pyproject.toml`: check `[tool.ruff]` section or `ruff` in `[project.optional-dependencies]` / `[build-system]`
-- For `go.mod` / `Cargo.toml`: presence of file is sufficient
+- `composer.json`: read `require-dev` keys for `laravel/pint`, `phpstan/phpstan`, `rector/rector`
+- `package.json`: read `devDependencies` keys for `eslint`, `prettier`
+- `pyproject.toml`: check `[tool.ruff]` section or `ruff` in `[project.optional-dependencies]` / `[build-system]`
+- `go.mod` / `Cargo.toml`: presence of file is sufficient
 
 Print detected stacks and tools before running anything.
 
 ### 3. Run Formatters — Sequential
 
-Formatters modify files, so run them one at a time in this order:
+Run in this order (formatters modify files — must not run in parallel):
 
-1. **Pint** (if detected): `vendor/bin/pint --dirty`
-2. **Prettier** (if detected): `npx prettier --write .`
-3. **ruff format** (if detected): `ruff format .`
-4. **gofmt** (if detected): `gofmt -w .`
-5. **cargo fmt** (if detected): `cargo fmt`
+1. Pint: `vendor/bin/pint --dirty`
+2. Prettier: `npx prettier --write .`
+3. ruff format: `ruff format .`
+4. gofmt: `gofmt -w .`
+5. cargo fmt: `cargo fmt`
 
-After each formatter, note which files changed. All formatters must finish before step 4.
+Note which files changed. All formatters must finish before step 4.
 
 ### 4. Run Analyzers — Parallel Sub-Agents
 
 Launch all detected analyzers in parallel using the Agent tool in a single message:
 
-- **PHPStan**: `vendor/bin/phpstan analyse --memory-limit=512M`
-- **Rector**: `vendor/bin/rector --dry-run`
-- **ESLint**: `npx eslint .`
-- **ruff check**: `ruff check .`
-- **golangci-lint**: `golangci-lint run`
-- **cargo clippy**: `cargo clippy`
+- PHPStan: `vendor/bin/phpstan analyse --memory-limit=512M`
+- Rector: `vendor/bin/rector --dry-run`
+- ESLint: `npx eslint .`
+- ruff check: `ruff check .`
+- golangci-lint: `golangci-lint run`
+- cargo clippy: `cargo clippy`
 
-Example with PHPStan + Rector + ESLint detected:
-```
-Agent 1: "Run vendor/bin/phpstan analyse --memory-limit=512M. Report all errors with file:line."
-Agent 2: "Run vendor/bin/rector --dry-run. Report all suggested changes with file:line."
-Agent 3: "Run npx eslint . Report all errors with file:line."
-```
+Each agent: "Run `<command>`. Report all errors/changes with file:line."
 
 ### 5. Run Dependency Audit
 
-Run dependency vulnerability checks for detected stacks:
-
 | Stack | Command | Block on |
 |-------|---------|----------|
-| PHP (composer.json) | `composer audit` | any severity with fix available (`composer audit` has no severity filter) |
+| PHP (composer.json) | `composer audit` | any severity with fix available |
 | Node (package.json) | `npm audit --audit-level=high` | high or critical |
 | Node (yarn.lock) | `yarn audit --level high` | high or critical |
 | Node (pnpm-lock.yaml) | `pnpm audit --audit-level high` | high or critical |
 | Python (pyproject.toml / requirements.txt) | `pip-audit` | high or critical |
 
-For each detected package manager, run the audit command and capture output.
+**Block (fail this gate):** PHP: any vuln with fix available (`composer audit` exits non-zero for all severities). Node/Python: critical or high with fix available.
 
-**Block (fail this gate):**
-- PHP: any vulnerability that has a fix available (`composer audit` exits non-zero for all severities — no filtering option exists)
-- Node/Python: critical or high severity vulnerabilities that have a fix available
-
-**Warn (pass with note):** medium/low severity for Node/Python, or any severity with no available fix — note in report but do not block.
-
-Skip stacks not present in the project.
+**Warn (pass with note):** medium/low for Node/Python, or any severity with no fix — log but do not block.
 
 ### 6. Fix and Re-run
 
-If any analyzer reports errors or the dep audit blocks:
+**Classify each issue before fixing:**
 
-**Before fixing, classify each issue by scope:**
+Run `git diff main..HEAD --name-only` to get branch diff.
 
-- Run `git diff main..HEAD --name-only` to get the current branch diff.
-- If the issue is in a file **not** in that list (pre-existing issue outside the current branch), do **not** fix it inline. Log it to `tasks/tech-debt.md` in this format and move on:
-
+- **Out-of-scope** (file not in branch diff): do NOT fix inline. Log to `tasks/tech-debt.md`:
   ```
   ### [YYYY-MM-DD] Found during: sk:lint
   File: path/to/file.ext:line
   Issue: description of the problem
   Severity: high | medium | low
   ```
+- **In-scope** (file in branch diff): fix it.
 
-- If the issue is in a file **in** the branch diff (in-scope), fix it.
-
-**Fix loop (in-scope issues only):**
+**Fix loop (in-scope only):**
 1. Fix all in-scope issues
-2. Re-run formatters (fixes may need formatting)
+2. Re-run formatters
 3. Re-launch all analyzers in parallel
 4. Re-run dep audit if any dependency was fixed
-5. Re-run from step 3 until every tool exits clean
-6. Once all tools pass clean, make ONE squash commit: `fix(lint): resolve lint and dep audit issues` — do NOT ask the user
-
-> Squash gate commits — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
+5. Repeat from step 3 until all tools exit clean
+6. Make ONE squash commit: `fix(lint): resolve lint and dep audit issues` — do NOT ask the user
 
 ### 7. Report Results
-
-Print one line per tool:
 
 ```
 Pint:          X files formatted / clean
@@ -143,23 +123,23 @@ Only include lines for detected tools. All must show "clean" before this skill p
 
 ## Fix & Retest Protocol
 
-When this gate requires a fix, classify it before committing:
+Classify every fix before committing:
 
-**a. Formatter auto-fix** (Pint, Prettier, gofmt, cargo fmt changed whitespace/style) → auto-commit and re-run `/sk:lint`. Never a logic change — bypass protocol.
+**a. Formatter auto-fix** (Pint, Prettier, gofmt, cargo fmt changed whitespace/style) → auto-commit and re-run. Never a logic change — bypass protocol.
 
-**b. Analyzer fix** (PHPStan type error, Rector suggestion, ESLint error, ruff violation) → classify each fix:
-  - Type annotation, import order, unused var, style rule → **style fix** → auto-commit and re-run
-  - New guard clause, changed condition, extracted function, modified data flow → **logic change** → trigger protocol:
-    1. Update or add failing unit tests for the new behavior
-    2. Re-run `/sk:test` — must pass at 100% coverage
-    3. Auto-commit (tests + fix together in one commit)
-    4. Re-run `/sk:lint` from scratch
+**b. Analyzer fix** (PHPStan, Rector, ESLint, ruff) — classify:
+- Type annotation, import order, unused var, style rule → **style fix** → auto-commit and re-run
+- New guard clause, changed condition, extracted function, modified data flow → **logic change** → protocol:
+  1. Update or add failing unit tests for the new behavior
+  2. Re-run `/sk:test` — must pass at 100% coverage
+  3. Auto-commit (tests + fix together)
+  4. Re-run `/sk:lint` from scratch
 
-**c. Dependency vulnerability fix** (composer audit / npm audit finding) → classify:
-  - Version bump with no API change → **style fix** → auto-commit and re-run
-  - Version bump with API/behavior change → **logic change** → trigger protocol
+**c. Dependency vulnerability fix** — classify:
+- Version bump, no API change → **style fix** → auto-commit and re-run
+- Version bump with API/behavior change → **logic change** → trigger protocol
 
-All commits in this protocol are automatic — do not prompt the user for commit approval.
+All commits are automatic — do not prompt the user.
 
 ---
 

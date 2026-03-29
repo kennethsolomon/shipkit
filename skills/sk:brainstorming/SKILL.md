@@ -6,132 +6,35 @@ allowed-tools: Read, Write, Glob, Grep, Bash, Agent
 
 # Brainstorming Ideas Into Designs
 
-## Overview
-
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
-
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
-
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
+Do NOT invoke any implementation skill, write any code, or scaffold until the user approves the design. Every project — no matter how simple — goes through this process. The design can be short, but it MUST be presented and approved.
 </HARD-GATE>
 
-## Anti-Pattern: "This Is Too Simple To Need A Design"
+## Steps
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. "Simple" projects are where unexamined assumptions cause the most wasted work. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+1. **Explore context** — read `tasks/findings.md` and `tasks/lessons.md` if they exist. Summarize prior decisions; ask extend/revise/fresh? Do not re-explore what is already decided. Apply every active lesson as a design constraint. Check files, docs, recent commits.
+2. **Ask clarifying questions** — one per message, prefer multiple choice. Focus on purpose, constraints, success criteria.
+3. **Architecture assessment** (complex tasks only) — if task spans multiple systems, requires data modeling/API contracts, 3+ components, or touches auth/billing: invoke the `architect` agent with: "Read tasks/findings.md, tasks/lessons.md, tasks/tech-debt.md, explore relevant code. Propose 2-3 architecturally sound approaches for [task] with trade-offs. Read-only." Incorporate into step 5.
+4. **Search-First Research** — before proposing approaches:
 
-## Checklist
+   | Check | Action | Decision |
+   |-------|--------|----------|
+   | Grep codebase | Similar functionality exists? | **Adopt** (90%+) · **Extend** (60-90%) · **Build** (<60%) |
+   | Package registries | Well-maintained package? | Include as approach option |
+   | Existing skills/MCPs | ShipKit skill handles this? | Include as approach option |
 
-You MUST create a task for each of these items and complete them in order:
-
-1. **Explore project context** — read `tasks/findings.md` and `tasks/lessons.md` if they exist, then check files, docs, recent commits
-2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-3. **Propose 2-3 approaches** — with trade-offs and your recommendation
-4. **Present design** — in sections scaled to their complexity, get user approval after each section
-5. **Write findings** — Save the agreed-upon direction to `tasks/findings.md`:
-   - Problem statement
-   - Key decisions made
-   - Chosen approach + rationale
-   - Open questions (if any remain)
-   Additionally, **append** an ADR entry to `docs/decisions.md` (see "Decisions Log" section below).
-   (Optionally also write a full design doc to docs/plans/YYYY-MM-DD-<topic>-design.md)
-6. **Transition to implementation** — invoke `/sk:write-plan` skill to create implementation plan
-
-## Process Flow
-
-```dot
-digraph brainstorming {
-    "Explore project context" [shape=box];
-    "Ask clarifying questions" [shape=box];
-    "Propose 2-3 approaches" [shape=box];
-    "Present design sections" [shape=box];
-    "User approves design?" [shape=diamond];
-    "Write design doc" [shape=box];
-    "Invoke `/sk:write-plan` skill" [shape=doublecircle];
-
-    "Explore project context" -> "Ask clarifying questions";
-    "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
-    "Present design sections" -> "User approves design?";
-    "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Invoke `/sk:write-plan` skill";
-}
-```
-
-**The terminal state is invoking `/sk:write-plan`.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is `/sk:write-plan`.
-
-## The Process
-
-**Understanding the idea:**
-- If `tasks/findings.md` exists and has content, read it in full. Summarize the prior
-  decisions to the user and ask: extend, revise, or start fresh? Do not re-explore
-  what is already decided unless the user asks.
-- If `tasks/lessons.md` exists, read it in full. Apply every active lesson as a design
-  constraint throughout the brainstorm — particularly prevention rules when proposing approaches.
-- Check out the current project state first (files, docs, recent commits)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
-
-**Architecture Assessment (before proposing approaches — complex tasks only):**
-
-After exploring the project context, check if this task is architecturally complex:
-- Does it span multiple systems, services, or bounded contexts?
-- Does it require decisions about data modeling, API contracts, or system boundaries?
-- Does it involve 3+ major components being added or changed?
-- Does it touch auth, billing, or other sensitive infrastructure?
-
-If YES to any of the above, invoke the **`architect` agent** before proposing approaches:
-> Task: "Read tasks/findings.md, tasks/lessons.md, tasks/tech-debt.md, and explore the relevant code areas. Propose 2-3 architecturally sound approaches for [task description] with explicit trade-offs. Read-only — no code."
-
-Incorporate the architect's recommendations into step 3 (propose approaches). If the task is simple and narrow, skip this step.
-
-**Search-First Research (before proposing approaches):**
-Before proposing custom solutions, check if the problem is already solved:
-1. **Grep codebase** — does similar functionality already exist in this repo?
-2. **Check package registries** — is there a well-maintained package for this? (npm, PyPI, Packagist, crates.io)
-3. **Check existing skills** — does a ShipKit skill or MCP server already handle this?
-
-Decision matrix:
-- **Adopt** — existing solution covers 90%+ of requirements → use it directly
-- **Extend** — existing solution covers 60-90% → extend or wrap it
-- **Build custom** — nothing suitable exists → build from scratch (informed by what was found)
-
-If a suitable package or existing solution is found, include it as one of the approaches.
-
-**Exploring approaches:**
-- Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
-- Lead with your recommended option and explain why
-
-**Presenting the design:**
-- Once you believe you understand what you're building, present the design
-- Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
-- Cover: architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
-
-## After the Design
-
-**Documentation:**
-- Write the findings to `tasks/findings.md` (required — captures problem, decisions, approach, rationale)
-- Append an ADR entry to `docs/decisions.md` (required — see "Decisions Log" section below)
-- Optionally: Create a full design doc at `docs/plans/YYYY-MM-DD-<topic>-design.md` for complex projects
-- Commit the findings, decisions log entry, and any design document to git
-
-**Implementation:**
-- Invoke the `/sk:write-plan` skill to create a detailed implementation plan
-- Do NOT invoke any other skill. `/sk:write-plan` is the next step.
+5. **Propose 2-3 approaches** — with trade-offs; lead with recommendation and reasoning.
+6. **Present design** — scale each section to complexity. Ask after each section. Cover: architecture, components, data flow, error handling, testing.
+7. **Write findings** — save to `tasks/findings.md` (problem statement, decisions, approach + rationale, open questions). Append ADR to `docs/decisions.md` (see below). Optionally: `docs/plans/YYYY-MM-DD-<topic>-design.md`. Commit all.
+8. **Transition** — invoke `/sk:write-plan`. Do NOT invoke any other skill.
 
 ## Decisions Log
 
-After writing findings to `tasks/findings.md`, also **append** an Architecture Decision Record (ADR) entry to `docs/decisions.md`. This file is **cumulative and append-only** — never overwrite or remove existing entries.
+After writing findings, **append** an ADR entry to `docs/decisions.md`. This file is **cumulative and append-only** — never overwrite or remove existing entries.
 
 ### If `docs/decisions.md` does not exist
 
-Create it with this header before the first entry:
+Create it with this header first:
 
 ```markdown
 # Architecture Decision Records
@@ -140,8 +43,6 @@ A cumulative log of key design decisions made across features. Append-only — n
 ```
 
 ### ADR Entry Format
-
-Append this template for each brainstorm decision:
 
 ```markdown
 ## [YYYY-MM-DD] [Feature/Task Name]
@@ -155,19 +56,9 @@ Append this template for each brainstorm decision:
 
 ### Rules
 
-- **Append-only** — never edit or delete existing entries in `docs/decisions.md`
+- **Append-only** — never edit or delete existing entries
 - **One entry per brainstorm** — each completed brainstorm adds exactly one ADR entry
-- **Use absolute dates** — always `YYYY-MM-DD`, never relative dates
-- Entries accumulate across features — this is a project-level historical record
-
-## Key Principles
-
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design, get approval before moving on
-- **Be flexible** - Go back and clarify when something doesn't make sense
+- **Absolute dates only** — always `YYYY-MM-DD`
 
 ---
 

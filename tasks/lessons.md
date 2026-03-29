@@ -293,6 +293,16 @@ When any agent definition changes, update ALL of:
 **When adding a new agent:**
 Also update `CLAUDE.md` — update the count in Sub-Agent Patterns section if applicable.
 
+### [2026-03-29] New skills must update skill-profiles.md
+**Bug:** Stack-aware skill filtering relies on `skills/sk:setup-claude/references/skill-profiles.md` to know which skills belong to which stack. If a new skill is added without updating this file, it won't be installed for any project.
+**Root cause:** No tracking entry existed for this new file.
+**Prevention:** When adding or removing a skill, update ALL of:
+1. `skills/sk:setup-claude/references/skill-profiles.md` — add to correct category (universal, stack-specific, or opt-in) + update capability→add-on mapping
+2. `CLAUDE.md` — commands table
+3. `README.md` — All Commands section
+4. `.claude/docs/DOCUMENTATION.md` — skills section
+5. `CHANGELOG.md` — document the addition
+
 ### [2026-03-29] Duplicate slash commands from skills + command files coexisting
 **Bug:** Commands like `/sk:security-check` and `/sk:start` appeared 2–3 times in autocomplete. `/sk:security-check` appeared 3 times: once as a global skill (`~/.claude/skills/sk:security-check/`), once as a global command file (`~/.claude/commands/sk/security-check.md`), and once as a project-level command (`commands/sk/security-check.md` at the project root).
 **Root cause:** Three registration sources exist for the same command name:

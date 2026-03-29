@@ -5,22 +5,18 @@ description: "Structured bug investigation: reproduce, isolate, hypothesize, ver
 
 # Structured Debugging Workflow
 
-## Overview
-
-Systematic bug investigation that follows a disciplined process: reproduce, isolate, hypothesize, verify, fix. Every finding is logged to prevent repeated work and build project knowledge.
-
 <HARD-GATE>
 Do NOT jump to fixing code before you understand the bug. No code changes until a hypothesis is CONFIRMED through systematic investigation. Random fixes waste time and mask root causes.
 </HARD-GATE>
 
-## Anti-Patterns — Do NOT Do These
+## Anti-Patterns
 
-- **Changing code before understanding** — Read and analyze first
-- **Trying random fixes** — "Maybe if I change this..." is not debugging
-- **Ignoring stack traces** — They tell you exactly where to look
-- **Fixing symptoms, not causes** — A try/catch around a crash is not a fix
-- **Skipping reproduction** — If you can't reproduce it, you can't verify the fix
-- **Debugging in production** — Reproduce locally first
+- Changing code before understanding — read and analyze first
+- Trying random fixes — "maybe if I change this..." is not debugging
+- Ignoring stack traces — they tell you exactly where to look
+- Fixing symptoms, not causes — a try/catch around a crash is not a fix
+- Skipping reproduction — if you can't reproduce it, you can't verify the fix
+- Debugging in production — reproduce locally first
 
 ## Allowed Tools
 
@@ -49,36 +45,32 @@ If `debugger` agent hits a 3-strike failure, fall back to manual steps below.
 
 ## Steps
 
-You MUST complete these steps in order:
+Complete these steps in order:
 
 ### 1. Gather Information
 
 Parse what the user tells you:
 
-- **Error message**: Extract the exact error text
-- **Stack trace**: Identify the file, line, and call chain
-- **Expected vs actual behavior**: What should happen vs what does happen
-- **Trigger conditions**: When does it happen? Always, sometimes, under specific conditions?
-- **Recent changes**: Did it work before? What changed?
+- **Error message** — exact error text
+- **Stack trace** — file, line, and call chain
+- **Expected vs actual** — what should happen vs what does happen
+- **Trigger conditions** — always, sometimes, under specific conditions?
+- **Recent changes** — did it work before? what changed?
 
-If the user provides insufficient information, ask specific questions — don't guess.
+If insufficient information, ask specific questions — don't guess.
 
 ### 2. Read Project Context
 
-Check for existing knowledge:
-
 ```
-CLAUDE.md                  — Project conventions, known issues
-tasks/findings.md          — Previous debugging sessions, known bugs
-tasks/lessons.md           — Patterns that caused issues before
-tasks/progress.md          — Recent work log and error log
+CLAUDE.md               — project conventions, known issues
+tasks/findings.md       — previous debugging sessions, known bugs
+tasks/lessons.md        — patterns that caused issues before
+tasks/progress.md       — recent work log and error log
 ```
 
-**If `tasks/lessons.md` exists, read it in full.** For each active lesson, apply its prevention rule to your investigation — treat lessons as standing constraints, not just history. For example: if a lesson says "always check env vars before checking application code", do that first.
+**If `tasks/lessons.md` exists, read it in full.** For each active lesson, apply its prevention rule — treat lessons as standing constraints, not just history.
 
-**If `tasks/progress.md` exists**, scan the Error Log for failures near the bug's reported time — they often share a root cause with the current bug.
-
-Check if this bug (or something similar) has been investigated before.
+**If `tasks/progress.md` exists**, scan the Error Log for failures near the bug's reported time — they often share a root cause.
 
 ### 3. Check Recent Changes
 
@@ -91,55 +83,19 @@ Correlate the bug timeline with recent changes. Did the bug start after a specif
 
 ### 4. Reproduce the Bug
 
-**Determine the bug surface first:**
+**A. Server / CLI / Non-Browser Bug** — run the specific command, test, or action that triggers the bug. Capture the full output.
 
-#### A. Server / CLI / Non-Browser Bug
+**B. Browser / UI Bug** — use the Playwright MCP plugin:
 
-Run the specific command, test, or action that triggers the bug. Capture the full output.
+1. Navigate: `mcp__plugin_playwright_playwright__browser_navigate({ url: "http://localhost:[PORT]/[path]" })`
+2. JS errors: `mcp__plugin_playwright_playwright__browser_console_messages({ level: "error" })`
+3. Network failures: `mcp__plugin_playwright_playwright__browser_network_requests({ includeStatic: false })`
+4. Screenshot: `mcp__plugin_playwright_playwright__browser_take_screenshot({ type: "png" })`
+5. DOM snapshot: `mcp__plugin_playwright_playwright__browser_snapshot()`
 
-```bash
-# Run the failing test/command
-[specific command that triggers the bug]
-```
+Use console errors and network failures as primary evidence in Step 6.
 
-#### B. Browser / UI Bug
-
-If the bug is visual, involves JavaScript errors, or requires a browser to reproduce, use the Playwright MCP plugin instead of Bash:
-
-1. **Navigate to the page**:
-   ```
-   mcp__plugin_playwright_playwright__browser_navigate({ url: "http://localhost:[PORT]/[path]" })
-   ```
-
-2. **Capture JS errors** (most useful for runtime exceptions):
-   ```
-   mcp__plugin_playwright_playwright__browser_console_messages({ level: "error" })
-   ```
-
-3. **Inspect failed network requests** (useful for API/fetch failures):
-   ```
-   mcp__plugin_playwright_playwright__browser_network_requests({ includeStatic: false })
-   ```
-
-4. **Screenshot the visual state** to document what the bug looks like:
-   ```
-   mcp__plugin_playwright_playwright__browser_take_screenshot({ type: "png" })
-   ```
-
-5. **Capture accessibility snapshot** for structural/DOM-level inspection:
-   ```
-   mcp__plugin_playwright_playwright__browser_snapshot()
-   ```
-
-Use the console errors and network failures as primary evidence in Step 6 (Hypotheses).
-
----
-
-If you cannot reproduce (either path):
-- Check environment differences
-- Check for race conditions or timing issues
-- Ask the user for exact reproduction steps
-- Do NOT proceed to fixing without reproduction
+If you cannot reproduce (either path): check environment differences, check for race conditions, ask for exact reproduction steps. Do NOT proceed to fixing without reproduction.
 
 ### 5. Isolate the Problem
 
@@ -147,20 +103,12 @@ Read the relevant code, tracing the execution path:
 
 1. Start at the error location (from stack trace)
 2. Trace backward through the call chain
-3. Identify the inputs and state at each step
+3. Identify inputs and state at each step
 4. Find where actual behavior diverges from expected
-
-Use targeted searches:
-
-```bash
-# Find related code
-grep -r "functionName" src/
-grep -r "ERROR_CODE" .
-```
 
 ### 6. Form Hypotheses
 
-Generate 2-3 ranked hypotheses based on your investigation:
+Generate 2-3 ranked hypotheses and log to `tasks/findings.md`:
 
 ```markdown
 ## Hypotheses
@@ -178,28 +126,21 @@ Generate 2-3 ranked hypotheses based on your investigation:
 - Test: how to confirm or reject
 ```
 
-Log these to `tasks/findings.md` under a dated heading.
-
 ### 7. Test Hypotheses Systematically
 
-For each hypothesis, starting with the most likely:
+For each hypothesis (most likely first):
 
 1. Design a specific diagnostic step (not a fix)
 2. Execute it and observe the result
-3. Update the hypothesis status: **CONFIRMED** / **REJECTED** / **PARTIAL**
+3. Update status: **CONFIRMED** / **REJECTED** / **PARTIAL**
 
-Diagnostic steps might include:
-- Adding a temporary log statement to check a value
-- Running with different inputs
-- Checking database state
-- Inspecting environment variables
-- Running a minimal reproduction
+Diagnostic steps: add a temporary log statement, run with different inputs, check database state, inspect environment variables, run a minimal reproduction.
 
 **Do NOT change production code during this phase.** Diagnostic changes only.
 
 ### 8. Update Findings
 
-Update `tasks/findings.md` with results:
+Update `tasks/findings.md`:
 
 ```markdown
 ### [Date] Bug: [brief description]
@@ -212,23 +153,11 @@ Update `tasks/findings.md` with results:
 
 ### 9. Propose Minimal Fix
 
-Once a hypothesis is confirmed, propose the smallest possible fix:
+Once a hypothesis is confirmed, propose the smallest possible fix — change as few lines as possible, don't refactor surrounding code, don't add "while I'm here" improvements. Explain why the fix addresses the root cause.
 
-- Change as few lines as possible
-- Don't refactor surrounding code
-- Don't add "while I'm here" improvements
-- Explain why this fix addresses the root cause
-
-Present the fix and **wait for user approval** before applying.
+**Wait for user approval before applying.**
 
 ### 10. Verify Fix + Regression Check
-
-After the fix is applied:
-
-1. Re-run the original reproduction steps — bug should be gone
-2. Run the full test suite — no new failures
-3. If there was a related test, confirm it passes
-4. If there was no test, suggest writing one (reference `/sk:write-tests`)
 
 ```bash
 # Verify the specific fix
@@ -238,12 +167,16 @@ After the fix is applied:
 [test suite command]
 ```
 
+1. Re-run the original reproduction steps — bug should be gone
+2. Run the full test suite — no new failures
+3. If there was a related test, confirm it passes
+4. If there was no test, suggest writing one (reference `/sk:write-tests`)
+
 ### 11. Document
 
-**Root cause in `tasks/findings.md`:**
-Update the entry from step 8 with the final resolution.
+**`tasks/findings.md`** — update the entry from step 8 with the final resolution.
 
-**Lesson in `tasks/lessons.md`** (only if the pattern could recur):
+**`tasks/lessons.md`** (only if the pattern could recur):
 
 ```markdown
 ### [Date] Lesson: [brief title]

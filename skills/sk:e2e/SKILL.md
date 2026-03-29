@@ -6,9 +6,7 @@ model: sonnet
 
 # /sk:e2e
 
-E2E behavioral verification — the final quality gate before `/sk:finish-feature`. Runs after Review to verify the complete, reviewed, secure implementation works end-to-end from a user's perspective.
-
-**Hard gate:** all scenarios must pass. Zero failures allowed.
+E2E behavioral verification — the final quality gate before `/sk:finish-feature`. Runs after Review. **Hard gate:** all scenarios must pass. Zero failures allowed.
 
 ## Allowed Tools
 
@@ -18,14 +16,12 @@ Bash, Read, Glob, Grep
 
 ### 1. Read Context
 
-Read these files to understand what to test:
+Read to understand what to test:
 - `tasks/todo.md` — planned features and acceptance criteria
 - `tasks/findings.md` — design decisions and expected behaviors
 - `tasks/progress.md` — implementation notes
 
 ### 2. Detect E2E Runner
-
-Check which runner is available, in priority order:
 
 **Priority 1 — Playwright (preferred)**
 
@@ -33,16 +29,12 @@ Check which runner is available, in priority order:
 ls playwright.config.ts 2>/dev/null || ls playwright.config.js 2>/dev/null
 ```
 
-If a Playwright config exists → use Playwright CLI (Step 3a). This is the preferred path because:
-- Uses headless Chromium (no conflict with system Chrome)
-- No additional global install required (`@playwright/test` in devDeps)
-- Test files in `e2e/` or `tests/e2e/` are picked up automatically
-- `webServer` in `playwright.config.ts` auto-starts the dev server
+If config exists → use Playwright CLI (Step 3a). Advantages: headless Chromium, no system Chrome conflict, `@playwright/test` in devDeps, auto-picks `e2e/` or `tests/e2e/`, `webServer` auto-starts dev server.
 
-**Playwright config requirements** (verify before running):
-- `headless: true` must be set under `use:`
-- `channel: undefined` (or omitted) — must NOT be `'chrome'` or `'msedge'` to avoid system browser conflicts
-- `webServer.reuseExistingServer: true` — avoids double-starting the dev server
+**Config requirements (verify before running):**
+- `headless: true` under `use:`
+- `channel: undefined` (omit) — NOT `'chrome'` or `'msedge'`
+- `webServer.reuseExistingServer: true`
 
 If config has `channel: 'chrome'` or `headless: false`, warn:
 > "playwright.config.ts uses system Chrome or headed mode — this may conflict with a running browser. Consider setting `headless: true` and `channel: undefined`."
@@ -53,12 +45,11 @@ If config has `channel: 'chrome'` or `headless: false`, warn:
 agent-browser --version
 ```
 
-Only use `agent-browser` if NO `playwright.config.ts` / `playwright.config.js` exists.
+Only use if NO Playwright config exists.
 
-If `agent-browser` is also not found, AND no Playwright config exists:
-
+If neither is found:
 ```
-Neither Playwright nor agent-browser is configured. To fix permanently:
+Neither Playwright nor agent-browser is configured.
 
 Option A (recommended) — Playwright:
   npm install -D @playwright/test
@@ -82,9 +73,9 @@ ls tests/e2e/ 2>/dev/null
 find . -name "*.spec.ts" -not -path "*/node_modules/*"
 ```
 
-If spec files exist, run them:
+If spec files exist:
 ```bash
-npx playwright test --reporter=list
+npx playwright test --reporter=list 2>&1
 ```
 
 To run a specific file:
@@ -92,79 +83,49 @@ To run a specific file:
 npx playwright test e2e/my-feature.spec.ts --reporter=list
 ```
 
-To run with visible output on failure:
-```bash
-npx playwright test --reporter=list 2>&1
-```
-
 **Interpreting results:**
-- Exit code 0 = all tests passed
-- Exit code 1 = one or more tests failed (output includes which tests and why)
-- Each failing test shows: test name, expected vs. actual, screenshot path (if `trace: 'on-first-retry'` is set)
+- Exit 0 = all passed; Exit 1 = failures (shows test name, expected vs. actual, screenshot path if `trace: 'on-first-retry'`)
 
-If no spec files exist → derive scenarios from `tasks/todo.md` acceptance criteria and write them to `e2e/<feature>.spec.ts` before running. Follow the test file patterns already present in the project (check `e2e/helpers/` for shared utilities).
+If no spec files exist → derive scenarios from `tasks/todo.md` acceptance criteria, write to `e2e/<feature>.spec.ts`, check `e2e/helpers/` for shared utilities, then run.
 
-After running, record for each test:
-- Test name / suite
-- Result: PASS or FAIL
-- On FAIL: error message and relevant snapshot
+Record per test: name/suite, PASS or FAIL, on FAIL: error + snapshot excerpt.
 
-Skip to **Step 5 (Report Results)**.
+Skip to **Step 5**.
 
-### 3b. Detect Local Server (agent-browser path only)
+### 3b. Detect Local Server (agent-browser only)
 
-Only needed if using agent-browser (Playwright's `webServer` handles this automatically).
+Playwright's `webServer` handles this automatically — only needed for agent-browser.
 
-Determine what URL to test against:
-- Check for a dev server command in `package.json` scripts (`dev`, `start`)
-- Check for `artisan serve` in Laravel projects (`php artisan serve`)
-- Check for `vite` or `next dev`
-- If a server is already running (check common ports: 3000, 5173, 8000, 8080), use it
-- If no server is running, start one in the background and note the URL
+- Check `package.json` scripts (`dev`, `start`), `artisan serve`, `vite`, `next dev`
+- Check common ports: 3000, 5173, 8000, 8080; use existing server or start one in background
 
-### 4. Locate E2E Test Files (agent-browser path only)
+### 4. Locate E2E Test Files (agent-browser only)
 
-Find E2E test scenarios written during the Write Tests step:
 ```bash
 find . -name "*.e2e.*" -o -name "*.spec.*" | grep -v node_modules
 ls tests/e2e/ 2>/dev/null
 ```
 
-If no E2E test files exist, derive scenarios from `tasks/todo.md` acceptance criteria and `tasks/findings.md`.
+If none exist, derive scenarios from `tasks/todo.md` and `tasks/findings.md`.
 
 ### 4b. Run E2E Scenarios via agent-browser
 
-For each scenario, use agent-browser following this core pattern:
-
 ```bash
-# Navigate to the page
 agent-browser open <url>
-
-# Get interactive elements (token-efficient ref-based snapshot)
-agent-browser snapshot -i
-
-# Interact using @refs (never CSS selectors)
-agent-browser click @e1
+agent-browser snapshot -i              # token-efficient ref-based snapshot
+agent-browser click @e1                # use @refs — never CSS selectors
 agent-browser fill @e2 "input value"
 agent-browser press Enter
-
-# Use semantic locators when @refs aren't stable
-agent-browser find role button
+agent-browser find role button         # semantic locators when @refs unstable
 agent-browser find text "Expected Text"
 agent-browser find label "Email"
-
-# Assert expected state
-agent-browser snapshot   # check content
+agent-browser snapshot                 # assert state
 agent-browser find text "Success Message"
 ```
 
-**Ref-based interaction is required.** Never use CSS selectors (`#id`, `.class`) — use semantic locators (`find role`, `find text`, `find label`, `find placeholder`) for stability.
+**Use @refs or semantic locators (`find role`, `find text`, `find label`, `find placeholder`). Never CSS selectors.**
 
-For each scenario, record:
-- Scenario name
-- Steps executed
-- Result: PASS or FAIL
-- On FAIL: what was expected vs. what was found (include snapshot excerpt)
+Record per scenario: name, steps, PASS/FAIL, on FAIL: expected vs. actual + snapshot excerpt.
 
 ### 5. Report Results
 
@@ -172,68 +133,55 @@ For each scenario, record:
 E2E Runner: Playwright CLI  (or: agent-browser)
 E2E Results:
   PASS  [scenario name]
-  PASS  [scenario name]
   FAIL  [scenario name] — expected "X" but found "Y"
 
 Total: X passed, Y failed
 ```
 
-If all pass → proceed to Fix & Retest Protocol section (no action needed).
-If any fail → apply Fix & Retest Protocol.
+All pass → no action needed. Any fail → apply Fix & Retest Protocol.
 
 ## Fix & Retest Protocol
 
-When this gate requires a fix, classify it before committing:
+Classify before committing:
 
-**a. Style/config/wording change** (CSS tweak, copy change, selector fix) → include in the gate's squash commit and re-run `/sk:e2e`. Do not ask the user.
+| Type | Action |
+|------|--------|
+| Style/config/wording (CSS, copy, selector) | Include in gate's squash commit, re-run `/sk:e2e`. No user prompt. |
+| Logic change (branch, condition, data path, query, function, API) | 1) Update/add failing unit tests 2) `/sk:test` at 100% coverage 3) Commit tests + fix: `fix(e2e): [description]` 4) Re-run `/sk:e2e` from scratch |
+| Formatter auto-fixes | Never logic changes — bypass protocol automatically. |
 
-**b. Logic change** (new branch, modified condition, new data path, query change, new function, API change) → trigger protocol:
-1. Update or add failing unit tests for the new behavior
-2. Re-run `/sk:test` — must pass at 100% coverage
-3. Commit tests + fix together with `fix(e2e): [description]`.
-4. Re-run `/sk:e2e` from scratch
+Squash gate commits: collect all fixes, then one commit: `fix(e2e): resolve failing E2E scenarios`.
 
-**Exception:** Formatter auto-fixes are never logic changes — bypass protocol automatically.
-
-> Squash gate commits — collect all fixes for the pass, then one commit: `fix(e2e): resolve failing E2E scenarios`. Do not commit after each individual fix.
-
-**This gate cannot be skipped.** All scenarios must pass before proceeding to `/sk:update-task`.
+**This gate cannot be skipped.** All scenarios must pass before `/sk:update-task`.
 
 ### Pre-existing Issues
 
-If during E2E testing a bug is found in functionality **outside** the current feature being tested (pre-existing issue unrelated to this branch), do NOT fix it inline. Log it to `tasks/tech-debt.md`:
+If a bug is found outside the current feature, do NOT fix inline. Log to `tasks/tech-debt.md`:
 
 ```
 ### [YYYY-MM-DD] Found during: sk:e2e
 File: path/to/file.ext:line
-Issue: description of the pre-existing bug
+Issue: description
 Severity: critical | high | medium | low
 ```
 
-Continue testing the current feature. Pre-existing bugs do not block this gate unless they affect the current feature's scenarios.
+Pre-existing bugs don't block this gate unless they affect the current feature's scenarios.
 
 ## Next Steps
 
-If all scenarios pass:
-> "E2E gate clean. Run `/sk:update-task` to mark the task done."
->
-> No manual commit is needed — any fixes made during this gate were auto-committed.
-
-If failures remain after fixes:
-> "Re-running /sk:e2e — [N] scenarios still failing."
+- All pass: "E2E gate clean. Run `/sk:update-task` to mark the task done." (fixes were auto-committed)
+- Failures remain: "Re-running /sk:e2e — [N] scenarios still failing."
 
 ---
 
 ## Playwright Setup Reference
-
-When setting up Playwright for the first time in a project:
 
 ```bash
 npm install -D @playwright/test
 npx playwright install chromium
 ```
 
-Minimal `playwright.config.ts` (headless, no system Chrome conflict):
+Minimal `playwright.config.ts`:
 
 ```ts
 import { defineConfig, devices } from '@playwright/test'
@@ -263,7 +211,7 @@ export default defineConfig({
 })
 ```
 
-E2E test helpers go in `e2e/helpers/`. Auth helper pattern:
+E2E helpers go in `e2e/helpers/`. Auth helper pattern:
 
 ```ts
 // e2e/helpers/auth.ts
@@ -289,7 +237,7 @@ export const TEST_USERS = {
 }
 ```
 
-Test credentials go in `.env.local` (never hardcoded):
+Test credentials in `.env.local` (never hardcoded):
 ```
 E2E_USER_EMAIL=...
 E2E_USER_PASSWORD=...
