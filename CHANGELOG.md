@@ -27,6 +27,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.18.0] - 2026-03-29
+
+
+### Added
+- Steps 5.5 (Scope Check), 8.5 (Learn), 8.6 (Retro) wired into the standard workflow, autopilot, and finish-feature
+- `/sk:save-session` session-end hook: session-stop.sh now saves a minimal snapshot to `.claude/sessions/auto-YYYY-MM-DD-branch.md` on every session end
+- `.claude/docs/maintenance-guide.md`: permanent map of which files to touch when changing workflow steps, agents, skills, gates, or hooks
+
+### Changed
+- `commands/sk/help.md`: Feature Workflow table now matches CLAUDE.md exactly — Step 2 (Design) restored, gates collapsed to single `/sk:gates` row
+- `skills/sk:setup-claude/templates/CLAUDE.md.template`: new project bootstraps now include steps 5.5, 8.5, 8.6
+- `skills/sk:setup-optimizer/SKILL.md`: diagnostics updated from "8 steps" to "11 steps" — prevents false-positive outdated-workflow flags on correctly updated projects
+- `skills/sk:gates/SKILL.md`: perf auto-skip rule now documented in the skill (was only in CLAUDE.md); stale step references updated from old 21-step numbering
+- All "8-step workflow" references updated to "8-phase workflow" across autopilot, team, DOCUMENTATION.md
+
+### Fixed
+- `.claude/agents/debugger.md`, `qa-engineer.md`, `tech-writer.md`: added DESIGN NOTE comments explaining why isolation is intentionally omitted — prevents false-positive audit flags
+
+
+---
+
+
 ## [v3.17.1] - 2026-03-29
 
 
