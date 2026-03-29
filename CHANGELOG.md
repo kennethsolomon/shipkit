@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- _Upcoming features and improvements will be listed here_
+
+### Changed
+- _Behavioral changes will be listed here_
+
+### Fixed
+- _Bug fixes will be listed here_
+
+---
+
+## [v3.20.0] - 2026-03-29
+
+### Added
 - **Stack-aware skill filtering** — `/sk:setup-claude` now auto-detects project stack (14 frameworks supported) and installs only relevant skills, agents, and rules at the project level (`.claude/skills/`, `.claude/agents/`, `.claude/rules/`)
 - `skills/sk:setup-claude/references/skill-profiles.md` — source of truth mapping 44 skills, 13 agents, and 6 rules to their applicable stacks
 - `.shipkit/config.json` extended schema — new `stack` (detected, detected_at, capabilities) and `skills` (extra, disabled) fields
@@ -19,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CLAUDE.md compressed ~22% — merged step table + details, tables for flows/rules, tighter prose
 - 13 skill SKILL.md files compressed 12-58% — prose→tables/lists, removed duplication, all instructions preserved
 - README.md — added "Stack-Aware Skill Filtering" section with override examples
-- `tasks/lessons.md` — added tracking entry for `skill-profiles.md` updates when adding new skills
 
 ---
 
