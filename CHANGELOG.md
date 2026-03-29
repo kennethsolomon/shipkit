@@ -31,6 +31,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Added
+- _Upcoming features and improvements will be listed here_
+
+### Changed
+- _Behavioral changes will be listed here_
+
+### Deprecated
+- _Features being phased out will be listed here_
+
+### Removed
+- _Features being removed will be listed here_
+
+### Fixed
+- _Bug fixes will be listed here_
+
+### Security
+- _Security fixes will be listed here_
+
+
+---
+
+
+## [v3.18.0] - 2026-03-29
+
+
+### Added
 - Steps 5.5 (Scope Check), 8.5 (Learn), 8.6 (Retro) wired into the standard workflow, autopilot, and finish-feature
 - `/sk:save-session` session-end hook: session-stop.sh now saves a minimal snapshot to `.claude/sessions/auto-YYYY-MM-DD-branch.md` on every session end
 - `.claude/docs/maintenance-guide.md`: permanent map of which files to touch when changing workflow steps, agents, skills, gates, or hooks
