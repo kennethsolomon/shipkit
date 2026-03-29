@@ -27,6 +27,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.17.1] - 2026-03-29
+
+
+### Changed
+- **README rewrite** — scenario-first structure with 5 tutorial walkthroughs (feature, bug fix, hotfix, small change, requirement change); agents table now shows `Invoked by` column; condensed MCP section; removed What's New and redundant Highest ROI sections
+
+### Security
+- _Security fixes will be listed here_
+
+
+---
+
+
 ## [v3.17.0] - 2026-03-29
 
 
