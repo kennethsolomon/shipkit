@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep, Agent, Skill
 
 # Autopilot Mode
 
-Hands-free workflow that executes all 8 steps of the ShipIt workflow with minimal interruptions. Same quality gates, same fix loops, same 100% coverage — just fewer stops.
+Hands-free workflow that executes all 8 phases (including scope check, learn, and retro) of the ShipIt workflow with minimal interruptions. Same quality gates, same fix loops, same 100% coverage — just fewer stops.
 
 ## When to Use
 

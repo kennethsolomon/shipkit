@@ -23,19 +23,14 @@ Run these commands in order for a complete, quality-gated feature build.
 
 | # | Command | Purpose |
 |---|---------|---------|
-| 1 | `/sk:brainstorm` | Explore requirements and design — **no code yet** |
-| 2 | `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |
-| 3 | `/sk:branch` | Create a feature branch from the current task |
-| 4 | `/sk:schema-migrate` | Analyze schema changes *(skip if no DB changes)* |
-| 5 | `/sk:write-tests` | TDD red: write failing tests first |
-| 5 | `/sk:execute-plan` | TDD green: implement until tests pass |
+| 1 | `/sk:brainstorm` | Explore requirements — **no code yet** |
+| 2 | `/sk:frontend-design` or `/sk:api-design` | Design UI or API contracts *(auto-skip if no frontend/API keywords)* |
+| 3 | `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |
+| 4 | `/sk:branch` | Create a feature branch from the current task |
+| 5 | `/sk:write-tests` + `/sk:execute-plan` | TDD red + green (includes `/sk:schema-migrate` if DB keywords detected) |
 | 5.5 | `/sk:scope-check` | Trim scope creep — compare implementation to plan |
 | 6 | `/sk:smart-commit` | Conventional commit with approval |
-| 7 | `/sk:lint` | **GATE** — all linters must pass |
-| 7 | `/sk:test` | **GATE** — 100% coverage on new code |
-| 7 | `/sk:security-check` | **GATE** — 0 security issues |
-| 7 | `/sk:review` | **GATE** — blast-radius-aware self-review across 7 dimensions |
-| 7 | `/sk:e2e` | **GATE** — E2E behavioral verification (final gate) |
+| 7 | `/sk:gates` | **All quality gates** — lint, test, security, perf, review, e2e *(hard gate)* |
 | 8 | `/sk:finish-feature` | Changelog + PR creation |
 | 8.5 | `/sk:learn` | Extract reusable patterns from this session |
 | 8.6 | `/sk:retro` | Post-ship retrospective — velocity, blockers, next actions |

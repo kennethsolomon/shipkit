@@ -44,7 +44,7 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Stale content** — detects outdated info (stale model/route counts, removed dependencies, old command names like `/laravel-lint` instead of `/sk:lint`)
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
-- **Outdated workflow** — checks if the workflow matches the current 8-step flow with `/sk:gates` as single gate step
+- **Outdated workflow** — checks if the workflow matches the current 11-step flow (1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 8.6) with `/sk:gates` as single gate step
 - **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin` in the Commands table
 - **Missing agents** — checks if `.claude/agents/` exists and contains the 13 core agents: `backend-dev`, `frontend-dev`, `mobile-dev`, `qa-engineer`, `code-reviewer`, `security-reviewer`, `performance-optimizer`, `architect`, `database-architect`, `devops-engineer`, `debugger`, `refactor-specialist`, `tech-writer`
 - **Missing rules** — checks if `.claude/rules/` exists and contains the project-relevant rule files based on detected stack (laravel.md, react.md, vue.md, tests.md, api.md, migrations.md)
@@ -59,13 +59,13 @@ Reports findings before proceeding. If issues are found, they inform subsequent 
 
 If the workflow section is outdated or missing, replace it with the latest version:
 
-**Current workflow (8 steps, TDD with `/sk:gates` as single gate step):**
+**Current workflow (11 steps, TDD with `/sk:gates` as single gate step):**
 ```
-Explore → Design → Plan → Branch → Write Tests + Implement → Commit → Gates → Finalize
+Explore → Design → Plan → Branch → Write Tests + Implement → Scope Check → Commit → Gates → Finalize + Learn + Retro
 ```
 
 **What gets updated:**
-- Workflow table (8 steps — `/sk:brainstorm`, `/sk:frontend-design` or `/sk:api-design`, `/sk:write-plan`, `/sk:branch`, `/sk:write-tests` + `/sk:execute-plan`, `/sk:smart-commit`, `/sk:gates`, `/sk:finish-feature`)
+- Workflow table (11 steps — `/sk:brainstorm`, `/sk:frontend-design` or `/sk:api-design`, `/sk:write-plan`, `/sk:branch`, `/sk:write-tests` + `/sk:execute-plan`, `/sk:scope-check`, `/sk:smart-commit`, `/sk:gates`, `/sk:finish-feature`, `/sk:learn`, `/sk:retro`)
 - Step details (TDD red/green/verify descriptions)
 - Workflow rules (auto-advance, conditional summary, auto-skip, squash gate commits)
 - Bug fix flow section (7 steps)

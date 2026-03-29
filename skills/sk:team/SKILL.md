@@ -106,7 +106,7 @@ If both agents used worktree isolation and made changes:
 
 ### 5. Collect QA Agent Results
 
-Collect the QA Agent's E2E scenarios. These will be used in the E2E gate (step 17).
+Collect the QA Agent's E2E scenarios. These will be used in the E2E gate (step 7 / Batch 4).
 
 ### 6. Report Results
 

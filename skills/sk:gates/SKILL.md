@@ -10,7 +10,7 @@ Run all quality gates (lint, test, security, perf, review, e2e) in optimized bat
 
 ## When to Use
 
-Run `/sk:gates` after committing implementation code (step 11). This single command handles steps 12-17 of the workflow.
+Run `/sk:gates` after `/sk:smart-commit` completes (step 6). This single command covers all quality gates (step 7 of the workflow).
 
 ## Execution Strategy
 
@@ -23,6 +23,7 @@ Launch 3 agents simultaneously:
 1. **Linter agent** — runs all formatters, analyzers, dep audits
 2. **`security-reviewer` agent** — OWASP audit on changed files (read-only; reports findings, does not fix)
 3. **`performance-optimizer` agent** — bundle, N+1, Core Web Vitals, memory (worktree isolation — finds AND fixes critical/high issues)
+   **Auto-skip:** If NO frontend keywords (component, view, page, CSS, UI, form, modal, button, react, vue, svelte, blade) AND NO database keywords (migration, schema, table, column, model, database, foreign key, index, seed) appear in `tasks/todo.md`, skip this agent and log: `Auto-skipped: Performance (no frontend or database keywords in plan)`.
 
 These 3 have no dependencies on each other. Run them in parallel using the Agent tool.
 

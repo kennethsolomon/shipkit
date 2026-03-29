@@ -279,7 +279,7 @@ Step 1a — Design: /sk:frontend-design
 Step 2 — Plan: /sk:write-plan
 → Reads findings.md (both brainstorm + frontend-design outputs);
   Reads lessons.md + CLAUDE.md;
-  Writes unified 8-step plan to tasks/todo.md:
+  Writes unified plan to tasks/todo.md:
   [ ] S3 bucket configuration + upload endpoint
   [ ] Frontend upload form component (from design)
   [ ] Crop preview component (from design)
@@ -339,13 +339,13 @@ After these three steps: `CLAUDE.md` is configured for your stack, `tasks/` plan
 
 ### Daily Workflow
 
-During normal development, follow the 8-step workflow: Explore → Design → Plan → Branch → Write Tests + Implement → Commit → Gates → Finalize. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
+During normal development, follow the 8-phase workflow: Explore → Design → Plan → Branch → Write Tests + Implement → Scope Check → Commit → Gates → Finalize → Learn → Retro. See the [Complete Workflow Flow](#complete-workflow-flow) above for the full diagram with all hard gates and optional steps.
 
 ---
 
 ## Recommended Workflow
 
-The complete 8-step workflow from idea to merge with **automatic context threading and bug prevention**:
+The complete 8-phase workflow from idea to merge with **automatic context threading and bug prevention**:
 
 | # | Step | Command | Notes |
 |---|------|---------|-------|
@@ -750,10 +750,10 @@ Smart entry point that classifies tasks and routes to the optimal flow, mode, an
 
 ### /sk:autopilot
 
-Hands-free workflow mode that runs all 8 steps with auto-skip, auto-advance, and auto-commit. Same quality gates as manual mode.
+Hands-free workflow mode that runs all 8 phases (including scope check, learn, and retro) with auto-skip, auto-advance, and auto-commit. Same quality gates as manual mode.
 
 **What it does:**
-- Executes the full 8-step workflow automatically
+- Executes the full 8-phase workflow automatically
 - Auto-skips optional steps when detection criteria are not met (no frontend files → skip design, no schema changes → skip migrate)
 - Auto-advances between steps without prompting
 - Auto-commits at appropriate checkpoints
