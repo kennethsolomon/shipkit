@@ -1,6 +1,6 @@
 ---
 name: sk:autopilot
-description: Hands-free workflow — runs all 8 steps with auto-skip, auto-advance, auto-commit. Stops only for direction approval, 3-strike failures, and PR push.
+description: Hands-free workflow — runs all 8 phases (including scope check, learn, retro) with auto-skip, auto-advance, auto-commit. Stops only for direction approval, 3-strike failures, and PR push.
 allowed-tools: Read, Write, Bash, Glob, Grep, Agent, Skill
 ---
 
@@ -22,7 +22,7 @@ Hands-free workflow that executes all 8 steps of the ShipIt workflow with minima
 
 ## Quality Guarantee
 
-Autopilot runs the EXACT same 8 steps as manual mode:
+Autopilot runs the EXACT same workflow as manual mode (8 phases: explore, design, plan, branch, implement + scope check, commit, gates, ship + learn + retro):
 - ALL quality gates enforced (lint, test, security, perf, review, e2e)
 - ALL fix-rerun loops active
 - 100% test coverage required on new code
