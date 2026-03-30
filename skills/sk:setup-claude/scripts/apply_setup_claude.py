@@ -58,6 +58,14 @@ def _has_dep(pkg: dict, name: str) -> bool:
     return name in deps
 
 
+def _has_composer_dep(composer: dict, name: str) -> bool:
+    """Check if a Composer package is in require or require-dev."""
+    deps = {}
+    for key in ("require", "require-dev"):
+        deps.update(composer.get(key, {}) or {})
+    return name in deps
+
+
 def _any_dep_prefix(pkg: dict, prefix: str) -> bool:
     deps = {}
     for key in ("dependencies", "devDependencies", "peerDependencies", "optionalDependencies"):
@@ -107,13 +115,16 @@ def _write_cached_detection(repo_root: Path, detection: Detection) -> None:
 
 def detect(repo_root: Path) -> Detection:
     package_json = _read_json(repo_root / "package.json") or {}
+    composer_json = _read_json(repo_root / "composer.json") or {}
     scripts = (package_json.get("scripts") or {}) if isinstance(package_json, dict) else {}
 
     project_name = str(package_json.get("name") or repo_root.name)
     description = str(package_json.get("description") or "Project instructions for Claude Code.")
 
-    # Language
-    if (repo_root / "tsconfig.json").exists() or _has_dep(package_json, "typescript"):
+    # Language — composer.json with laravel/framework takes priority over package.json
+    if _has_composer_dep(composer_json, "laravel/framework"):
+        language = "PHP"
+    elif (repo_root / "tsconfig.json").exists() or _has_dep(package_json, "typescript"):
         language = "TypeScript"
     elif (repo_root / "package.json").exists():
         language = "JavaScript"
@@ -129,7 +140,21 @@ def detect(repo_root: Path) -> Detection:
         language = "Unknown"
 
     # Framework (keep simple; expand later)
-    if _has_dep(package_json, "next"):
+    is_laravel = _has_composer_dep(composer_json, "laravel/framework")
+    if is_laravel:
+        # Sub-detect Laravel stack flavor
+        if _has_composer_dep(composer_json, "inertiajs/inertia-laravel"):
+            if _has_dep(package_json, "react"):
+                framework = "Laravel (Inertia + React)"
+            elif _has_dep(package_json, "vue"):
+                framework = "Laravel (Inertia + Vue)"
+            else:
+                framework = "Laravel (Inertia)"
+        elif _has_composer_dep(composer_json, "livewire/livewire"):
+            framework = "Laravel (Livewire)"
+        else:
+            framework = "Laravel (API)"
+    elif _has_dep(package_json, "next"):
         framework = "Next.js (App Router)"
     elif _has_dep(package_json, "react"):
         framework = "React"
@@ -139,7 +164,9 @@ def detect(repo_root: Path) -> Detection:
         framework = "Unknown"
 
     # Database / ORM
-    if _has_dep(package_json, "drizzle-orm"):
+    if is_laravel and (repo_root / "database" / "migrations").exists():
+        database = "Eloquent ORM"
+    elif _has_dep(package_json, "drizzle-orm"):
         if _has_dep(package_json, "better-sqlite3"):
             database = "Drizzle ORM + SQLite"
         elif _has_dep(package_json, "pg"):
@@ -165,7 +192,9 @@ def detect(repo_root: Path) -> Detection:
         ui = "Unknown"
 
     # Testing
-    if _has_dep(package_json, "vitest"):
+    if _has_composer_dep(composer_json, "pestphp/pest"):
+        testing = "Pest"
+    elif _has_dep(package_json, "vitest"):
         testing = "Vitest"
     elif _has_dep(package_json, "jest"):
         testing = "Jest"
@@ -190,10 +219,16 @@ def detect(repo_root: Path) -> Detection:
     else:
         browser_automation = "None"
 
-    dev_cmd = scripts.get("dev") and "npm run dev" or "npm run dev"
-    build_cmd = scripts.get("build") and "npm run build" or "npm run build"
-    lint_cmd = scripts.get("lint") and "npm run lint" or "npm run lint"
-    test_cmd = scripts.get("test") and "npm test" or "npm test"
+    if is_laravel:
+        dev_cmd = "php artisan serve"
+        build_cmd = "npm run build"
+        lint_cmd = "vendor/bin/pint"
+        test_cmd = "vendor/bin/pest"
+    else:
+        dev_cmd = scripts.get("dev") and "npm run dev" or "npm run dev"
+        build_cmd = scripts.get("build") and "npm run build" or "npm run build"
+        lint_cmd = scripts.get("lint") and "npm run lint" or "npm run lint"
+        test_cmd = scripts.get("test") and "npm test" or "npm test"
 
     typo_dir = repo_root / ".claude" / "docs" / "achritectural_change_log"
     correct_dir = repo_root / ".claude" / "docs" / "architectural_change_log"
@@ -413,7 +448,7 @@ def _rules_filter(detection: Detection):
     def _filter(filename: str) -> bool:
         if filename in always:
             return True
-        if filename == "laravel.md.template" and "Laravel" in detection.framework:
+        if filename == "laravel.md.template" and detection.framework.startswith("Laravel"):
             return True
         if filename == "react.md.template" and (
             "React" in detection.framework or detection.framework == "Next.js (App Router)"
@@ -422,6 +457,67 @@ def _rules_filter(detection: Detection):
         return False
 
     return _filter
+
+
+# Stack-conditional MCP server mapping (managed entries only)
+_MANAGED_MCP_SERVERS: Dict[str, dict] = {
+    "laravel-boost": {
+        "stack_prefix": "Laravel",
+        "command": "php",
+        "args": ["artisan", "boost:mcp"],
+        "sail_command": "vendor/bin/sail",
+    },
+}
+
+
+def _deploy_project_mcp(
+    repo_root: Path,
+    detection: Detection,
+    *,
+    dry_run: bool,
+) -> List[tuple]:
+    """Add/remove/update managed MCP entries in .mcp.json based on detected stack."""
+    mcp_path = repo_root / ".mcp.json"
+    results: List[tuple] = []
+
+    existing = _read_json(mcp_path) or {}
+    servers = existing.get("mcpServers", {})
+    changed = False
+
+    for name, config in _MANAGED_MCP_SERVERS.items():
+        stack_matches = detection.framework.startswith(config["stack_prefix"])
+        use_sail = (repo_root / "vendor" / "bin" / "sail").exists()
+        command = config["sail_command"] if use_sail else config["command"]
+        expected_entry = {"command": command, "args": config["args"], "env": {}}
+
+        if stack_matches:
+            if name not in servers:
+                servers[name] = expected_entry
+                changed = True
+            elif servers[name].get("command") != command:
+                # Sail status changed — update command
+                servers[name]["command"] = command
+                changed = True
+        else:
+            if name in servers:
+                del servers[name]
+                changed = True
+
+    if not changed:
+        results.append(("skipped", mcp_path))
+        return results
+
+    if dry_run:
+        action = "updated" if mcp_path.exists() else "created"
+        results.append((action, mcp_path))
+        return results
+
+    existing["mcpServers"] = servers
+    mcp_path.parent.mkdir(parents=True, exist_ok=True)
+    mcp_path.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
+    action = "updated" if mcp_path.exists() else "created"
+    results.append((action, mcp_path))
+    return results
 
 
 def apply(
@@ -570,6 +666,10 @@ def apply(
             _make_executable(statusline_dest)
             action_sl = "created"
         _collect_results([(action_sl, statusline_dest)], repo_root, created, updated, skipped)
+
+    # --- Deploy project-level .mcp.json (stack-conditional) ---
+    mcp_results = _deploy_project_mcp(repo_root, detection, dry_run=dry_run)
+    _collect_results(mcp_results, repo_root, created, updated, skipped)
 
     if dry_run:
         print("setup-claude dry-run complete (no files written)")

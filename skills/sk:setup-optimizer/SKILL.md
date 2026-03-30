@@ -89,6 +89,10 @@ Rule changes:
   + migrations.md  (database paths)
   No removals.
 
+Project MCP changes:
+  - laravel-boost  (stack is no longer laravel)
+  No additions.
+
 Apply changes? (y/n)
 ```
 
@@ -113,6 +117,13 @@ If the user confirms:
 - Add newly relevant rules: copy from `~/.claude/rules/` to `.claude/rules/` in the project
 - Remove stale rules: delete from `.claude/rules/` in the project if they no longer match
 - Never remove user-customized rules (same detection as agents)
+
+**Project-level MCP sync** (sole owner of `.mcp.json` managed entries — Step 1.7 only handles global MCP):
+- Read the MCP Server → Stack Mapping from `skill-profiles.md`
+- **Add:** MCP entries to `.mcp.json` when stack matches and entry is missing
+- **Remove:** MCP entries from `.mcp.json` when stack no longer matches (e.g., `laravel-boost` removed if stack changed from Laravel to Next.js). Only remove entries whose key matches the mapping table — never touch other entries.
+- **Update:** If entry exists but command is stale (e.g., Sail added/removed since last setup — `vendor/bin/sail` exists but entry uses `php`, or vice versa), update the command to match current state
+- For Laravel Boost Sail detection: use `vendor/bin/sail` command variant if `vendor/bin/sail` exists in the project
 
 **Config update:**
 - Update `.shipkit/config.json` with new `stack.detected`, `stack.detected_at`, `stack.capabilities`
@@ -245,9 +256,11 @@ After hooks deployment, check and configure LSP tooling:
 
 **Idempotency:** Never overwrite existing hook files — the user may have customized them. Only deploy hooks that don't exist yet. For settings.json, merge additively.
 
-### Step 1.7: MCP Servers & Plugin Check
+### Step 1.7: Global MCP Servers & Plugin Check
 
-After LSP check, verify the three recommended tools are configured:
+After LSP check, verify the three recommended **global** tools are configured.
+
+> **Note:** Project-level MCP (`.mcp.json`) is managed exclusively by Step 0.5 during stack sync. This step only handles global MCP/plugins.
 
 1. **Sequential Thinking MCP** — grep `~/.mcp.json` for `sequential-thinking`
 2. **Context7 plugin** — grep `~/.claude/settings.json` for `context7@claude-plugins-official` in `enabledPlugins`
@@ -255,7 +268,7 @@ After LSP check, verify the three recommended tools are configured:
 
 **Report status and prompt:**
 
-> "MCP/Plugins: [X/3] configured
+> "Global MCP/Plugins: [X/3] configured
 >   sequential-thinking: [✓ configured / ✗ missing]
 >   context7:            [✓ configured / ✗ missing]
 >   ccstatusline:        [✓ configured / ✗ missing]

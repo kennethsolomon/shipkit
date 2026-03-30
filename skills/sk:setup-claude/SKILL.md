@@ -277,7 +277,58 @@ composer require --dev laravel/pint
 # Pest (if missing)
 composer require --dev pestphp/pest pestphp/pest-plugin-laravel
 ./vendor/bin/pest --init
+
+# Laravel Boost MCP (if missing) — provides database schema, queries, docs search, logs, browser errors
+composer require --dev laravel/boost
 ```
+
+### Laravel Boost MCP Configuration
+
+**Do NOT run `php artisan boost:install`** — it generates its own CLAUDE.md and skills that conflict with ShipKit-managed files. We configure the MCP server entry directly.
+
+After installing `laravel/boost`, configure the MCP server in the project's `.mcp.json` (create-if-missing, merge additively):
+
+```json
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "php",
+      "args": ["artisan", "boost:mcp"],
+      "env": {}
+    }
+  }
+}
+```
+
+For **Laravel Sail** projects (detected by `vendor/bin/sail` existing), use:
+
+```json
+{
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "vendor/bin/sail",
+      "args": ["artisan", "boost:mcp"],
+      "env": {}
+    }
+  }
+}
+```
+
+**Idempotency:** If `laravel-boost` already exists in `.mcp.json`, check whether the command matches the current Sail status. If `vendor/bin/sail` exists but the entry uses `php` (or vice versa), update the entry to match. Otherwise skip.
+
+**What Boost MCP provides (9 tools):**
+
+| Tool | Purpose |
+|------|---------|
+| ApplicationInfo | PHP/Laravel version, DB engine, installed packages, Eloquent models |
+| DatabaseSchema | Full schema — tables, columns, indexes, foreign keys (summary + filter modes) |
+| DatabaseQuery | Read-only SQL queries (SELECT, SHOW, EXPLAIN, DESCRIBE only) |
+| DatabaseConnections | All configured DB connections and the default |
+| SearchDocs | Laravel ecosystem docs (Laravel, Pest, Livewire, Filament, Tailwind, Inertia) |
+| ReadLogEntries | Last N log entries (PSR-3 and JSON format) |
+| BrowserLogs | Browser console errors/warnings from `storage/logs/browser.log` |
+| LastError | Last exception from cache or log file |
+| GetAbsoluteUrl | Convert relative paths or named routes to absolute URLs |
 
 ### Laravel Official Plugins
 

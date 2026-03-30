@@ -365,13 +365,23 @@ Rule files in `.claude/rules/` auto-activate in Claude Code when you edit matchi
 
 ## MCP Servers
 
-Installed optionally by `/sk:setup-claude` and `/sk:setup-optimizer`.
+### Global (opt-in, installed to `~/.mcp.json`)
+
+Installed by `/sk:setup-claude` and `/sk:setup-optimizer` when you opt in.
 
 | Server | What it does | Best for |
 |---|---|---|
 | **Sequential Thinking** | Structured reasoning scratchpad — Claude thinks through hard problems step-by-step without cluttering the conversation | `/sk:brainstorm`, `/sk:debug`, `/sk:review` |
 | **context7** | Fetches current, version-accurate docs for libraries you're using — no stale API suggestions | React 19, Next.js 15, Tailwind v4, shadcn/ui |
 | **ccstatusline** | Persistent statusline: context window %, model, git branch, current task | Every session |
+
+### Project-level (stack-conditional, installed to `.mcp.json`)
+
+Added/removed automatically based on detected stack. No opt-in required.
+
+| Server | Stack | What it does |
+|---|---|---|
+| **laravel-boost** | Laravel | Database schema, read-only queries, docs search (version-matched), application logs, browser errors, last exception, Eloquent model list |
 
 ---
 

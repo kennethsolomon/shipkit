@@ -803,7 +803,8 @@ Bootstrap or repair Claude Code infrastructure on any project.
 **Additional setup steps (opt-in prompts):**
 - **Lifecycle hooks** — core 6 (always) + enhanced 6 (opt-in): auto-format, config protection, compact suggestions, cost tracking
 - **LSP** — installs the language server for your stack (`typescript-language-server`, `intelephense`, `pyright`, etc.)
-- **MCP Servers & Plugins** — opt-in installation of Sequential Thinking MCP (`~/.mcp.json`), Context7 plugin (`~/.claude/settings.json`), and ccstatusline (`npx ccstatusline@latest`)
+- **Global MCP & Plugins** — opt-in installation of Sequential Thinking MCP (`~/.mcp.json`), Context7 plugin (`~/.claude/settings.json`), and ccstatusline (`npx ccstatusline@latest`)
+- **Project-level MCP** — stack-conditional MCP servers in `.mcp.json` (e.g., Laravel Boost for Laravel projects — database schema, queries, docs search, logs, browser errors). Managed entries are added/removed/updated automatically based on detected stack.
 
 **Usage:** Open any project in Claude Code and run:
 ```

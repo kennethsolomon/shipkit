@@ -1,9 +1,9 @@
 # ShipKit Skill Profiles — Stack-Based Filtering
 
-**Last Updated:** 2026-03-29
-**Total Skills:** 44 | **Agents:** 13 | **Rules:** 6
+**Last Updated:** 2026-03-30
+**Total Skills:** 44 | **Agents:** 13 | **Rules:** 6 | **Project MCP:** 1
 
-This file is the source of truth for which skills, agents, and rules get installed per project. Read by `sk:setup-claude` (initial setup) and `sk:setup-optimizer` (ongoing sync).
+This file is the source of truth for which skills, agents, rules, and project-level MCP servers get installed per project. Read by `sk:setup-claude` (initial setup) and `sk:setup-optimizer` (ongoing sync).
 
 ---
 
@@ -179,6 +179,24 @@ These are installed universally because they run inside `sk:gates`. Perf auto-sk
 
 ---
 
+## Project-Level MCP Server → Stack Mapping
+
+MCP servers configured in the project's `.mcp.json` (not global `~/.mcp.json`). Managed by `sk:setup-claude` (initial setup) and `sk:setup-optimizer` (ongoing sync).
+
+| MCP Server | Stack | Command | Purpose |
+|-----------|-------|---------|---------|
+| laravel-boost | laravel | `php artisan boost:mcp` (or `vendor/bin/sail artisan boost:mcp` for Sail) | Database schema, queries, docs search, logs, browser errors |
+
+**Sync rules:**
+- **Add** to `.mcp.json` when stack matches and entry is missing
+- **Remove** from `.mcp.json` when stack no longer matches (e.g., project switched from Laravel to Next.js)
+- **Update** existing entry if command is stale (e.g., Sail added/removed — switch between `php` and `vendor/bin/sail`)
+- Never touch MCP entries not in this table (user-added entries are preserved)
+- Sail detection: use `vendor/bin/sail` command variant if `vendor/bin/sail` exists
+- **Ownership:** Project-level MCP is managed by `sk:setup-claude` (initial) and `sk:setup-optimizer` Step 0.5 (ongoing). Step 1.7 handles only global MCP.
+
+---
+
 ## Installation Formula
 
 For a given project with detected `stack` and `capabilities`:
@@ -196,6 +214,10 @@ installed_agents = universal_agents
 
 installed_rules  = universal_rules (tests.md)
                  + stack_matching_rules(stack, capabilities)
+
+project_mcp      = stack_matching_mcp(stack)
+                 # Add matching entries to .mcp.json
+                 # Remove non-matching entries from .mcp.json (only managed entries — never touch user-added)
 ```
 
 User overrides (`extra`, `disabled`) are never touched by auto-detection.

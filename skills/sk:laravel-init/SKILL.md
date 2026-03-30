@@ -12,13 +12,14 @@ Configure this Laravel project with production-ready conventions. Safe to run on
 Invokes the `setup-claude` skill to:
 
 1. **Detect stack** from `composer.json` + `package.json`
-2. **Install missing dev tools**: PHPStan/Larastan, Rector, Pint, Pest
-3. **Publish config files** (if missing): `phpstan.neon`, `rector.php`, `pint.json`
-4. **Configure strict models** in `AppServiceProvider`
-5. **Generate `CLAUDE.md`** — stack-aware, with full workflow, conventions, and sub-agent patterns
-6. **Bootstrap `tasks/`** — findings, lessons, todo, progress, security-findings
-7. **Generate `.claude/commands/`** — lint, test
-8. **Pre-seed `tasks/findings.md`** with detected stack info
+2. **Install missing dev tools**: PHPStan/Larastan, Rector, Pint, Pest, Laravel Boost
+3. **Configure Laravel Boost MCP** in `.mcp.json` — database schema, queries, docs search, logs, browser errors
+4. **Publish config files** (if missing): `phpstan.neon`, `rector.php`, `pint.json`
+5. **Configure strict models** in `AppServiceProvider`
+6. **Generate `CLAUDE.md`** — stack-aware, with full workflow, conventions, and sub-agent patterns
+7. **Bootstrap `tasks/`** — findings, lessons, todo, progress, security-findings
+8. **Generate `.claude/commands/`** — lint, test
+9. **Pre-seed `tasks/findings.md`** with detected stack info
 
 ## Idempotent
 

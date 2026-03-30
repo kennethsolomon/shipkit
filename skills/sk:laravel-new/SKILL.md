@@ -54,6 +54,7 @@ Location: [path]
 
 Files created:
   CLAUDE.md
+  .mcp.json (laravel-boost MCP server)
   phpstan.neon
   rector.php
   pint.json

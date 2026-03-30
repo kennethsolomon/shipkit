@@ -158,5 +158,272 @@ class TestApplySetupClaude(unittest.TestCase):
             self.assertIn("Notes:", buf.getvalue())
 
 
+    def test_laravel_detection_inertia_react(self):
+        mod = _load_apply_module()
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "composer.json").write_text(
+                json.dumps({
+                    "require": {"laravel/framework": "^12.0"},
+                    "require-dev": {
+                        "pestphp/pest": "^3.0",
+                        "inertiajs/inertia-laravel": "^2.0",
+                    },
+                }),
+                encoding="utf-8",
+            )
+            (repo_root / "package.json").write_text(
+                json.dumps({"dependencies": {"react": "^19.0"}}),
+                encoding="utf-8",
+            )
+            (repo_root / "database" / "migrations").mkdir(parents=True)
+
+            detection = mod.detect(repo_root)
+            self.assertEqual(detection.framework, "Laravel (Inertia + React)")
+            self.assertEqual(detection.language, "PHP")
+            self.assertEqual(detection.database, "Eloquent ORM")
+            self.assertEqual(detection.testing, "Pest")
+            self.assertEqual(detection.dev_cmd, "php artisan serve")
+            self.assertEqual(detection.lint_cmd, "vendor/bin/pint")
+            self.assertEqual(detection.test_cmd, "vendor/bin/pest")
+
+    def test_laravel_detection_livewire(self):
+        mod = _load_apply_module()
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "composer.json").write_text(
+                json.dumps({
+                    "require": {
+                        "laravel/framework": "^12.0",
+                        "livewire/livewire": "^3.0",
+                    },
+                }),
+                encoding="utf-8",
+            )
+
+            detection = mod.detect(repo_root)
+            self.assertEqual(detection.framework, "Laravel (Livewire)")
+
+    def test_laravel_detection_api_only(self):
+        mod = _load_apply_module()
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "composer.json").write_text(
+                json.dumps({"require": {"laravel/framework": "^12.0"}}),
+                encoding="utf-8",
+            )
+
+            detection = mod.detect(repo_root)
+            self.assertEqual(detection.framework, "Laravel (API)")
+
+    def test_mcp_json_created_for_laravel(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "composer.json").write_text(
+                json.dumps({"require": {"laravel/framework": "^12.0"}}),
+                encoding="utf-8",
+            )
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=mod.detect(repo_root),
+                )
+
+            mcp_path = repo_root / ".mcp.json"
+            self.assertTrue(mcp_path.exists())
+            mcp_data = json.loads(mcp_path.read_text(encoding="utf-8"))
+            self.assertIn("laravel-boost", mcp_data["mcpServers"])
+            self.assertEqual(mcp_data["mcpServers"]["laravel-boost"]["command"], "php")
+
+    def test_mcp_json_not_created_for_nextjs(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "package.json").write_text(
+                json.dumps({
+                    "name": "demo",
+                    "dependencies": {"next": "15.0.0", "react": "19.0.0"},
+                }),
+                encoding="utf-8",
+            )
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=mod.detect(repo_root),
+                )
+
+            mcp_path = repo_root / ".mcp.json"
+            if mcp_path.exists():
+                mcp_data = json.loads(mcp_path.read_text(encoding="utf-8"))
+                self.assertNotIn("laravel-boost", mcp_data.get("mcpServers", {}))
+
+    def test_mcp_json_removed_when_stack_changes(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+
+            # Start with Laravel — creates .mcp.json with laravel-boost
+            (repo_root / "composer.json").write_text(
+                json.dumps({"require": {"laravel/framework": "^12.0"}}),
+                encoding="utf-8",
+            )
+            laravel_detection = mod.detect(repo_root)
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=laravel_detection,
+                )
+
+            mcp_path = repo_root / ".mcp.json"
+            self.assertTrue(mcp_path.exists())
+            mcp_data = json.loads(mcp_path.read_text(encoding="utf-8"))
+            self.assertIn("laravel-boost", mcp_data["mcpServers"])
+
+            # Switch to Next.js — laravel-boost should be removed
+            (repo_root / "composer.json").unlink()
+            (repo_root / "package.json").write_text(
+                json.dumps({
+                    "name": "demo",
+                    "dependencies": {"next": "15.0.0", "react": "19.0.0"},
+                }),
+                encoding="utf-8",
+            )
+            nextjs_detection = mod.detect(repo_root)
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=nextjs_detection,
+                )
+
+            mcp_data = json.loads(mcp_path.read_text(encoding="utf-8"))
+            self.assertNotIn("laravel-boost", mcp_data.get("mcpServers", {}))
+
+    def test_mcp_json_sail_detection(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "composer.json").write_text(
+                json.dumps({"require": {"laravel/framework": "^12.0"}}),
+                encoding="utf-8",
+            )
+            # Simulate Sail being present
+            (repo_root / "vendor" / "bin").mkdir(parents=True)
+            (repo_root / "vendor" / "bin" / "sail").write_text("#!/bin/sh\n", encoding="utf-8")
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=mod.detect(repo_root),
+                )
+
+            mcp_path = repo_root / ".mcp.json"
+            mcp_data = json.loads(mcp_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                mcp_data["mcpServers"]["laravel-boost"]["command"],
+                "vendor/bin/sail",
+            )
+
+    def test_mcp_json_preserves_user_entries(self):
+        mod = _load_apply_module()
+        skill_root = Path(__file__).resolve().parents[1]
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "composer.json").write_text(
+                json.dumps({"require": {"laravel/framework": "^12.0"}}),
+                encoding="utf-8",
+            )
+
+            # Pre-existing user MCP entry
+            (repo_root / ".mcp.json").write_text(
+                json.dumps({
+                    "mcpServers": {
+                        "my-custom-server": {"command": "node", "args": ["server.js"]},
+                    },
+                }),
+                encoding="utf-8",
+            )
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                mod.apply(
+                    repo_root,
+                    skill_root,
+                    update_generated=False,
+                    dry_run=False,
+                    detection=mod.detect(repo_root),
+                )
+
+            mcp_data = json.loads((repo_root / ".mcp.json").read_text(encoding="utf-8"))
+            self.assertIn("my-custom-server", mcp_data["mcpServers"])
+            self.assertIn("laravel-boost", mcp_data["mcpServers"])
+
+    def test_laravel_rules_filter(self):
+        mod = _load_apply_module()
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "composer.json").write_text(
+                json.dumps({"require": {"laravel/framework": "^12.0"}}),
+                encoding="utf-8",
+            )
+            detection = mod.detect(repo_root)
+            rule_filter = mod._rules_filter(detection)
+            self.assertTrue(rule_filter("laravel.md.template"))
+            self.assertTrue(rule_filter("tests.md.template"))
+
+    def test_nextjs_rules_filter_excludes_laravel(self):
+        mod = _load_apply_module()
+
+        with tempfile.TemporaryDirectory() as td:
+            repo_root = Path(td)
+            (repo_root / "package.json").write_text(
+                json.dumps({
+                    "dependencies": {"next": "15.0.0", "react": "19.0.0"},
+                }),
+                encoding="utf-8",
+            )
+            detection = mod.detect(repo_root)
+            rule_filter = mod._rules_filter(detection)
+            self.assertFalse(rule_filter("laravel.md.template"))
+            self.assertTrue(rule_filter("react.md.template"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -19,6 +19,20 @@ paths:
 - **Config**: Access config via `config()` helper, never `env()` outside config files.
 - **Strict mode**: Models use strict mode (prevent lazy loading, silently discarding attributes, accessing missing attributes).
 
+## Laravel Boost MCP
+
+Project MCP server auto-configured in `.mcp.json` by `/sk:laravel-init`. Provides 9 tools Claude can call directly:
+
+| Tool | When to use |
+|------|-------------|
+| `DatabaseSchema` | Before writing migrations or queries — get exact column types, indexes, FKs |
+| `DatabaseQuery` | Run read-only SELECTs to validate data assumptions |
+| `SearchDocs` | Look up Laravel/Livewire/Filament/Pest docs matched to your installed versions |
+| `ReadLogEntries` | Check recent errors without leaving Claude |
+| `BrowserLogs` | Inspect browser console errors captured server-side |
+| `LastError` | Get the last exception instantly |
+| `ApplicationInfo` | Check installed packages and Eloquent models at session start |
+
 ## Code Refinement
 
 After running `/sk:execute-plan`, use the `laravel-simplifier` agent to refine recently modified PHP/Laravel code:

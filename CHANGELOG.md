@@ -18,6 +18,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.21.0] - 2026-03-30
+
+### Added
+- **Laravel Boost MCP** (`laravel/boost`) — project-level MCP server auto-configured in `.mcp.json` for Laravel projects. Provides 9 tools: `DatabaseSchema`, `DatabaseQuery`, `DatabaseConnections`, `SearchDocs`, `ReadLogEntries`, `BrowserLogs`, `LastError`, `GetAbsoluteUrl`, `ApplicationInfo`
+- **Stack-conditional MCP management** — `skill-profiles.md` now maps MCP servers to stacks. `sk:setup-claude` creates `.mcp.json`, `sk:setup-optimizer` Step 0.5 adds/removes/updates entries when stack changes (including Sail migration: switches between `php` and `vendor/bin/sail` command)
+- **Laravel framework detection in `apply_setup_claude.py`** — reads `composer.json`, detects Inertia+React, Inertia+Vue, Livewire, and API-only flavors, Eloquent ORM, Pest testing, and correct build commands (`php artisan serve`, `vendor/bin/pint`, `vendor/bin/pest`)
+- **`.mcp.json` generation in `apply_setup_claude.py`** — deterministic apply now writes `.mcp.json` for Laravel and removes `laravel-boost` for non-Laravel stacks
+- **Laravel Boost MCP section in `laravel.md.template`** — documents all 9 MCP tools and when to use each
+- **10 new tests** in `test_apply_setup_claude.py` covering Laravel detection flavors, MCP create/remove/update/Sail/user-entry-preservation, and rules filter
+
+### Changed
+- `README.md` MCP Servers section split into **Global** (opt-in, `~/.mcp.json`) and **Project-level** (stack-conditional, `.mcp.json`)
+- `DOCUMENTATION.md` setup-claude entry now distinguishes global MCP from project-level MCP
+- `sk:setup-optimizer` Step 1.7 renamed to "Global MCP" — project MCP is exclusively owned by Step 0.5
+
+---
+
 ## [v3.20.0] - 2026-03-29
 
 ### Added
