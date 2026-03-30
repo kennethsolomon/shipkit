@@ -1972,6 +1972,122 @@ assert_contains \
   "$REPO/skills/sk:gates/SKILL.md" \
   "Checkpoint"
 
+# ── Laravel Boost MCP — Template & Doc Sync ─────────────────────────────────
+# Guards against template/doc divergence when SKILL.md changes.
+# Each assert checks that the concept documented in SKILL.md also appears
+# in the corresponding template or reference file.
+
+echo ""
+echo "--- Laravel Boost MCP: Template & Doc Sync ---"
+
+LARAVEL_RULE_TPL="$REPO/skills/sk:setup-claude/templates/.claude/rules/laravel.md.template"
+SKILL_PROFILES="$REPO/skills/sk:setup-claude/references/skill-profiles.md"
+SETUP_CLAUDE_SKILL="$REPO/skills/sk:setup-claude/SKILL.md"
+SETUP_OPT_SKILL="$REPO/skills/sk:setup-optimizer/SKILL.md"
+APPLY_SCRIPT="$REPO/skills/sk:setup-claude/scripts/apply_setup_claude.py"
+
+# SKILL.md documents Boost installation and MCP config
+assert_contains \
+  "setup-claude SKILL.md installs laravel/boost" \
+  "$SETUP_CLAUDE_SKILL" \
+  "laravel/boost"
+
+assert_contains \
+  "setup-claude SKILL.md configures laravel-boost MCP entry" \
+  "$SETUP_CLAUDE_SKILL" \
+  "laravel-boost"
+
+assert_contains \
+  "setup-claude SKILL.md warns against boost:install" \
+  "$SETUP_CLAUDE_SKILL" \
+  "Do NOT run"
+
+assert_contains \
+  "setup-claude SKILL.md documents Sail variant" \
+  "$SETUP_CLAUDE_SKILL" \
+  "vendor/bin/sail"
+
+# laravel.md.template must document Boost MCP (template sync guard)
+assert_contains \
+  "laravel.md.template documents Laravel Boost MCP section" \
+  "$LARAVEL_RULE_TPL" \
+  "Laravel Boost MCP"
+
+assert_contains \
+  "laravel.md.template lists DatabaseSchema tool" \
+  "$LARAVEL_RULE_TPL" \
+  "DatabaseSchema"
+
+assert_contains \
+  "laravel.md.template lists SearchDocs tool" \
+  "$LARAVEL_RULE_TPL" \
+  "SearchDocs"
+
+# skill-profiles.md is the source of truth — must map laravel-boost
+assert_contains \
+  "skill-profiles.md maps laravel-boost to laravel stack" \
+  "$SKILL_PROFILES" \
+  "laravel-boost"
+
+assert_contains \
+  "skill-profiles.md documents MCP sync rules (Add/Remove/Update)" \
+  "$SKILL_PROFILES" \
+  "Update"
+
+assert_contains \
+  "skill-profiles.md documents MCP ownership" \
+  "$SKILL_PROFILES" \
+  "Ownership"
+
+# setup-optimizer must own project MCP sync (Step 0.5)
+assert_contains \
+  "setup-optimizer documents project MCP sync in Step 0.5" \
+  "$SETUP_OPT_SKILL" \
+  "Project-level MCP sync"
+
+assert_contains \
+  "setup-optimizer Step 1.7 scoped to global MCP only" \
+  "$SETUP_OPT_SKILL" \
+  "Global MCP"
+
+assert_contains \
+  "setup-optimizer Step 0.5 diff shows MCP changes" \
+  "$SETUP_OPT_SKILL" \
+  "laravel-boost"
+
+# Python script must implement MCP generation
+assert_contains \
+  "apply_setup_claude.py has _deploy_project_mcp function" \
+  "$APPLY_SCRIPT" \
+  "_deploy_project_mcp"
+
+assert_contains \
+  "apply_setup_claude.py reads composer.json for Laravel detection" \
+  "$APPLY_SCRIPT" \
+  "composer_json"
+
+assert_contains \
+  "apply_setup_claude.py handles Sail detection" \
+  "$APPLY_SCRIPT" \
+  "vendor/bin/sail"
+
+# README distinguishes global vs project-level MCP
+assert_contains \
+  "README documents project-level MCP section" \
+  "$REPO/README.md" \
+  "Project-level"
+
+assert_contains \
+  "README mentions laravel-boost" \
+  "$REPO/README.md" \
+  "laravel-boost"
+
+# DOCUMENTATION.md distinguishes global vs project-level MCP
+assert_contains \
+  "DOCUMENTATION.md mentions project-level MCP" \
+  "$REPO/.claude/docs/DOCUMENTATION.md" \
+  "Project-level MCP"
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 
 echo "=== Results: $PASS passed, $FAIL failed ==="
