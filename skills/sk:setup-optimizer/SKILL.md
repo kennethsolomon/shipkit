@@ -45,7 +45,7 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 11-step flow (1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 8.6) with `/sk:gates` as single gate step
-- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin` in the Commands table
+- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin`, `sk:deps-audit` in the Commands table
 - **Missing agents** — checks if `.claude/agents/` exists and contains the 13 core agents: `backend-dev`, `frontend-dev`, `mobile-dev`, `qa-engineer`, `code-reviewer`, `security-reviewer`, `performance-optimizer`, `architect`, `database-architect`, `devops-engineer`, `debugger`, `refactor-specialist`, `tech-writer`
 - **Missing rules** — checks if `.claude/rules/` exists and contains the project-relevant rule files based on detected stack (laravel.md, react.md, vue.md, tests.md, api.md, migrations.md)
 - **Stale agent frontmatter** — checks that existing agent files use the new `memory`, `model`, and `tools` frontmatter fields (agents without `memory` are degraded)
@@ -265,19 +265,23 @@ After LSP check, verify the three recommended **global** tools are configured.
 1. **Sequential Thinking MCP** — grep `~/.mcp.json` for `sequential-thinking`
 2. **Context7 plugin** — grep `~/.claude/settings.json` for `context7@claude-plugins-official` in `enabledPlugins`
 3. **ccstatusline** — check `~/.claude/settings.json` for a `statusline` entry set by ccstatusline
+4. **context-mode plugin** — grep `~/.claude/settings.json` for `context-mode` in `enabledPlugins`. Check if installed and get version via `claude plugin list 2>/dev/null | grep context-mode`
 
 **Report status and prompt:**
 
-> "Global MCP/Plugins: [X/3] configured
+> "Global MCP/Plugins: [X/4] configured
 >   sequential-thinking: [✓ configured / ✗ missing]
 >   context7:            [✓ configured / ✗ missing]
 >   ccstatusline:        [✓ configured / ✗ missing]
-> Install missing? [y/n]"
+>   context-mode:        [✓ vX.Y.Z / ✓ update available vX.Y.Z → vA.B.C / ✗ missing]
+> Install missing / update available? [y/n]"
 
 **If yes:** Follow the same install steps as `sk:setup-claude` MCP Servers & Plugins section:
 - Sequential Thinking: merge entry into `~/.mcp.json`
 - Context7: add `context7@claude-plugins-official: true` to `~/.claude/settings.json` enabledPlugins
 - ccstatusline: run `npx ccstatusline@latest`
+- context-mode (install): run `/plugin marketplace add mksglu/context-mode` then `/plugin install context-mode@context-mode`
+- context-mode (update): run `/context-mode:ctx-upgrade`
 
 **If no:** skip, continue to Step 1.8.
 

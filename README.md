@@ -143,6 +143,7 @@ Batch 1 (parallel):
   security-reviewer  → OWASP audit → flags: no rate limit on POST /login
   performance-optimizer → scans for N+1 → clean
   linter             → pint auto-fixes formatting
+  deps-audit         → CVE scan → clean
 
 Batch 2:
   test runner        → 97% coverage → adds missing test → 100%
@@ -157,7 +158,7 @@ Batch 4:
 Each failure auto-fixes and re-runs. One squash commit per gate pass.
 
 **Step 8 — Finalize** (`/sk:finish-feature`)
-Changelog updated. PR created. Feature spec synced. Asks about release.
+Changelog updated. PR created. CI monitor loop starts automatically — polls CI every 60 seconds, reads all auto-reviewer comments (Copilot, CodeRabbit, etc.), and iterates until CI is green and zero unresolved threads remain. Feature spec synced. Asks about release.
 
 **Step 8.5 — Learn** (`/sk:learn`)
 Extracts reusable patterns from this session:
@@ -308,11 +309,11 @@ Agents are specialized sub-agents deployed to `.claude/agents/` by `/sk:setup-cl
 
 ## Quality Gates
 
-`/sk:gates` runs all 6 gates in optimized parallel batches. One command replaces six.
+`/sk:gates` runs all 7 gates in optimized parallel batches. One command replaces seven.
 
 | Batch | Gates | Notes |
 |---|---|---|
-| **1** (parallel) | lint + `security-reviewer` + `performance-optimizer` | Independent — run simultaneously |
+| **1** (parallel) | lint + `security-reviewer` + `performance-optimizer` + `deps-audit` | Independent — run simultaneously |
 | **2** | tests (100% coverage on new code) | Needs lint fixes first |
 | **3** | `code-reviewer` (7-dimension) | Needs test confirmation |
 | **4** | E2E Tests (Playwright or agent-browser) | Uses scenarios from `qa-engineer` |
@@ -382,6 +383,14 @@ Added/removed automatically based on detected stack. No opt-in required.
 | Server | Stack | What it does |
 |---|---|---|
 | **laravel-boost** | Laravel | Database schema, read-only queries, docs search (version-matched), application logs, browser errors, last exception, Eloquent model list |
+
+### Recommended Community Plugins
+
+These are not installed by ShipKit but are worth adding manually.
+
+| Plugin | Install | What it does |
+|---|---|---|
+| **context-mode** | `/plugin marketplace add mksglu/context-mode` then `/plugin install context-mode@context-mode` | Routes large tool outputs (Playwright snapshots, grep results) through SQLite-backed summarization — up to 96% context savings. Hooks in automatically via `PreToolUse`/`PostToolUse`. |
 
 ---
 
@@ -474,7 +483,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 ## All Commands
 
 <details>
-<summary><strong>43 skills + 13 agents</strong> — click to expand</summary>
+<summary><strong>44 skills + 13 agents</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---|---|
@@ -490,6 +499,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:context-budget` | Audit context window token consumption |
 | `/sk:dashboard` | Live Kanban board across worktrees |
 | `/sk:debug` | Structured bug investigation |
+| `/sk:deps-audit` | CVE scan, license compliance, outdated packages — runs automatically in `/sk:gates` Batch 1 |
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Define, run, and report evals |
 | `/sk:execute-plan` | Execute plan checkboxes in batches |

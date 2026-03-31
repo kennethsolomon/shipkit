@@ -79,10 +79,10 @@ Format: `type(scope): description`
 ### 7. Gates (auto-advance on clean pass)
 
 Run all quality gates via `/sk:gates`:
-1. Lint + dep audit
-2. Test (100% coverage)
-3. Security (0 issues)
-4. Performance (if not auto-skipped)
+1. Lint + deps-audit (CVE scan, license compliance, outdated packages)
+2. Security (0 issues)
+3. Performance (if not auto-skipped)
+4. Test (100% coverage)
 5. Review + simplify
 6. E2E
 

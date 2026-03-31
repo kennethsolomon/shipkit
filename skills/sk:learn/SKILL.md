@@ -114,6 +114,29 @@ Extracted 3 patterns from this session:
 Save patterns? (all / 1,3 / none)
 ```
 
+### Phase 6: Skill Improvement Pass
+
+After saving patterns, scan the current session for evidence that any ShipKit skill underperformed:
+
+**Signals to look for:**
+- A skill was invoked, then its output was immediately corrected or overridden by the user
+- A gate skill (lint, security, perf, deps-audit, review) failed to catch something that was caught later
+- The user said "no", "don't", "wrong", "instead", or "again" in response to a skill's output
+- A skill ran 2+ retries because its first attempt was wrong
+
+**If signals found**, present:
+```
+Skill improvement candidates:
+1. sk:finish-feature — CI monitor loop timed out twice before CI passed (suggest: increase default poll interval)
+2. sk:gates — deps-audit was skipped but CVE was found in security-reviewer (suggest: always run deps-audit)
+
+Improve any of these? (1 / 2 / all / none)
+```
+
+If user confirms → open the skill's SKILL.md and propose a targeted diff to address the specific failure. Use `/sk:skill-creator` to apply the change.
+
+If no signals found → skip silently (no output for this phase).
+
 ## Promotion: Project to Global
 
 A pattern is auto-promoted to global when:

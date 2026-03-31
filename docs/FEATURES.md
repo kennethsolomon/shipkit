@@ -31,7 +31,8 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 
 | Command | Purpose | Spec |
 |---------|---------|------|
-| `/sk:lint` | Auto-detect + run all linters; dependency vulnerability audit | — |
+| `/sk:deps-audit` | CVE scan, license compliance, outdated packages (npm, Composer, Cargo, pip, Go, Bundler) | — |
+| `/sk:lint` | Auto-detect + run all linters | — |
 | `/sk:test` | Auto-detect + run all test suites; 100% coverage gate | — |
 | `/sk:security-check` | OWASP security audit on changed files | — |
 | `/sk:perf` | Performance audit (bundle, N+1, Core Web Vitals, memory) | — |
@@ -102,3 +103,4 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | [sk-autopilot.md](sk:features/sk-autopilot.md) | 2026-03-24 | v3.10.0 |
 | [sk-team.md](sk:features/sk-team.md) | 2026-03-24 | v3.10.0 |
 | [sk-start.md](sk:features/sk-start.md) | 2026-03-24 | v3.10.0 |
+| [sk-deps-audit.md](sk:features/sk-deps-audit.md) | 2026-03-31 | v3.22.0 |

@@ -155,6 +155,37 @@ If unresolved Critical/High findings remain, warn the user before proceeding.
 
    e) Report the PR URL to the user.
 
+7.5. **CI Monitor Loop** (mandatory — do not skip)
+
+After the PR is created, monitor CI and respond to all auto-reviewer comments before calling the feature done.
+
+   a) **Wait for auto-reviewers** — wait 3 minutes after PR creation. Auto-reviewers (Copilot, CodeRabbit, Gemini, etc.) need time to post their first round.
+
+   b) **Poll CI status:**
+   ```bash
+   gh run list --branch "$(git rev-parse --abbrev-ref HEAD)" --limit 1 --json status,conclusion,name
+   ```
+   Re-poll every 60 seconds until status is `completed`. If `conclusion` is `failure`: read the failed run logs (`gh run view --log-failed`), fix the issue, push, and restart the loop.
+
+   c) **Read all PR comments:**
+   ```bash
+   gh pr view --comments
+   ```
+   Address **every comment** — no exceptions, no "minor" exemptions. For each:
+   - Apply the suggested change or push back with a reply explaining why not
+   - Mark threads resolved after addressing
+
+   d) **Iterate** until both conditions are true:
+   - CI conclusion: `success`
+   - Zero unresolved comment threads
+
+   e) **Output verification line:**
+   ```
+   [VERIFIED] CI: ✓ success | Unresolved comments: 0 | Iterations: N
+   ```
+
+   **Forbidden:** checking CI once and proceeding, ignoring "nit" comments, merging with unresolved threads.
+
 8. **Capture Patterns** (`/sk:learn`)
 
    After the PR is created, run `/sk:learn` to extract reusable patterns from this session.

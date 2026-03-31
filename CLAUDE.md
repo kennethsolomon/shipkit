@@ -55,7 +55,7 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 | 5 | Write Tests + Implement | `/sk:write-tests` → `/sk:execute-plan` | required | TDD red→green. `/sk:schema-migrate` if DB keywords detected. Log to progress.md. |
 | 5.5 | Scope Check | `/sk:scope-check` | required | Compare implementation vs plan. Trim scope creep. |
 | 6 | Commit | `/sk:smart-commit` | required | |
-| 7 | Gates | `/sk:gates` | hard gate | Lint, test, security, perf, review, e2e in parallel. Blocks until all pass. |
+| 7 | Gates | `/sk:gates` | hard gate | Lint, test, security, perf, deps-audit, review, e2e in parallel. Blocks until all pass. |
 | 8 | Finalize | `/sk:finish-feature` | required | Changelog, PR, `/sk:update-task`, `/sk:features`. Ask about `/sk:release` (never auto-skip). |
 | 8.5 | Learn | `/sk:learn` | required | Extract patterns to `~/.claude/skills/learned/`. |
 | 8.6 | Retro | `/sk:retro` | required | Velocity, blockers, next actions. |
@@ -151,6 +151,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:context-budget` | Audit context window token consumption |
 | `/sk:dashboard` | Workflow Kanban board (localhost) |
 | `/sk:debug` | Investigate and debug issues |
+| `/sk:deps-audit` | CVE scan, license compliance, outdated packages (npm, Composer, Cargo, pip, Go, Bundler) |
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Run evaluations for agent reliability |
 | `/sk:execute-plan` | Execute todo.md checkboxes in batches |

@@ -75,6 +75,23 @@ Every write-capable agent MUST have either `isolation: worktree` in its frontmat
 
 ---
 
+## When You Add/Remove a Community Plugin
+
+Community plugins (like context-mode) are not owned by ShipKit but are recommended and integrated into setup flows.
+
+| File | What to change |
+|------|---------------|
+| `skills/sk:setup-claude/SKILL.md` | MCP Servers & Plugins section — add/remove under numbered list. Update prompt string. |
+| `skills/sk:setup-optimizer/SKILL.md` | Step 1.7 — add/remove from numbered check list. Update report prompt string and install/update instructions. |
+| `README.md` | Recommended Community Plugins table under MCP Servers section |
+| `.claude/docs/maintenance-guide.md` | This guide — update if plugin changes the maintenance process |
+
+**For install:** provide `/plugin marketplace add <org>/<repo>` + `/plugin install <name>@<name>` commands.
+**For update:** provide the plugin's own upgrade command (e.g., `/context-mode:ctx-upgrade`).
+**For check:** use `claude plugin list 2>/dev/null | grep <name>` to detect presence and version.
+
+---
+
 ## When You Change Gate Configuration
 
 Gates live in `skills/sk:gates/SKILL.md`. Batch order affects agent invocation.
@@ -137,4 +154,4 @@ Gates live in `skills/sk:gates/SKILL.md`. Batch order affects agent invocation.
 
 ---
 
-Last updated: 2026-03-29
+Last updated: 2026-03-31

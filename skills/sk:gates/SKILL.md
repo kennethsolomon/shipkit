@@ -1,12 +1,12 @@
 ---
 name: sk:gates
-description: Run all quality gates in optimized parallel batches — one command instead of six
+description: Run all quality gates in optimized parallel batches — one command instead of seven
 allowed-tools: Agent, Read, Write, Bash, Glob, Grep
 ---
 
 # Gates Orchestrator
 
-Run all quality gates (lint, test, security, perf, review, e2e) in optimized batches. Replaces manually invoking 6 separate commands.
+Run all quality gates (lint, test, security, perf, deps-audit, review, e2e) in optimized batches. Replaces manually invoking 7 separate commands.
 
 ## When to Use
 
@@ -16,19 +16,20 @@ Run `/sk:gates` after `/sk:smart-commit` completes (step 6). This single command
 
 Gates are organized into 4 batches for maximum parallelism while respecting dependencies:
 
-### Batch 1 — Parallel Agents (lint + security + perf)
+### Batch 1 — Parallel Agents (lint + security + perf + deps-audit)
 
-Launch 3 agents simultaneously:
+Launch 4 agents simultaneously:
 
-1. **Linter agent** — runs all formatters, analyzers, dep audits
+1. **Linter agent** — runs all formatters, analyzers
 2. **`security-reviewer` agent** — OWASP audit on changed files (read-only; reports findings, does not fix)
 3. **`performance-optimizer` agent** — bundle, N+1, Core Web Vitals, memory (worktree isolation — finds AND fixes critical/high issues)
    **Auto-skip:** If NO frontend keywords (component, view, page, CSS, UI, form, modal, button, react, vue, svelte, blade) AND NO database keywords (migration, schema, table, column, model, database, foreign key, index, seed) appear in `tasks/todo.md`, skip this agent and log: `Auto-skipped: Performance (no frontend or database keywords in plan)`.
+4. **`/sk:deps-audit` skill** — CVE scan, license compliance, outdated packages across all detected ecosystems (npm, Composer, Cargo, pip, Go, Bundler). Auto-fixes safe patch/minor bumps. Writes findings to `tasks/security-findings.md`.
 
-These 3 have no dependencies on each other. Run them in parallel using the Agent tool.
+These 4 have no dependencies on each other. Run them in parallel using the Agent tool.
 
-Wait for all 3 to complete. Collect results. Apply security fixes from `security-reviewer` findings in the main context. `performance-optimizer` commits its own fixes from its worktree — merge them in.
-Post checkpoint: `[Checkpoint] Batch 1 complete: lint + security + perf. Next: Batch 2 — test.`
+Wait for all 4 to complete. Collect results. Apply security fixes from `security-reviewer` findings in the main context. `performance-optimizer` commits its own fixes from its worktree — merge them in. `/sk:deps-audit` auto-commits any dependency bumps it applied.
+Post checkpoint: `[Checkpoint] Batch 1 complete: lint + security + perf + deps-audit. Next: Batch 2 — test.`
 
 ### Batch 2 — Test Agent (sequential, needs lint fixes)
 
@@ -57,12 +58,13 @@ After all 4 batches complete, output a summary:
 
 ```
 === Gate Results ===
-Lint:     clean (attempt N)
-Security: 0 findings (attempt N)
-Perf:     0 critical/high (attempt N)
-Tests:    X passed, 0 failed (attempt N)
-Review:   0 issues (attempt N)
-E2E:      Y scenarios passed (attempt N)
+Lint:       clean (attempt N)
+Security:   0 findings (attempt N)
+Perf:       0 critical/high (attempt N)
+Deps Audit: 0 CVEs (attempt N)
+Tests:      X passed, 0 failed (attempt N)
+Review:     0 issues (attempt N)
+E2E:        Y scenarios passed (attempt N)
 
 All gates passed. Run /sk:update-task
 ```
@@ -86,6 +88,7 @@ If any single gate fails 3 times:
 
 The orchestrator itself runs in the main context. Agents use their own model routing:
 - Linter: haiku (mechanical)
+- Deps audit: haiku (mechanical)
 - Test runner: sonnet
 - Security auditor: sonnet
 - Perf auditor: sonnet

@@ -137,6 +137,35 @@ Wait for user response:
    **If fast-track flow:**
    - Invoke `/sk:fast-track` with the task description
 
+### Step 3.5 — Task Onboarding Record (automatic, no prompt)
+
+After routing, write a lightweight task context snapshot to `tasks/onboarding/[task-slug].md`. This enables `/sk:resume-session` to pick up exactly where the task left off.
+
+Generate `[task-slug]` from the task description: lowercase, spaces → hyphens, max 40 chars. Example: `add-user-authentication`.
+
+```markdown
+# Task: [task description]
+Date: [YYYY-MM-DD HH:MM]
+Branch: [current branch or "not yet created"]
+Flow: [feature/debug/hotfix/fast-track]
+Mode: [autopilot/manual]
+Agents: [team/solo]
+
+## Codebase State
+- Recent commits: [last 3 from git log --oneline -3]
+- Modified files: [git status --short, if any]
+
+## Detected Context
+- Stack: [detected from package.json / composer.json / etc.]
+- Scope: [frontend/backend/full-stack/unknown]
+- Missing context flagged: [list if any, else "none"]
+
+## Entry Point
+Routed to: [/sk:autopilot / /sk:brainstorm / /sk:debug / /sk:hotfix / /sk:fast-track]
+```
+
+This file is ephemeral — it is for session continuity only. Do not log to `tasks/findings.md`.
+
 ## Override Flags
 
 | Flag | Effect |

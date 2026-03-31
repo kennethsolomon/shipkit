@@ -30,7 +30,7 @@ Run these commands in order for a complete, quality-gated feature build.
 | 5 | `/sk:write-tests` + `/sk:execute-plan` | TDD red + green (includes `/sk:schema-migrate` if DB keywords detected) |
 | 5.5 | `/sk:scope-check` | Trim scope creep — compare implementation to plan |
 | 6 | `/sk:smart-commit` | Conventional commit with approval |
-| 7 | `/sk:gates` | **All quality gates** — lint, test, security, perf, review, e2e *(hard gate)* |
+| 7 | `/sk:gates` | **All quality gates** — lint, deps-audit, security, perf, test, review, e2e *(hard gate)* |
 | 8 | `/sk:finish-feature` | Changelog + PR creation |
 | 8.5 | `/sk:learn` | Extract reusable patterns from this session |
 | 8.6 | `/sk:retro` | Post-ship retrospective — velocity, blockers, next actions |
@@ -72,6 +72,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:context-budget` | Audit context window token consumption and find savings |
 | `/sk:dashboard` | Read-only workflow Kanban board |
 | `/sk:debug` | Structured bug investigation |
+| `/sk:deps-audit` | CVE scan, license compliance, outdated packages — runs automatically in `/sk:gates` Batch 1 |
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Define, run, and report evals for agent reliability |
 | `/sk:execute-plan` | Implement plan in batches |
@@ -136,7 +137,7 @@ ShipKit routes each skill to the right model automatically. Set once per project
 | eval | sonnet | sonnet | sonnet | haiku |
 | lint, test | sonnet | sonnet | haiku | haiku |
 | smart-commit, branch, update-task | haiku | haiku | haiku | haiku |
-| start, learn, context-budget, health | haiku | haiku | haiku | haiku |
+| start, learn, context-budget, health, deps-audit | haiku | haiku | haiku | haiku |
 | save-session, resume-session, safety-guard | haiku | haiku | haiku | haiku |
 
 `opus` = inherit (uses your current session model).

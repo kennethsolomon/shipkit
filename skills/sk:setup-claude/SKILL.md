@@ -608,7 +608,7 @@ After stack detection, check and configure LSP tooling:
 
 After LSP setup, prompt the user to install three recommended tools that enhance Claude Code with structured reasoning, live documentation, and session visibility:
 
-> "Install recommended MCP servers & plugins? (Sequential Thinking, Context7, ccstatusline) [y/n]"
+> "Install recommended MCP servers & plugins? (Sequential Thinking, Context7, ccstatusline, context-mode) [y/n]"
 
 If yes, install each — skip any already configured.
 
@@ -658,6 +658,23 @@ npx ccstatusline@latest
 ```
 
 Report: `+ ccstatusline configured`
+
+#### 4. context-mode
+
+Routes large tool outputs (Playwright snapshots, grep results, log files, API responses) through a SQLite-backed summarization layer — keeps raw data out of the context window. Benchmarked at 96% average context savings across 21 real scenarios. Hooks in automatically via `PreToolUse`/`PostToolUse`/`PreCompact`/`SessionStart`.
+
+**Check:** run `claude plugin list 2>/dev/null | grep context-mode`. If missing:
+
+```
+/plugin marketplace add mksglu/context-mode
+/plugin install context-mode@context-mode
+```
+
+Then reload: `/reload-plugins`
+
+Verify with `/context-mode:ctx-doctor` — all checks should show `[x]`.
+
+Report: `+ context-mode plugin installed`
 
 **Idempotency:** Skip each install if already present. Never overwrite existing MCP entries, plugin flags, or statusline config.
 
