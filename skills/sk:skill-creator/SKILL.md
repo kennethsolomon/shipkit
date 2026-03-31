@@ -11,6 +11,8 @@ Assess where the user is in this loop and jump in accordingly. If they already h
 
 Adapt communication to user familiarity — briefly define "JSON", "assertion", etc. if context suggests unfamiliarity.
 
+> **ShipKit structural changes:** If this skill creation or modification touches ShipKit's own structure (adding/removing a skill, gate, command, agent, or community plugin), read `.claude/docs/maintenance-guide.md` BEFORE writing any files. The guide lists every derived file that must stay in sync — missing even one causes a second-pass cleanup. This is a lesson learned from experience.
+
 ---
 
 ## Creating a skill
