@@ -18,6 +18,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.22.0] - 2026-03-31
+
+### Added
+- **`/sk:deps-audit`** — new quality gate skill: CVE scanning, license compliance, and outdated package detection across npm, Composer, Cargo, pip, Go modules, and Bundler. Auto-fixes safe patch/minor version bumps. Runs automatically in `/sk:gates` Batch 1 as the 4th parallel agent (gate count 6 → 7).
+- **context-mode plugin integration** — `/sk:setup-claude` and `/sk:setup-optimizer` now prompt to install/update `mksglu/context-mode` (96% average context savings via SQLite-backed output summarization). Documented in README under "Recommended Community Plugins".
+- **CI monitor loop in `/sk:finish-feature`** — mandatory Step 7.5 after PR creation: polls CI every 60s, reads all auto-reviewer comments (Copilot, CodeRabbit, etc.), iterates until CI green + zero unresolved threads before calling the feature done.
+- **Task onboarding record in `/sk:start`** — Step 3.5 writes `tasks/onboarding/[task-slug].md` after routing, capturing flow, mode, agents, and codebase state for session continuity.
+- **Skill improvement pass in `/sk:learn`** — Phase 6 scans the session for evidence of skill underperformance and proposes targeted SKILL.md diffs via `/sk:skill-creator`.
+- **Feature spec** `docs/sk:features/sk-deps-audit.md` — full business logic, edge cases, and hard rules for the new skill.
+- **Maintenance guide** updated with "When You Add/Remove a Community Plugin" section.
+- **Architectural change log** entry for this release.
+
+### Changed
+- `/sk:gates` Batch 1 now runs 4 parallel agents (lint + security + perf + deps-audit) instead of 3.
+- `/sk:autopilot` Step 7 gate list updated to match new gate order.
+- `/sk:setup-optimizer` Step 1.7 checks 4 global plugins instead of 3; includes context-mode install/update.
+- README commands count updated 43 → 44.
+
+---
+
 ## [v3.21.0] - 2026-03-30
 
 ### Added
