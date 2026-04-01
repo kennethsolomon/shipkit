@@ -12,7 +12,9 @@ Do NOT invoke any implementation skill, write any code, or scaffold until the us
 
 ## Steps
 
-1. **Explore context** — read `tasks/findings.md` and `tasks/lessons.md` if they exist. Summarize prior decisions; ask extend/revise/fresh? Do not re-explore what is already decided. Apply every active lesson as a design constraint. Check files, docs, recent commits.
+1. **Explore context** — in this order:
+   - If `tasks/spec.md` exists, read it first. Treat every acceptance criterion as a fixed constraint — do not re-ask questions the spec already answers. Note: "Spec found — requirements pre-defined. Exploring implementation approaches only."
+   - Read `tasks/findings.md` and `tasks/lessons.md` if they exist. Summarize prior decisions; ask extend/revise/fresh? Do not re-explore what is already decided. Apply every active lesson as a design constraint. Check files, docs, recent commits.
 2. **Ask clarifying questions** — one per message, prefer multiple choice. Focus on purpose, constraints, success criteria.
 3. **Architecture assessment** (complex tasks only) — if task spans multiple systems, requires data modeling/API contracts, 3+ components, or touches auth/billing: invoke the `architect` agent with: "Read tasks/findings.md, tasks/lessons.md, tasks/tech-debt.md, explore relevant code. Propose 2-3 architecturally sound approaches for [task] with trade-offs. Read-only." Incorporate into step 5.
 4. **Search-First Research** — before proposing approaches:

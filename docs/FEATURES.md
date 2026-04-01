@@ -16,6 +16,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 
 | Command | Purpose | Spec |
 |---------|---------|------|
+| `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring; auto-run for vague tasks | [sk-deep-interview.md](sk:features/sk-deep-interview.md) |
 | `/sk:brainstorm` | Explore requirements and design before implementation | — |
 | `/sk:frontend-design` | UI mockup + optional Pencil visual design | — |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) | — |
@@ -59,7 +60,8 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 |---------|---------|------|
 | `/sk:dashboard` | Live Kanban board — workflow status across all worktrees | [sk-dashboard.md](sk:features/sk-dashboard.md) |
 | `/sk:context` | Session initializer — load context files + output SESSION BRIEF | [sk-context.md](sk:features/sk-context.md) |
-| `/sk:debug` | Structured bug investigation: reproduce → isolate → fix | — |
+| `/sk:deep-dive` | Trace + interview pipeline for unknown-cause bugs | [sk-deep-dive.md](sk:features/sk-deep-dive.md) |
+| `/sk:debug` | Structured bug investigation (known cause): reproduce → isolate → fix | — |
 | `/sk:hotfix` | Emergency fix workflow (skip TDD, enforce quality gates) | — |
 | `/sk:change` | Handle mid-workflow requirement change; re-enter at correct step | — |
 | `/sk:status` | Show workflow + task status at a glance | — |
@@ -100,7 +102,9 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | [sk-gates.md](sk:features/sk-gates.md) | 2026-03-23 | v3.7.0 |
 | [sk-fast-track.md](sk:features/sk-fast-track.md) | 2026-03-23 | v3.7.0 |
 | [sk-auto-skip.md](sk:features/sk-auto-skip.md) | 2026-03-24 | v3.10.0 |
-| [sk-autopilot.md](sk:features/sk-autopilot.md) | 2026-03-24 | v3.10.0 |
+| [sk-autopilot.md](sk:features/sk-autopilot.md) | 2026-04-01 | v3.23.0 |
 | [sk-team.md](sk:features/sk-team.md) | 2026-03-24 | v3.10.0 |
-| [sk-start.md](sk:features/sk-start.md) | 2026-03-24 | v3.10.0 |
+| [sk-start.md](sk:features/sk-start.md) | 2026-04-01 | v3.23.0 |
 | [sk-deps-audit.md](sk:features/sk-deps-audit.md) | 2026-03-31 | v3.22.0 |
+| [sk-deep-interview.md](sk:features/sk-deep-interview.md) | 2026-04-01 | v3.23.0 |
+| [sk-deep-dive.md](sk:features/sk-deep-dive.md) | 2026-04-01 | v3.23.0 |

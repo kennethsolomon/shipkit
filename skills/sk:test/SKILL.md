@@ -123,13 +123,34 @@ Sub-agent 3: [FE command]
 
 ### 4. If Tests Fail
 
-- Read the failure output carefully — identify the root cause
-- Fix the failing **implementation code** or test setup, not the test assertions (tests define expected behavior)
-- Do NOT skip, mark incomplete, or delete failing tests
-- Re-run the failing suite
-- Loop until all pass
-- If the fix is a logic change (new behavior, changed contract), update the relevant tests to reflect the new behavior.
-- Once all tests pass, make ONE squash commit: `fix(test): resolve failing tests` — do NOT ask the user
+Use a 3-cycle approach. Track the error message prefix (first 30 chars) to detect repeated failures.
+
+**Cycle 1 — Self-fix:**
+Read the failure output carefully. Fix the failing **implementation code** or test setup — not the test assertions (tests define expected behavior). Do NOT skip, mark incomplete, or delete failing tests. Re-run.
+
+**Cycle 2 — Architect diagnosis (same failure as cycle 1):**
+If the exact same failure recurs, spawn an `architect` agent:
+```
+Task(subagent_type="architect", model="sonnet", prompt="Tests failing after a fix attempt:
+
+[paste failure output]
+
+Analyze the root cause and provide specific, actionable fix recommendations.")
+```
+Apply the architect's recommendations. Re-run.
+
+**Cycle 3 — Stop (same failure as cycle 2):**
+If the failure recurs a third time:
+```
+[STOPPED] Same failure after 3 cycles.
+Root cause (architect diagnosis): [summary]
+Needs human judgment before continuing.
+```
+Log to `tasks/progress.md`. Do not attempt further fixes.
+
+**Same-failure detection:** Compare first 30 chars of the error message. If identical across consecutive cycles, treat as same failure — skip self-fix on cycle 2, go directly to architect.
+
+Once all tests pass, make ONE squash commit: `fix(test): resolve failing tests` — do NOT ask the user
 
 > Squash gate commits — collect all fixes for the pass, then one commit. Do not commit after each individual fix.
 

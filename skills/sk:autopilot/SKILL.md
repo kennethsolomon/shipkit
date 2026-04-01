@@ -31,6 +31,41 @@ Autopilot runs the EXACT same workflow as manual mode (8 phases: explore, design
 
 ## Steps
 
+### 0. Task Classification (silent, auto — no user prompt)
+
+Before loading context, classify the input to route any pre-processing.
+
+**Check A — Bug with unknown root cause:**
+Signals: prompt contains `bug`, `error`, `broken`, `crash`, `failing`, `not working`, `issue`, `unexpected behavior`, `regression`
+AND no known-cause anchors: no `file:line`, no `"the issue is"`, no specific error code pointing to a cause, no function name + symptom pair.
+
+Examples: "something is broken with auth", "payments failing intermittently", "dashboard is slow and I don't know why"
+
+If matched:
+→ Log: `[Autopilot] Bug with unknown root cause — running /sk:deep-dive to investigate.`
+→ Invoke `Skill("sk:deep-dive")` with the original task description
+→ Deep-dive writes `tasks/spec.md` with root cause + fix scope
+→ Continue with bug fix flow: branch (step 4) → write-tests → execute-plan → commit → gates → finalize
+→ Skip steps 1–3 (brainstorm/design/plan are replaced by the spec)
+
+**Check B — Vague feature or improvement:**
+No bug signals from Check A, AND no concrete anchors:
+- No file paths, no function/method names, no specific error messages
+- Open-ended verbs: `improve`, `enhance`, `make better`, `add features`, `build`, `clean up`, `refactor`
+- References a system area without scope: "the auth system", "the dashboard", "notifications"
+
+If matched:
+→ Log: `[Autopilot] Open-ended request — running /sk:deep-interview to clarify requirements.`
+→ Invoke `Skill("sk:deep-interview")` with the original task description
+→ Deep-interview writes `tasks/spec.md`
+→ Continue to Step 1 (brainstorm reads spec.md automatically — no re-asking)
+
+**Check C — Clear input (default):**
+Has concrete anchors OR is a specific bounded request.
+→ Proceed directly to Step 1 — no log, no extra step.
+
+---
+
 ### 1. Load Context + Brainstorm + Direction Approval (STOP — requires user input)
 
 - Read `tasks/todo.md`, `tasks/lessons.md`, `tasks/findings.md`, `tasks/tech-debt.md`
@@ -40,6 +75,10 @@ Autopilot runs the EXACT same workflow as manual mode (8 phases: explore, design
 **Present ONE direction summary and ask:**
 > "Direction: [1-2 sentence summary of chosen approach]
 > Scope: [what will be built/changed]
+> Acceptance Criteria:
+>   - [ ] [criterion 1 — testable, specific]
+>   - [ ] [criterion 2]
+>   - [ ] [criterion 3]
 > Auto-skipping: [list of steps that will be auto-skipped and why]
 > Proceed? (y/n)"
 
@@ -87,6 +126,16 @@ Run all quality gates via `/sk:gates`:
 6. E2E
 
 Each gate auto-fixes and re-runs internally. Squash gate commits — one commit per gate pass.
+
+### 7.5. Verify Acceptance Criteria (auto)
+
+Before the PR push stop, verify each acceptance criterion defined in step 1:
+- Run the relevant test, command, or check for each criterion
+- Mark ✓ passing or ✗ failing
+- All must be ✓ before proceeding to step 8
+- If any ✗: fix → re-run `/sk:gates` (step 7) → re-verify criteria
+
+Log result: `[Autopilot] Acceptance criteria: X/X passed.`
 
 ### 8. PR Push (STOP — requires user confirmation)
 

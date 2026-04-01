@@ -64,7 +64,25 @@ Create a decision-complete plan **before** writing code.
    Fill in the contract based on what the plan describes. If the plan is too vague for a specific field, write `[TBD — clarify before implementation]`.
 
    This file is the mandatory handshake for `/sk:team`. If no API keywords are found, skip this step silently.
-4. Present the plan to the user and wait for approval.
+4. **Consensus check (auto):**
+
+   Scan `tasks/findings.md` and the task description for high-risk keywords:
+   - **Auth/security:** `auth`, `authentication`, `authorization`, `permission`, `role`, `token`, `OAuth`, `2FA`, `session`, `password`
+   - **Data safety:** `migration`, `schema`, `data loss`, `DROP`, `truncate`, `production data`, `seed`
+   - **Payments:** `payment`, `billing`, `stripe`, `invoice`, `checkout`, `subscription`
+   - **Public API:** `API contract`, `breaking change`, `backward compat`, `deprecat`
+   - **Infrastructure:** `deploy`, `CI/CD`, `pipeline`, `environment variable`, `secret`, `credentials`
+
+   If high-risk keyword found (and `--no-consensus` not passed):
+   → Log: `[Write-plan] High-risk task — running architect + critic review.`
+   → Architect (read-only): strongest argument against approach, one real tradeoff, architectural concerns.
+   → Critic (read-only, after architect): are acceptance criteria testable? alternatives fairly dismissed?
+   → Main context applies revisions. Max 2 rounds.
+
+   If no high-risk keywords: skip to step 5.
+   Manual overrides: `--consensus` forces the loop; `--no-consensus` skips it.
+
+5. Present the final plan to the user and wait for approval.
 
 ## Rules
 - No implementation until the plan is approved.

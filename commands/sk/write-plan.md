@@ -88,7 +88,34 @@ Create a decision-complete plan **before** writing code.
    - Completeness check — are all requirements covered? List any gaps.
    - Dependency analysis — are tasks ordered correctly? Could any sequential
      tasks actually run in parallel (same wave)?
-5. Present the plan to the user and wait for approval.
+5. **Consensus check (auto):**
+
+   Scan `tasks/findings.md` and the task description for high-risk keywords:
+   - **Auth/security:** `auth`, `authentication`, `authorization`, `permission`, `role`, `token`, `OAuth`, `2FA`, `session`, `password`
+   - **Data safety:** `migration`, `schema`, `data loss`, `DROP`, `truncate`, `production data`, `seed`
+   - **Payments:** `payment`, `billing`, `stripe`, `invoice`, `checkout`, `subscription`
+   - **Public API:** `API contract`, `breaking change`, `backward compat`, `deprecat`
+   - **Infrastructure:** `deploy`, `CI/CD`, `pipeline`, `environment variable`, `secret`, `credentials`
+
+   If any high-risk keyword found (and `--no-consensus` not passed):
+   → Log: `[Write-plan] High-risk task detected — running architect + critic review.`
+   → Run consensus loop (max 2 rounds):
+
+   **Round a — Architect review** (spawn agent, read-only):
+   > "Review the plan in `tasks/todo.md`. Provide: (1) strongest argument against this approach, (2) one real tradeoff tension being accepted, (3) any architectural concerns. Read-only."
+
+   **Round b — Critic review** (spawn agent after architect, read-only):
+   > "Evaluate the plan in `tasks/todo.md`: (1) are acceptance criteria testable and specific? (2) are alternatives fairly dismissed? (3) what's missing or under-specified?"
+
+   → Main context applies revisions to `tasks/todo.md`
+   → If architect and critic agree after round 1, proceed without round 2
+
+   If no high-risk keywords (or `--no-consensus` passed):
+   → Skip consensus loop, proceed to user approval directly
+
+   Manual overrides: `--consensus` forces the loop on any task; `--no-consensus` skips it even on high-risk tasks.
+
+6. Present the final plan to the user and wait for approval.
 
 ## Rules
 - No implementation until the plan is approved.

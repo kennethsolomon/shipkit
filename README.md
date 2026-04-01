@@ -483,7 +483,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 ## All Commands
 
 <details>
-<summary><strong>44 skills + 13 agents</strong> — click to expand</summary>
+<summary><strong>46 skills + 13 agents</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---|---|
@@ -498,7 +498,9 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:context` | Load project context |
 | `/sk:context-budget` | Audit context window token consumption |
 | `/sk:dashboard` | Live Kanban board across worktrees |
-| `/sk:debug` | Structured bug investigation |
+| `/sk:debug` | Structured bug investigation (known cause) |
+| `/sk:deep-dive` | Trace + interview pipeline for unknown-cause bugs — auto-routed by `/sk:start` and `/sk:autopilot` |
+| `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring — auto-routed for vague tasks |
 | `/sk:deps-audit` | CVE scan, license compliance, outdated packages — runs automatically in `/sk:gates` Batch 1 |
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Define, run, and report evals |

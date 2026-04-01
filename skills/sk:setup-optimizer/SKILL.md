@@ -45,13 +45,13 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Inconsistencies** — compares documented vs actual project state (directories, scripts, workflows)
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 11-step flow (1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 8.6) with `/sk:gates` as single gate step
-- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin`, `sk:deps-audit` in the Commands table
+- **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin`, `sk:deps-audit`, `sk:deep-interview`, `sk:deep-dive` in the Commands table
 - **Missing agents** — checks if `.claude/agents/` exists and contains the 13 core agents: `backend-dev`, `frontend-dev`, `mobile-dev`, `qa-engineer`, `code-reviewer`, `security-reviewer`, `performance-optimizer`, `architect`, `database-architect`, `devops-engineer`, `debugger`, `refactor-specialist`, `tech-writer`
 - **Missing rules** — checks if `.claude/rules/` exists and contains the project-relevant rule files based on detected stack (laravel.md, react.md, vue.md, tests.md, api.md, migrations.md)
 - **Stale agent frontmatter** — checks that existing agent files use the new `memory`, `model`, and `tools` frontmatter fields (agents without `memory` are degraded)
 - **Auto-skip rules** — checks for auto-skip detection rules in the workflow section
 - **Stale tracker references** — checks for `tasks/workflow-status.md` references (removed — progress tracked via git branch + todo.md checkboxes)
-- **Missing hooks** — checks if `.claude/hooks/` exists and contains both core and enhanced hooks
+- **Missing hooks** — checks if `.claude/hooks/` exists and contains both core and enhanced hooks; also checks for `keyword-router.sh` (UserPromptSubmit magic keyword routing)
 
 Reports findings before proceeding. If issues are found, they inform subsequent steps.
 
@@ -182,7 +182,7 @@ Explore → Design → Plan → Branch → Write Tests + Implement → Scope Che
 After updating the workflow, check and deploy hooks:
 
 1. **Check if `.claude/hooks/` exists** — if not, create it
-2. **Check for core hooks** — `session-start.sh`, `session-stop.sh`, `pre-compact.sh`, `validate-commit.sh`, `validate-push.sh`, `log-agent.sh`
+2. **Check for core hooks** — `session-start.sh`, `session-stop.sh`, `pre-compact.sh`, `validate-commit.sh`, `validate-push.sh`, `log-agent.sh`, `keyword-router.sh`
 3. **Check for enhanced hooks** — `config-protection.sh`, `post-edit-format.sh`, `console-log-warning.sh`, `cost-tracker.sh`, `suggest-compact.sh`, `safety-guard.sh`
 4. **Check `.claude/settings.json`** — verify hooks are wired correctly
 

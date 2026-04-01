@@ -27,12 +27,20 @@ Read the task description from arguments. Scan for signal keywords to determine 
 
 **Flow detection:**
 
-| Signal Keywords | Detected Flow |
-|----------------|---------------|
-| bug, fix, broken, error, regression, failing, crash, wrong | `debug` (7 steps) |
-| urgent, prod down, hotfix, emergency, critical, production, incident | `hotfix` (6 steps) |
-| config, bump, typo, copy, rename, dependency, upgrade, version, docs | `fast-track` (5 steps) |
-| *(default — no special signals)* | `feature` (8 phases + scope check, learn, retro) |
+Check in this order — first match wins:
+
+| Signal Keywords | Additional condition | Detected Flow |
+|----------------|---------------------|---------------|
+| urgent, prod down, hotfix, emergency, critical, production, incident | — | `hotfix` (6 steps) |
+| config, bump, typo, copy, rename, dependency, upgrade, version, docs | — | `fast-track` (5 steps) |
+| bug, fix, broken, error, regression, failing, crash, wrong, issue, unexpected | Has known-cause anchor (file:line, "the issue is", specific function + symptom) | `debug` (7 steps) |
+| bug, fix, broken, error, regression, failing, crash, wrong, issue, unexpected | No known-cause anchor | `deep-dive` (trace → interview → fix) |
+| *(default — no special signals)* | — | `feature` (8 phases + scope check, learn, retro) |
+
+**Known-cause anchors:** specific file path (`app/Models/User.php`), line number reference, function/method name + symptom, explicit "the issue is X", specific HTTP status pointing to code location.
+
+**Vague feature detection** (runs for `feature` flow only):
+After flow detection, check if the feature request has no concrete anchors (no file paths, no function names, no bounded scope) AND uses open-ended verbs (improve, enhance, make better, add features, build something, clean up, refactor). If yes, flag as `vague-feature`.
 
 **Scope detection:**
 
@@ -82,20 +90,40 @@ This check runs silently. If <3 items missing, no output.
 Present the classification and recommendation:
 
 ```
-Detected: [Full-stack feature / Backend bug fix / Frontend hotfix / Small config change / etc.]
+# Standard feature:
+Detected: [Full-stack feature / Backend feature / Frontend feature / etc.]
 Recommended:
-  Flow:   [feature (8 phases) / debug (7 steps) / hotfix (6 steps) / fast-track (5 steps)]
-  Mode:   [autopilot / manual]
-  Agents: [team (backend + frontend + QA) / solo]
-
+  Flow:   feature (8 phases)
+  Mode:   autopilot
+  Agents: [team / solo]
 Proceed? (y) or override: manual / no-team / --debug / --hotfix / --fast-track
+
+# Vague feature:
+Detected: Open-ended feature request — requirements need clarification
+Recommended:
+  Flow:   feature (with deep-interview pre-step)
+  Mode:   autopilot
+  Agents: [scope-based]
+Proceed? (y) or override: manual / skip-interview
+
+# Unknown-cause bug:
+Detected: Bug investigation (root cause unknown)
+Recommended:
+  Flow:   deep-dive (trace → interview → fix)
+  Mode:   autopilot
+  Agents: solo
+Proceed? (y) or override: manual / --debug (if cause is known)
+
+# Known-cause bug:
+Detected: Bug fix (cause identified)
+Recommended:
+  Flow:   debug (7 steps)
+  Mode:   autopilot
+  Agents: solo
 ```
 
 Default mode recommendation:
-- `feature` flow → recommend `autopilot`
-- `debug` flow → recommend `autopilot`
-- `hotfix` flow → recommend `autopilot`
-- `fast-track` flow → recommend `autopilot`
+- `feature`, `debug`, `deep-dive`, `hotfix`, `fast-track` flow → recommend `autopilot`
 
 Wait for user response:
 - `y` or `yes` → proceed with recommendation
@@ -127,6 +155,19 @@ Wait for user response:
    **If manual mode + solo:**
    - Start the normal step-by-step workflow (`/sk:brainstorm`)
    - Standard manual behavior — no changes from current flow
+
+   **If deep-dive flow:**
+   - Invoke `Skill("sk:deep-dive")` with the task description
+   - Deep-dive produces `tasks/spec.md` with root cause + fix scope
+   - After spec is written, continue bug fix flow: branch → write-tests → execute-plan → commit → gates → finalize
+
+   **If feature flow + autopilot + vague-feature flagged:**
+   - Invoke `/sk:autopilot` — autopilot step 0 handles deep-interview automatically
+
+   **If feature flow + manual mode + vague-feature flagged:**
+   - Log: `[Start] Open-ended request — running /sk:deep-interview before brainstorm.`
+   - Invoke `Skill("sk:deep-interview")`
+   - After spec.md is written, invoke `/sk:brainstorm` (reads spec.md automatically)
 
    **If debug flow:**
    - Invoke `/sk:debug` with the task description
@@ -173,7 +214,9 @@ This file is ephemeral — it is for session continuity only. Do not log to `tas
 | `--manual` | Force manual mode (step-by-step, no auto-advance) |
 | `--no-team` | Force single-agent even if full-stack detected |
 | `--team` | Force team mode even if single-domain detected |
-| `--debug` | Force debug flow (bug fix) |
+| `--debug` | Force debug flow (known-cause bug fix) |
+| `--deep-dive` | Force deep-dive flow (unknown-cause investigation) |
+| `--interview` | Force deep-interview pre-step even on clear requests |
 | `--hotfix` | Force hotfix flow (production emergency) |
 | `--fast-track` | Force fast-track flow (small change) |
 

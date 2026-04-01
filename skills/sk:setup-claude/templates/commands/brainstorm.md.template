@@ -20,6 +20,7 @@ Explore design and clarify requirements **before** any code is written.
 ## Steps
 
 0. **Read context files first:**
+   - If `tasks/spec.md` exists, read it first. Treat every acceptance criterion as a fixed constraint — do not re-ask questions the spec already answers. Note: "Spec found — requirements pre-defined. Exploring implementation approaches only."
    - If `tasks/findings.md` exists and has content, read it — summarize prior decisions
      and ask: extend, revise, or start fresh?
    - If `tasks/lessons.md` exists, read it in full. Apply every active lesson as a design

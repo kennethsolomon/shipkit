@@ -71,17 +71,29 @@ All gates passed. Run /sk:update-task
 
 ## Failure Handling
 
-- Each agent handles its own fix → re-run loop internally
+- Each agent handles its own fix → re-run loop internally (up to 2 self-fix attempts)
 - **Squash gate commits:** When a gate requires fixes, collect all fixes for that pass, then make ONE commit: `fix(<gate>): resolve <gate> issues`. Do not commit after each individual fix.
-- If any agent fails after 3 attempts → stop all gates and report to user
 - Do NOT proceed to the next batch if the current batch has unresolved failures
+
+**Same-failure detection:** Track the first 30 chars of each gate's error message. If identical across 2 consecutive fix attempts, trigger architect diagnosis immediately — do not wait for a 3rd attempt.
+
+**On 3rd failure of any gate (or 2nd if same-failure detected):**
+1. Gates orchestrator spawns `architect` agent:
+   ```
+   Task(subagent_type="architect", model="sonnet", prompt="Gate [name] failing after 2 fix attempts.
+   Error: [error output]
+   Diagnose root cause and recommend a specific fix.")
+   ```
+2. Main context applies the architect's recommendation
+3. Re-run the failed gate (this is the final attempt)
+4. If still failing → 3-strike protocol below
 
 ## 3-Strike Protocol
 
-If any single gate fails 3 times:
+If any single gate fails after architect-assisted retry:
 1. Stop the entire gates process
 2. Log the failure to `tasks/progress.md`
-3. Report to user with details of what failed and what was tried
+3. Report to user: gate name, error, architect diagnosis, what was tried
 4. Do NOT mark the step as done
 
 ## Model Routing

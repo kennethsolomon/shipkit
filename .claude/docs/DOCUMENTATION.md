@@ -137,10 +137,21 @@ npm update -g @kennethsolomon/shipkit
 │          Plan → Build (TDD) → Quality Gates → Ship → Learn                  │
 └─────────────────────────────────────────────────────────────────────────────┘
 
+PHASE 0: CLASSIFY (OPTIONAL — auto-run by /sk:autopilot and /sk:start)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Step 0 — Task Classification (silent)                                    │
+│ • Check A: bug signals + no known cause → /sk:deep-dive                 │
+│   (3 parallel trace lanes → pre-seeded interview → tasks/spec.md)       │
+│ • Check B: vague/open-ended feature → /sk:deep-interview                │
+│   (ambiguity scoring, 4 dimensions, ≤20% gate → tasks/spec.md)         │
+│ • Check C: clear input → skip, proceed directly to Phase 1              │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
 PHASE 1: EXPLORE (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ Step 1 — /sk:brainstorm                                                  │
-│ • Reads: tasks/findings.md, tasks/lessons.md, tasks/todo.md             │
+│ • Reads: tasks/spec.md (if written by Step 0), tasks/findings.md,       │
+│   tasks/lessons.md, tasks/todo.md                                        │
 │ • Clarifies requirements, proposes approaches, gets approval             │
 │ • architect agent: reviews codebase, proposes 2-3 approaches            │
 │ • Writes: tasks/findings.md (design decision + rationale + checklist)  │

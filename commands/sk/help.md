@@ -23,6 +23,7 @@ Run these commands in order for a complete, quality-gated feature build.
 
 | # | Command | Purpose |
 |---|---------|---------|
+| 0 | `/sk:deep-interview` | Clarify requirements via Socratic interview — **auto-run for vague tasks** |
 | 1 | `/sk:brainstorm` | Explore requirements — **no code yet** |
 | 2 | `/sk:frontend-design` or `/sk:api-design` | Design UI or API contracts *(auto-skip if no frontend/API keywords)* |
 | 3 | `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |
@@ -49,7 +50,8 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 
 | Command | Purpose |
 |---------|---------|
-| `/sk:debug` | Root-cause analysis |
+| `/sk:deep-dive` | Unknown-cause investigation (trace → interview → fix) |
+| `/sk:debug` | Known-cause root-cause analysis |
 | `/sk:write-plan` | Fix plan |
 | `/sk:branch` | Feature branch |
 | `/sk:write-tests` | Reproduce the bug in a test |
@@ -71,7 +73,9 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:context` | Load project context (automatic via hooks) |
 | `/sk:context-budget` | Audit context window token consumption and find savings |
 | `/sk:dashboard` | Read-only workflow Kanban board |
-| `/sk:debug` | Structured bug investigation |
+| `/sk:debug` | Structured bug investigation (known cause) |
+| `/sk:deep-dive` | Bug investigation for unknown root causes (trace → interview → fix) |
+| `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring (auto-run by start/autopilot) |
 | `/sk:deps-audit` | CVE scan, license compliance, outdated packages — runs automatically in `/sk:gates` Batch 1 |
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Define, run, and report evals for agent reliability |

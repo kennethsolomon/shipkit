@@ -7,7 +7,7 @@ When ShipKit changes, use this guide to find every file that needs updating.
 
 ## When You Add/Remove/Rename a Workflow Step
 
-Current steps: 1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 8.6
+Current steps: 0 (optional), 1, 2, 3, 4, 5, 5.5, 6, 7, 7.5 (autopilot only), 8, 8.5, 8.6
 
 | File | What to change |
 |------|---------------|

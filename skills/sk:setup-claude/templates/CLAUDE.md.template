@@ -46,7 +46,8 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 
 | # | Step | Command | Type | Notes |
 |---|------|---------|------|-------|
-| 1 | Explore | `/sk:brainstorm` | required | Reads todo.md, lessons.md, findings.md. No code. |
+| 0 | Deep Interview | `/sk:deep-interview` | optional | For vague/open-ended tasks. Auto-run by `/sk:start` and `/sk:autopilot`. Outputs `tasks/spec.md`. Skip if task has concrete anchors. |
+| 1 | Explore | `/sk:brainstorm` | required | Reads todo.md, lessons.md, findings.md, spec.md (if present). No code. |
 | 2 | Design | `/sk:frontend-design` or `/sk:api-design` | auto-skip | No code. `--pencil` for visual mockup. Auto-skip if no frontend/API keywords. |
 | 3 | Plan | `/sk:write-plan` | required | No code. Runs auto-skip detection for step 2. |
 | 4 | Branch | `/sk:branch` | required | Auto-named from current task. |

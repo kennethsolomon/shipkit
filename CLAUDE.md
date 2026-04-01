@@ -48,7 +48,8 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 
 | # | Step | Command | Type | Notes |
 |---|------|---------|------|-------|
-| 1 | Explore | `/sk:brainstorm` | required | Reads todo.md, lessons.md, findings.md. No code. |
+| 0 | Deep Interview | `/sk:deep-interview` | optional | For vague/open-ended tasks. Auto-run by `/sk:start` and `/sk:autopilot`. Outputs `tasks/spec.md`. Skip if task has concrete anchors (file paths, function names, specific scope). |
+| 1 | Explore | `/sk:brainstorm` | required | Reads todo.md, lessons.md, findings.md, spec.md (if present). No code. |
 | 2 | Design | `/sk:frontend-design` or `/sk:api-design` | auto-skip | No code. `--pencil` for visual mockup. Auto-skip if no frontend/API keywords. |
 | 3 | Plan | `/sk:write-plan` | required | No code. Runs auto-skip detection for step 2. |
 | 4 | Branch | `/sk:branch` | required | Auto-named from current task. |
@@ -85,7 +86,8 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 
 | Flow | Entry | Steps |
 |------|-------|-------|
-| **Bug fix** | `/sk:debug` | debug → branch → write-tests (regression) → fix → commit → gates → finalize |
+| **Bug fix (known cause)** | `/sk:debug` | debug → branch → write-tests (regression) → fix → commit → gates → finalize |
+| **Bug fix (unknown cause)** | `/sk:deep-dive` | trace (3 parallel lanes) → interview → branch → write-tests → fix → commit → gates → finalize |
 | **Hotfix** (prod emergency) | `/sk:debug` | debug → branch → fix directly → commit → gates → finalize. Add regression test after merge. |
 
 ### Requirement Change Flow
@@ -150,7 +152,9 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:context` | Load context files + session brief |
 | `/sk:context-budget` | Audit context window token consumption |
 | `/sk:dashboard` | Workflow Kanban board (localhost) |
-| `/sk:debug` | Investigate and debug issues |
+| `/sk:debug` | Investigate and debug issues (known cause) |
+| `/sk:deep-dive` | Trace + interview for bugs with unknown root cause |
+| `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring; auto-run by start/autopilot |
 | `/sk:deps-audit` | CVE scan, license compliance, outdated packages (npm, Composer, Cargo, pip, Go, Bundler) |
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Run evaluations for agent reliability |
