@@ -18,6 +18,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.23.0] - 2026-04-01
+
+### Added
+- **`/sk:deep-interview`** — Socratic requirements-gathering skill with mathematical ambiguity scoring (4 weighted dimensions: Goal 35%, Constraint 25%, Success Criteria 25%, Context 15%). Blocks until clarity ≥80%. One question per round. Outputs `tasks/spec.md`. Auto-triggered by `/sk:autopilot` and `/sk:start` for vague/open-ended tasks.
+- **`/sk:deep-dive`** — Two-stage pipeline for unknown-cause bugs: 3 parallel trace lanes (git history, code structure, runtime behavior) → pre-seeded deep interview (threshold 25%) → `tasks/spec.md` with root cause + fix scope. Auto-triggered by `/sk:autopilot` and `/sk:start` when bug signals detected with no known cause.
+- **Magic keyword hook** (`keyword-router.sh`) — `UserPromptSubmit` hook. Prefixes `autopilot:`, `debug:`, `fast:`, `interview:`, `team:` inject routing context; Claude invokes the corresponding skill automatically.
+- **`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`** env var in `.claude/settings.json` — enables native Claude Code agent team spawning for `/sk:team`.
+- **Step 0 task classification in `/sk:autopilot`** — silently routes to `/sk:deep-dive` (Check A: unknown-cause bug) or `/sk:deep-interview` (Check B: vague feature) before entering the main workflow. Clear input (Check C) skips Step 0.
+- **Acceptance criteria in `/sk:autopilot`** — direction approval now includes explicit testable acceptance criteria. Step 7.5 verifies all criteria pass before PR push.
+- **Deep-dive + vague-feature routing in `/sk:start`** — flow detection now includes `deep-dive` (bug signals + no known cause). Vague-feature flag routes to `/sk:deep-interview` in manual mode. New override flags: `--deep-dive`, `--interview`.
+- **Auto-consensus in `/sk:write-plan`** — automatically runs Architect + Critic review loop when high-risk keywords detected (auth, migration, payment, breaking change, deploy, credentials). `--consensus` forces it; `--no-consensus` skips.
+- **ultraqa cycling in `/sk:test`** — replaces blind retry with 3-cycle architect-diagnosed loop. Same-failure detection (first 30 chars): identical failures across 2 attempts trigger architect diagnosis immediately.
+- **ultraqa cycling in `/sk:gates`** — failure handling now spawns `architect` agent for root cause diagnosis on repeated gate failures. Same-failure detection triggers early.
+- **Feature specs** `docs/sk:features/sk-deep-interview.md` and `docs/sk:features/sk-deep-dive.md`.
+- **Architectural change log** entry for this release.
+
+### Changed
+- `/sk:brainstorm` Step 1 reads `tasks/spec.md` if present; treats its acceptance criteria as fixed constraints (skips re-asking).
+- `/sk:autopilot` and `/sk:start` feature specs updated to document new routing logic.
+- `commands/sk/help.md` Feature Workflow table, Bug Fix Workflow, and All Commands updated.
+- `skills/sk:setup-optimizer` now checks for `sk:deep-interview`, `sk:deep-dive`, and `keyword-router.sh`.
+- README commands count updated 44 → 46.
+- All templates updated: `CLAUDE.md.template`, `settings.json.template`, `write-plan.md.template`, `brainstorm.md.template`, `keyword-router.sh` template.
+
+---
+
 ## [v3.22.0] - 2026-03-31
 
 ### Added
