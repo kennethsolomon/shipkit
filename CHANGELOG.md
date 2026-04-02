@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.25.1] - 2026-04-02
+
+### Fixed
+- **`/sk:release` npm publish guard** — publishable package check now requires `name` + `main`/`bin`/`exports` field (prevents accidentally publishing apps that lack `"private": true`); adds confirmation prompt + OTP note before publishing.
+- **`/sk:e2e` spec detection scoped to `e2e/` and `tests/e2e/`** — previous `find` matched unit test specs (Vitest/Jest), causing false Playwright CLI priority match.
+- **`/sk:setup-claude` agent-browser labeled as CLI tool** — clarifies check method (PATH, not `claude plugin list`).
+- **`/sk:finish-feature` `/sk:review` gate wording** — rephrased to "not certain it was run" (original wording was unenforceable).
+- **`/sk:e2e` Step 4b terminus** — added missing "Skip to Step 5".
+- **Arch change log entries** — added `2026-04-02-agent-browser-e2e-integration.md` and `2026-04-02-retro-enforcement-rules.md`.
+
+---
+
 ## [v3.25.0] - 2026-04-02
 
 ### Added
