@@ -36,6 +36,13 @@ Run the existing release script (`release.sh`) which handles:
 5. Create git commit + annotated tag
 6. Push tag to GitHub
 
+7. **npm publish** — if `package.json` exists and has a `name` field (i.e. this is a Node package), run:
+   ```bash
+   npm publish
+   ```
+   For scoped packages (`"name": "@scope/pkg"`), run `npm publish --access public` unless `publishConfig.access` is already set in `package.json`.
+   Skip this step if `package.json` has `"private": true`.
+
 If no flags were passed, stop here.
 
 ## Step 3: Mobile Store Audit

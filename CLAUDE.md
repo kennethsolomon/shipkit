@@ -73,6 +73,7 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 5. **Squash gate commits** — one commit per gate pass: `fix(<gate>): resolve <gate> issues`.
 6. **No code in steps 1-3** — explore/design/plan only. Exception: `tasks/` files.
 7. **Requirements change?** — run `/sk:change` immediately.
+8. **todo.md required** — before any session touching ≥ 3 files, create `tasks/todo.md` with at least 5 checkboxes. No todo.md = no `/sk:scope-check`, no retro task metrics.
 
 ### Fix & Retest Protocol
 
