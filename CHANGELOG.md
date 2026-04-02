@@ -18,6 +18,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.24.0] - 2026-04-02
+
+### Added
+- **Progressive disclosure in `/sk:context`** — index pass reads only what the SESSION BRIEF needs upfront: `tasks/findings.md` first 50 lines, `tasks/lessons.md` count + last 30 lines, `tasks/tech-debt.md` headers only. Full content available on-demand via `"load findings"` / `"load lessons"` / `"load debt"` / `"load all"`. Cuts cold-start context 60–80% on mature projects with large task files. Adapted from claude-mem (thedotmack/claude-mem).
+- **Context Index** in `/sk:context` output — a compact section after the SESSION BRIEF showing which heavy files are available on demand with approximate sizes and trigger phrases.
+- **`auto-progress.sh`** (enhanced/opt-in hook, PostToolUse) — auto-logs `git commit`, `git push`, and `git tag` events to `tasks/progress.md`. Passive safety net for the most-skipped manual workflow step. Never blocks, exit 0 always, only writes if `tasks/progress.md` exists. Adapted from claude-mem.
+
+### Changed
+- `/sk:context` reading strategy updated: findings.md, lessons.md, and tech-debt.md are now read progressively (index pass only by default). Behavior is identical for the SESSION BRIEF; difference is context efficiency.
+- `skills/sk:setup-optimizer/SKILL.md` enhanced hooks list updated to include `auto-progress.sh`.
+- README hooks table updated: `keyword-router` added to always-installed table (missing since v3.23.0); `auto-progress` added to opt-in table.
+
+---
+
 ## [v3.23.0] - 2026-04-01
 
 ### Added
