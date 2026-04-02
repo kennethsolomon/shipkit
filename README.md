@@ -394,6 +394,12 @@ These are not installed by ShipKit but are worth adding manually.
 |---|---|---|
 | **context-mode** | `/plugin marketplace add mksglu/context-mode` then `/plugin install context-mode@context-mode` | Routes large tool outputs (Playwright snapshots, grep results) through SQLite-backed summarization — up to 96% context savings. Hooks in automatically via `PreToolUse`/`PostToolUse`. |
 
+### Recommended CLI Tools
+
+| Tool | Install | What it does |
+|---|---|---|
+| **agent-browser** | `npm install -g agent-browser && agent-browser install` | Token-efficient browser automation for `/sk:e2e` — navigates via accessibility tree text snapshots (refs like `@e1`, `@e2`) instead of screenshots. 10–20× fewer tokens than screenshot-based E2E verification. Used by `/sk:e2e` automatically when Playwright spec files are absent. |
+
 ---
 
 ## On-Demand Tools

@@ -1,6 +1,6 @@
 ---
 name: sk:e2e
-description: "Run E2E behavioral verification as the final quality gate before finalize. Prefers Playwright CLI when playwright.config.ts is detected; falls back to agent-browser otherwise. Tests the complete, reviewed, secure implementation from a user's perspective."
+description: "Run E2E behavioral verification as the final quality gate before finalize. Prefers agent-browser (token-efficient, accessibility-tree snapshots) for interactive verification; uses Playwright CLI runner when spec files already exist. Tests the complete, reviewed, secure implementation from a user's perspective."
 model: sonnet
 ---
 
@@ -23,13 +23,16 @@ Read to understand what to test:
 
 ### 2. Detect E2E Runner
 
-**Priority 1 — Playwright (preferred)**
+> **Token note:** agent-browser uses accessibility tree text snapshots (refs like `@e1`, `@e2`) — no screenshots required. This is 10–20× fewer tokens than screenshot-based verification. Playwright MCP (not CLI) is the screenshot-heavy path; this skill avoids it.
+
+**Priority 1 — Playwright CLI with existing spec files (fastest path)**
 
 ```bash
 ls playwright.config.ts 2>/dev/null || ls playwright.config.js 2>/dev/null
+find . -name "*.spec.ts" -o -name "*.spec.js" | grep -v node_modules | head -1
 ```
 
-If config exists → use Playwright CLI (Step 3a). Advantages: headless Chromium, no system Chrome conflict, `@playwright/test` in devDeps, auto-picks `e2e/` or `tests/e2e/`, `webServer` auto-starts dev server.
+If config exists AND spec files exist → use Playwright CLI (Step 3a). Tests are already written — just run them. Advantages: headless Chromium, no screenshots, `webServer` auto-starts dev server.
 
 **Config requirements (verify before running):**
 - `headless: true` under `use:`
@@ -39,26 +42,27 @@ If config exists → use Playwright CLI (Step 3a). Advantages: headless Chromium
 If config has `channel: 'chrome'` or `headless: false`, warn:
 > "playwright.config.ts uses system Chrome or headed mode — this may conflict with a running browser. Consider setting `headless: true` and `channel: undefined`."
 
-**Priority 2 — agent-browser (fallback)**
+**Priority 2 — agent-browser (preferred for interactive verification)**
 
 ```bash
 agent-browser --version
 ```
 
-Only use if NO Playwright config exists.
+Use when: NO spec files exist yet, OR Playwright is not configured. agent-browser's refs system navigates by accessibility tree — no screenshot needed, no DOM fragility.
 
-If neither is found:
+**Priority 3 — fallback (neither available)**
+
 ```
-Neither Playwright nor agent-browser is configured.
+Neither Playwright spec files nor agent-browser found.
 
-Option A (recommended) — Playwright:
+Option A (recommended for interactive verification) — agent-browser:
+  npm install -g agent-browser
+  agent-browser install
+
+Option B (if you prefer spec files) — Playwright:
   npm install -D @playwright/test
   npx playwright install chromium
   # Create playwright.config.ts with headless: true, channel: undefined
-
-Option B — agent-browser:
-  npm install -g agent-browser
-  agent-browser install
 
 Then re-run /sk:e2e.
 ```

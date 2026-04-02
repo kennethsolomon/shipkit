@@ -260,7 +260,7 @@ After hooks deployment, check and configure LSP tooling:
 
 ### Step 1.7: Global MCP Servers & Plugin Check
 
-After LSP check, verify the three recommended **global** tools are configured.
+After LSP check, verify the recommended **global** tools are configured.
 
 > **Note:** Project-level MCP (`.mcp.json`) is managed exclusively by Step 0.5 during stack sync. This step only handles global MCP/plugins.
 
@@ -268,14 +268,16 @@ After LSP check, verify the three recommended **global** tools are configured.
 2. **Context7 plugin** — grep `~/.claude/settings.json` for `context7@claude-plugins-official` in `enabledPlugins`
 3. **ccstatusline** — check `~/.claude/settings.json` for a `statusline` entry set by ccstatusline
 4. **context-mode plugin** — grep `~/.claude/settings.json` for `context-mode` in `enabledPlugins`. Check if installed and get version via `claude plugin list 2>/dev/null | grep context-mode`
+5. **agent-browser CLI** — run `agent-browser --version 2>/dev/null` to check if installed
 
 **Report status and prompt:**
 
-> "Global MCP/Plugins: [X/4] configured
+> "Global MCP/Plugins: [X/5] configured
 >   sequential-thinking: [✓ configured / ✗ missing]
 >   context7:            [✓ configured / ✗ missing]
 >   ccstatusline:        [✓ configured / ✗ missing]
 >   context-mode:        [✓ vX.Y.Z / ✓ update available vX.Y.Z → vA.B.C / ✗ missing]
+>   agent-browser:       [✓ vX.Y.Z / ✗ missing]
 > Install missing / update available? [y/n]"
 
 **If yes:** Follow the same install steps as `sk:setup-claude` MCP Servers & Plugins section:
@@ -284,6 +286,7 @@ After LSP check, verify the three recommended **global** tools are configured.
 - ccstatusline: run `npx ccstatusline@latest`
 - context-mode (install): run `/plugin marketplace add mksglu/context-mode` then `/plugin install context-mode@context-mode`
 - context-mode (update): run `/context-mode:ctx-upgrade`
+- agent-browser: run `npm install -g agent-browser && agent-browser install`
 
 **If no:** skip, continue to Step 1.8.
 

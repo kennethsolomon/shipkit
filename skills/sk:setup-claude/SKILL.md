@@ -608,7 +608,7 @@ After stack detection, check and configure LSP tooling:
 
 After LSP setup, prompt the user to install three recommended tools that enhance Claude Code with structured reasoning, live documentation, and session visibility:
 
-> "Install recommended MCP servers & plugins? (Sequential Thinking, Context7, ccstatusline, context-mode) [y/n]"
+> "Install recommended MCP servers & plugins? (Sequential Thinking, Context7, ccstatusline, context-mode, agent-browser) [y/n]"
 
 If yes, install each — skip any already configured.
 
@@ -675,6 +675,19 @@ Then reload: `/reload-plugins`
 Verify with `/context-mode:ctx-doctor` — all checks should show `[x]`.
 
 Report: `+ context-mode plugin installed`
+
+#### 5. agent-browser
+
+Token-efficient browser automation CLI for `/sk:e2e`. Uses accessibility tree text snapshots (refs like `@e1`, `@e2`) instead of screenshots — 10–20× fewer tokens than screenshot-based E2E verification. Required by `/sk:e2e` when no Playwright spec files exist.
+
+**Check:** run `agent-browser --version 2>/dev/null`. If missing:
+
+```bash
+npm install -g agent-browser
+agent-browser install
+```
+
+Report: `+ agent-browser installed`
 
 **Idempotency:** Skip each install if already present. Never overwrite existing MCP entries, plugin flags, or statusline config.
 
