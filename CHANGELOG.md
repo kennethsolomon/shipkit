@@ -18,6 +18,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.25.0] - 2026-04-02
+
+### Added
+- **agent-browser integration in `/sk:e2e`** — accessibility tree snapshots (text refs like `@e1`, `@e2`) replace screenshot-based verification. 10–20× fewer tokens than Playwright MCP. Priority order: Playwright CLI when spec files already exist → agent-browser for interactive verification → prompt to install one if neither found. Install: `npm install -g agent-browser && agent-browser install`.
+- **agent-browser in `/sk:setup-claude` and `/sk:setup-optimizer`** — added as item 5 in the MCP/plugins install prompt. Setup optimizer now reports `X/5 configured` and can install agent-browser automatically.
+- **agent-browser in README** — new "Recommended CLI Tools" table under MCP Servers section.
+
+### Changed
+- **`/sk:e2e` description updated** — now accurately reflects agent-browser as the preferred interactive verification tool, Playwright CLI as the spec-file runner.
+- **`.claude/docs/maintenance-guide.md`** — "When You Add/Remove a Community Plugin" section split into two sub-types: Claude Plugin (installed via `/plugin`) and CLI Tool (installed via `npm install -g`). agent-browser is the first CLI tool sub-type. Different check command, install steps, and README section for each.
+
+### Fixed
+- **`tasks/todo.md` now enforced as a workflow rule** — CLAUDE.md rule 8 added: before any session touching ≥ 3 files, create `tasks/todo.md` with at least 5 checkboxes. Mirrored to `CLAUDE.md.template` for new projects. (6th retro noting this issue — escalated from habit to rule.)
+- **`/sk:finish-feature` blocks on missing `/sk:review`** — "Before You Start" section now counts SKILL.md files changed on the branch. If ≥ 3 and `/sk:review` hasn't run, finalize is blocked. (4th retro noting this issue — escalated to hard gate.)
+- **`/sk:release` now runs `npm publish`** — after `git push --tags`, runs `npm publish` (or `npm publish --access public` for scoped packages). Skips if `"private": true`. (2nd retro noting npm registry was behind.)
+
+---
+
 ## [v3.24.1] - 2026-04-02
 
 ### Fixed
