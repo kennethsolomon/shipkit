@@ -36,12 +36,22 @@ Run the existing release script (`release.sh`) which handles:
 5. Create git commit + annotated tag
 6. Push tag to GitHub
 
-7. **npm publish** — if `package.json` exists and has a `name` field (i.e. this is a Node package), run:
+7. **npm publish** — check if this is a publishable package:
+   - `package.json` exists
+   - Has a `name` field AND at least one of: `"main"`, `"bin"`, `"exports"` (publishable package, not an app)
+   - Does NOT have `"private": true`
+
+   If all conditions met, confirm before publishing:
+   > "Publish `[name]@[version]` to npm? [y/n]"
+   > "(If your account has 2FA enabled, have your OTP ready)"
+
+   On yes:
    ```bash
-   npm publish
+   npm publish                         # unscoped packages
+   npm publish --access public         # scoped packages (@scope/pkg) unless publishConfig.access is already set
    ```
-   For scoped packages (`"name": "@scope/pkg"`), run `npm publish --access public` unless `publishConfig.access` is already set in `package.json`.
-   Skip this step if `package.json` has `"private": true`.
+
+   On no, or conditions not met: skip — user can publish manually with `npm publish`.
 
 If no flags were passed, stop here.
 

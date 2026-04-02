@@ -1,6 +1,6 @@
 ---
 name: sk:e2e
-description: "Run E2E behavioral verification as the final quality gate before finalize. Prefers agent-browser (token-efficient, accessibility-tree snapshots) for interactive verification; uses Playwright CLI runner when spec files already exist. Tests the complete, reviewed, secure implementation from a user's perspective."
+description: "Run E2E behavioral verification as the final quality gate before finalize. Uses Playwright CLI when E2E spec files already exist; uses agent-browser (accessibility-tree snapshots, no screenshots) for interactive verification when they don't. Tests the complete, reviewed, secure implementation from a user's perspective."
 model: sonnet
 ---
 
@@ -29,10 +29,12 @@ Read to understand what to test:
 
 ```bash
 ls playwright.config.ts 2>/dev/null || ls playwright.config.js 2>/dev/null
-find . -name "*.spec.ts" -o -name "*.spec.js" | grep -v node_modules | head -1
+find e2e tests/e2e -name "*.spec.ts" -o -name "*.spec.js" 2>/dev/null | head -1
 ```
 
-If config exists AND spec files exist → use Playwright CLI (Step 3a). Tests are already written — just run them. Advantages: headless Chromium, no screenshots, `webServer` auto-starts dev server.
+If config exists AND E2E spec files exist (in `e2e/` or `tests/e2e/`) → use Playwright CLI (Step 3a). Tests are already written — just run them. Advantages: headless Chromium, no screenshots, `webServer` auto-starts dev server.
+
+> **Note:** Unit test spec files (`src/**/*.spec.ts`, Vitest/Jest) do not count — only files under `e2e/` or `tests/e2e/`.
 
 **Config requirements (verify before running):**
 - `headless: true` under `use:`
@@ -130,6 +132,8 @@ agent-browser find text "Success Message"
 **Use @refs or semantic locators (`find role`, `find text`, `find label`, `find placeholder`). Never CSS selectors.**
 
 Record per scenario: name, steps, PASS/FAIL, on FAIL: expected vs. actual + snapshot excerpt.
+
+Skip to **Step 5**.
 
 ### 5. Report Results
 

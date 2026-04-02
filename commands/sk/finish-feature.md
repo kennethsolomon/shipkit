@@ -17,7 +17,7 @@ This is the **last step before `/sk:release`**. It auto-commits documentation ch
 ```bash
 git diff main..HEAD --name-only | grep -c 'SKILL\.md' || true
 ```
-If the count is **≥ 3**, `/sk:review` must be run before proceeding. If it has not been run this session, stop and run it now. This prevents cross-cutting skill regressions from shipping unreviewed.
+If the count is **≥ 3**, `/sk:review` must be run before proceeding. If you are not certain `/sk:review` has been run on this branch's changes, run it now. This prevents cross-cutting skill regressions from shipping unreviewed.
 
 If `tasks/lessons.md` exists, read it in full. For each active lesson, scan the
 final diff (`git diff main..HEAD`) for the **Bug** pattern described in that lesson

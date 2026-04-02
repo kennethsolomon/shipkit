@@ -676,7 +676,7 @@ Verify with `/context-mode:ctx-doctor` — all checks should show `[x]`.
 
 Report: `+ context-mode plugin installed`
 
-#### 5. agent-browser
+#### 5. agent-browser *(CLI tool — check via PATH, not via `claude plugin list`)*
 
 Token-efficient browser automation CLI for `/sk:e2e`. Uses accessibility tree text snapshots (refs like `@e1`, `@e2`) instead of screenshots — 10–20× fewer tokens than screenshot-based E2E verification. Required by `/sk:e2e` when no Playwright spec files exist.
 
