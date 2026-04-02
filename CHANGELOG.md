@@ -18,6 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.24.1] - 2026-04-02
+
+### Fixed
+- `skills/sk:setup-optimizer/SKILL.md` — hook report string count corrected from `X/6` to `X/7` for both core and enhanced hooks; deployed hooks example now includes `keyword-router.sh` and `auto-progress.sh`.
+
+### Changed
+- `.claude/docs/maintenance-guide.md` — added "When You Change a Skill's Behavior" section, "How Updates Reach Existing Projects" propagation table, "Quick Checklist After Any Hook Change", hook count update rule, README as a touchpoint for hook changes, and expanded canonical file roles table.
+
+---
+
 ## [v3.24.0] - 2026-04-02
 
 ### Added
