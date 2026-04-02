@@ -490,6 +490,8 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 
 ## All Commands
 
+> **Visual reference:** open [`docs/dashboard.html`](docs/dashboard.html) in any browser for a searchable, categorized view of every command, workflow, agent, MCP plugin, and model profile — no server needed.
+
 <details>
 <summary><strong>46 skills + 13 agents</strong> — click to expand</summary>
 
@@ -562,6 +564,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 
 | Topic | Where |
 |---|---|
+| **Interactive reference dashboard** | [docs/dashboard.html](docs/dashboard.html) — searchable commands, workflows, agents, MCP, profiles |
 | Detailed 8-step workflow | [DOCUMENTATION.md](.claude/docs/DOCUMENTATION.md) |
 | Feature specifications | [docs/FEATURES.md](docs/FEATURES.md) |
 | Model routing profiles & config | [DOCUMENTATION.md — Config](.claude/docs/DOCUMENTATION.md#config-reference) |

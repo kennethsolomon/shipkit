@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShipKit Reference Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3247;
+      --text: #e2e8f0;
+      --muted: #8b949e;
+      --accent: #7c6af5;
+      --accent2: #5ba4f5;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --red: #f85149;
+      --orange: #f0883e;
+      --purple: #a371f7;
+      --teal: #39c5cf;
+      --pink: #f778ba;
+      --radius: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--accent);
+      white-space: nowrap;
+      letter-spacing: -0.3px;
+    }
+    .logo span { color: var(--muted); font-weight: 400; }
+
+    #search {
+      flex: 1;
+      max-width: 420px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 7px 12px 7px 34px;
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
+      transition: border-color 0.15s;
+    }
+    #search:focus { border-color: var(--accent); }
+    #search::placeholder { color: var(--muted); }
+
+    #match-count {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      min-width: 70px;
+    }
+
+    /* ── Nav tabs ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+    }
+    nav::-webkit-scrollbar { height: 3px; }
+    nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .tab {
+      padding: 10px 16px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Main layout ── */
+    main { padding: 20px; max-width: 1400px; margin: 0 auto; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── Section heading ── */
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── Category label ── */
+    .category {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 24px 0 10px;
+    }
+    .category:first-of-type { margin-top: 0; }
+
+    /* ── Cards grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      transition: border-color 0.15s;
+    }
+    .card:hover { border-color: var(--accent); }
+    .card.hidden { display: none; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .card-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-weight: 700;
+    }
+
+    .card-name {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent2);
+    }
+
+    .card-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; margin-bottom: 24px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 8px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+    tr.hidden { display: none; }
+
+    code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--surface2);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--accent2);
+    }
+
+    /* ── Workflow steps ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .step:last-child { border-bottom: none; }
+    .step.hidden { display: none; }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 2px solid var(--border);
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .step-body { flex: 1; }
+    .step-cmd { font-family: var(--mono); font-size: 13px; color: var(--accent2); font-weight: 600; }
+    .step-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .step-flag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    /* ── Profile matrix ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr repeat(4, auto);
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: 13px;
+    }
+    .prow {
+      display: contents;
+    }
+    .prow > div {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .prow:last-child > div { border-bottom: none; }
+    .prow:hover > div { background: var(--surface2); }
+    .prow.hidden { display: none; }
+    .prow.header > div {
+      background: var(--surface2);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    /* color badges */
+    .badge-planning  { background: #1a3a5c; color: var(--accent2); }
+    .badge-quality   { background: #1a3d29; color: var(--green); }
+    .badge-complete  { background: #3d2a1a; color: var(--orange); }
+    .badge-devtool   { background: #2a1a3d; color: var(--purple); }
+    .badge-setup     { background: #1a2a3d; color: var(--teal); }
+    .badge-laravel   { background: #3d1a1a; color: var(--red); }
+    .badge-required  { background: #1a3d29; color: var(--green); }
+    .badge-optional  { background: #3d3a1a; color: var(--yellow); }
+    .badge-hardgate  { background: #3d1a1a; color: var(--red); }
+    .badge-autoskip  { background: #1a2a3d; color: var(--teal); }
+    .badge-bug       { background: #3d1a1a; color: var(--red); }
+    .badge-opus      { background: #2a1a3d; color: var(--purple); }
+    .badge-sonnet    { background: #1a3a5c; color: var(--accent2); }
+    .badge-haiku     { background: #1a3d29; color: var(--green); }
+    .badge-inherit   { background: var(--surface2); color: var(--muted); }
+
+    .icon-planning  { background: #1a3a5c; color: var(--accent2); }
+    .icon-quality   { background: #1a3d29; color: var(--green); }
+    .icon-complete  { background: #3d2a1a; color: var(--orange); }
+    .icon-devtool   { background: #2a1a3d; color: var(--purple); }
+    .icon-setup     { background: #1a2a3d; color: var(--teal); }
+    .icon-laravel   { background: #3d1a1a; color: var(--red); }
+    .icon-mcp       { background: #2a1a3d; color: var(--pink); }
+    .icon-agent     { background: #1a3d29; color: var(--green); }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .empty strong { display: block; font-size: 16px; margin-bottom: 6px; color: var(--text); }
+
+    /* ── No-results overlay ── */
+    #no-results {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      .profile-grid { grid-template-columns: 1fr repeat(2, auto); }
+    }
+
+    /* highlight */
+    mark {
+      background: rgba(124, 106, 245, 0.3);
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ShipKit <span>Reference</span></div>
+  <input id="search" type="search" placeholder="Search commands, descriptions, categories…" autocomplete="off" />
+  <div id="match-count"></div>
+</header>
+
+<nav>
+  <div class="tab active" data-tab="commands">Commands</div>
+  <div class="tab" data-tab="workflows">Workflows</div>
+  <div class="tab" data-tab="agents">Agents</div>
+  <div class="tab" data-tab="mcp">MCP &amp; Plugins</div>
+  <div class="tab" data-tab="profiles">Model Profiles</div>
+</nav>
+
+<main>
+
+  <!-- ══════════════════════════════════════════════
+       COMMANDS
+  ══════════════════════════════════════════════ -->
+  <div class="section active" id="tab-commands">
+    <div class="section-title">Commands</div>
+    <div class="section-subtitle">All /sk: slash commands — categorized by domain.</div>
+
+    <div class="category">Planning &amp; Exploration</div>
+    <div class="grid" id="grid-planning"></div>
+
+    <div class="category">Quality Gates</div>
+    <div class="grid" id="grid-quality"></div>
+
+    <div class="category">Completion</div>
+    <div class="grid" id="grid-complete"></div>
+
+    <div class="category">Developer Tools</div>
+    <div class="grid" id="grid-devtool"></div>
+
+    <div class="category">Setup &amp; Configuration</div>
+    <div class="grid" id="grid-setup"></div>
+
+    <div class="category">Laravel</div>
+    <div class="grid" id="grid-laravel"></div>
+
+    <div id="no-results-commands" style="display:none" class="empty">
+      <strong>No matches</strong>Try a different search term.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       WORKFLOWS
+  ══════════════════════════════════════════════ -->
+  <div class="section" id="tab-workflows">
+    <div class="section-title">Workflows</div>
+    <div class="section-subtitle">Step-by-step flows for features, bugs, hotfixes, and requirement changes.</div>
+
+    <div class="category">Feature Workflow</div>
+    <div class="steps" id="steps-feature"></div>
+
+    <div class="category" style="margin-top:28px">Bug Fix — Known Cause</div>
+    <div class="steps" id="steps-bugfix"></div>
+
+    <div class="category" style="margin-top:28px">Bug Fix — Unknown Cause</div>
+    <div class="steps" id="steps-deepdive"></div>
+
+    <div class="category" style="margin-top:28px">Hotfix (Production Emergency)</div>
+    <div class="steps" id="steps-hotfix"></div>
+
+    <div class="category" style="margin-top:28px">Requirement Change Flow</div>
+    <div class="table-wrap">
+      <table id="table-change">
+        <thead><tr><th>Tier</th><th>Scope</th><th>Re-entry point</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Tier 1</strong></td><td>Behavior tweak — logic changes, plan stays</td><td><code>/sk:write-tests</code></td></tr>
+          <tr><td><strong>Tier 2</strong></td><td>New requirements — new scope or constraints</td><td><code>/sk:write-plan</code></td></tr>
+          <tr><td><strong>Tier 3</strong></td><td>Scope shift — rethinking the approach</td><td><code>/sk:brainstorm</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="category" style="margin-top:28px">Auto-Skip Rules</div>
+    <div class="table-wrap">
+      <table id="table-autoskip">
+        <thead><tr><th>Gate / Step</th><th>Skip condition</th></tr></thead>
+        <tbody>
+          <tr><td><code>/sk:frontend-design</code> &amp; <code>/sk:api-design</code> (step 2)</td><td>No frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button) AND no API keywords (endpoint, route, controller, API)</td></tr>
+          <tr><td><code>/sk:schema-migrate</code> (step 5)</td><td>No DB keywords (migration, schema, table, column, model, database, foreign key, index, seed)</td></tr>
+          <tr><td><code>/sk:perf</code> (in gates)</td><td>No frontend AND no DB keywords</td></tr>
+          <tr><td><code>/sk:release</code></td><td><strong>Never auto-skipped</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       AGENTS
+  ══════════════════════════════════════════════ -->
+  <div class="section" id="tab-agents">
+    <div class="section-title">Agents</div>
+    <div class="section-subtitle">13 core subagents — each specialized for a domain. Definitions live in <code>.claude/agents/</code>.</div>
+
+    <div class="grid" id="grid-agents"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MCP & PLUGINS
+  ══════════════════════════════════════════════ -->
+  <div class="section" id="tab-mcp">
+    <div class="section-title">MCP Servers &amp; Plugins</div>
+    <div class="section-subtitle">Recommended community plugins and CLI tools integrated into the ShipKit workflow.</div>
+
+    <div class="category">Claude Plugins</div>
+    <div class="grid" id="grid-plugins"></div>
+
+    <div class="category">CLI Tools</div>
+    <div class="grid" id="grid-clitools"></div>
+
+    <div class="category" style="margin-top:28px">Hook Lifecycle Reference</div>
+    <div class="table-wrap">
+      <table id="table-hooks">
+        <thead><tr><th>Lifecycle key</th><th>When it fires</th></tr></thead>
+        <tbody>
+          <tr><td><code>SessionStart</code></td><td>Once at the start of every Claude Code session</td></tr>
+          <tr><td><code>SessionStop</code></td><td>When the session ends</td></tr>
+          <tr><td><code>PreToolUse</code></td><td>Before every tool call</td></tr>
+          <tr><td><code>PostToolUse</code></td><td>After every tool call completes</td></tr>
+          <tr><td><code>Stop</code></td><td>When Claude finishes a response turn</td></tr>
+          <tr><td><code>UserPromptSubmit</code></td><td>When the user submits a prompt</td></tr>
+          <tr><td><code>SubagentStart</code></td><td>When a subagent process starts</td></tr>
+          <tr><td><code>PreCompact</code></td><td>Before context compaction runs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MODEL PROFILES
+  ══════════════════════════════════════════════ -->
+  <div class="section" id="tab-profiles">
+    <div class="section-title">Model Routing Profiles</div>
+    <div class="section-subtitle">Set once per project with <code>/sk:set-profile</code>. Config lives in <code>.shipkit/config.json</code>.</div>
+
+    <div class="category">Profiles</div>
+    <div class="grid" id="grid-profiles"></div>
+
+    <div class="category" style="margin-top:28px">Routing Matrix</div>
+    <div id="profile-matrix"></div>
+  </div>
+
+</main>
+
+<script>
+// ──────────────────────────────────────────────
+// DATA
+// ──────────────────────────────────────────────
+
+const COMMANDS = [
+  // Planning & Exploration
+  { cmd: '/sk:deep-interview', desc: 'Socratic requirements-gathering with ambiguity scoring — auto-run for vague tasks. Outputs tasks/spec.md.', cat: 'planning', icon: '?', flag: 'optional' },
+  { cmd: '/sk:brainstorm', desc: 'Explore requirements and design (includes search-first research). Reads todo.md, lessons.md, findings.md. No code.', cat: 'planning', icon: '💡', flag: 'required' },
+  { cmd: '/sk:frontend-design', desc: 'UI mockup before implementation. Use --pencil for Pencil visual mockup.', cat: 'planning', icon: '🎨', flag: 'autoskip' },
+  { cmd: '/sk:api-design', desc: 'Design REST/GraphQL contracts (endpoints, payloads, auth, errors) before implementation.', cat: 'planning', icon: '⚡', flag: 'autoskip' },
+  { cmd: '/sk:write-plan', desc: 'Write a decision-complete plan into tasks/todo.md. Auto-generates tasks/contracts.md for API tasks.', cat: 'planning', icon: '📝', flag: 'required' },
+  { cmd: '/sk:branch', desc: 'Create a feature branch auto-named from the current task.', cat: 'planning', icon: '🌿', flag: 'required' },
+  { cmd: '/sk:schema-migrate', desc: 'Multi-ORM database schema change analysis. Auto-run by /sk:execute-plan when DB keywords are detected.', cat: 'planning', icon: '🗄️', flag: 'autoskip' },
+  { cmd: '/sk:write-tests', desc: 'TDD: write failing tests before implementation (RED phase). Every new function/endpoint/component needs tests.', cat: 'planning', icon: '🧪', flag: 'required' },
+  { cmd: '/sk:execute-plan', desc: 'Implement tasks/todo.md checkboxes in small batches. Logs to tasks/progress.md.', cat: 'planning', icon: '▶️', flag: 'required' },
+  { cmd: '/sk:reverse-doc', desc: 'Generate architecture, design, and API docs from existing code by analyzing patterns.', cat: 'planning', icon: '📖', flag: null },
+  { cmd: '/sk:accessibility', desc: 'WCAG 2.1 AA audit on frontend code or design specs.', cat: 'planning', icon: '♿', flag: null },
+
+  // Quality Gates
+  { cmd: '/sk:gates', desc: 'Run all quality gates in optimized parallel batches. Hard gate — blocks progress until all pass.', cat: 'quality', icon: '🔒', flag: 'hardgate' },
+  { cmd: '/sk:lint', desc: 'Auto-detect and run all linters. Formatters run first (sequential), then static analysis in parallel.', cat: 'quality', icon: '✨', flag: null },
+  { cmd: '/sk:test', desc: 'Auto-detect and run all test suites. Enforces 100% coverage on new code.', cat: 'quality', icon: '✅', flag: null },
+  { cmd: '/sk:security-check', desc: 'OWASP security audit with content isolation and CVSS scoring on changed files.', cat: 'quality', icon: '🛡️', flag: null },
+  { cmd: '/sk:perf', desc: 'Performance audit: bundle size, N+1 queries, Core Web Vitals, memory leaks, missing indexes.', cat: 'quality', icon: '⚡', flag: 'autoskip' },
+  { cmd: '/sk:review', desc: '7-dimension self-review of branch changes: correctness, security, performance, reliability, design, best practices, testing.', cat: 'quality', icon: '🔍', flag: null },
+  { cmd: '/sk:e2e', desc: 'E2E behavioral verification — final quality gate before finalize. Uses Playwright CLI.', cat: 'quality', icon: '🌐', flag: null },
+  { cmd: '/sk:scope-check', desc: 'Compare current implementation against the plan to detect and trim scope creep.', cat: 'quality', icon: '📏', flag: 'required' },
+  { cmd: '/sk:deps-audit', desc: 'CVE scan, license compliance, and outdated package detection across npm, Composer, Cargo, pip, Go, Bundler.', cat: 'quality', icon: '🔐', flag: null },
+  { cmd: '/sk:seo-audit', desc: 'Dual-mode SEO audit: scans source templates and optionally fetches from running dev server. Ask-before-fix.', cat: 'quality', icon: '🔎', flag: null },
+  { cmd: '/sk:eval', desc: 'Define, run, and report on evaluations for agent reliability and code quality.', cat: 'quality', icon: '📊', flag: null },
+
+  // Completion
+  { cmd: '/sk:smart-commit', desc: 'Conventional commit with approval workflow. Format: type(scope): message.', cat: 'complete', icon: '💾', flag: 'required' },
+  { cmd: '/sk:update-task', desc: 'Mark current task done in tasks/todo.md and log completion to tasks/progress.md.', cat: 'complete', icon: '☑️', flag: 'required' },
+  { cmd: '/sk:finish-feature', desc: 'Changelog + architectural change log entry + PR creation.', cat: 'complete', icon: '🚢', flag: 'required' },
+  { cmd: '/sk:features', desc: 'Sync docs/sk:features/ specs with the current codebase. Auto-detects changed areas.', cat: 'complete', icon: '📋', flag: 'required' },
+  { cmd: '/sk:release', desc: 'Version bump + changelog + git tag. --android / --ios for mobile store audit. Never auto-skipped.', cat: 'complete', icon: '🏷️', flag: null },
+  { cmd: '/sk:learn', desc: 'Extract reusable patterns from the current session into ~/.claude/skills/learned/.', cat: 'complete', icon: '🧠', flag: 'required' },
+  { cmd: '/sk:retro', desc: 'Post-ship retrospective: velocity, blockers, patterns, and next actions.', cat: 'complete', icon: '🔄', flag: 'required' },
+
+  // Developer Tools
+  { cmd: '/sk:start', desc: 'Smart entry point — classifies your task and routes to the optimal flow (feature/bug/hotfix/fast-track).', cat: 'devtool', icon: '🚀', flag: null },
+  { cmd: '/sk:autopilot', desc: 'Hands-free workflow — runs all 8 phases with auto-skip, auto-advance, and auto-commit.', cat: 'devtool', icon: '🤖', flag: null },
+  { cmd: '/sk:team', desc: 'Parallel domain agents for full-stack implementation — spawns Backend, Frontend, and QA agents simultaneously.', cat: 'devtool', icon: '👥', flag: null },
+  { cmd: '/sk:debug', desc: 'Structured bug investigation for known-cause bugs: reproduce → isolate → hypothesize → verify → fix.', cat: 'devtool', icon: '🐛', flag: null },
+  { cmd: '/sk:deep-dive', desc: 'Two-stage pipeline for unknown-cause bugs: parallel trace → deep-interview. Outputs findings report.', cat: 'devtool', icon: '🔬', flag: null },
+  { cmd: '/sk:fast-track', desc: 'Abbreviated workflow for small, clear changes — skip planning ceremony, keep all quality gates.', cat: 'devtool', icon: '⚡', flag: null },
+  { cmd: '/sk:hotfix', desc: 'Emergency production fix: debug → branch → fix directly → commit → gates → finalize. No TDD.', cat: 'devtool', icon: '🚨', flag: null },
+  { cmd: '/sk:change', desc: 'Handle a mid-workflow requirement change — assesses scope (Tier 1/2/3) and re-enters at the right step.', cat: 'devtool', icon: '🔀', flag: null },
+  { cmd: '/sk:dashboard', desc: 'Read-only Kanban board on localhost showing workflow status across all git worktrees.', cat: 'devtool', icon: '📊', flag: null },
+  { cmd: '/sk:status', desc: 'Show planning and workflow status at a glance.', cat: 'devtool', icon: '📡', flag: null },
+  { cmd: '/sk:context', desc: 'Session initializer — loads all project context files and outputs a formatted session brief.', cat: 'devtool', icon: '📚', flag: null },
+  { cmd: '/sk:context-budget', desc: 'Audit context window token consumption and find optimization opportunities.', cat: 'devtool', icon: '💰', flag: null },
+  { cmd: '/sk:health', desc: 'Harness self-audit scorecard across 7 categories, scored 0–70.', cat: 'devtool', icon: '❤️', flag: null },
+  { cmd: '/sk:save-session', desc: 'Save current session state for cross-session continuity.', cat: 'devtool', icon: '💾', flag: null },
+  { cmd: '/sk:resume-session', desc: 'Resume a previously saved session with full context restoration.', cat: 'devtool', icon: '↩️', flag: null },
+  { cmd: '/sk:safety-guard', desc: 'Protect against destructive operations with careful, freeze, and guard modes.', cat: 'devtool', icon: '🛡️', flag: null },
+  { cmd: '/sk:plan', desc: 'Create or refresh tasks planning files and start planning.', cat: 'devtool', icon: '🗺️', flag: null },
+  { cmd: '/sk:ci', desc: 'Set up GitHub Actions or GitLab CI pipeline configuration.', cat: 'devtool', icon: '⚙️', flag: null },
+
+  // Setup & Configuration
+  { cmd: '/sk:setup-claude', desc: 'Bootstrap or repair Claude Code project scaffolding — deploys .claude docs, commands, tasks files.', cat: 'setup', icon: '🏗️', flag: null },
+  { cmd: '/sk:setup-optimizer', desc: 'Diagnose, update workflow, deploy hooks, enrich CLAUDE.md, and keep project infrastructure current.', cat: 'setup', icon: '🔧', flag: null },
+  { cmd: '/sk:config', desc: 'View and edit ShipKit project configuration in .shipkit/config.json.', cat: 'setup', icon: '⚙️', flag: null },
+  { cmd: '/sk:set-profile', desc: 'Switch the ShipKit model routing profile for this project (balanced/quality/full-sail/budget).', cat: 'setup', icon: '📊', flag: null },
+  { cmd: '/sk:skill-creator', desc: 'Create new skills, modify existing skills, and measure skill performance with evals.', cat: 'setup', icon: '🔨', flag: null },
+  { cmd: '/sk:mvp', desc: 'Generate a complete MVP validation app from a prompt — landing page with waitlist + working app.', cat: 'setup', icon: '🚀', flag: null },
+  { cmd: '/sk:website', desc: 'Build a complete, client-deliverable multi-page marketing website from a brief, URL, or one sentence.', cat: 'setup', icon: '🌐', flag: null },
+
+  // Laravel
+  { cmd: '/sk:laravel-init', desc: 'Configure an existing Laravel project with opinionated production-ready conventions.', cat: 'laravel', icon: 'L', flag: null },
+  { cmd: '/sk:laravel-new', desc: 'Scaffold a fresh Laravel app and configure it with opinionated production-ready conventions.', cat: 'laravel', icon: 'L', flag: null },
+  { cmd: '/sk:laravel-deploy', desc: 'Deploy a Laravel application to Laravel Cloud via the cloud CLI. Requires /sk:gates to pass first.', cat: 'laravel', icon: 'L', flag: null },
+];
+
+const FEATURE_STEPS = [
+  { num: '0', cmd: '/sk:deep-interview', desc: 'Clarify requirements via Socratic interview. Auto-run for vague tasks. Outputs tasks/spec.md. Skip if task has concrete anchors (file paths, function names, specific scope).', flag: 'optional', flagClass: 'badge-optional' },
+  { num: '1', cmd: '/sk:brainstorm', desc: 'Explore requirements, design, and context. Reads todo.md, lessons.md, findings.md, spec.md. No code written.', flag: 'required', flagClass: 'badge-required' },
+  { num: '2', cmd: '/sk:frontend-design or /sk:api-design', desc: 'Design UI mockups or API contracts before implementation. No code. Use --pencil for visual mockup.', flag: 'auto-skip', flagClass: 'badge-autoskip' },
+  { num: '3', cmd: '/sk:write-plan', desc: 'Write a decision-complete plan into tasks/todo.md. Runs auto-skip detection for step 2. No code.', flag: 'required', flagClass: 'badge-required' },
+  { num: '4', cmd: '/sk:branch', desc: 'Create a feature branch auto-named from the current task.', flag: 'required', flagClass: 'badge-required' },
+  { num: '5', cmd: '/sk:write-tests + /sk:execute-plan', desc: 'TDD red→green. Write failing tests first, then implement. Includes /sk:schema-migrate if DB keywords detected.', flag: 'required', flagClass: 'badge-required' },
+  { num: '5.5', cmd: '/sk:scope-check', desc: 'Compare implementation against the plan. Detect and trim scope creep.', flag: 'required', flagClass: 'badge-required' },
+  { num: '6', cmd: '/sk:smart-commit', desc: 'Conventional commit with user approval. Format: type(scope): message.', flag: 'required', flagClass: 'badge-required' },
+  { num: '7', cmd: '/sk:gates', desc: 'All quality gates in parallel batches: lint, deps-audit, security, perf, test, review, e2e. Blocks until all pass. Auto-fix and re-run internally.', flag: 'hard gate', flagClass: 'badge-hardgate' },
+  { num: '8', cmd: '/sk:finish-feature', desc: 'Changelog + architectural change log + PR creation. Pause here to confirm before pushing to remote.', flag: 'required', flagClass: 'badge-required' },
+  { num: '8.5', cmd: '/sk:learn', desc: 'Extract reusable patterns from this session into ~/.claude/skills/learned/.', flag: 'required', flagClass: 'badge-required' },
+  { num: '8.6', cmd: '/sk:retro', desc: 'Post-ship retrospective — velocity, blockers, patterns, and next actions.', flag: 'required', flagClass: 'badge-required' },
+];
+
+const BUGFIX_STEPS = [
+  { num: '1', cmd: '/sk:debug', desc: 'Structured investigation: reproduce → isolate → hypothesize → verify → fix.', flag: null, flagClass: '' },
+  { num: '2', cmd: '/sk:branch', desc: 'Create a fix branch from the current task.', flag: null, flagClass: '' },
+  { num: '3', cmd: '/sk:write-tests', desc: 'Write a failing regression test that reproduces the bug.', flag: null, flagClass: '' },
+  { num: '4', cmd: '/sk:execute-plan', desc: 'Implement the fix to make the test pass.', flag: null, flagClass: '' },
+  { num: '5', cmd: '/sk:smart-commit', desc: 'Conventional commit: fix(scope): description', flag: null, flagClass: '' },
+  { num: '6', cmd: '/sk:gates', desc: 'All quality gates must pass before finalizing.', flag: 'hard gate', flagClass: 'badge-hardgate' },
+  { num: '7', cmd: '/sk:finish-feature', desc: 'Changelog + PR creation.', flag: null, flagClass: '' },
+];
+
+const DEEPDIVE_STEPS = [
+  { num: '1', cmd: '/sk:deep-dive', desc: 'Parallel trace across 3 investigation lanes, followed by deep interview. Outputs structured findings report.', flag: null, flagClass: '' },
+  { num: '2', cmd: '/sk:branch', desc: 'Create a fix branch based on investigation findings.', flag: null, flagClass: '' },
+  { num: '3', cmd: '/sk:write-tests', desc: 'Write failing tests that reproduce the root cause.', flag: null, flagClass: '' },
+  { num: '4', cmd: '/sk:execute-plan', desc: 'Implement the fix.', flag: null, flagClass: '' },
+  { num: '5', cmd: '/sk:smart-commit', desc: 'Conventional commit with fix details.', flag: null, flagClass: '' },
+  { num: '6', cmd: '/sk:gates', desc: 'All quality gates must pass.', flag: 'hard gate', flagClass: 'badge-hardgate' },
+  { num: '7', cmd: '/sk:finish-feature', desc: 'Changelog + PR creation.', flag: null, flagClass: '' },
+];
+
+const HOTFIX_STEPS = [
+  { num: '1', cmd: '/sk:debug', desc: 'Rapid root cause analysis for production emergency.', flag: null, flagClass: '' },
+  { num: '2', cmd: '/sk:branch', desc: 'Create a hotfix branch.', flag: null, flagClass: '' },
+  { num: '3', cmd: '/sk:execute-plan', desc: 'Fix directly — TDD skipped for speed. Add regression test after merge.', flag: null, flagClass: '' },
+  { num: '4', cmd: '/sk:smart-commit', desc: 'hotfix(scope): description', flag: null, flagClass: '' },
+  { num: '5', cmd: '/sk:gates', desc: 'All quality gates must pass even on hotfixes.', flag: 'hard gate', flagClass: 'badge-hardgate' },
+  { num: '6', cmd: '/sk:finish-feature', desc: 'Changelog + PR — add regression test post-merge.', flag: null, flagClass: '' },
+];
+
+const AGENTS = [
+  { name: 'architect', desc: 'System design and architecture — analyzes codebase, reads findings/lessons, and proposes architecturally sound approaches before implementation.', isolation: 'None (read-only)' },
+  { name: 'backend-dev', desc: 'Backend implementation — writes backend tests (TDD red) then implements API/services/models against the API contract. Used in sk:team.', isolation: 'worktree' },
+  { name: 'code-reviewer', desc: 'Rigorous 7-dimension code reviewer — correctness, security, performance, reliability, design, best practices, testing. Read-only.', isolation: 'None (read-only)' },
+  { name: 'database-architect', desc: 'Schema design, migration safety analysis, and query optimization. Read-only — produces migration plans and index recommendations.', isolation: 'None (read-only)' },
+  { name: 'debugger', desc: 'Structured bug investigation: reproduce → isolate → hypothesize → verify → fix. Used by /sk:debug.', isolation: 'None (real state needed)' },
+  { name: 'devops-engineer', desc: 'CI/CD, Docker, deployment config, and infrastructure. Implements workflow files, Dockerfiles, and environment config. Used by /sk:ci.', isolation: 'None' },
+  { name: 'frontend-dev', desc: 'Frontend implementation — writes frontend tests (TDD red) then implements UI/components/pages using mocked API contracts. Used in sk:team.', isolation: 'worktree' },
+  { name: 'mobile-dev', desc: 'React Native, Expo, and Flutter implementation. Handles mobile-specific patterns, permissions, native modules, and platform differences.', isolation: 'None' },
+  { name: 'performance-optimizer', desc: 'Finds and fixes N+1 queries, bundle bloat, missing indexes, memory leaks, and Core Web Vitals issues. Used by /sk:perf.', isolation: 'None' },
+  { name: 'qa-engineer', desc: 'Writes E2E test scenarios while backend and frontend agents implement. Background agent in sk:team. Writes scenarios only — does not run tests.', isolation: 'None (test files only)' },
+  { name: 'refactor-specialist', desc: 'Eliminates duplication, extracts abstractions, improves naming, and reduces complexity without changing behavior. Runs tests before and after.', isolation: 'None' },
+  { name: 'security-reviewer', desc: 'OWASP security audit specialist. Read-only — finds vulnerabilities without modifying code. Used by /sk:security-check.', isolation: 'None (read-only)' },
+  { name: 'tech-writer', desc: 'Generates README, API docs, architecture docs, and inline comments from existing code. Never invents behavior — always reads code first.', isolation: 'None (docs only)' },
+];
+
+const MCP_PLUGINS = [
+  { name: 'context-mode', type: 'Plugin', desc: 'Routes large output through a sandboxed context window — prevents token flooding from test runs, git diffs, API calls, and browser snapshots.', install: '/plugin marketplace add kennethsolomon/context-mode', update: '/context-mode:ctx-upgrade', check: "claude plugin list 2>/dev/null | grep context-mode" },
+  { name: 'context7', type: 'Plugin', desc: 'Fetches up-to-date library documentation for any npm/pip/go package. Use when working with any library — training data may be stale.', install: '/plugin marketplace add upstash/context7', update: 'Managed via plugin marketplace', check: "claude plugin list 2>/dev/null | grep context7" },
+  { name: 'pencil', type: 'Plugin', desc: 'Visual design editor for .pen files — generates and validates web/mobile UI mockups. Used by /sk:frontend-design --pencil.', install: '/plugin marketplace add pencil/pencil', update: 'Managed via plugin marketplace', check: "claude plugin list 2>/dev/null | grep pencil" },
+];
+
+const CLI_TOOLS = [
+  { name: 'agent-browser', type: 'CLI', desc: 'Parallel-safe browser automation via accessibility tree. Each call gets its own subprocess. Used by /sk:e2e for fast E2E verification.', install: 'npm install -g agent-browser && agent-browser install', update: 'npm install -g agent-browser', check: 'agent-browser --version 2>/dev/null' },
+];
+
+const PROFILES = [
+  { name: 'full-sail', desc: 'High-stakes / client work. Maximum quality, uses Opus for all critical steps.', when: 'Client projects, production releases, high-visibility work' },
+  { name: 'quality', desc: 'Most projects. Strong quality with Opus on planning/review, Sonnet on implementation.', when: 'Default for production codebases' },
+  { name: 'balanced', desc: 'Balanced speed and quality. Sonnet across most steps, Haiku for lightweight tasks.', when: 'Default profile — good for active development' },
+  { name: 'budget', desc: 'Side projects and exploration. Sonnet/Haiku throughout, no Opus.', when: 'Prototypes, exploration, cost-sensitive work' },
+];
+
+const PROFILE_MATRIX = [
+  { group: 'brainstorm, write-plan, debug, execute-plan, review', fullSail: 'opus', quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
+  { group: 'write-tests, frontend-design, api-design, security-check', fullSail: 'opus', quality: 'sonnet', balanced: 'sonnet', budget: 'sonnet' },
+  { group: 'change', fullSail: 'opus', quality: 'sonnet', balanced: 'sonnet', budget: 'sonnet' },
+  { group: 'autopilot, team', fullSail: 'opus', quality: 'opus', balanced: 'sonnet', budget: 'sonnet' },
+  { group: 'perf, schema-migrate, accessibility', fullSail: 'opus', quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
+  { group: 'eval', fullSail: 'sonnet', quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
+  { group: 'lint, test', fullSail: 'sonnet', quality: 'sonnet', balanced: 'haiku', budget: 'haiku' },
+  { group: 'smart-commit, branch, update-task', fullSail: 'haiku', quality: 'haiku', balanced: 'haiku', budget: 'haiku' },
+  { group: 'start, learn, context-budget, health, deps-audit', fullSail: 'haiku', quality: 'haiku', balanced: 'haiku', budget: 'haiku' },
+  { group: 'save-session, resume-session, safety-guard', fullSail: 'haiku', quality: 'haiku', balanced: 'haiku', budget: 'haiku' },
+];
+
+// ──────────────────────────────────────────────
+// RENDER
+// ──────────────────────────────────────────────
+
+function modelBadge(m) {
+  const cls = m === 'opus' ? 'badge-opus' : m === 'sonnet' ? 'badge-sonnet' : m === 'haiku' ? 'badge-haiku' : 'badge-inherit';
+  return `<span class="card-badge ${cls}">${m}</span>`;
+}
+
+function flagBadge(f) {
+  if (!f) return '';
+  const map = {
+    required: 'badge-required',
+    optional: 'badge-optional',
+    'auto-skip': 'badge-autoskip',
+    autoskip: 'badge-autoskip',
+    'hard gate': 'badge-hardgate',
+    hardgate: 'badge-hardgate',
+    'hard-gate': 'badge-hardgate',
+  };
+  const cls = map[f] || 'badge-optional';
+  return `<span class="card-badge ${cls}">${f}</span>`;
+}
+
+function iconCls(cat) {
+  const map = { planning: 'icon-planning', quality: 'icon-quality', complete: 'icon-complete', devtool: 'icon-devtool', setup: 'icon-setup', laravel: 'icon-laravel', mcp: 'icon-mcp', agent: 'icon-agent' };
+  return map[cat] || '';
+}
+
+// Render command cards
+function renderCommands() {
+  const cats = ['planning', 'quality', 'complete', 'devtool', 'setup', 'laravel'];
+  const ids  = ['grid-planning', 'grid-quality', 'grid-complete', 'grid-devtool', 'grid-setup', 'grid-laravel'];
+  cats.forEach((cat, i) => {
+    const items = COMMANDS.filter(c => c.cat === cat);
+    const el = document.getElementById(ids[i]);
+    el.innerHTML = items.map(c => `
+      <div class="card" data-search="${c.cmd} ${c.desc} ${c.flag||''} ${cat}">
+        <div class="card-header">
+          <div class="card-icon ${iconCls(cat)}">${c.icon}</div>
+          <div>
+            <div class="card-name">${c.cmd}</div>
+          </div>
+          ${c.flag ? `<div style="margin-left:auto">${flagBadge(c.flag)}</div>` : ''}
+        </div>
+        <div class="card-desc">${c.desc}</div>
+      </div>
+    `).join('');
+  });
+}
+
+// Render workflow steps
+function renderSteps(containerId, steps) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = steps.map(s => `
+    <div class="step" data-search="${s.cmd} ${s.desc} ${s.flag||''}">
+      <div class="step-num">${s.num}</div>
+      <div class="step-body">
+        <div class="step-cmd">${s.cmd}</div>
+        <div class="step-desc">${s.desc}</div>
+      </div>
+      ${s.flag ? `<div class="step-flag ${s.flagClass}">${s.flag}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// Render agents
+function renderAgents() {
+  const el = document.getElementById('grid-agents');
+  el.innerHTML = AGENTS.map(a => `
+    <div class="card" data-search="${a.name} ${a.desc} ${a.isolation}">
+      <div class="card-header">
+        <div class="card-icon icon-agent">${a.name[0].toUpperCase()}</div>
+        <div>
+          <div class="card-name">${a.name}</div>
+        </div>
+        <div style="margin-left:auto;font-size:11px;color:var(--muted);white-space:nowrap">${a.isolation}</div>
+      </div>
+      <div class="card-desc">${a.desc}</div>
+    </div>
+  `).join('');
+}
+
+// Render MCP plugins & CLI tools
+function renderMCP() {
+  const pe = document.getElementById('grid-plugins');
+  pe.innerHTML = MCP_PLUGINS.map(p => `
+    <div class="card" data-search="${p.name} ${p.desc} ${p.type} plugin mcp">
+      <div class="card-header">
+        <div class="card-icon icon-mcp">P</div>
+        <div>
+          <div class="card-name">${p.name}</div>
+        </div>
+        <div style="margin-left:auto"><span class="card-badge badge-setup">${p.type}</span></div>
+      </div>
+      <div class="card-desc">${p.desc}</div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:11px;color:var(--muted)">Install: <code>${p.install}</code></div>
+        <div style="font-size:11px;color:var(--muted)">Update: <code>${p.update}</code></div>
+        <div style="font-size:11px;color:var(--muted)">Check: <code>${p.check}</code></div>
+      </div>
+    </div>
+  `).join('');
+
+  const ce = document.getElementById('grid-clitools');
+  ce.innerHTML = CLI_TOOLS.map(t => `
+    <div class="card" data-search="${t.name} ${t.desc} ${t.type} cli tool">
+      <div class="card-header">
+        <div class="card-icon icon-mcp">C</div>
+        <div>
+          <div class="card-name">${t.name}</div>
+        </div>
+        <div style="margin-left:auto"><span class="card-badge badge-devtool">${t.type}</span></div>
+      </div>
+      <div class="card-desc">${t.desc}</div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:11px;color:var(--muted)">Install: <code>${t.install}</code></div>
+        <div style="font-size:11px;color:var(--muted)">Update: <code>${t.update}</code></div>
+        <div style="font-size:11px;color:var(--muted)">Check: <code>${t.check}</code></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render profiles
+function renderProfiles() {
+  const ge = document.getElementById('grid-profiles');
+  ge.innerHTML = PROFILES.map(p => `
+    <div class="card" data-search="${p.name} ${p.desc} ${p.when} profile model">
+      <div class="card-header">
+        <div class="card-icon icon-devtool">P</div>
+        <div>
+          <div class="card-name">/sk:set-profile ${p.name}</div>
+        </div>
+      </div>
+      <div class="card-desc">${p.desc}</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--muted)"><strong style="color:var(--text)">Use when:</strong> ${p.when}</div>
+    </div>
+  `).join('');
+
+  const me = document.getElementById('profile-matrix');
+  me.innerHTML = `
+    <div class="profile-grid" id="pmatrix">
+      <div class="prow header">
+        <div>Skill group</div>
+        <div>full-sail</div>
+        <div>quality</div>
+        <div>balanced</div>
+        <div>budget</div>
+      </div>
+      ${PROFILE_MATRIX.map(r => `
+        <div class="prow" data-search="${r.group} ${r.fullSail} ${r.quality} ${r.balanced} ${r.budget}">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted)">${r.group}</div>
+          <div>${modelBadge(r.fullSail)}</div>
+          <div>${modelBadge(r.quality)}</div>
+          <div>${modelBadge(r.balanced)}</div>
+          <div>${modelBadge(r.budget)}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ──────────────────────────────────────────────
+// SEARCH
+// ──────────────────────────────────────────────
+
+let currentTab = 'commands';
+
+function runSearch(q) {
+  const raw = q.toLowerCase().trim();
+  let total = 0;
+  let visible = 0;
+
+  // Helper: check if text matches query
+  function matches(text) {
+    if (!raw) return true;
+    return raw.split(/\s+/).every(token => text.toLowerCase().includes(token));
+  }
+
+  // Cards (commands, agents, mcp, profiles)
+  document.querySelectorAll('.card[data-search]').forEach(el => {
+    const hit = matches(el.dataset.search);
+    el.classList.toggle('hidden', !hit);
+    total++;
+    if (hit) visible++;
+  });
+
+  // Steps
+  document.querySelectorAll('.step[data-search]').forEach(el => {
+    const hit = matches(el.dataset.search);
+    el.classList.toggle('hidden', !hit);
+    total++;
+    if (hit) visible++;
+  });
+
+  // Table rows
+  document.querySelectorAll('tbody tr[data-search], .prow[data-search]').forEach(el => {
+    const hit = matches(el.dataset.search);
+    el.classList.toggle('hidden', !hit);
+    total++;
+    if (hit) visible++;
+  });
+
+  // Update count
+  const mc = document.getElementById('match-count');
+  if (raw) {
+    mc.textContent = `${visible} match${visible !== 1 ? 'es' : ''}`;
+  } else {
+    mc.textContent = '';
+  }
+}
+
+// ──────────────────────────────────────────────
+// TABS
+// ──────────────────────────────────────────────
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    const id = 'tab-' + tab.dataset.tab;
+    document.getElementById(id).classList.add('active');
+    currentTab = tab.dataset.tab;
+    runSearch(document.getElementById('search').value);
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  runSearch(e.target.value);
+});
+
+// ──────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────
+
+renderCommands();
+renderSteps('steps-feature', FEATURE_STEPS);
+renderSteps('steps-bugfix', BUGFIX_STEPS);
+renderSteps('steps-deepdive', DEEPDIVE_STEPS);
+renderSteps('steps-hotfix', HOTFIX_STEPS);
+renderAgents();
+renderMCP();
+renderProfiles();
+</script>
+</body>
+</html>

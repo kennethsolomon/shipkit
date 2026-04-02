@@ -72,6 +72,7 @@ Every write-capable agent MUST have either `isolation: worktree` in its frontmat
 | `docs/sk:features/sk-<name>.md` | Create or delete feature spec |
 | `docs/FEATURES.md` | Add/remove entry |
 | `README.md` | Scenario tutorials or skill descriptions (if user-visible) |
+| `docs/dashboard.html` | `COMMANDS` array — add/remove/rename entry with correct `cat`, `desc`, `flag` |
 
 ---
 
@@ -231,4 +232,67 @@ Understanding this propagation path is essential — different change types requ
 
 ---
 
-Last updated: 2026-04-02 (agent-browser CLI tool sub-type added)
+## HTML Reference Dashboard (`docs/dashboard.html`)
+
+The dashboard is a single-file, zero-dependency HTML page that provides a searchable, categorized reference for all ShipKit commands, workflows, agents, MCP plugins, and model profiles. Open it directly in any browser — no server needed.
+
+**Location:** `docs/dashboard.html`
+
+### What it shows
+
+| Tab | Content | Data source in HTML |
+|-----|---------|---------------------|
+| Commands | All `/sk:` commands grouped by domain, with descriptions and flags | `COMMANDS` array |
+| Workflows | Feature, bug fix, deep-dive, hotfix step flows + auto-skip and requirement change tables | `FEATURE_STEPS`, `BUGFIX_STEPS`, `DEEPDIVE_STEPS`, `HOTFIX_STEPS` arrays + inline tables |
+| Agents | 13 core agents with descriptions and isolation decisions | `AGENTS` array |
+| MCP & Plugins | Claude plugins + CLI tools with install/update/check commands, plus hook lifecycle reference | `MCP_PLUGINS`, `CLI_TOOLS` arrays |
+| Model Profiles | Profile descriptions and full routing matrix | `PROFILES`, `PROFILE_MATRIX` arrays |
+
+All data lives as JavaScript arrays at the top of the `<script>` block in `docs/dashboard.html`. The search bar filters every card, step, row, and table row simultaneously via `data-search` attributes.
+
+### When to update the dashboard
+
+| Change type | Array to update |
+|-------------|-----------------|
+| Add/remove/rename a skill or command | `COMMANDS` — add/remove entry; set `cat` to one of: `planning`, `quality`, `complete`, `devtool`, `setup`, `laravel` |
+| Change a command's description | `COMMANDS` — update the `desc` field for that entry |
+| Change a command's required/optional/skip behavior | `COMMANDS` — update the `flag` field (`required`, `optional`, `autoskip`, `hardgate`) |
+| Add/remove a workflow step | `FEATURE_STEPS` (or relevant steps array) — add/remove step object |
+| Change auto-skip rules | Inline `<table id="table-autoskip">` in the Workflows tab |
+| Add/remove/rename an agent | `AGENTS` — add/remove entry; update `isolation` field |
+| Add/remove a plugin or CLI tool | `MCP_PLUGINS` or `CLI_TOOLS` — add/remove entry with `install`, `update`, `check` fields |
+| Add a hook lifecycle key | Inline `<table id="table-hooks">` in the MCP tab |
+| Change model routing | `PROFILE_MATRIX` — update the relevant row |
+| Add/remove a profile | `PROFILES` array |
+
+### Category values for `COMMANDS`
+
+| `cat` value | Dashboard section |
+|-------------|-------------------|
+| `planning` | Planning & Exploration |
+| `quality` | Quality Gates |
+| `complete` | Completion |
+| `devtool` | Developer Tools |
+| `setup` | Setup & Configuration |
+| `laravel` | Laravel |
+
+### Flag values for `COMMANDS`
+
+| `flag` value | Badge color | Meaning |
+|-------------|-------------|---------|
+| `required` | Green | Must run in workflow |
+| `optional` | Yellow | Run only when needed |
+| `autoskip` | Teal | Skipped automatically based on keywords |
+| `hardgate` | Red | Blocks progress until passing |
+| `null` | *(none)* | Standalone utility — no workflow position |
+
+### Quick edit example
+
+Adding a new command `/sk:foo` in the Setup category:
+```javascript
+{ cmd: '/sk:foo', desc: 'What it does.', cat: 'setup', icon: '🔧', flag: null },
+```
+
+---
+
+Last updated: 2026-04-02 (HTML dashboard added)
