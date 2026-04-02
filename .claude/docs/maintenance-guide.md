@@ -117,20 +117,36 @@ Current counts: **7 core, 7 enhanced** (as of v3.24.0)
 
 ---
 
-## When You Add/Remove a Community Plugin
+## When You Add/Remove a Community Plugin or CLI Tool
 
-Community plugins (like context-mode) are not owned by ShipKit but are recommended and integrated into setup flows.
+External tools (not owned by ShipKit) that are recommended and integrated into setup flows. Two sub-types with different install patterns:
+
+### Sub-type A — Claude Plugin (e.g. context-mode, context7)
 
 | File | What to change |
 |------|---------------|
 | `skills/sk:setup-claude/SKILL.md` | MCP Servers & Plugins section — add/remove under numbered list. Update prompt string. |
-| `skills/sk:setup-optimizer/SKILL.md` | Step 1.7 — add/remove from numbered check list. Update report prompt string and install/update instructions. |
+| `skills/sk:setup-optimizer/SKILL.md` | Step 1.7 — add/remove from numbered check list. Update `X/N configured` count. Update install/update instructions. |
 | `README.md` | Recommended Community Plugins table under MCP Servers section |
 | `.claude/docs/maintenance-guide.md` | This guide — update if plugin changes the maintenance process |
 
 **For install:** provide `/plugin marketplace add <org>/<repo>` + `/plugin install <name>@<name>` commands.
 **For update:** provide the plugin's own upgrade command (e.g., `/context-mode:ctx-upgrade`).
 **For check:** use `claude plugin list 2>/dev/null | grep <name>` to detect presence and version.
+
+### Sub-type B — CLI Tool (e.g. agent-browser)
+
+| File | What to change |
+|------|---------------|
+| `skills/sk:setup-claude/SKILL.md` | MCP Servers & Plugins section — add/remove under numbered list. Update prompt string. |
+| `skills/sk:setup-optimizer/SKILL.md` | Step 1.7 — add/remove from numbered check list. Update `X/N configured` count. Update install instructions. |
+| `README.md` | Recommended CLI Tools table under MCP Servers section |
+| `skills/sk:<skill>/SKILL.md` | The skill that uses this tool — update detection/priority logic |
+| `.claude/docs/maintenance-guide.md` | This guide — update if tool changes the maintenance process |
+
+**For install:** provide `npm install -g <pkg> && <pkg> install` (or equivalent).
+**For update:** `npm install -g <pkg>` (standard npm global update).
+**For check:** use `<cmd> --version 2>/dev/null` to detect presence and version.
 
 ---
 
@@ -215,4 +231,4 @@ Understanding this propagation path is essential — different change types requ
 
 ---
 
-Last updated: 2026-04-02
+Last updated: 2026-04-02 (agent-browser CLI tool sub-type added)
