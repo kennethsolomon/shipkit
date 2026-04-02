@@ -10,9 +10,10 @@ Load all project context files into the conversation and output a formatted sess
 
 ## What It Does
 
-1. **Reads** all context files (listed below) to load project state into the conversation
-2. **Outputs** a formatted SESSION BRIEF the user can read at a glance
+1. **Reads** context files using a progressive index strategy — reads only what the SESSION BRIEF needs
+2. **Outputs** a formatted SESSION BRIEF plus a Context Index showing what's available on demand
 3. **Applies** all active lessons from `tasks/lessons.md` as standing constraints for the session
+4. **Loads** full file content on demand when requested
 
 ## Hard Rules
 
@@ -22,30 +23,31 @@ Load all project context files into the conversation and output a formatted sess
 
 ---
 
-## Files to Read (in order)
+## Files to Read (Progressive Strategy)
 
-| # | File | What to Extract |
-|---|------|-----------------|
-| 1 | `tasks/todo.md` | Task name (from `# TODO —` heading), milestone progress, count of `- [x]` (done) vs `- [ ]` (pending) checkboxes |
-| 2 | `tasks/progress.md` | Last 5 entries only (most recent work). If file is large, read only the last 50 lines. |
-| 3 | `tasks/findings.md` | Current decisions, chosen approach, open questions |
-| 4 | `tasks/lessons.md` | All active lessons — read in full, apply as constraints for this session |
-| 5 | `docs/decisions.md` | If exists: last 3 ADR entries. If missing: note "no decisions log yet" |
-| 6 | `docs/vision.md` | If exists: product name + value proposition. If missing: note "no vision.md found" |
-| 7 | `tasks/tech-debt.md` | If exists: count entries with no `Resolved:` line (unresolved), highest severity among unresolved |
+| # | File | How to Read | What to Extract |
+|---|------|-------------|-----------------|
+| 1 | `tasks/todo.md` | Full | Task name, milestone progress, `[x]`/`[ ]` counts |
+| 2 | `tasks/progress.md` | Last 50 lines only | Most recent entry summary |
+| 3 | `tasks/findings.md` | First 50 lines only | Open questions section, headings |
+| 4 | `tasks/lessons.md` | Last 30 lines only + count | Count `### [` headings (total); read last 30 lines for recent lessons |
+| 5 | `docs/decisions.md` | Last 3 entries | ADR summaries |
+| 6 | `docs/vision.md` | First 10 lines | Product name + value proposition |
+| 7 | `tasks/tech-debt.md` | Headers only (grep) | Count unresolved entries + highest severity |
 
-### Reading Strategy
+### Why Progressive Reading
 
-- Read files 1-4 first (these are the core context).
-- Files 5-6 are optional — check if they exist before reading.
-- For `tasks/progress.md`: only read the last 50 lines to avoid loading a huge file.
-- If `tasks/todo.md` is missing: the project has no active task.
+- `tasks/findings.md` can grow to 500+ lines. The first 50 lines contain the section headings and open questions — all the SESSION BRIEF needs.
+- `tasks/lessons.md` can accumulate 20+ lessons. The count + last 2–3 lessons are sufficient for the brief; full lessons are loaded on demand when needed for active work.
+- `tasks/tech-debt.md` only needs entry counts and severity labels for the brief.
+
+Full content is always available via on-demand loading (see below).
 
 ---
 
 ## Output Format
 
-After reading all files, output this session brief:
+### Part 1 — SESSION BRIEF
 
 ```
 ╔══════════════════════════════════════════╗
@@ -62,26 +64,56 @@ Product:    [value prop from vision.md, or "no vision.md found"]
 ════════════════════════════════════════════
 ```
 
-### Field Rules
+### Part 2 — Context Index
 
-- **Branch:** Run `git branch --show-current` to get the current branch name.
-- **Task:** Extract from the first `# TODO —` line in `tasks/todo.md`. If the file doesn't exist or all checkboxes are done, show "No active task — ready to start fresh".
-- **Progress:** Count `- [x]` (done) and `- [ ]` (pending) lines in `tasks/todo.md`. Stop counting at the first `## Verification`, `## Acceptance Criteria`, or `## Risks` heading (these are meta-sections, not tasks). Show `N done / M total`.
-- **Last done:** The most recent entry from `tasks/progress.md`. Summarize in one line.
-- **Lessons:** Count `### [` headings in `tasks/lessons.md` (each lesson starts with `### [YYYY-MM-DD]`). Show the count + the **Prevention:** line from the most recent lesson.
-- **Open Qs:** Check for an "## Open Questions" section in `tasks/findings.md`. List them or say "none".
-- **Tech Debt:** Read `tasks/tech-debt.md` if it exists. Count entries that have no `Resolved:` line — each entry starts with `### [`. For unresolved entries, find the highest severity. Show `N unresolved — highest: [severity] ([file])`. If file missing or 0 unresolved, show `none`.
-- **Product:** From `docs/vision.md`, extract the value proposition. If file doesn't exist, say "no vision.md found".
+After the SESSION BRIEF, output the context index:
+
+```
+── On demand ──────────────────────────────────────────
+  findings  [~N lines]  [N open questions]   → "load findings"
+  lessons   [N active]  last: YYYY-MM-DD     → "load lessons"
+  tech-debt [N unresolved, SEVERITY]         → "load debt"
+───────────────────────────────────────────────────────
+```
+
+Only show rows for files that exist. If a file is missing, omit its row silently.
+
+### Part 3 — Active Lessons + Next Step
+
+After the context index:
+1. **State the active lessons** that apply as constraints. List each **Prevention:** rule as a bullet (from the last 3 lessons read).
+2. **State what's next** — tell the user the next step and the command to run.
 
 ---
 
-## After the Brief
+## Field Rules
 
-After outputting the session brief:
+- **Branch:** Run `git branch --show-current`.
+- **Task:** Extract from the first `# TODO —` line in `tasks/todo.md`. If missing or all done: "No active task — ready to start fresh".
+- **Progress:** Count `- [x]` (done) and `- [ ]` (pending) in `tasks/todo.md`. Stop at first `## Verification`, `## Acceptance Criteria`, or `## Risks` heading.
+- **Last done:** Most recent entry from `tasks/progress.md` (last 50 lines). Summarize in one line.
+- **Lessons count:** Count `### [` occurrences in `tasks/lessons.md` (full grep, not full read). Show count + **Prevention:** line from the most recently read lesson.
+- **Open Qs:** `## Open Questions` section in first 50 lines of `tasks/findings.md`, or "none".
+- **Tech Debt:** Grep `tasks/tech-debt.md` for `### [` entries without `Resolved:`. Count unresolved + find highest severity keyword (CRITICAL > HIGH > MEDIUM > LOW). Show `N unresolved — highest: [severity] ([file])`. "none" if 0 or file missing.
+- **Product:** First `value proposition` or description paragraph from `docs/vision.md` first 10 lines.
 
-1. **State the active lessons** that apply as constraints. List each prevention rule as a bullet.
-2. **State what's next** — tell the user the next step and the command to run.
-3. If the user has a specific request, proceed with it (the context is now loaded).
+---
+
+## On-Demand Loading
+
+When the user says any of the following (case-insensitive), read the full file and output it:
+
+| Trigger | Action |
+|---------|--------|
+| `load findings` / `show findings` | Read `tasks/findings.md` in full and output |
+| `load lessons` / `show lessons` | Read `tasks/lessons.md` in full and output, applying ALL lessons as constraints |
+| `load debt` / `load tech-debt` / `show debt` | Read `tasks/tech-debt.md` in full and output |
+| `load all` / `full context` | Read all 7 files in full (original behavior) |
+| `/sk:context --load findings` | Same as "load findings" |
+| `/sk:context --load lessons` | Same as "load lessons" |
+| `/sk:context --load all` | Same as "load all" |
+
+On-demand loads are additive — they do not re-run the SESSION BRIEF.
 
 ---
 
@@ -92,12 +124,14 @@ After outputting the session brief:
 | No `tasks/todo.md` | Show "No active task — ready to start fresh" |
 | All checkboxes done in todo.md | Show "Task complete — 0 pending" for Progress field |
 | No `tasks/progress.md` | Show "No progress logged yet" for Last done |
-| No `tasks/findings.md` | Show "none" for Open Qs |
-| No `tasks/lessons.md` | Show "0 active" for Lessons |
+| No `tasks/findings.md` | Show "none" for Open Qs; omit findings row from Context Index |
+| No `tasks/lessons.md` | Show "0 active" for Lessons; omit lessons row from Context Index |
 | No `docs/decisions.md` | Show "no decisions log yet" — do not error |
 | No `docs/vision.md` | Show "no vision.md found" — do not error |
-| No `tasks/tech-debt.md` | Show "none" for Tech Debt field — do not error |
-| All checkboxes done in todo.md | Show "Task complete — 0 pending" |
+| No `tasks/tech-debt.md` | Show "none" for Tech Debt; omit debt row from Context Index |
+| All tech-debt entries resolved | Show "none" for Tech Debt; omit debt row from Context Index |
+| Context Index has no rows | Omit the entire "On demand" section |
+| User requests "load all" | Read all 7 files in full — original behavior |
 
 ---
 

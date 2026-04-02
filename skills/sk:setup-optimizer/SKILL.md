@@ -183,7 +183,7 @@ After updating the workflow, check and deploy hooks:
 
 1. **Check if `.claude/hooks/` exists** — if not, create it
 2. **Check for core hooks** — `session-start.sh`, `session-stop.sh`, `pre-compact.sh`, `validate-commit.sh`, `validate-push.sh`, `log-agent.sh`, `keyword-router.sh`
-3. **Check for enhanced hooks** — `config-protection.sh`, `post-edit-format.sh`, `console-log-warning.sh`, `cost-tracker.sh`, `suggest-compact.sh`, `safety-guard.sh`
+3. **Check for enhanced hooks** — `config-protection.sh`, `post-edit-format.sh`, `console-log-warning.sh`, `cost-tracker.sh`, `suggest-compact.sh`, `safety-guard.sh`, `auto-progress.sh`
 4. **Check `.claude/settings.json`** — verify hooks are wired correctly
 
 **Report status and prompt:**

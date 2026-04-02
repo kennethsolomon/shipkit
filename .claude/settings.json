@@ -122,6 +122,16 @@
             "timeout": 10000
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/auto-progress.sh",
+            "timeout": 5000
+          }
+        ]
       }
     ],
     "SubagentStart": [

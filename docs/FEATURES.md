@@ -95,7 +95,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | Spec | Last Updated | Version |
 |------|-------------|---------|
 | [sk-dashboard.md](sk:features/sk-dashboard.md) | 2026-03-19 | v3.5.0 |
-| [sk-context.md](sk:features/sk-context.md) | 2026-03-20 | v3.6.0 |
+| [sk-context.md](sk:features/sk-context.md) | 2026-04-02 | v3.24.0 |
 | [sk-scope-check.md](sk:features/sk-scope-check.md) | 2026-03-23 | v3.7.0 |
 | [sk-retro.md](sk:features/sk-retro.md) | 2026-03-23 | v3.7.0 |
 | [sk-reverse-doc.md](sk:features/sk-reverse-doc.md) | 2026-03-23 | v3.7.0 |

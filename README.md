@@ -336,6 +336,7 @@ Installed by `/sk:setup-claude`. Fire automatically on Claude Code events.
 | `validate-commit` | Before `git commit` | Validates conventional commit format, detects secrets |
 | `validate-push` | Before `git push` | Warns before pushing to protected branches |
 | `log-agent` | Sub-agent starts | Logs invocations to `tasks/agent-audit.log` |
+| `keyword-router` | User prompt submitted | Detects `autopilot:`/`debug:`/`fast:`/`interview:`/`team:` prefixes → routes to skill |
 
 **Opt-in:**
 
@@ -346,6 +347,7 @@ Installed by `/sk:setup-claude`. Fire automatically on Claude Code events.
 | `console-log-warning` | Warns about `console.log`, `dd()`, `var_dump()` in modified files |
 | `cost-tracker` | Logs session metadata to `.claude/sessions/cost-log.jsonl` |
 | `safety-guard` | Enforces `/sk:safety-guard` freeze/careful mode |
+| `auto-progress` | Auto-logs `git commit`/`push`/`tag` events to `tasks/progress.md` |
 
 ---
 

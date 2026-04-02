@@ -1,6 +1,6 @@
 # /sk:context
 
-> **Status:** Shipped (v3.7.0 — 2026-03-20)
+> **Status:** Shipped (updated v3.24.0 — 2026-04-02)
 > **Type:** Developer Tool (standalone — not a numbered workflow step)
 > **Command:** `/sk:context`
 > **Skill file:** `skills/sk:context/SKILL.md`
@@ -9,21 +9,23 @@
 
 ## Overview
 
-Session initializer that loads all project context files into the conversation and outputs a formatted SESSION BRIEF. Designed to be run at the **start of every conversation** for instant orientation — replaces manually reading 5+ files. Read-only, no modifications, no questions.
+Session initializer that loads all project context files into the conversation and outputs a formatted SESSION BRIEF. Designed to be run at the **start of every conversation** for instant orientation.
+
+Uses **progressive disclosure**: reads only what the SESSION BRIEF needs upfront (index pass), then makes full file content available on demand. Reduces cold-start context burn by 60–80% on mature projects. Read-only, no modifications, no questions.
 
 ---
 
 ## Inputs
 
-| Input | Source | Required |
-|-------|--------|----------|
-| `tasks/todo.md` | Project planning file | No — shows "No active task" if missing |
-| `tasks/progress.md` | Work log (last 50 lines only) | No — shows "No progress logged yet" if missing |
-| `tasks/findings.md` | Current task decisions | No — shows "none" for Open Qs if missing |
-| `tasks/lessons.md` | Past corrections (read in full) | No — shows "0 active" if missing |
-| `docs/decisions.md` | ADR log (last 3 entries) | No — shows "no decisions log yet" if missing |
-| `docs/vision.md` | Product context (name + value prop) | No — shows "no vision.md found" if missing |
-| `tasks/tech-debt.md` | Pre-existing issues from gates | No — shows "none logged" if missing |
+| Input | How Read | Required |
+|-------|----------|----------|
+| `tasks/todo.md` | Full | No — shows "No active task" if missing |
+| `tasks/progress.md` | Last 50 lines only | No — shows "No progress logged yet" if missing |
+| `tasks/findings.md` | First 50 lines only (index pass) | No — shows "none" for Open Qs if missing |
+| `tasks/lessons.md` | Count (grep) + last 30 lines (index pass) | No — shows "0 active" if missing |
+| `docs/decisions.md` | Last 3 entries | No — shows "no decisions log yet" if missing |
+| `docs/vision.md` | First 10 lines | No — shows "no vision.md found" if missing |
+| `tasks/tech-debt.md` | Headers grep only (index pass) | No — shows "none logged" if missing |
 | `git branch --show-current` | Git CLI | Yes — always available |
 
 ---
@@ -32,8 +34,9 @@ Session initializer that loads all project context files into the conversation a
 
 | Output | Destination | Notes |
 |--------|-------------|-------|
-| SESSION BRIEF | Terminal (stdout) | Formatted box with branch, task, step, pending, lessons, open Qs, product |
-| Active lessons | Terminal (stdout) | Bulleted list of prevention rules from lessons.md |
+| SESSION BRIEF | Terminal (stdout) | Formatted box with branch, task, progress, lessons, open Qs, tech debt, product |
+| Context Index | Terminal (stdout) | One-line per heavy file — shows what's available on demand |
+| Active lessons | Terminal (stdout) | Prevention rules from last 3 lessons as standing constraints |
 | Next step | Terminal (stdout) | Command to run next |
 
 ### SESSION BRIEF Format
@@ -42,36 +45,55 @@ Session initializer that loads all project context files into the conversation a
 ╔══════════════════════════════════════════╗
 ║            SESSION BRIEF                 ║
 ╚══════════════════════════════════════════╝
-Branch:     feature/xxx
-Task:       Task name from todo.md
-Progress:   12/19 checkboxes done in todo.md
-Last done:  Last progress.md entry summary
-Lessons:    7 active — most critical 1-liner
+Branch:     feature/add-auth
+Task:       Add email/password authentication
+Progress:   12/19 checkboxes done
+Last done:  Implemented AuthController with JWT signing
+Lessons:    7 active — maintenance-guide.md must be read first
 Open Qs:    none
-Tech Debt:  3 unresolved — highest: high (src/auth.ts:42)
-Product:    value prop from vision.md
+Tech Debt:  3 unresolved — highest: HIGH (src/auth.ts:42)
+Product:    Ship features with TDD, security audits, and code review
 ════════════════════════════════════════════
+
+── On demand ──────────────────────────────────────────
+  findings  [~180 lines]  2 open questions   → "load findings"
+  lessons   [7 active]    last: 2026-04-01   → "load lessons"
+  tech-debt [3 unresolved, HIGH]             → "load debt"
+───────────────────────────────────────────────────────
 ```
 
 ---
 
 ## Business Logic
 
-1. **Read core files (1-5)** — always attempted. Missing files produce fallback values, not errors.
-2. **Read optional files (6-7)** — check existence before reading. Missing = noted in brief.
-3. **Extract fields:**
-   - **Branch:** `git branch --show-current`
-   - **Task:** First `# TODO —` line, text after last em dash `—`
-   - **Progress:** Count `[x]` and `[ ]` checkboxes in todo.md; report as "done/total checkboxes"
-   - **Last done:** Most recent entry from progress.md (1-line summary)
-   - **Lessons:** Count `### [` headings in lessons.md; show count + **Prevention:** line from most recent
-   - **Open Qs:** `## Open Questions` section in findings.md, or "none"
-   - **Tech Debt:** Count entries in tech-debt.md with no `Resolved:` line; report count + highest severity + file. "none logged" if file missing, "none" if 0 unresolved.
-   - **Product:** Value proposition from vision.md, or "no vision.md found"
-4. **Output SESSION BRIEF** in the box format.
-5. **State active lessons** as bulleted prevention rules — these become standing constraints.
-6. **State next step** — the command to run.
-7. If user has a specific request, proceed with it (context is loaded).
+### Index Pass (always runs)
+
+1. Read `tasks/todo.md` in full → extract task name, checkbox counts
+2. Read last 50 lines of `tasks/progress.md` → extract last entry
+3. Read first 50 lines of `tasks/findings.md` → extract open questions section
+4. Grep `tasks/lessons.md` for `### [` count; read last 30 lines for recent lessons
+5. Read last 3 entries of `docs/decisions.md` if it exists
+6. Read first 10 lines of `docs/vision.md` if it exists
+7. Grep `tasks/tech-debt.md` for entry count and severity keywords
+
+### Context Index
+
+After the SESSION BRIEF, output one-line per file that exists AND has content worth loading:
+- Only show files where the index pass found content (skip if missing or empty)
+- Include approximate line count, key stat (open Qs / active count / unresolved count)
+- Show on-demand trigger phrase
+
+### On-Demand Loading
+
+When user says a trigger phrase, read the full file and output it:
+
+| Trigger | Action |
+|---------|--------|
+| `load findings` / `show findings` | Read `tasks/findings.md` in full |
+| `load lessons` / `show lessons` | Read `tasks/lessons.md` in full; apply ALL lessons as constraints |
+| `load debt` / `load tech-debt` | Read `tasks/tech-debt.md` in full |
+| `load all` / `full context` | Read all 7 files in full (original behavior) |
+| `/sk:context --load <name>` | Same as trigger phrase variants |
 
 ---
 
@@ -80,7 +102,7 @@ Product:    value prop from vision.md
 - **Read-only** — this skill never modifies any files
 - **Graceful fallback** — missing files are noted in the brief, never treated as errors
 - **No questions** — runs silently, does not ask the user anything
-- **Progress.md capped** — only reads last 50 lines to avoid loading a huge file
+- **Progressive by default** — index pass only; full files on demand
 
 ---
 
@@ -90,13 +112,15 @@ Product:    value prop from vision.md
 |----------|----------|
 | No `tasks/todo.md` | Shows "No active task — ready to start fresh" |
 | No `tasks/progress.md` | Shows "No progress logged yet" for Last done |
-| No `tasks/findings.md` | Shows "none" for Open Qs |
-| No `tasks/lessons.md` | Shows "0 active" for Lessons |
+| No `tasks/findings.md` | Shows "none" for Open Qs; omits findings row from Context Index |
+| No `tasks/lessons.md` | Shows "0 active" for Lessons; omits lessons row from Context Index |
 | No `docs/decisions.md` | Shows "no decisions log yet" — no error |
 | No `docs/vision.md` | Shows "no vision.md found" — no error |
-| No `tasks/tech-debt.md` | Shows "none logged" for Tech Debt |
-| `tasks/tech-debt.md` exists, 0 unresolved | Shows "none" for Tech Debt |
-| All checkboxes done in todo.md | Shows "Task complete — 0 pending" |
+| No `tasks/tech-debt.md` | Shows "none logged"; omits debt row from Context Index |
+| All tech-debt resolved | Shows "none"; omits debt row from Context Index |
+| All checkboxes done | Shows "Task complete — 0 pending" |
+| Context Index has no rows | Omits entire "On demand" section |
+| User says "load all" | Reads all 7 files in full — original pre-v3.24.0 behavior |
 
 ---
 
@@ -106,21 +130,6 @@ Product:    value prop from vision.md
 |-----------|----------|
 | Git not available | Branch field shows "unknown" |
 | File read error (not ENOENT) | Treat as missing — use fallback value |
-
----
-
-## UI/UX Behavior
-
-### CLI Output
-
-Two-part output:
-1. **SESSION BRIEF box** — formatted with Unicode box-drawing characters
-2. **Active lessons** — bulleted list of prevention rules
-3. **Next step** — one line with the command to run
-
-### When Done
-
-The skill transitions directly to the user's request if they have one, or suggests the next workflow step.
 
 ---
 
@@ -134,6 +143,6 @@ CLI tool — no mobile or web platform. Works in any project that uses ShipKit's
 
 - `skills/sk:context/SKILL.md` — full implementation spec and model routing
 - `tasks/todo.md` — primary data source for task and progress info
-- `tasks/lessons.md` — loaded in full and applied as session constraints
+- `tasks/lessons.md` — loaded progressively; say "load lessons" for full content
 - `docs/decisions.md` — ADR log (created by sk:brainstorming)
 - `docs/vision.md` — product context (created by sk:mvp Step 9)
