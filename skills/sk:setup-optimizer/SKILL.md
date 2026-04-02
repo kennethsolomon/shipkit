@@ -188,7 +188,7 @@ After updating the workflow, check and deploy hooks:
 
 **Report status and prompt:**
 
-> "Hooks: [X/6 core, Y/6 enhanced] installed
+> "Hooks: [X/7 core, Y/7 enhanced] installed
 > Install missing hooks? [y/n]"
 
 **If yes:**
@@ -212,8 +212,10 @@ After updating the workflow, check and deploy hooks:
 4. **Report what was deployed:**
    ```
    Deployed hooks:
+     + keyword-router.sh (UserPromptSubmit — magic keyword routing)
      + config-protection.sh (PreToolUse — blocks linter config edits)
      + post-edit-format.sh (PostToolUse — auto-format after edits)
+     + auto-progress.sh (PostToolUse — auto-log git events to progress.md)
      + console-log-warning.sh (Stop — warn on debug statements)
      + cost-tracker.sh (Stop — session metadata logging)
      + suggest-compact.sh (PreToolUse — compact suggestions)

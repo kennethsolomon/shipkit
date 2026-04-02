@@ -75,6 +75,48 @@ Every write-capable agent MUST have either `isolation: worktree` in its frontmat
 
 ---
 
+## When You Change a Skill's Behavior (without adding/removing it)
+
+For internal mechanic upgrades to existing skills (e.g., progressive disclosure in `/sk:context`, ultraqa cycling in `/sk:test`):
+
+| File | What to change |
+|------|---------------|
+| `skills/sk:<name>/SKILL.md` | Update behavior description |
+| `docs/sk:features/sk-<name>.md` | Update feature spec |
+| `docs/FEATURES.md` | Bump spec date + version in Spec Status table |
+| `CLAUDE.md` | Only if behavior change affects workflow rules or step descriptions |
+| `README.md` | Only if behavior change is user-visible (new flags, changed output format) |
+| `skills/sk:setup-claude/templates/commands/<name>.md.template` | If the skill has a template variant |
+
+**Propagation:** Skill behavior changes reach users automatically via `npm install -g @kennethsolomon/shipkit && shipkit`. No `/sk:setup-optimizer` run needed for the skill content itself.
+
+---
+
+## When You Add/Remove a Hook
+
+| File | What to change |
+|------|---------------|
+| `.claude/hooks/<hook>.sh` | Create, modify, or delete |
+| `.claude/settings.json` | Add/remove under the correct lifecycle key |
+| `skills/sk:setup-optimizer/SKILL.md` | Core/enhanced hook lists **AND** report string hook count (`X/7 core, Y/7 enhanced`) |
+| `skills/sk:setup-claude/templates/hooks/` | Add/remove template file (deployed to new projects) |
+| `skills/sk:setup-claude/templates/.claude/settings.json.template` | Add/remove hook wiring |
+| `README.md` | Always-installed or Opt-in hooks table (Lifecycle Hooks section) |
+
+**Hook lifecycle keys in settings.json:** `SessionStart`, `SessionStop`, `PreToolUse`, `PostToolUse`, `Stop`, `UserPromptSubmit`, `SubagentStart`, `PreCompact`
+
+**Core vs enhanced classification:**
+- **Core** (always deployed by setup-optimizer): hooks required for the workflow to function — session lifecycle, commit validation, keyword routing
+- **Enhanced** (opt-in, deployed on user confirmation): quality-of-life hooks — formatting, warnings, logging, safety
+
+**When you add a hook, also update the count** in `skills/sk:setup-optimizer/SKILL.md`:
+```
+> "Hooks: [X/N core, Y/N enhanced] installed
+```
+Current counts: **7 core, 7 enhanced** (as of v3.24.0)
+
+---
+
 ## When You Add/Remove a Community Plugin
 
 Community plugins (like context-mode) are not owned by ShipKit but are recommended and integrated into setup flows.
@@ -110,17 +152,23 @@ Gates live in `skills/sk:gates/SKILL.md`. Batch order affects agent invocation.
 
 ---
 
-## When You Change Hooks
+## How Updates Reach Existing Projects
 
-| File | What to change |
-|------|---------------|
-| `.claude/hooks/<hook>.sh` | Create, modify, or delete |
-| `.claude/settings.json` | Add/remove under the correct lifecycle key |
-| `skills/sk:setup-optimizer/SKILL.md` | Core/enhanced hook lists |
-| `skills/sk:setup-claude/templates/hooks/` | Update template (deployed to new projects) |
-| `skills/sk:setup-claude/templates/settings.json.template` | Update wiring template |
+Understanding this propagation path is essential — different change types require different user actions.
 
-**Hook lifecycle keys in settings.json:** `SessionStart`, `SessionStop`, `PreToolUse`, `PostToolUse`, `Stop`
+| Change type | User action to receive update |
+|-------------|------------------------------|
+| Skill behavior change (`SKILL.md`) | `npm install -g @kennethsolomon/shipkit && shipkit` |
+| New or modified hook script | `npm install -g @kennethsolomon/shipkit && shipkit` → then `/sk:setup-optimizer` (Step 1.5 deploys missing hooks) |
+| New `settings.json` hook wiring | `npm install -g @kennethsolomon/shipkit && shipkit` → then `/sk:setup-optimizer` (Step 1.5 merges new entries additively) |
+| New agent definition | `npm install -g @kennethsolomon/shipkit && shipkit` → then `/sk:setup-optimizer` (Step 1.8 deploys missing agents) |
+| CLAUDE.md workflow section update | `/sk:setup-optimizer` (Step 1 refreshes the workflow section from the latest template) |
+| New slash command | `npm install -g @kennethsolomon/shipkit && shipkit` |
+| New rule file | `npm install -g @kennethsolomon/shipkit && shipkit` → then `/sk:setup-optimizer` (Step 1.8 deploys missing rules) |
+
+**Summary: `/sk:setup-optimizer` is the single command that applies all hook, settings, agent, rule, and CLAUDE.md updates to existing projects.** Skill content (SKILL.md files) updates via npm only.
+
+**For new hook scripts specifically:** the optimizer detects the missing `.sh` file, deploys it from the templates directory, and merges the new settings.json entry — all in one confirmation step. Users never need to manually edit settings.json.
 
 ---
 
@@ -133,8 +181,10 @@ Gates live in `skills/sk:gates/SKILL.md`. Batch order affects agent invocation.
 | `skills/sk:autopilot/SKILL.md` | **Derived** — orchestrates full workflow | Any step change |
 | `skills/sk:gates/SKILL.md` | **Derived** — orchestrates step 7 | Gate config or step change |
 | `skills/sk:team/SKILL.md` | **Derived** — parallel implementation | Agent or step 5 change |
-| `skills/sk:setup-optimizer/SKILL.md` | **Derived** — workflow health checker | Any step, agent, or command change |
+| `skills/sk:setup-optimizer/SKILL.md` | **Derived** — workflow health checker | Any step, agent, command, or hook change |
 | `skills/sk:setup-claude/templates/CLAUDE.md.template` | **Template** — bootstraps new projects | Any canonical workflow change |
+| `skills/sk:setup-claude/templates/.claude/settings.json.template` | **Template** — wires hooks for new projects | Any hook addition/removal |
+| `skills/sk:setup-claude/templates/hooks/` | **Templates** — hook scripts for new projects | Any hook addition/modification |
 | `.claude/agents/*.md` | **Definitions** — agent behavior | Agent capability or isolation change |
 | `.claude/docs/DOCUMENTATION.md` | **Reference** — feature detail docs | Major feature or step change |
 | `docs/sk:features/*.md` | **Specs** — per-feature documentation | Feature change |
@@ -152,6 +202,17 @@ Gates live in `skills/sk:gates/SKILL.md`. Batch order affects agent invocation.
 - [ ] All write-capable agents have `isolation: worktree` OR a `<!-- DESIGN NOTE -->` comment
 - [ ] Create entry in `.claude/docs/architectural_change_log/` for the change
 
+## Quick Checklist After Any Hook Change
+
+- [ ] Hook script created in `.claude/hooks/` and `skills/sk:setup-claude/templates/hooks/`
+- [ ] `skills/sk:setup-claude/templates/.claude/settings.json.template` has the new wiring
+- [ ] `.claude/settings.json` (this project) has the new wiring
+- [ ] `skills/sk:setup-optimizer/SKILL.md` core/enhanced lists updated
+- [ ] `skills/sk:setup-optimizer/SKILL.md` report string count updated (`X/N core, Y/N enhanced`)
+- [ ] `skills/sk:setup-optimizer/SKILL.md` deployed hooks example updated
+- [ ] `README.md` Lifecycle Hooks table updated (Always installed or Opt-in)
+- [ ] Create entry in `.claude/docs/architectural_change_log/` for the change
+
 ---
 
-Last updated: 2026-03-31
+Last updated: 2026-04-02
