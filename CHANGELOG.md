@@ -32,7 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **`tasks/todo.md` now enforced as a workflow rule** — CLAUDE.md rule 8 added: before any session touching ≥ 3 files, create `tasks/todo.md` with at least 5 checkboxes. Mirrored to `CLAUDE.md.template` for new projects. (6th retro noting this issue — escalated from habit to rule.)
 - **`/sk:finish-feature` blocks on missing `/sk:review`** — "Before You Start" section now counts SKILL.md files changed on the branch. If ≥ 3 and `/sk:review` hasn't run, finalize is blocked. (4th retro noting this issue — escalated to hard gate.)
-- **`/sk:release` now runs `npm publish`** — after `git push --tags`, runs `npm publish` (or `npm publish --access public` for scoped packages). Skips if `"private": true`. (2nd retro noting npm registry was behind.)
+- **`/sk:release` now runs `npm publish`** — requires confirmation prompt + OTP note before publishing; publishable package check requires `name` + `main`/`bin`/`exports` field (prevents accidentally publishing apps that lack `"private": true`). For scoped packages runs `npm publish --access public`.
+- **`/sk:e2e` spec detection scoped to `e2e/` and `tests/e2e/`** — previous `find` was too broad and matched unit test specs (Vitest/Jest), causing false Playwright CLI priority match. Now only E2E directories count.
+- **`/sk:setup-claude` agent-browser item clarified as CLI tool** — labeled `*(CLI tool — check via PATH, not via claude plugin list)*` to prevent wrong install state check.
+- **Arch change log entries** — added `2026-04-02-agent-browser-e2e-integration.md` and `2026-04-02-retro-enforcement-rules.md`.
 
 ---
 
