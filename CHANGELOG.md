@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.26.1] - 2026-04-05
+
+### Fixed
+- **Installer crash on broken symlinks** — `shipkit` install now detects and removes broken symlinks (from old `shipit` path) before copying skill directories, preventing ENOENT errors on `mkdirSync`
+- **Installer resilience** — individual skill install failures no longer crash the entire install; failed skills are reported as warnings
+
+---
+
 ## [v3.26.0] - 2026-04-05
 
 ### Added

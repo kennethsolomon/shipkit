@@ -143,11 +143,26 @@ function install() {
     const skillDirs = fs.readdirSync(skillsSrc, { withFileTypes: true })
       .filter(e => e.isDirectory());
 
+    const failed = [];
     for (const entry of skillDirs) {
       const src  = path.join(skillsSrc, entry.name);
       const dest = path.join(skillsDest, entry.name);
-      copyDir(src, dest);
-      skillCount++;
+      try {
+        // Remove broken symlinks that block mkdir
+        try {
+          const lstat = fs.lstatSync(dest);
+          if (lstat.isSymbolicLink()) {
+            fs.unlinkSync(dest);
+          }
+        } catch (_) { /* dest doesn't exist — fine */ }
+        copyDir(src, dest);
+        skillCount++;
+      } catch (err) {
+        failed.push(entry.name);
+      }
+    }
+    if (failed.length) {
+      console.log(`  ${yellow}!${reset} ${failed.length} skill(s) failed to install: ${dim}${failed.join(', ')}${reset}`);
     }
     console.log(`  ${green}✓${reset} Installed skills ${dim}(${skillCount} skills)${reset}`);
   } else {
