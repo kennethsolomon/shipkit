@@ -18,6 +18,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.26.0] - 2026-04-05
+
+### Added
+- **`/sk:steal` skill** — review external sources (GitHub repos, articles, screenshots) and adapt useful patterns into your project
+- **`/sk:explain` skill** — structured code explainer: one-sentence summary, mental model, ASCII diagram, key details, modification guide
+- **`scan-secrets.sh` hook** — PreToolUse hook detects AWS keys, GitHub tokens, API keys, Slack tokens, private keys, and connection strings before writing
+- **`warn-large-files.sh` hook** — blocks writes to node_modules, vendor, dist, build, __pycache__, .venv, and binary file extensions
+- **`doc-reviewer` agent** — reviews documentation for accuracy, completeness, staleness, and clarity by cross-referencing source code
+- **`security.md` rule** — path-scoped security rules (auth, middleware, crypto files)
+- **`error-handling.md` rule** — path-scoped error handling patterns (exceptions, services files)
+- **`frontend.md` rule** — framework-agnostic design tokens, accessibility checklist, performance rules
+- **`CLAUDE.local.md.example`** — personal overrides template for team projects (gitignored)
+- **`/sk:frontend-design` design principle table** — 11 principles (glassmorphism, brutalism, minimalism, etc.) with "best for" guidance
+
+### Changed
+- **`/sk:review` now 8-dimension** — added Documentation dimension (Step 9), delegates to `doc-reviewer` agent when doc files changed
+- **`/sk:gates` Batch 3** — `doc-reviewer` runs in parallel with `code-reviewer` when doc files are in the diff
+- **`config-protection.sh` hook** — now also blocks .env, .pem, .key, lock files, generated code, and sensitive directories
+- **`safety-guard.sh` hook** — added DELETE without WHERE, TRUNCATE TABLE, curl|sh piping, npm/cargo/gem/twine publish, mkfs/dd/fdisk
+- **`post-edit-format.sh` hook** — added Ruff, Black+isort (Python), and Dart formatter support
+- **`security-reviewer` agent** — added injection grep checklist (SQL, command, XSS, template, path traversal, SSRF, deserialization)
+- **`code-reviewer` agent** — added "Correctness Patterns to Catch" and "What NOT to Flag" sections
+- **`migrations.md` rule** — added drizzle, knex, sequelize, typeorm, flyway, liquibase migration paths
+- Agent count: 13 → 14 core agents; Hook count: 7/7 → 7/9 (core/enhanced)
+
+---
+
 ## [v3.25.1] - 2026-04-02
 
 ### Fixed
