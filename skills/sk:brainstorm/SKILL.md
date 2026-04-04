@@ -1,5 +1,5 @@
 ---
-name: sk:brainstorming
+name: sk:brainstorm
 description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
 allowed-tools: Read, Write, Glob, Grep, Bash, Agent
 ---
@@ -68,7 +68,7 @@ A cumulative log of key design decisions made across features. Append-only — n
 
 Read `.shipkit/config.json` from the project root if it exists.
 
-- If `model_overrides["sk:brainstorming"]` is set, use that model — it takes precedence.
+- If `model_overrides["sk:brainstorm"]` is set, use that model — it takes precedence.
 - Otherwise use the `profile` field. Default: `balanced`.
 
 | Profile | Model |

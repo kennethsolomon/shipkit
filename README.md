@@ -99,7 +99,7 @@ Proceed? (y)
 
 Type `y`. Here's what happens automatically:
 
-**Step 1 — Brainstorm** (`/sk:brainstorming`)
+**Step 1 — Brainstorm** (`/sk:brainstorm`)
 Reads your `tasks/findings.md` and `tasks/lessons.md`. Asks clarifying questions one at a time: session vs token auth? remember me? email verification? Writes decisions to `tasks/findings.md`.
 
 For complex architecture decisions, the `architect` agent kicks in before you write a plan:
@@ -291,7 +291,7 @@ Agents are specialized sub-agents deployed to `.claude/agents/` by `/sk:setup-cl
 
 | Agent | Invoked by | What it does |
 |---|---|---|
-| `architect` | `sk:brainstorming` (complex tasks) | Proposes 2-3 architectural approaches with trade-offs before `/sk:write-plan` (read-only) |
+| `architect` | `sk:brainstorm` (complex tasks) | Proposes 2-3 architectural approaches with trade-offs before `/sk:write-plan` (read-only) |
 | `database-architect` | `sk:schema-migrate` Phase 0 | Migration safety analysis, index recommendations, breaking change flags (read-only) |
 
 ### Operations Agents — infrastructure and maintenance

@@ -144,5 +144,5 @@ CLI tool — no mobile or web platform. Works in any project that uses ShipKit's
 - `skills/sk:context/SKILL.md` — full implementation spec and model routing
 - `tasks/todo.md` — primary data source for task and progress info
 - `tasks/lessons.md` — loaded progressively; say "load lessons" for full content
-- `docs/decisions.md` — ADR log (created by sk:brainstorming)
+- `docs/decisions.md` — ADR log (created by sk:brainstorm)
 - `docs/vision.md` — product context (created by sk:mvp Step 9)

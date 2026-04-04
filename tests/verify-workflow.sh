@@ -694,20 +694,20 @@ echo ""
 
 echo "── Milestone 9: Persistent Decisions Log ──"
 
-BRAIN_SKILL="$REPO/skills/sk:brainstorming/SKILL.md"
+BRAIN_SKILL="$REPO/skills/sk:brainstorm/SKILL.md"
 
 assert_contains \
-  "sk:brainstorming appends to docs/decisions.md" \
+  "sk:brainstorm appends to docs/decisions.md" \
   "$BRAIN_SKILL" \
   "docs/decisions.md"
 
 assert_contains \
-  "sk:brainstorming uses ADR format" \
+  "sk:brainstorm uses ADR format" \
   "$BRAIN_SKILL" \
   "Decision"
 
 assert_contains \
-  "sk:brainstorming marks decisions.md as append-only" \
+  "sk:brainstorm marks decisions.md as append-only" \
   "$BRAIN_SKILL" \
   "append"
 
@@ -1823,7 +1823,7 @@ echo "--- ECC Intelligence: Search-first in brainstorm ---"
 
 assert_contains \
   "brainstorm has search-first phase" \
-  "$REPO/skills/sk:brainstorming/SKILL.md" \
+  "$REPO/skills/sk:brainstorm/SKILL.md" \
   "search-first\|Search-First\|Search First\|search first"
 
 # ── ECC Intelligence: Codebase onboarding in setup-claude ────────────────────

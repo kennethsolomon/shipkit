@@ -120,7 +120,7 @@ Adds per-file token breakdown:
 ```
 Skills Breakdown:
   sk:autopilot/SKILL.md        ~620 tokens
-  sk:brainstorming/SKILL.md    ~480 tokens
+  sk:brainstorm/SKILL.md       ~480 tokens
   sk:gates/SKILL.md            ~440 tokens
   ...
 ```

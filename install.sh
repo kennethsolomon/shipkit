@@ -36,7 +36,7 @@ mkdir -p "${SKILLS_DIR}"
 mkdir -p "${COMMANDS_DIR}"
 
 # ── Clean stale symlinks (pre-rebrand names) ─
-stale_skills=(starter-setup claude-doctor laravel-setup-claude laravel-lint laravel-test laravel-write-tests accessibility api-design brainstorming debug features frontend-design laravel-init laravel-new lint perf release review schema-migrate setup-claude setup-optimizer skill-creator smart-commit test write-tests)
+stale_skills=(starter-setup claude-doctor laravel-setup-claude laravel-lint laravel-test laravel-write-tests accessibility api-design brainstorm brainstorming debug features frontend-design laravel-init laravel-new lint perf release review schema-migrate setup-claude setup-optimizer skill-creator smart-commit test write-tests)
 for stale in "${stale_skills[@]}"; do
   if [[ -L "${SKILLS_DIR}/${stale}" ]]; then
     rm "${SKILLS_DIR}/${stale}"

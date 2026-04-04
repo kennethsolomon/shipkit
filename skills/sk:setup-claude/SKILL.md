@@ -30,7 +30,7 @@ After bootstrapping a project, the recommended workflow becomes:
 - `tasks/cross-platform.md` — changes that need replication in companion codebase (web <-> mobile) (**never overwrite**)
 
 ### Project Commands (in `.claude/commands/`)
-- `brainstorm.md` — invokes the global `brainstorming` skill
+- `brainstorm.md` — invokes the global `brainstorm` skill
 - `re-setup.md` — re-runs the setup script for this repo (refresh generated files)
 - `write-plan.md` — forces a decision-complete plan (writes to `tasks/todo.md`)
 - `execute-plan.md` — executes the plan in batches; logs to `tasks/progress.md`

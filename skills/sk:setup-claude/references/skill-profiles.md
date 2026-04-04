@@ -13,7 +13,7 @@ This file is the source of truth for which skills, agents, rules, and project-le
 |-------|---------|
 | sk:start | Smart entry point — classifies task, routes to workflow |
 | sk:context | Load project context + session brief |
-| sk:brainstorming | Explore requirements before implementation |
+| sk:brainstorm | Explore requirements before implementation |
 | sk:write-plan | Decision-complete plan into todo.md |
 | sk:execute-plan | Implement tasks in batches with progress logging |
 | sk:write-tests | TDD: write failing tests before implementation |
