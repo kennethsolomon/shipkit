@@ -69,6 +69,8 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:start` | Smart entry point — classifies task, routes to optimal flow/mode/agents | [sk-start.md](sk:features/sk-start.md) |
 | `/sk:autopilot` | Hands-free workflow — all 8 steps, auto-skip, auto-advance, auto-commit | [sk-autopilot.md](sk:features/sk-autopilot.md) |
 | `/sk:team` | Parallel domain agents (backend + frontend + QA) for full-stack tasks | [sk-team.md](sk:features/sk-team.md) |
+| `/sk:steal` | Review external source (GitHub, article, screenshot) and adapt ideas | [sk-steal.md](sk:features/sk-steal.md) |
+| `/sk:explain` | Explain code with visual diagrams and mental models | [sk-explain.md](sk:features/sk-explain.md) |
 
 ### Workflow Enhancements
 

@@ -162,6 +162,7 @@ These are installed universally because they run inside `sk:gates`. Perf auto-sk
 | performance-optimizer | all | Performance analysis, universal |
 | refactor-specialist | all | Safe refactoring, universal |
 | tech-writer | all | Documentation, universal |
+| doc-reviewer | all | Documentation review, universal |
 | devops-engineer | all | CI/CD, deployment, universal |
 
 ---

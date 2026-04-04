@@ -43,6 +43,7 @@ Post checkpoint: `[Checkpoint] Batch 2 complete: test. Next: Batch 3 — review.
 After Batch 2 completes:
 
 5. **`code-reviewer` agent** — 7-dimension review (correctness, security, performance, reliability, design, best practices, testing). Read-only — reports findings. Main context applies fixes and re-runs.
+6. **`doc-reviewer` agent** (conditional) — if `git diff main..HEAD --name-only` includes any `.md`, `.mdx`, docstring-heavy, or README files, launch `doc-reviewer` in parallel with code-reviewer. It cross-references docs against actual code for accuracy, completeness, and staleness. Skip if no doc files changed.
 Post checkpoint: `[Checkpoint] Batch 3 complete: review. Next: Batch 4 — e2e.`
 
 ### Batch 4 — E2E Agent (needs review fixes)

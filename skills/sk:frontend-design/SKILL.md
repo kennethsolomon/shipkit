@@ -47,6 +47,26 @@ NEVER use generic AI aesthetics: overused fonts (Inter, Roboto, Arial, system fo
 
 **IMPORTANT**: Match design detail to the aesthetic vision. Maximalist designs need elaborate layout descriptions, rich animation notes, and dense component specs. Minimalist designs need precise spacing rules, restrained color notes, and careful typographic ratios. Commit to the vision fully.
 
+## Design Principle Selection
+
+Before designing, pick ONE primary principle. Don't mix randomly.
+
+| Principle | Best For |
+|---|---|
+| **Glassmorphism** | Overlays, modern dashboards, floating panels |
+| **Neumorphism** | Settings panels, minimal controls, calculator UIs |
+| **Brutalism** | Developer tools, editorial sites, bold statements |
+| **Minimalism** | Portfolios, documentation, content-first apps |
+| **Maximalism** | Creative agencies, e-commerce, immersive experiences |
+| **Claymorphism** | Playful apps, onboarding flows, gamified UIs |
+| **Bento Grid** | Dashboards, feature showcases, landing page sections |
+| **Aurora / Mesh Gradients** | Landing pages, hero sections, premium SaaS |
+| **Flat Design** | Mobile apps, system UI, dense information |
+| **Material Elevation** | Data-heavy apps, enterprise, admin panels |
+| **Editorial** | Blogs, long-form content, magazine layouts |
+
+State your chosen principle in the design artifact and commit to it throughout.
+
 ## UX Quality Constraints
 
 Hard constraints during design, ordered by priority. Skip categories irrelevant to the current design (e.g., Charts for a landing page).

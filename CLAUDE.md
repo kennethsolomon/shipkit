@@ -160,6 +160,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Run evaluations for agent reliability |
 | `/sk:execute-plan` | Execute todo.md checkboxes in batches |
+| `/sk:explain` | Explain code with visual diagrams and mental models |
 | `/sk:fast-track` | Abbreviated workflow for small changes |
 | `/sk:features` | Sync feature specs with implementation |
 | `/sk:finish-feature` | Changelog + PR creation |
@@ -191,6 +192,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:smart-commit` | Conventional commit with approval |
 | `/sk:start` | Smart entry point — classifies task |
 | `/sk:status` | Show workflow + task status |
+| `/sk:steal` | Review external source (GitHub, article, screenshot) and adapt ideas |
 | `/sk:team` | Parallel domain agents (BE + FE + QA) |
 | `/sk:test` | Auto-detect and run all test suites |
 | `/sk:update-task` | Mark task done + log completion |

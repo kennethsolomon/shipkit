@@ -201,7 +201,7 @@ Copy matching skills from `~/.claude/skills/` to `.claude/skills/` in the projec
 
 | Stack | Agents to install |
 |-------|------------------|
-| all | architect, qa-engineer, debugger, code-reviewer, security-reviewer, performance-optimizer, refactor-specialist, tech-writer, devops-engineer |
+| all | architect, qa-engineer, debugger, code-reviewer, security-reviewer, performance-optimizer, refactor-specialist, tech-writer, doc-reviewer, devops-engineer |
 | laravel, express, go, python, rust, rails | + backend-dev |
 | react, nextjs, vue, nuxt, svelte | + frontend-dev |
 | expo, react-native, flutter | + mobile-dev |

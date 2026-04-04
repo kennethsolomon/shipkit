@@ -2,9 +2,20 @@
 paths:
   - "database/migrations/**"
   - "prisma/**"
+  - "prisma/migrations/**"
   - "**/*.migration.ts"
   - "db/migrate/**"
   - "db/schema.rb"
+  - "**/migrations/**"
+  - "**/migrate/**"
+  - "**/alembic/**"
+  - "**/alembic/versions/**"
+  - "**/drizzle/**"
+  - "**/knex/migrations/**"
+  - "**/sequelize/migrations/**"
+  - "**/typeorm/migrations/**"
+  - "**/flyway/**"
+  - "**/liquibase/**"
 ---
 
 # Database Migration Rules

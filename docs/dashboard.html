@@ -466,7 +466,7 @@
   ══════════════════════════════════════════════ -->
   <div class="section" id="tab-agents">
     <div class="section-title">Agents</div>
-    <div class="section-subtitle">13 core subagents — each specialized for a domain. Definitions live in <code>.claude/agents/</code>.</div>
+    <div class="section-subtitle">14 core subagents — each specialized for a domain. Definitions live in <code>.claude/agents/</code>.</div>
 
     <div class="grid" id="grid-agents"></div>
   </div>
@@ -561,6 +561,7 @@ const COMMANDS = [
 
   // Developer Tools
   { cmd: '/sk:start', desc: 'Smart entry point — classifies your task and routes to the optimal flow (feature/bug/hotfix/fast-track).', cat: 'devtool', icon: '🚀', flag: null },
+  { cmd: '/sk:steal', desc: 'Review an external source (GitHub repo, article, screenshot) and extract ideas to adapt into ShipKit or the current project.', cat: 'devtool', icon: '🏴‍☠️', flag: null },
   { cmd: '/sk:autopilot', desc: 'Hands-free workflow — runs all 8 phases with auto-skip, auto-advance, and auto-commit.', cat: 'devtool', icon: '🤖', flag: null },
   { cmd: '/sk:team', desc: 'Parallel domain agents for full-stack implementation — spawns Backend, Frontend, and QA agents simultaneously.', cat: 'devtool', icon: '👥', flag: null },
   { cmd: '/sk:debug', desc: 'Structured bug investigation for known-cause bugs: reproduce → isolate → hypothesize → verify → fix.', cat: 'devtool', icon: '🐛', flag: null },
@@ -568,6 +569,7 @@ const COMMANDS = [
   { cmd: '/sk:fast-track', desc: 'Abbreviated workflow for small, clear changes — skip planning ceremony, keep all quality gates.', cat: 'devtool', icon: '⚡', flag: null },
   { cmd: '/sk:hotfix', desc: 'Emergency production fix: debug → branch → fix directly → commit → gates → finalize. No TDD.', cat: 'devtool', icon: '🚨', flag: null },
   { cmd: '/sk:change', desc: 'Handle a mid-workflow requirement change — assesses scope (Tier 1/2/3) and re-enters at the right step.', cat: 'devtool', icon: '🔀', flag: null },
+  { cmd: '/sk:explain', desc: 'Explain code with visual diagrams, mental models, and modification guide.', cat: 'devtool', icon: '📖', flag: null },
   { cmd: '/sk:dashboard', desc: 'Read-only Kanban board on localhost showing workflow status across all git worktrees.', cat: 'devtool', icon: '📊', flag: null },
   { cmd: '/sk:status', desc: 'Show planning and workflow status at a glance.', cat: 'devtool', icon: '📡', flag: null },
   { cmd: '/sk:context', desc: 'Session initializer — loads all project context files and outputs a formatted session brief.', cat: 'devtool', icon: '📚', flag: null },
@@ -652,6 +654,7 @@ const AGENTS = [
   { name: 'refactor-specialist', desc: 'Eliminates duplication, extracts abstractions, improves naming, and reduces complexity without changing behavior. Runs tests before and after.', isolation: 'None' },
   { name: 'security-reviewer', desc: 'OWASP security audit specialist. Read-only — finds vulnerabilities without modifying code. Used by /sk:security-check.', isolation: 'None (read-only)' },
   { name: 'tech-writer', desc: 'Generates README, API docs, architecture docs, and inline comments from existing code. Never invents behavior — always reads code first.', isolation: 'None (docs only)' },
+  { name: 'doc-reviewer', desc: 'Reviews documentation for accuracy, completeness, and clarity by cross-referencing actual source code. Used by /sk:review for doc changes.', isolation: 'None (read-only)' },
 ];
 
 const MCP_PLUGINS = [

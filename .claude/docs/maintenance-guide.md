@@ -33,12 +33,12 @@ grep -rn "step [0-9]\+\|[0-9] steps\|[0-9]-step\|all [0-9] step" \
 
 ## When You Add/Remove/Rename an Agent
 
-Agent definitions live in `.claude/agents/`. Setup-optimizer validates 13 core agents by name.
+Agent definitions live in `.claude/agents/`. Setup-optimizer validates 14 core agents by name.
 
 | File | What to change |
 |------|---------------|
 | `.claude/agents/<name>.md` | Create or delete |
-| `skills/sk:setup-optimizer/SKILL.md` | "13 core agents" list (line 49) — update count and name |
+| `skills/sk:setup-optimizer/SKILL.md` | "14 core agents" list (line 49) — update count and name |
 | `skills/sk:setup-claude/templates/.claude/agents/` | Add/remove template agent file |
 | `CLAUDE.md` | Commands table (if user-facing) |
 | `commands/sk/help.md` | All Commands table (if user-facing) |
@@ -114,7 +114,7 @@ For internal mechanic upgrades to existing skills (e.g., progressive disclosure 
 ```
 > "Hooks: [X/N core, Y/N enhanced] installed
 ```
-Current counts: **7 core, 7 enhanced** (as of v3.24.0)
+Current counts: **7 core, 9 enhanced** (as of v3.25.1)
 
 ---
 
@@ -244,7 +244,7 @@ The dashboard is a single-file, zero-dependency HTML page that provides a search
 |-----|---------|---------------------|
 | Commands | All `/sk:` commands grouped by domain, with descriptions and flags | `COMMANDS` array |
 | Workflows | Feature, bug fix, deep-dive, hotfix step flows + auto-skip and requirement change tables | `FEATURE_STEPS`, `BUGFIX_STEPS`, `DEEPDIVE_STEPS`, `HOTFIX_STEPS` arrays + inline tables |
-| Agents | 13 core agents with descriptions and isolation decisions | `AGENTS` array |
+| Agents | 14 core agents with descriptions and isolation decisions | `AGENTS` array |
 | MCP & Plugins | Claude plugins + CLI tools with install/update/check commands, plus hook lifecycle reference | `MCP_PLUGINS`, `CLI_TOOLS` arrays |
 | Model Profiles | Profile descriptions and full routing matrix | `PROFILES`, `PROFILE_MATRIX` arrays |
 

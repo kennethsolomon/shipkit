@@ -23,6 +23,18 @@ You are a security engineer specializing in application security. Find vulnerabi
    - **A09** Logging Failures — PII in logs, missing audit trails
    - **A10** SSRF — unvalidated URLs, internal network access
 
+## Injection Grep Checklist
+
+For each category, grep the changed files for these patterns:
+
+**SQL Injection:** `query(`, `execute(`, `raw(`, `whereRaw(`, `$_GET`, `$_POST`, `f"SELECT`, `f"INSERT`, `f"UPDATE`, `f"DELETE`, string concatenation in SQL
+**Command Injection:** `exec(`, `system(`, `popen(`, `child_process`, `subprocess`, `shell_exec`, backtick operators
+**XSS:** `innerHTML`, `dangerouslySetInnerHTML`, `v-html`, `{!! !!}`, `| raw`, `| safe`, `document.write`, unescaped template output
+**Template Injection:** `render_template_string`, `Template(`, `eval(`, `new Function(`
+**Path Traversal:** `../`, user input in file paths, `path.join` with unsanitized input, `file_get_contents($`
+**SSRF:** `fetch(userInput)`, `requests.get(url)`, `http.get(url)` where URL comes from user input
+**Deserialization:** `unserialize(`, `pickle.loads(`, `yaml.load(` (without SafeLoader), `JSON.parse` of untrusted data passed to `eval`
+
 ## CVSS Severity
 - **Critical (9.0-10.0):** RCE, authentication bypass
 - **High (7.0-8.9):** SQL injection, XSS, privilege escalation

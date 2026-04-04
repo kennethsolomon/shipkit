@@ -35,10 +35,40 @@ if [[ "$MODE" == "careful" || "$MODE" == "guard" ]]; then
       "git clean -f"
       "DROP TABLE"
       "DROP DATABASE"
+      "TRUNCATE TABLE"
       "chmod 777"
       "chmod -R 777"
       "--no-verify"
+      "npm publish"
+      "npx publish"
+      "cargo publish"
+      "gem push"
+      "twine upload"
     )
+
+    # Block DELETE FROM without WHERE clause
+    if echo "$COMMAND" | grep -qiE 'DELETE[[:space:]]+FROM' && ! echo "$COMMAND" | grep -qiE 'WHERE'; then
+      echo "BLOCKED by safety-guard: DELETE FROM without WHERE clause detected."
+      echo "  Command: $COMMAND"
+      echo "  Disable: /sk:safety-guard off"
+      exit 2
+    fi
+
+    # Block piping curl/wget to shell execution
+    if echo "$COMMAND" | grep -qE '(curl|wget)\s.*\|\s*(bash|sh|zsh|source)'; then
+      echo "BLOCKED by safety-guard: piping remote content to shell execution."
+      echo "  Command: $COMMAND"
+      echo "  Disable: /sk:safety-guard off"
+      exit 2
+    fi
+
+    # Block disk/partition destructive commands
+    if echo "$COMMAND" | grep -qE '(mkfs|dd\s+if=|fdisk|parted)'; then
+      echo "BLOCKED by safety-guard: disk/partition destructive command detected."
+      echo "  Command: $COMMAND"
+      echo "  Disable: /sk:safety-guard off"
+      exit 2
+    fi
     for pattern in "${DESTRUCTIVE_PATTERNS[@]}"; do
       if echo "$COMMAND" | grep -qi "$pattern"; then
         echo "BLOCKED by safety-guard (careful mode): destructive command detected."

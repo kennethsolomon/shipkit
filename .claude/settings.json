@@ -86,6 +86,26 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash .claude/hooks/scan-secrets.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/warn-large-files.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
             "command": "bash .claude/hooks/config-protection.sh",
             "timeout": 5000
           }

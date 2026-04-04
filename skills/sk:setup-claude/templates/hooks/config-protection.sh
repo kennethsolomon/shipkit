@@ -21,7 +21,72 @@ fi
 
 BASENAME=$(basename "$FILE_PATH")
 
-# Protected config patterns
+# --- Sensitive files (secrets, keys, certs) ---
+SENSITIVE_PATTERNS=(
+  ".env"
+  ".env.*"
+  "*.pem"
+  "*.key"
+  "*.crt"
+  "*.p12"
+  "*.pfx"
+  "id_rsa"
+  "id_ed25519"
+  "credentials.json"
+  ".npmrc"
+  ".pypirc"
+)
+
+for pattern in "${SENSITIVE_PATTERNS[@]}"; do
+  case "$BASENAME" in
+    $pattern)
+      echo "BLOCKED: Sensitive file '$BASENAME' matches pattern '$pattern'."
+      echo "Secrets and keys must never be written by Claude."
+      echo "Override: set SHIPKIT_ALLOW_CONFIG_EDIT=1"
+      exit 2
+      ;;
+  esac
+done
+
+# --- Lock files and generated code (should not be manually edited) ---
+GENERATED_PATTERNS=(
+  "package-lock.json"
+  "yarn.lock"
+  "pnpm-lock.yaml"
+  "composer.lock"
+  "Gemfile.lock"
+  "Cargo.lock"
+  "poetry.lock"
+  "*.gen.ts"
+  "*.generated.*"
+  "*.min.js"
+  "*.min.css"
+)
+
+for pattern in "${GENERATED_PATTERNS[@]}"; do
+  case "$BASENAME" in
+    $pattern)
+      echo "BLOCKED: Generated/lock file '$BASENAME' should not be edited directly."
+      echo "Use the package manager to update lock files."
+      echo "Override: set SHIPKIT_ALLOW_CONFIG_EDIT=1"
+      exit 2
+      ;;
+  esac
+done
+
+# --- Sensitive directories ---
+case "$FILE_PATH" in
+  */.ssh/*|*.ssh/*)
+    echo "BLOCKED: Cannot write to .ssh directory."
+    exit 2
+    ;;
+  */secrets/*|*/.secrets/*)
+    echo "BLOCKED: Cannot write to secrets directory."
+    exit 2
+    ;;
+esac
+
+# --- Linter/formatter configs ---
 PROTECTED_CONFIGS=(
   ".eslintrc"
   ".eslintrc.js"

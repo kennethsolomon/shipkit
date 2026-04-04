@@ -1,0 +1,27 @@
+# Personal Overrides
+
+> Rename this to CLAUDE.local.md — it's gitignored and won't be shared with the team.
+
+## My Preferences
+
+- I prefer [concise|verbose] explanations
+- Default to [TypeScript|JavaScript|PHP|Python|Go|Rust] when ambiguous
+- I use [VS Code|Cursor|JetBrains|Vim|Emacs]
+
+## Environment
+
+- My test database runs on port 5432
+- Use `pnpm` instead of `npm` on my machine
+- Local API runs at http://localhost:8000
+
+## Shortcuts
+
+- When I say "ship it", run `/sk:smart-commit` then `/sk:finish-feature`
+- When I say "review", run `/sk:review`
+- When I say "fix it", run `/sk:debug`
+
+## Current Context
+
+- I'm working on [current feature/module] this sprint
+- The staging environment is at [URL]
+- Feature flags are managed in [system]

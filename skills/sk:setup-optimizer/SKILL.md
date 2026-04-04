@@ -46,7 +46,7 @@ Before making any changes, runs a diagnostic pass on the existing CLAUDE.md:
 - **Section completeness** — flags sections that exist but are empty or have only placeholder text
 - **Outdated workflow** — checks if the workflow matches the current 11-step flow (1, 2, 3, 4, 5, 5.5, 6, 7, 8, 8.5, 8.6) with `/sk:gates` as single gate step
 - **Missing commands** — checks for `sk:start`, `sk:autopilot`, `sk:team`, `sk:learn`, `sk:context-budget`, `sk:health`, `sk:save-session`, `sk:resume-session`, `sk:safety-guard`, `sk:eval`, `sk:ci`, `sk:plugin`, `sk:deps-audit`, `sk:deep-interview`, `sk:deep-dive` in the Commands table
-- **Missing agents** — checks if `.claude/agents/` exists and contains the 13 core agents: `backend-dev`, `frontend-dev`, `mobile-dev`, `qa-engineer`, `code-reviewer`, `security-reviewer`, `performance-optimizer`, `architect`, `database-architect`, `devops-engineer`, `debugger`, `refactor-specialist`, `tech-writer`
+- **Missing agents** — checks if `.claude/agents/` exists and contains the 14 core agents: `backend-dev`, `frontend-dev`, `mobile-dev`, `qa-engineer`, `code-reviewer`, `security-reviewer`, `performance-optimizer`, `architect`, `database-architect`, `devops-engineer`, `debugger`, `refactor-specialist`, `tech-writer`, `doc-reviewer`
 - **Missing rules** — checks if `.claude/rules/` exists and contains the project-relevant rule files based on detected stack (laravel.md, react.md, vue.md, tests.md, api.md, migrations.md)
 - **Stale agent frontmatter** — checks that existing agent files use the new `memory`, `model`, and `tools` frontmatter fields (agents without `memory` are degraded)
 - **Auto-skip rules** — checks for auto-skip detection rules in the workflow section
@@ -183,12 +183,12 @@ After updating the workflow, check and deploy hooks:
 
 1. **Check if `.claude/hooks/` exists** — if not, create it
 2. **Check for core hooks** — `session-start.sh`, `session-stop.sh`, `pre-compact.sh`, `validate-commit.sh`, `validate-push.sh`, `log-agent.sh`, `keyword-router.sh`
-3. **Check for enhanced hooks** — `config-protection.sh`, `post-edit-format.sh`, `console-log-warning.sh`, `cost-tracker.sh`, `suggest-compact.sh`, `safety-guard.sh`, `auto-progress.sh`
+3. **Check for enhanced hooks** — `config-protection.sh`, `post-edit-format.sh`, `console-log-warning.sh`, `cost-tracker.sh`, `suggest-compact.sh`, `safety-guard.sh`, `auto-progress.sh`, `scan-secrets.sh`, `warn-large-files.sh`
 4. **Check `.claude/settings.json`** — verify hooks are wired correctly
 
 **Report status and prompt:**
 
-> "Hooks: [X/7 core, Y/7 enhanced] installed
+> "Hooks: [X/7 core, Y/9 enhanced] installed
 > Install missing hooks? [y/n]"
 
 **If yes:**
@@ -303,7 +303,7 @@ After MCP check, verify the project has the correct agents and rules for its det
 1. Check if `.claude/agents/` directory exists
 2. Read detected stack from `.shipkit/config.json` (or re-detect if not present)
 3. Using the agent→stack mapping from `skill-profiles.md`, determine which agents this project should have:
-   - Universal agents (all projects): architect, qa-engineer, debugger, code-reviewer, security-reviewer, performance-optimizer, refactor-specialist, tech-writer, devops-engineer
+   - Universal agents (all projects): architect, qa-engineer, debugger, code-reviewer, security-reviewer, performance-optimizer, refactor-specialist, tech-writer, doc-reviewer, devops-engineer
    - Stack-specific: backend-dev (backend stacks), frontend-dev (web stacks), mobile-dev (mobile stacks), database-architect (database capability)
 4. For each expected agent, check if it exists in `.claude/agents/`
 5. For each existing agent, check if it has `memory:` and `model:` in frontmatter (older agents may be missing these)

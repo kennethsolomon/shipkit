@@ -1,6 +1,6 @@
 ---
 name: sk:review
-description: "Rigorous self-review of all branch changes across 7 dimensions: correctness, security, performance, reliability, design quality, best practices, and testing. Report-only — no PR creation (that's /sk:finish-feature's job). Use when code is complete and ready for review before merging."
+description: "Rigorous self-review of all branch changes across 8 dimensions: correctness, security, performance, reliability, design quality, best practices, documentation, and testing. Report-only — no PR creation (that's /sk:finish-feature's job). Use when code is complete and ready for review before merging."
 model: sonnet
 ---
 
@@ -14,7 +14,7 @@ Perform a rigorous, multi-dimensional review of all changes on the current branc
 
 This is a **report-only** step. Critical or Warning issues loop back to `/sk:debug` → `/sk:smart-commit` → `/sk:review` until clean. Then run `/sk:finish-feature`.
 
-**exhaustiveness commitment:** Every dimension (Steps 3–9) must be fully analyzed before generating the report. Skipping a dimension is a failure. If nothing is found in a dimension, state `"No issues found"` explicitly.
+**exhaustiveness commitment:** Every dimension (Steps 3–10) must be fully analyzed before generating the report. Skipping a dimension is a failure. If nothing is found in a dimension, state `"No issues found"` explicitly.
 
 ## Allowed Tools
 
@@ -147,7 +147,7 @@ Read in this priority order:
 3. **Blast-radius dependent files** — use `rg -B5 -A10 "\bsymbol\b" dependent_file` to get call sites with context, not the entire file.
 4. **Test files** for changed symbols — verify existing tests still cover the changed behavior.
 
-Do not read unchanged files outside the blast radius. Carry the blast-radius mapping (symbol → dependents) forward into Steps 3–9.
+Do not read unchanged files outside the blast radius. Carry the blast-radius mapping (symbol → dependents) forward into Steps 3–10.
 
 > Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
 
@@ -366,7 +366,17 @@ Think about the next engineer who reads this code.
 
 > Before analyzing this dimension, use a `<think>` block to: (1) identify which changed files and blast-radius dependents are most relevant here, and (2) list 3–5 specific things to look for given the nature of the change. This reasoning is not shown to the user — it improves analysis depth.
 
-### 9. Analyze — Testing (if tests are included in the diff)
+### 9. Analyze — Documentation (if docs are included in the diff)
+
+If the diff includes `.md`, `.mdx`, README, or files with significant docstring/JSDoc changes, delegate to the `doc-reviewer` agent:
+
+> "Review the documentation changes on this branch. Cross-reference every claim against the actual source code. Check for accuracy, completeness, staleness, and clarity."
+
+Merge its findings into the final report under a `[Documentation]` dimension tag.
+
+If no documentation files were changed, skip this section and note: `"Documentation: No doc files in diff — skipped."`
+
+### 10. Analyze — Testing (if tests are included in the diff)
 
 If the diff includes test files, review them with the same rigor as production code.
 
@@ -378,7 +388,7 @@ If the diff includes test files, review them with the same rigor as production c
 - **Mocking:** Minimal and realistic? Over-mocking hides real bugs.
 - **Flakiness risks:** Timing-dependent assertions, network calls, random data without seeding
 
-### 10. Generate Review Report
+### 11. Generate Review Report
 
 ```markdown
 ## Code Review: [branch-name]
@@ -386,7 +396,7 @@ If the diff includes test files, review them with the same rigor as production c
 **Changes:** X files changed, +Y/-Z lines
 **Commits:** N commits
 **Blast radius:** X changed files + Y dependents = Z total review scope
-**Review dimensions:** Correctness, Security, Performance, Reliability, Design, Best Practices, Testing, Blast Radius
+**Review dimensions:** Correctness, Security, Performance, Reliability, Design, Best Practices, Documentation, Testing, Blast Radius
 
 ### Critical (must fix before merge)
 - **[Correctness]** [src/checkout/cart.ts:42:processOrder:function] Description of critical issue
@@ -417,13 +427,13 @@ If the diff includes test files, review them with the same rigor as production c
 
 **Rules:**
 - Maximum 20 items total (prioritize by severity, then by category)
-- Every item must tag its review dimension: `[Correctness]`, `[Security]`, `[Performance]`, `[Reliability]`, `[Design]`, `[Best Practices]`, `[Testing]`, `[Blast Radius]`
+- Every item must tag its review dimension: `[Correctness]`, `[Security]`, `[Performance]`, `[Reliability]`, `[Design]`, `[Best Practices]`, `[Testing]`, `[Documentation]`, `[Blast Radius]`
 - Use `[Blast Radius]` for issues found in dependent files — callers broken by changed signatures, importers affected by removed exports, tests that no longer cover the changed behavior
 - Every item must reference a specific file, line, and symbol using `[FILE:LINE:SYMBOL]` format
 - Every item must explain **why** it matters — the impact, not just the symptom
 - Include "What Looks Good" (2-3 items) — acknowledge strong patterns to reinforce them
 
-### 11. Fix and Re-run
+### 12. Fix and Re-run
 
 Fix **all** findings regardless of severity. Do not ask whether to fix nitpicks.
 

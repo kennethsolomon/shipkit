@@ -29,6 +29,25 @@ file:line — [dimension] — [critical|high|medium|low] — description
 ```
 Group by severity. End with: "X critical, Y high, Z medium, W low issues found."
 
+## Correctness Patterns to Catch
+
+- Off-by-one errors in loops, slices, and pagination
+- Null/undefined dereference — variables used before null check
+- Race conditions — shared mutable state without synchronization
+- Resource leaks — opened files, connections, or streams never closed
+- Type coercion bugs — `==` vs `===`, implicit string-to-number
+- Async/await — missing `await` on async calls, unhandled promise rejections
+- Error swallowing — empty catch blocks, catch-and-return-null
+- Boundary conditions — empty arrays, zero values, max int, empty strings
+
+## What NOT to Flag
+
+- Style/formatting handled by linters (indentation, trailing commas, semicolons)
+- Minor naming preferences when the intent is clear
+- Missing comments on self-explanatory code
+- Theoretical performance issues without measurable impact
+- "I would have done it differently" — only flag if the current approach is wrong
+
 ## Rules
 - Nothing to find? Look harder. Real code almost always has issues.
 - All 7 dimensions must be checked — partial reviews are rejected.

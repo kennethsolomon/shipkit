@@ -80,6 +80,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Define, run, and report evals for agent reliability |
 | `/sk:execute-plan` | Implement plan in batches |
+| `/sk:explain` | Explain code with visual diagrams and mental models |
 | `/sk:fast-track` | Small changes — skip planning, keep gates |
 | `/sk:features` | Sync docs/sk:features/ specs with codebase |
 | `/sk:finish-feature` | Changelog + PR creation |
@@ -112,6 +113,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:smart-commit` | Conventional commit with approval |
 | `/sk:start` | Smart entry point — classifies task, routes to optimal flow |
 | `/sk:status` | Show workflow and task status |
+| `/sk:steal` | Review external source (GitHub, article, screenshot) and adapt ideas |
 | `/sk:team` | Parallel domain agents for full-stack tasks |
 | `/sk:test` | Auto-detect and verify all tests pass |
 | `/sk:update-task` | Mark task done, log completion |

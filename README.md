@@ -342,12 +342,15 @@ Installed by `/sk:setup-claude`. Fire automatically on Claude Code events.
 
 | Hook | What it does |
 |---|---|
-| `post-edit-format` | Auto-formats with Biome/Prettier/Pint/gofmt after every edit |
-| `config-protection` | Blocks edits to linter/formatter config files |
+| `post-edit-format` | Auto-formats with Biome/Prettier/Pint/Ruff/Black/gofmt/rustfmt/dart after every edit |
+| `config-protection` | Blocks edits to linter configs, sensitive files (.env, .pem, lock files), and generated code |
+| `scan-secrets` | Detects hardcoded secrets (AWS keys, GitHub tokens, API keys, private keys) before writing |
+| `warn-large-files` | Blocks writes to node_modules, vendor, dist, build, __pycache__, and binary files |
 | `console-log-warning` | Warns about `console.log`, `dd()`, `var_dump()` in modified files |
 | `cost-tracker` | Logs session metadata to `.claude/sessions/cost-log.jsonl` |
-| `safety-guard` | Enforces `/sk:safety-guard` freeze/careful mode |
+| `safety-guard` | Blocks destructive commands (rm -rf, DROP, DELETE without WHERE, curl\|sh, npm publish) |
 | `auto-progress` | Auto-logs `git commit`/`push`/`tag` events to `tasks/progress.md` |
+| `suggest-compact` | Suggests context compaction when file count is high |
 
 ---
 
@@ -493,7 +496,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 > **Visual reference:** open [`docs/dashboard.html`](docs/dashboard.html) in any browser for a searchable, categorized view of every command, workflow, agent, MCP plugin, and model profile — no server needed.
 
 <details>
-<summary><strong>46 skills + 13 agents</strong> — click to expand</summary>
+<summary><strong>49 skills + 14 agents</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---|---|
@@ -515,6 +518,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Define, run, and report evals |
 | `/sk:execute-plan` | Execute plan checkboxes in batches |
+| `/sk:explain` | Explain code with visual diagrams and mental models |
 | `/sk:fast-track` | Small changes — skip planning, keep gates |
 | `/sk:features` | Sync feature specs with codebase |
 | `/sk:finish-feature` | Changelog + PR |
@@ -535,7 +539,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:resume-session` | Resume a previously saved session |
 | `/sk:retro` | Post-ship retrospective |
 | `/sk:reverse-doc` | Generate docs from existing code |
-| `/sk:review` | 7-dimension code review |
+| `/sk:review` | 8-dimension code review (includes documentation) |
 | `/sk:safety-guard` | Protect against destructive ops |
 | `/sk:save-session` | Save session state for continuity |
 | `/sk:schema-migrate` | Database schema change analysis |
@@ -549,6 +553,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:smart-commit` | Conventional commit with approval |
 | `/sk:start` | Smart entry point — classifies task, routes to flow |
 | `/sk:status` | Show workflow + task status |
+| `/sk:steal` | Review external source (GitHub, article, screenshot) and adapt ideas |
 | `/sk:team` | Parallel domain agents for full-stack tasks |
 | `/sk:test` | Run all test suites |
 | `/sk:update-task` | Mark task done |
