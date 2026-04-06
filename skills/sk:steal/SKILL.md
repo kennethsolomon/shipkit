@@ -90,6 +90,17 @@ After presenting the report:
 3. Never copy code verbatim from the source — adapt to our conventions and style
 4. Credit the source in a comment or commit message
 
+## Post-Implementation: Maintenance Guide Sync
+
+After implementing approved adaptations that touch ShipKit's own structure (skills, config, hooks, agents, plugins), automatically sync derived files:
+
+1. Read `.claude/docs/maintenance-guide.md`
+2. Identify which change type sections apply (skill behavior, config, plugin manifests, etc.)
+3. For each applicable section, treat the file table as a checklist — update every listed file
+4. Create an entry in `.claude/docs/architectural_change_log/`
+
+This step is mandatory for ShipKit-internal adaptations. Skip for adaptations that only affect the user's project code.
+
 ## Rules
 
 - Always compare before suggesting — don't recommend what we already have
