@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.27.1] - 2026-04-06
+
+### Fixed
+- **Session-start hook staleness detection** — displays `(stale — todo.md last modified Xd ago)` when todo.md is older than 7 days, preventing misleading "Current task" display from unrelated projects
+- **`/sk:steal` maintenance sync** — added explicit post-implementation step to sync derived files via maintenance guide after ShipKit-internal adaptations
+
+---
+
 ## [v3.27.0] - 2026-04-06
 
 ### Added
