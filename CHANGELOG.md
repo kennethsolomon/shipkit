@@ -18,6 +18,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [v3.27.0] - 2026-04-06
+
+### Added
+- **Intensity routing** — new `intensity` config (lite/full/deep) with per-phase auto-select in autopilot, `--intensity` flag on `/sk:start`, and intensity sections in sk:review (default: deep), sk:explain, sk:gates (default: lite)
+- **Anti-pattern blocks** — skill-creator now guides new skills to include `## Anti-Patterns (NEVER do these)` sections for explicit failure mode documentation
+- **Auto-clarity escape hatch** — skill-creator guides style-modifying skills to define when to temporarily disable themselves (security warnings, destructive ops)
+- **Skill benchmarking** — new `/sk:eval benchmark <skill>` subcommand to measure token/quality impact with parallel with/without-skill trials
+- **Multi-format plugin distribution** — new `.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json` manifests with CI auto-sync workflow
+- Feature specs for sk:skill-creator and sk:eval
+
+### Changed
+- `.shipkit/config.json` now supports `intensity` and `intensity_overrides` fields (follows existing profile/model_overrides pattern)
+- Enriched `.claude-plugin/plugin.json` with version and skills path
+
+---
+
 ## [v3.26.1] - 2026-04-05
 
 ### Fixed
