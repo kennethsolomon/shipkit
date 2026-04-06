@@ -113,3 +113,4 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | [sk-deep-dive.md](sk:features/sk-deep-dive.md) | 2026-04-01 | v3.23.0 |
 | [sk-skill-creator.md](sk:features/sk-skill-creator.md) | 2026-04-06 | v3.27.0 |
 | [sk-eval.md](sk:features/sk-eval.md) | 2026-04-06 | v3.27.0 |
+| [sk-steal.md](sk:features/sk-steal.md) | 2026-04-06 | v3.27.1 |

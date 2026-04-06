@@ -42,6 +42,18 @@ Review an external source (GitHub repo, article URL, screenshot, pasted code) an
 
 ---
 
+## Post-Implementation: Maintenance Guide Sync
+
+After implementing approved adaptations that touch ShipKit's own structure (skills, config, hooks, agents, plugins):
+1. Read `.claude/docs/maintenance-guide.md`
+2. Identify applicable change type sections, treat file tables as checklists
+3. Update every listed derived file
+4. Create entry in `.claude/docs/architectural_change_log/`
+
+Skip for adaptations that only affect user project code.
+
+---
+
 ## Hard Rules
 
 - Always compare before suggesting — don't recommend what we already have
