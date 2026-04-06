@@ -84,7 +84,8 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 |---------|---------|------|
 | `/sk:setup-claude` | Bootstrap Claude Code project scaffolding | — |
 | `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md | — |
-| `/sk:skill-creator` | Create or modify skills; run evals | — |
+| `/sk:skill-creator` | Create or modify skills; run evals; anti-pattern + auto-clarity guidance | [sk-skill-creator.md](sk:features/sk-skill-creator.md) |
+| `/sk:eval` | Define, run, report evals, and benchmark skill token/quality impact | [sk-eval.md](sk:features/sk-eval.md) |
 | `/sk:laravel-init` | Configure existing Laravel project with opinionated conventions | — |
 | `/sk:laravel-new` | Scaffold fresh Laravel app | — |
 | `/sk:mvp` | Generate complete MVP validation app from a prompt | — |
@@ -101,12 +102,14 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | [sk-scope-check.md](sk:features/sk-scope-check.md) | 2026-03-23 | v3.7.0 |
 | [sk-retro.md](sk:features/sk-retro.md) | 2026-03-23 | v3.7.0 |
 | [sk-reverse-doc.md](sk:features/sk-reverse-doc.md) | 2026-03-23 | v3.7.0 |
-| [sk-gates.md](sk:features/sk-gates.md) | 2026-03-23 | v3.7.0 |
+| [sk-gates.md](sk:features/sk-gates.md) | 2026-04-06 | v3.27.0 |
 | [sk-fast-track.md](sk:features/sk-fast-track.md) | 2026-03-23 | v3.7.0 |
 | [sk-auto-skip.md](sk:features/sk-auto-skip.md) | 2026-03-24 | v3.10.0 |
-| [sk-autopilot.md](sk:features/sk-autopilot.md) | 2026-04-01 | v3.23.0 |
+| [sk-autopilot.md](sk:features/sk-autopilot.md) | 2026-04-06 | v3.27.0 |
 | [sk-team.md](sk:features/sk-team.md) | 2026-03-24 | v3.10.0 |
-| [sk-start.md](sk:features/sk-start.md) | 2026-04-01 | v3.23.0 |
+| [sk-start.md](sk:features/sk-start.md) | 2026-04-06 | v3.27.0 |
 | [sk-deps-audit.md](sk:features/sk-deps-audit.md) | 2026-03-31 | v3.22.0 |
 | [sk-deep-interview.md](sk:features/sk-deep-interview.md) | 2026-04-01 | v3.23.0 |
 | [sk-deep-dive.md](sk:features/sk-deep-dive.md) | 2026-04-01 | v3.23.0 |
+| [sk-skill-creator.md](sk:features/sk-skill-creator.md) | 2026-04-06 | v3.27.0 |
+| [sk-eval.md](sk:features/sk-eval.md) | 2026-04-06 | v3.27.0 |

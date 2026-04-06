@@ -1,0 +1,45 @@
+name: Sync Skills Across Plugin Formats
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - '.claude-plugin/plugin.json'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync version across plugin manifests
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+
+          # Update .claude-plugin/plugin.json
+          jq --arg v "$VERSION" '.version = $v' .claude-plugin/plugin.json > tmp.json && mv tmp.json .claude-plugin/plugin.json
+
+          # Update .codex-plugin/plugin.json
+          jq --arg v "$VERSION" '.version = $v' .codex-plugin/plugin.json > tmp.json && mv tmp.json .codex-plugin/plugin.json
+
+          # Update .agents/plugins/marketplace.json
+          jq --arg v "$VERSION" '.version = $v' .agents/plugins/marketplace.json > tmp.json && mv tmp.json .agents/plugins/marketplace.json
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit synced manifests
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .claude-plugin/ .codex-plugin/ .agents/
+          git commit -m "chore: sync plugin manifests to v$(node -p "require('./package.json').version")"
+          git push

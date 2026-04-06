@@ -468,6 +468,18 @@ Classify each fix before committing:
 
 ---
 
+## Intensity
+
+Read `.shipkit/config.json` for intensity settings. Resolution: `intensity_overrides["sk:review"]` → global `intensity` → `deep` (default for review).
+
+Review defaults to **deep** — security and correctness findings need full detail. Do not compress review output even if global intensity is `lite`.
+
+| Level | Review behavior |
+|-------|----------------|
+| **lite** | Top 5 critical/warning items only. No nitpicks. Compact report. |
+| **full** | Standard review — all items up to 20, full explanations. |
+| **deep** | Exhaustive — all dimensions fully analyzed, blast-radius explored, edge cases enumerated. Default for review. |
+
 ## Model Routing
 
 Read `.shipkit/config.json` from the project root if it exists.

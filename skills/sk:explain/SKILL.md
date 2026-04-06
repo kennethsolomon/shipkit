@@ -62,6 +62,16 @@ What would someone need to know to safely change this code?
 - What would break if changed carelessly?
 - Are there tests covering this? Where?
 
+## Intensity
+
+Read `.shipkit/config.json` for intensity settings. Resolution: `intensity_overrides["sk:explain"]` → global `intensity` → `full`.
+
+| Level | Explain behavior |
+|-------|-----------------|
+| **lite** | Section 1 (one-sentence summary) + Section 4 (key details) only. Skip diagram and modification guide. |
+| **full** | All 5 sections. Scale depth to complexity. Default. |
+| **deep** | All 5 sections with expanded detail. Include alternative approaches, historical context, and cross-references to related code. |
+
 ## Rules
 
 - Read the actual code before explaining — never guess from file names

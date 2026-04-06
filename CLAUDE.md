@@ -158,7 +158,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring; auto-run by start/autopilot |
 | `/sk:deps-audit` | CVE scan, license compliance, outdated packages (npm, Composer, Cargo, pip, Go, Bundler) |
 | `/sk:e2e` | E2E behavioral verification |
-| `/sk:eval` | Run evaluations for agent reliability |
+| `/sk:eval` | Run evaluations for agent reliability and skill benchmarking |
 | `/sk:execute-plan` | Execute todo.md checkboxes in batches |
 | `/sk:explain` | Explain code with visual diagrams and mental models |
 | `/sk:fast-track` | Abbreviated workflow for small changes |

@@ -153,6 +153,28 @@ Confirm push + PR? (y/n)
 
 ---
 
+## Intensity Routing
+
+Autopilot auto-selects output intensity per phase. Resolution: `intensity_overrides["sk:<phase>"]` → phase auto-select → global `intensity` → `full`.
+
+| Phase | Auto-selected | Why |
+|-------|--------------|-----|
+| brainstorm | full | Need substance for direction approval |
+| design | full | Design decisions need clarity |
+| write-plan | full | Plans must be decision-complete |
+| write-tests | lite | Tests are code — minimal prose |
+| execute-plan | lite | Implementation — minimal prose |
+| scope-check | lite | Pass/fail comparison |
+| gates | lite | Pass/fail, not essays |
+| review | deep | Security/perf findings need full detail |
+| finalize | full | PR descriptions need clarity |
+| learn | lite | Pattern extraction — concise |
+| retro | lite | Bullets, not paragraphs |
+
+Config: `.shipkit/config.json` — `intensity` (global default) and `intensity_overrides` (per-skill).
+
+---
+
 ## Platform Notes
 
 N/A — CLI tool only.

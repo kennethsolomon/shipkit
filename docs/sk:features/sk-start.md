@@ -93,6 +93,7 @@ For `feature` flow tasks, checks for vague-feature signals:
 | `--fast-track` | Force fast-track flow |
 | `--deep-dive` | Force deep-dive flow (trace + interview for bug investigation) |
 | `--interview` | Force deep-interview pre-step before brainstorm |
+| `--intensity lite\|full\|deep` | Override output intensity for this session |
 
 ---
 

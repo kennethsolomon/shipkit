@@ -53,6 +53,18 @@ After Batch 3 completes:
 6. **E2E tester agent** — runs full E2E verification using scenarios written by `qa-engineer` during implementation
 Post checkpoint: `[Checkpoint] Batch 4 complete: e2e. All gates done.`
 
+## Intensity
+
+Read `.shipkit/config.json` for intensity settings. Resolution: `intensity_overrides["sk:gates"]` → global `intensity` → `lite` (default for gates).
+
+Gates default to **lite** — pass/fail results, not essays. The review gate (Batch 3) overrides to its own intensity setting.
+
+| Level | Gates behavior |
+|-------|---------------|
+| **lite** | One-line per gate result. Compact summary. Default. |
+| **full** | Include fix details and agent recommendations in output. |
+| **deep** | Full agent output for each gate. Verbose logging. |
+
 ## Gate Results
 
 After all 4 batches complete, output a summary:

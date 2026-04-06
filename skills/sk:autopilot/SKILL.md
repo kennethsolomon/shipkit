@@ -185,6 +185,38 @@ If any step fails 3 times:
 
 Everything else auto-advances.
 
+## Intensity Routing
+
+Read `.shipkit/config.json` for the `intensity` field (default: `full`) and `intensity_overrides` map.
+
+**Resolution order:** `intensity_overrides["sk:<phase>"]` → phase auto-select (below) → global `intensity` → `full`.
+
+Autopilot auto-selects intensity per phase for optimal output:
+
+| Phase | Auto-selected | Why |
+|-------|--------------|-----|
+| brainstorm (step 1) | full | Need substance for direction approval |
+| design (step 2) | full | Design decisions need clarity |
+| write-plan (step 3) | full | Plans must be decision-complete |
+| write-tests (step 5) | lite | Tests are code — minimal prose |
+| execute-plan (step 5) | lite | Implementation — minimal prose |
+| scope-check (step 5.5) | lite | Pass/fail comparison |
+| gates (step 7) | lite | Pass/fail, not essays |
+| review (step 7, batch 3) | deep | Security/perf findings need full detail |
+| finalize (step 8) | full | PR descriptions need clarity |
+| learn (step 8.5) | lite | Pattern extraction — concise |
+| retro (step 8.6) | lite | Bullets, not paragraphs |
+
+**Intensity levels:**
+
+| Level | Behavior |
+|-------|----------|
+| **lite** | No filler/hedging. Keep articles + full sentences. Professional but tight. |
+| **full** | Standard output. Clear, complete explanations. Default. |
+| **deep** | Exhaustive analysis. Include edge cases, alternatives, and reasoning. No shortcuts. |
+
+User can override globally (`"intensity": "lite"` in config) or per-skill (`"intensity_overrides": {"sk:review": "deep"}`).
+
 ## Model Routing
 
 Read `.shipkit/config.json` from the project root if it exists.

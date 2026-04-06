@@ -1,7 +1,7 @@
 {
   "name": "shipkit",
   "version": "3.26.1",
-  "description": "A structured workflow toolkit — TDD, quality gates, parallel agents, and autopilot mode for Claude Code.",
+  "description": "A structured workflow toolkit — TDD, quality gates, parallel agents, and autopilot mode for Claude Code and Codex.",
   "author": {
     "name": "Kenneth Solomon"
   },

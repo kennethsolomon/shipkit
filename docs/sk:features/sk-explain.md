@@ -48,6 +48,18 @@ Explain any code — file, function, module, or concept — with a structured 5-
 
 ---
 
+## Intensity
+
+| Level | Behavior |
+|-------|----------|
+| **lite** | One-sentence summary + key details only. Skip diagram and modification guide. |
+| **full** | All 5 sections. Scale depth to complexity. Default. |
+| **deep** | All 5 sections expanded. Include alternatives, historical context, cross-references. |
+
+Config: `.shipkit/config.json` — `intensity_overrides["sk:explain"]` → global `intensity` → `full`.
+
+---
+
 ## Related Docs
 
 - `skills/sk:explain/SKILL.md` — full implementation spec

@@ -1,0 +1,10 @@
+{
+  "name": "shipkit",
+  "version": "3.26.1",
+  "description": "A structured workflow toolkit — TDD, quality gates, parallel agents, and autopilot mode.",
+  "author": "Kenneth Solomon",
+  "repository": "https://github.com/kennethsolomon/shipkit",
+  "license": "MIT",
+  "skills_path": "skills/",
+  "tags": ["workflow", "tdd", "quality-gates", "autopilot", "claude-code"]
+}

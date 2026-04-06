@@ -295,4 +295,44 @@ Adding a new command `/sk:foo` in the Setup category:
 
 ---
 
-Last updated: 2026-04-02 (HTML dashboard added)
+---
+
+## When You Change Intensity Configuration
+
+Intensity controls output verbosity per skill. Config lives in `.shipkit/config.json` under `intensity` (global default) and `intensity_overrides` (per-skill).
+
+| File | What to change |
+|------|---------------|
+| `.shipkit/config.json` | `intensity` field and `intensity_overrides` map |
+| `skills/sk:autopilot/SKILL.md` | Intensity Routing section — per-phase auto-select table |
+| `skills/sk:start/SKILL.md` | Override Flags table — `--intensity` flag |
+| `skills/sk:<skill>/SKILL.md` | Individual skill's Intensity section (if it has one) |
+
+**Skills with intensity sections:** sk:autopilot, sk:review (default: deep), sk:explain, sk:gates (default: lite).
+
+**Resolution order (documented in autopilot):** `intensity_overrides["sk:<phase>"]` → phase auto-select → global `intensity` → `full`.
+
+---
+
+## When You Change Plugin Manifests
+
+Plugin manifests enable cross-tool distribution (Claude Code, Codex, Agents marketplace).
+
+| File | Format | Purpose |
+|------|--------|---------|
+| `.claude-plugin/plugin.json` | Claude Code plugin | `claude plugin marketplace add` |
+| `.codex-plugin/plugin.json` | Codex plugin | Codex `/plugins` discovery |
+| `.agents/plugins/marketplace.json` | Agents marketplace | Generic agent tool discovery |
+
+All three must stay version-synced with `package.json`. The `.github/workflows/sync-skills.yml` CI workflow auto-syncs versions on push to main.
+
+| File | What to change |
+|------|---------------|
+| `.claude-plugin/plugin.json` | Plugin metadata, skills path |
+| `.codex-plugin/plugin.json` | Plugin metadata, skills path |
+| `.agents/plugins/marketplace.json` | Plugin metadata, tags |
+| `.github/workflows/sync-skills.yml` | Sync logic if manifest structure changes |
+
+---
+
+Last updated: 2026-04-06 (intensity routing, plugin manifests, benchmark harness added)

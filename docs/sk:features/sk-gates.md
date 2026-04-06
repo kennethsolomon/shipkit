@@ -112,6 +112,20 @@ All gates passed. Run /sk:update-task
 
 ---
 
+## Intensity
+
+Gates default to **lite** — pass/fail results, not essays. The review gate (Batch 3) uses its own intensity setting.
+
+| Level | Behavior |
+|-------|----------|
+| **lite** | One-line per gate result. Compact summary. Default for gates. |
+| **full** | Include fix details and agent recommendations. |
+| **deep** | Full agent output for each gate. Verbose logging. |
+
+Config: `.shipkit/config.json` — `intensity_overrides["sk:gates"]` → global `intensity` → `lite`.
+
+---
+
 ## Platform Notes
 
 N/A — CLI tool only. Agent model routing per gate:

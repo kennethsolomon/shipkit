@@ -14,6 +14,7 @@ A formal evaluation framework for measuring agent reliability and code quality. 
 /sk:eval check <feature>     # run evals against current state
 /sk:eval report              # summary of all eval results
 /sk:eval list                # show all defined evals
+/sk:eval benchmark <skill>   # measure skill token/quality impact
 ```
 
 ## Model Routing
@@ -148,6 +149,78 @@ Appended to `.claude/evals/[feature].log`:
   check_2: curl auth redirect (302) ✓
   check_3: no hardcoded secrets ✓
 ```
+
+## Skill Benchmarking
+
+Compare a skill's output against a baseline (no skill) across identical prompts. Measures token usage, output quality, and consistency. Adapted from the [Caveman benchmark harness](https://github.com/JuliusBrussee/caveman/blob/main/benchmarks/run.py).
+
+### `/sk:eval benchmark <skill-name>`
+
+**Step 1 — Load or create prompt set:**
+
+Check for `.claude/evals/<skill-name>/prompts.json`:
+
+```json
+{
+  "version": 1,
+  "prompts": [
+    {
+      "id": "descriptive-slug",
+      "category": "debugging|bugfix|setup|explanation|refactor|architecture|code-review|devops|implementation",
+      "prompt": "The full user prompt to test with"
+    }
+  ]
+}
+```
+
+If no prompt set exists, generate 5–10 diverse prompts that match the skill's trigger conditions. Present to user for confirmation before running.
+
+**Step 2 — Run trials:**
+
+For each prompt, spawn 2 agents in parallel:
+- **With-skill:** Load the skill's SKILL.md as system context, run the prompt
+- **Baseline:** Run the same prompt with no skill loaded
+
+Use `temperature: 0` for reproducibility. Run N trials per mode (default: 1, configurable with `--trials N`).
+
+Save all outputs to `.claude/evals/<skill-name>/results/`:
+```
+results/
+├── benchmark_YYYYMMDD_HHMMSS.json
+└── ...
+```
+
+**Step 3 — Compute stats:**
+
+For each prompt, compute:
+- **Token delta:** `baseline_output_tokens - skill_output_tokens` (savings %)
+- **Quality score:** If model-based grader is defined, run it on both outputs
+
+Aggregate:
+- Median token savings across all prompts
+- Min/max savings range
+- Average quality score delta (if graded)
+
+**Step 4 — Output report:**
+
+```markdown
+## Skill Benchmark: <skill-name>
+
+| Prompt | Baseline (tokens) | With Skill (tokens) | Saved |
+|--------|------------------:|-------------------:|------:|
+| [label] | NNN | NNN | NN% |
+| **Average** | **NNN** | **NNN** | **NN%** |
+
+*Range: NN%–NN% savings across prompts.*
+
+Quality: [average score delta if graded, or "not graded"]
+```
+
+Save results JSON with metadata (model, date, trials, skill hash).
+
+**Step 5 — Update README (optional):**
+
+If `--update-readme` flag is passed and README.md contains `<!-- BENCHMARK-TABLE-START -->` / `<!-- BENCHMARK-TABLE-END -->` markers, replace the content between them with the new table.
 
 ## Workflow Integration
 

@@ -219,8 +219,9 @@ This file is ephemeral — it is for session continuity only. Do not log to `tas
 | `--interview` | Force deep-interview pre-step even on clear requests |
 | `--hotfix` | Force hotfix flow (production emergency) |
 | `--fast-track` | Force fast-track flow (small change) |
+| `--intensity lite\|full\|deep` | Override intensity for this session |
 
-Flags can be combined: `/sk:start --manual --team add profile page`
+Flags can be combined: `/sk:start --manual --team --intensity deep add profile page`
 
 ## Relationship to Existing Commands
 

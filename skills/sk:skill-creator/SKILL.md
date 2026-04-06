@@ -78,6 +78,46 @@ cloud-deploy/
 
 Skills must not contain malware, exploit code, or anything that could compromise system security. Don't create misleading skills or skills designed for unauthorized access, data exfiltration, or other malicious purposes.
 
+#### Anti-Patterns Section (recommended)
+
+Every skill should define what it must NEVER do — not just what it does. This prevents subtle failure modes where the skill technically follows instructions but produces wrong results.
+
+Add a `## Anti-Patterns (NEVER do these)` section listing 3–5 concrete failure modes. Use specific examples, not abstract rules.
+
+```markdown
+## Anti-Patterns (NEVER do these)
+
+- [Concrete bad behavior + why it fails]
+- [Another failure mode + what happens]
+- [Edge case that looks correct but isn't]
+```
+
+Good anti-patterns are:
+- **Specific** — "Stating the answer then asking 'do you understand?'" not "Don't give answers"
+- **Observable** — someone reading the output can tell if it happened
+- **Non-obvious** — things the LLM might do that look right but are wrong
+
+Adapted from the [Socrates skill](https://github.com/RoundTable02/socrates-skill) pattern.
+
+#### Auto-Clarity Escape Hatch (recommended)
+
+Skills that modify output style (compression, formatting, tone) should define when to temporarily disable themselves. Without this, the skill may compress a security warning into an ambiguous fragment.
+
+Add a `## Auto-Clarity` section listing conditions where the skill should revert to normal output:
+
+```markdown
+## Auto-Clarity
+
+Drop [modified behavior] for:
+- Security warnings and irreversible action confirmations
+- Multi-step sequences where modified output risks misreading
+- When user is confused or asking for clarification
+
+Resume [modified behavior] after the clear section is complete.
+```
+
+This is a safety valve — the skill self-governs when its style becomes dangerous. Adapted from the [Caveman skill](https://github.com/JuliusBrussee/caveman) pattern.
+
 #### Writing Patterns
 
 Use imperative form. Explain *why* behind instructions rather than heavy-handed MUSTs — LLMs perform better with reasoning than rote commands.

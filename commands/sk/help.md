@@ -78,7 +78,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring (auto-run by start/autopilot) |
 | `/sk:deps-audit` | CVE scan, license compliance, outdated packages — runs automatically in `/sk:gates` Batch 1 |
 | `/sk:e2e` | E2E behavioral verification |
-| `/sk:eval` | Define, run, and report evals for agent reliability |
+| `/sk:eval` | Define, run, report evals, and benchmark skill token/quality impact |
 | `/sk:execute-plan` | Implement plan in batches |
 | `/sk:explain` | Explain code with visual diagrams and mental models |
 | `/sk:fast-track` | Small changes — skip planning, keep gates |
@@ -111,7 +111,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:setup-optimizer` | Diagnose + update workflow + enrich CLAUDE.md |
 | `/sk:skill-creator` | Create or improve skills |
 | `/sk:smart-commit` | Conventional commit with approval |
-| `/sk:start` | Smart entry point — classifies task, routes to optimal flow |
+| `/sk:start` | Smart entry point — classifies task, routes to optimal flow. `--intensity lite\|full\|deep` |
 | `/sk:status` | Show workflow and task status |
 | `/sk:steal` | Review external source (GitHub, article, screenshot) and adapt ideas |
 | `/sk:team` | Parallel domain agents for full-stack tasks |
@@ -148,6 +148,27 @@ ShipKit routes each skill to the right model automatically. Set once per project
 
 `opus` = inherit (uses your current session model).
 Config lives in `.shipkit/config.json` — per project, gitignored by default.
+
+## Output Intensity
+
+Control how verbose skill output is. Set globally or per-skill:
+
+```json
+// .shipkit/config.json
+{
+  "profile": "full-sail",
+  "intensity": "full",
+  "intensity_overrides": { "sk:review": "deep", "sk:gates": "lite" }
+}
+```
+
+| Level | Behavior |
+|-------|----------|
+| `lite` | No filler, tight sentences. Professional but compressed. |
+| `full` | Standard output — clear, complete. Default. |
+| `deep` | Exhaustive analysis — edge cases, alternatives, reasoning. |
+
+Autopilot auto-selects per phase (e.g., `lite` for gates, `deep` for review). Override with `--intensity` on `/sk:start`.
 
 ---
 
