@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.29.1] - 2026-04-07
+
+### Changed
+- **`docs/dashboard.html`** — added step 0.5 (`/sk:investigate`) to Feature Workflow, added `/sk:plugin` to Setup commands, updated `/sk:release` description, added investigate auto-skip rule to the Auto-Skip Rules table.
+- **`/sk:release` skill** — removed automatic npm publish step; npm publishing is now the user's manual responsibility after the tag is pushed.
+- **`.claude/docs/maintenance-guide.md`** — added "npm Publish Policy" section documenting that `/sk:release` only handles version bump + changelog + tag + GitHub push.
+
 ## [v3.29.0] - 2026-04-07
 
 ### Added
