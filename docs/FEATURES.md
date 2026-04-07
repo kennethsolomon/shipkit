@@ -17,7 +17,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | Command | Purpose | Spec |
 |---------|---------|------|
 | `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring; auto-run for vague tasks | [sk-deep-interview.md](sk:features/sk-deep-interview.md) |
-| `/sk:investigate` | Read-only feature-area exploration before brainstorm (Step 0.5) | — |
+| `/sk:investigate` | Read-only feature-area exploration before brainstorm (Step 0.5) | [sk-investigate.md](sk:features/sk-investigate.md) |
 | `/sk:brainstorm` | Explore requirements and design before implementation | — |
 | `/sk:frontend-design` | UI mockup + optional Pencil visual design | — |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) | — |
@@ -40,7 +40,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:perf` | Performance audit (bundle, N+1, Core Web Vitals, memory) | — |
 | `/sk:seo-audit` | Dual-mode SEO audit (source + dev server), ask-before-fix | — |
 | `/sk:review` | Multi-dimensional self-review with simplify pre-pass | — |
-| `/sk:respond-review` | Triage `/sk:review` findings into fix-now / defer / dispute (auto-invoked by gates Batch 3) | — |
+| `/sk:respond-review` | Triage `/sk:review` findings into fix-now / defer / dispute (auto-invoked by gates Batch 3) | [sk-respond-review.md](sk:features/sk-respond-review.md) |
 | `/sk:e2e` | E2E behavioral verification (final quality gate) | — |
 | `/sk:scope-check` | Compare implementation against plan to detect scope creep | [sk-scope-check.md](sk:features/sk-scope-check.md) |
 | `/sk:gates` | Run all quality gates in optimized parallel batches | [sk-gates.md](sk:features/sk-gates.md) |
@@ -116,3 +116,5 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | [sk-skill-creator.md](sk:features/sk-skill-creator.md) | 2026-04-06 | v3.27.0 |
 | [sk-eval.md](sk:features/sk-eval.md) | 2026-04-06 | v3.27.0 |
 | [sk-steal.md](sk:features/sk-steal.md) | 2026-04-06 | v3.27.1 |
+| [sk-investigate.md](sk:features/sk-investigate.md) | 2026-04-07 | v3.28.0 |
+| [sk-respond-review.md](sk:features/sk-respond-review.md) | 2026-04-07 | v3.28.0 |
