@@ -1,13 +1,28 @@
 ---
 name: sk:ci
-description: "Set up Claude Code GitHub Actions or GitLab CI integration. Generates workflow files for PR review, issue triage, nightly audits, and release automation. Supports direct API, AWS Bedrock, and Google Vertex AI."
+description: "Set up Claude Code GitHub Actions or GitLab CI integration. Generates workflow files for PR review, issue triage, nightly audits, and release automation. Supports direct API, AWS Bedrock, and Google Vertex AI. Use --claude for a ShipKit-aware review workflow preset."
 disable-model-invocation: true
-argument-hint: "[github|gitlab] [--bedrock|--vertex]"
+argument-hint: "[github|gitlab] [--bedrock|--vertex] [--claude]"
 ---
 
 # /sk:ci
 
 Set up Claude Code CI/CD integration: GitHub Actions or GitLab CI.
+
+## Fast Path: `--claude`
+
+`/sk:ci --claude` is a **fast-path preset** that scaffolds a ShipKit-aware review setup with zero prompts:
+
+- Provider: GitHub Actions (detected from `git remote -v`)
+- Auth: direct Anthropic API (`ANTHROPIC_API_KEY` secret)
+- Workflows: **[1] @claude trigger** + **[2] ShipKit Auto PR Review** (see template below)
+- Review prompt: uses ShipKit's 8-dimension review (correctness, security, performance, reliability, design, best practices, documentation, testing)
+- Label trigger: adding the `claude` label to any PR re-invokes review
+- Skips prompts 1–3; jumps straight to `devops-engineer` agent dispatch
+
+Combine with `--bedrock` or `--vertex` to swap the auth provider: `/sk:ci --claude --bedrock`.
+
+If the user passes `--claude` alone with no other flags, confirm provider once (direct / bedrock / vertex), then proceed without further prompts.
 
 ## Before You Start
 
@@ -54,18 +69,19 @@ Present a checklist. Ask the user which they want:
 ```
 Which workflows do you want to set up? (select all that apply)
 
-[1] @claude trigger — respond to @claude mentions in PR/issue comments
-[2] Auto PR review — review every PR automatically on open/sync
-[3] Issue triage — auto-label and respond to new issues
-[4] Nightly audit — daily code quality / security / SEO review
-[5] Release automation — auto-generate changelog on tag push
+[1]  @claude trigger — respond to @claude mentions + `claude` label in PR/issue
+[2]  Auto PR review — review every PR automatically (generic 4-point review)
+[2b] ShipKit Auto PR Review — review every PR using the 8-dimension review bar
+[3]  Issue triage — auto-label and respond to new issues
+[4]  Nightly audit — daily code quality / security / SEO review
+[5]  Release automation — auto-generate changelog on tag push
 ```
 
-Generate only the selected workflows.
+Generate only the selected workflows. **`--claude` fast path** picks `[1] + [2b]` automatically and skips this prompt.
 
 ## GitHub Actions — Workflow Templates
 
-### [1] @claude Trigger (responds to @claude mentions)
+### [1] @claude Trigger (responds to @claude mentions + `claude` label)
 
 Create `.github/workflows/claude.yml`:
 
@@ -78,6 +94,8 @@ on:
     types: [created]
   issues:
     types: [opened, assigned]
+  pull_request:
+    types: [labeled]
 
 permissions:
   contents: write
@@ -89,14 +107,18 @@ jobs:
     if: |
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude'))
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude')) ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'claude')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          label_trigger: "claude"
 ```
+
+**Label trigger:** adding the `claude` label to any open PR re-invokes the action with the PR context. Useful for re-running a review after stale feedback or when a PR has been updated significantly.
 
 ### [2] Auto PR Review
 
@@ -133,6 +155,67 @@ jobs:
             If the PR is clean, post a single approval comment.
           claude_args: "--max-turns 5"
 ```
+
+### [2b] ShipKit Auto PR Review (8-dimension review)
+
+Use this variant when the repo already has ShipKit installed and you want the CI review to match the local `/sk:review` quality bar. Generated automatically by `/sk:ci --claude`.
+
+Create `.github/workflows/claude-shipkit-review.yml`:
+
+```yaml
+name: Claude ShipKit Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  shipkit-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          label_trigger: "claude"
+          prompt: |
+            Review this pull request using the ShipKit 8-dimension review bar.
+            You are the reviewer, not the cheerleader. Find problems, not praise.
+
+            For EVERY dimension below, state findings or write "No issues found":
+
+            1. Correctness — logic errors, edge cases, off-by-one, null handling
+            2. Security — OWASP Top 10, injection, auth, secret exposure
+            3. Performance — N+1 queries, allocations, blocking I/O, bundle impact
+            4. Reliability — error handling, retries, timeouts, partial failure modes
+            5. Design quality — coupling, cohesion, naming, abstraction fit
+            6. Best practices — framework conventions, idiomatic patterns
+            7. Documentation — public API docstrings, README drift, inline "why"
+            8. Testing — missing coverage on new code paths, flaky patterns, test quality
+
+            Severity per finding: Critical | Warning | Nit.
+
+            Post findings as inline review comments on the diff.
+            End with a summary comment using this exact format:
+
+            ```
+            === ShipKit Review Summary ===
+            Critical: N
+            Warning:  N
+            Nit:      N
+            Gate: PASS | BLOCK
+            ```
+
+            Gate is BLOCK if any Critical or Warning exists, PASS otherwise.
+          claude_args: "--max-turns 10"
+```
+
+**Why this exists:** `/sk:review` is the local quality bar; this workflow makes every PR clear the same bar before a human sees it. Triggers on `opened`, `synchronize`, `reopened`, and manual re-trigger via the `claude` label.
 
 ### [3] Issue Triage
 

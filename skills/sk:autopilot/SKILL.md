@@ -22,7 +22,7 @@ Hands-free workflow that executes all 8 phases (including scope check, learn, an
 
 ## Quality Guarantee
 
-Autopilot runs the EXACT same workflow as manual mode (8 phases: explore, design, plan, branch, implement + scope check, commit, gates, ship + learn + retro):
+Autopilot runs the EXACT same workflow as manual mode (8 phases + optional pre-phases: investigate, explore, design, plan, branch, implement + scope check, commit, gates, ship + learn + retro):
 - ALL quality gates enforced (lint, test, security, perf, review, e2e)
 - ALL fix-rerun loops active
 - 100% test coverage required on new code
@@ -58,11 +58,36 @@ If matched:
 → Log: `[Autopilot] Open-ended request — running /sk:deep-interview to clarify requirements.`
 → Invoke `Skill("sk:deep-interview")` with the original task description
 → Deep-interview writes `tasks/spec.md`
-→ Continue to Step 1 (brainstorm reads spec.md automatically — no re-asking)
+→ Continue to Step 0.5 (investigate) — do not skip Check C's logic, fall through
 
 **Check C — Clear input (default):**
 Has concrete anchors OR is a specific bounded request.
-→ Proceed directly to Step 1 — no log, no extra step.
+→ Fall through to Step 0.5 — no log, no deep-interview.
+
+---
+
+### 0.5. Investigate (auto-skip unless unfamiliar area)
+
+**Auto-skip rule:** Skip this step if ANY is true:
+- Task description contains concrete anchors (file paths like `app/Models/User.php`, function names with symptom, line numbers)
+- Check A matched (bug flow — deep-dive handles its own investigation)
+- Repo is greenfield (no `package.json` / `composer.json` / `go.mod` / `Cargo.toml` detected)
+- User passed `--skip-investigate` via `/sk:start`
+- `tasks/investigation.md` already exists and was written within the last 4 hours for this same task
+
+Otherwise, check for unfamiliar-area signals:
+- References to subsystems: "the billing module", "our auth flow", "the webhook system", "the dashboard", "the notifications area"
+- Exploration verbs: `add to`, `extend`, `modify`, `touch`, `work on`, `how does`, `explore`, `figure out`, `map out`
+
+If unfamiliar-area signals match AND auto-skip rule did not fire:
+→ Log: `[Autopilot] Existing-area task — running /sk:investigate to map terrain.`
+→ Invoke `Skill("sk:investigate")` with the original task description
+→ Investigate writes `tasks/investigation.md` (read-only exploration — no code changes)
+→ Continue to Step 1 (brainstorm reads investigation.md + spec.md automatically)
+
+If no unfamiliar-area signals:
+→ Log: `Auto-skipped: Investigate (task has concrete anchors or is greenfield)` — silent if no signals at all
+→ Proceed to Step 1
 
 ---
 
@@ -195,6 +220,7 @@ Autopilot auto-selects intensity per phase for optimal output:
 
 | Phase | Auto-selected | Why |
 |-------|--------------|-----|
+| investigate (step 0.5) | lite | Factual mapping — tables and lists, not essays |
 | brainstorm (step 1) | full | Need substance for direction approval |
 | design (step 2) | full | Design decisions need clarity |
 | write-plan (step 3) | full | Plans must be decision-complete |

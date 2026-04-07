@@ -42,6 +42,15 @@ Check in this order — first match wins:
 **Vague feature detection** (runs for `feature` flow only):
 After flow detection, check if the feature request has no concrete anchors (no file paths, no function names, no bounded scope) AND uses open-ended verbs (improve, enhance, make better, add features, build something, clean up, refactor). If yes, flag as `vague-feature`.
 
+**Unfamiliar-area detection** (runs for `feature` flow only, independent of `vague-feature`):
+Check if the task references an existing system area without concrete anchors AND uses exploration verbs. Signals:
+- References to subsystems: "the billing module", "our auth flow", "the webhook system", "the dashboard", "the import pipeline", "the notifications area"
+- Exploration verbs: `add to`, `extend`, `modify`, `touch`, `work on`, `how does`, `explore`, `figure out`, `map out`, `understand`
+- AND no concrete anchors (file paths, function names, line numbers)
+- AND the repo is brownfield (has `package.json`, `composer.json`, `go.mod`, etc.)
+
+If matched, flag as `unfamiliar-area`. This flag is independent of `vague-feature` — a task can be both (needs interview AND investigate), just one, or neither.
+
 **Scope detection:**
 
 | Signal Keywords | Detected Scope |
@@ -162,12 +171,18 @@ Wait for user response:
    - After spec is written, continue bug fix flow: branch → write-tests → execute-plan → commit → gates → finalize
 
    **If feature flow + autopilot + vague-feature flagged:**
-   - Invoke `/sk:autopilot` — autopilot step 0 handles deep-interview automatically
+   - Invoke `/sk:autopilot` — autopilot step 0 handles deep-interview and step 0.5 handles investigate automatically
 
    **If feature flow + manual mode + vague-feature flagged:**
    - Log: `[Start] Open-ended request — running /sk:deep-interview before brainstorm.`
    - Invoke `Skill("sk:deep-interview")`
-   - After spec.md is written, invoke `/sk:brainstorm` (reads spec.md automatically)
+   - If `unfamiliar-area` is ALSO flagged: after spec.md is written, invoke `Skill("sk:investigate")` next
+   - After investigation.md is written (or immediately if only `vague-feature`), invoke `/sk:brainstorm` (reads spec.md and investigation.md automatically)
+
+   **If feature flow + manual mode + unfamiliar-area flagged (without vague-feature):**
+   - Log: `[Start] Existing-area task — running /sk:investigate before brainstorm.`
+   - Invoke `Skill("sk:investigate")` with the task description
+   - After investigation.md is written, invoke `/sk:brainstorm` (reads investigation.md automatically)
 
    **If debug flow:**
    - Invoke `/sk:debug` with the task description
@@ -217,6 +232,8 @@ This file is ephemeral — it is for session continuity only. Do not log to `tas
 | `--debug` | Force debug flow (known-cause bug fix) |
 | `--deep-dive` | Force deep-dive flow (unknown-cause investigation) |
 | `--interview` | Force deep-interview pre-step even on clear requests |
+| `--investigate` | Force investigate pre-step even on clear requests |
+| `--skip-investigate` | Skip investigate even if unfamiliar-area is detected |
 | `--hotfix` | Force hotfix flow (production emergency) |
 | `--fast-track` | Force fast-track flow (small change) |
 | `--intensity lite\|full\|deep` | Override intensity for this session |

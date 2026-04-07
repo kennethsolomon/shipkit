@@ -526,6 +526,7 @@
 const COMMANDS = [
   // Planning & Exploration
   { cmd: '/sk:deep-interview', desc: 'Socratic requirements-gathering with ambiguity scoring — auto-run for vague tasks. Outputs tasks/spec.md.', cat: 'planning', icon: '?', flag: 'optional' },
+  { cmd: '/sk:investigate', desc: 'Read-only feature-area exploration before brainstorm. Maps entry points, data model, tests, config. Outputs tasks/investigation.md.', cat: 'planning', icon: '🔎', flag: 'autoskip' },
   { cmd: '/sk:brainstorm', desc: 'Explore requirements and design (includes search-first research). Reads todo.md, lessons.md, findings.md. No code.', cat: 'planning', icon: '💡', flag: 'required' },
   { cmd: '/sk:frontend-design', desc: 'UI mockup before implementation. Use --pencil for Pencil visual mockup.', cat: 'planning', icon: '🎨', flag: 'autoskip' },
   { cmd: '/sk:api-design', desc: 'Design REST/GraphQL contracts (endpoints, payloads, auth, errors) before implementation.', cat: 'planning', icon: '⚡', flag: 'autoskip' },
@@ -544,6 +545,7 @@ const COMMANDS = [
   { cmd: '/sk:security-check', desc: 'OWASP security audit with content isolation and CVSS scoring on changed files.', cat: 'quality', icon: '🛡️', flag: null },
   { cmd: '/sk:perf', desc: 'Performance audit: bundle size, N+1 queries, Core Web Vitals, memory leaks, missing indexes.', cat: 'quality', icon: '⚡', flag: 'autoskip' },
   { cmd: '/sk:review', desc: '7-dimension self-review of branch changes: correctness, security, performance, reliability, design, best practices, testing.', cat: 'quality', icon: '🔍', flag: null },
+  { cmd: '/sk:respond-review', desc: 'Triage /sk:review findings into fix-now / defer / dispute. Auto-invoked by gates Batch 3 when findings > 0.', cat: 'quality', icon: '🧰', flag: null },
   { cmd: '/sk:e2e', desc: 'E2E behavioral verification — final quality gate before finalize. Uses Playwright CLI.', cat: 'quality', icon: '🌐', flag: null },
   { cmd: '/sk:scope-check', desc: 'Compare current implementation against the plan to detect and trim scope creep.', cat: 'quality', icon: '📏', flag: 'required' },
   { cmd: '/sk:deps-audit', desc: 'CVE scan, license compliance, and outdated package detection across npm, Composer, Cargo, pip, Go, Bundler.', cat: 'quality', icon: '🔐', flag: null },
@@ -579,7 +581,7 @@ const COMMANDS = [
   { cmd: '/sk:resume-session', desc: 'Resume a previously saved session with full context restoration.', cat: 'devtool', icon: '↩️', flag: null },
   { cmd: '/sk:safety-guard', desc: 'Protect against destructive operations with careful, freeze, and guard modes.', cat: 'devtool', icon: '🛡️', flag: null },
   { cmd: '/sk:plan', desc: 'Create or refresh tasks planning files and start planning.', cat: 'devtool', icon: '🗺️', flag: null },
-  { cmd: '/sk:ci', desc: 'Set up GitHub Actions or GitLab CI pipeline configuration.', cat: 'devtool', icon: '⚙️', flag: null },
+  { cmd: '/sk:ci', desc: 'Set up GitHub Actions or GitLab CI pipeline configuration. --claude fast-path scaffolds ShipKit-aware PR review with 8-dimension prompt.', cat: 'devtool', icon: '⚙️', flag: null },
 
   // Setup & Configuration
   { cmd: '/sk:setup-claude', desc: 'Bootstrap or repair Claude Code project scaffolding — deploys .claude docs, commands, tasks files.', cat: 'setup', icon: '🏗️', flag: null },

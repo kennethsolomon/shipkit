@@ -17,6 +17,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | Command | Purpose | Spec |
 |---------|---------|------|
 | `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring; auto-run for vague tasks | [sk-deep-interview.md](sk:features/sk-deep-interview.md) |
+| `/sk:investigate` | Read-only feature-area exploration before brainstorm (Step 0.5) | — |
 | `/sk:brainstorm` | Explore requirements and design before implementation | — |
 | `/sk:frontend-design` | UI mockup + optional Pencil visual design | — |
 | `/sk:api-design` | Design API contracts (endpoints, payloads, auth, errors) | — |
@@ -39,6 +40,7 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | `/sk:perf` | Performance audit (bundle, N+1, Core Web Vitals, memory) | — |
 | `/sk:seo-audit` | Dual-mode SEO audit (source + dev server), ask-before-fix | — |
 | `/sk:review` | Multi-dimensional self-review with simplify pre-pass | — |
+| `/sk:respond-review` | Triage `/sk:review` findings into fix-now / defer / dispute (auto-invoked by gates Batch 3) | — |
 | `/sk:e2e` | E2E behavioral verification (final quality gate) | — |
 | `/sk:scope-check` | Compare implementation against plan to detect scope creep | [sk-scope-check.md](sk:features/sk-scope-check.md) |
 | `/sk:gates` | Run all quality gates in optimized parallel batches | [sk-gates.md](sk:features/sk-gates.md) |

@@ -49,7 +49,8 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 | # | Step | Command | Type | Notes |
 |---|------|---------|------|-------|
 | 0 | Deep Interview | `/sk:deep-interview` | optional | For vague/open-ended tasks. Auto-run by `/sk:start` and `/sk:autopilot`. Outputs `tasks/spec.md`. Skip if task has concrete anchors (file paths, function names, specific scope). |
-| 1 | Explore | `/sk:brainstorm` | required | Reads todo.md, lessons.md, findings.md, spec.md (if present). No code. |
+| 0.5 | Investigate | `/sk:investigate` | auto-skip | Read-only feature-area exploration. Runs when task touches an unfamiliar brownfield area without concrete anchors. Outputs `tasks/investigation.md`. Auto-skipped if task has concrete anchors, is greenfield, or is a bug flow. |
+| 1 | Explore | `/sk:brainstorm` | required | Reads todo.md, lessons.md, findings.md, spec.md, investigation.md (if present). No code. |
 | 2 | Design | `/sk:frontend-design` or `/sk:api-design` | auto-skip | No code. `--pencil` for visual mockup. Auto-skip if no frontend/API keywords. |
 | 3 | Plan | `/sk:write-plan` | required | No code. Runs auto-skip detection for step 2. |
 | 4 | Branch | `/sk:branch` | required | Auto-named from current task. |
@@ -65,7 +66,8 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 
 1. **Auto-advance by default.** Pause at: plan approval (3), PR push (8), release confirmation.
 2. **Conditional summary** — only output when step was skipped, partial, or required fixes.
-3. **Auto-skip** — after plan (step 3), scan todo.md for keywords:
+3. **Auto-skip** — applied at each step:
+   - Investigate (step 0.5): skip if task has concrete anchors (file paths, function names, line numbers), is greenfield (no `package.json`/`composer.json`/`go.mod`/`Cargo.toml`), is a bug flow, or if `tasks/investigation.md` was written within the last 4 hours
    - Design: skip if NO frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button) AND NO API keywords (endpoint, route, controller, API)
    - Migrate (in step 5): skip if NO DB keywords (migration, schema, table, column, model, database, foreign key, index, seed)
    - Perf (in gates): skip if NO frontend AND NO DB keywords. Release: NEVER skip. Output: `Auto-skipped: [Name] ([reason])`
@@ -82,6 +84,7 @@ Progress tracked via git branch + `tasks/todo.md` checkboxes.
 | Format/style/config/wording | Include in gate's squash commit, re-run. No test update needed. |
 | Logic change (new branch, condition, data path, algorithm) | 1) Update/add failing tests 2) `/sk:test` at 100% coverage 3) Commit tests+fix together 4) Re-run gate from scratch |
 | Lint auto-fixes (Prettier, Pint, gofmt, cargo fmt) | Never logic changes — bypass protocol automatically. |
+| Review findings (Critical/Warning) | `/sk:respond-review` triages into fix-now / defer / dispute, applies fixes in one squash commit, then re-runs the review gate. Auto-invoked by `/sk:gates` Batch 3 when findings > 0. |
 
 ### Alternative Flows
 
@@ -117,6 +120,23 @@ Log changes affecting the companion codebase (web ↔ mobile) to `tasks/cross-pl
 **Write continuously:** `tasks/progress.md` (attempts/errors), `tasks/findings.md` (discoveries), `tasks/cross-platform.md` (cross-platform impacts)
 **Never overwrite:** `tasks/lessons.md`, `tasks/security-findings.md`, `tasks/cross-platform.md`
 
+### Memory Privacy — `<private>` Tag Convention
+
+Content wrapped in `<private>...</private>` tags is **never** written to any persistent memory surface:
+
+- Auto-memory files under `~/.claude/projects/*/memory/`
+- Project memory files: `tasks/findings.md`, `tasks/lessons.md`, `tasks/progress.md`, `tasks/tech-debt.md`, `tasks/review-disputes.md`, `tasks/cross-platform.md`, `tasks/investigation.md`, `tasks/spec.md`
+- Commit messages, PR descriptions, changelogs, architectural change log entries
+
+**Rules:**
+1. Strip `<private>...</private>` blocks (and their content) before any Write or Edit that touches the paths above.
+2. If the user explicitly asks to remember content that is inside `<private>` tags, refuse and explain: "That content is marked private — unmark it first or paste it outside the tags if you want it saved."
+3. Apply to both single-line tags (`<private>api_key=sk-...</private>`) and multi-line blocks.
+4. The tag is case-sensitive and must match exactly: `<private>` / `</private>`.
+5. Treat partial tags defensively — if a closing tag is missing, treat everything from the opening tag to end-of-message as private.
+
+Use case: paste credentials, internal URLs, stakeholder names, or debugging snippets that should help the current conversation without leaking into persistent storage.
+
 ## Lessons Capture
 
 Explicit (`lesson:`, `remember:`, `don't do this again:`) → append to `tasks/lessons.md` immediately.
@@ -149,7 +169,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:brainstorm` | Explore requirements and design; extracts requirements checklist |
 | `/sk:branch` | Create feature branch from current task |
 | `/sk:change` | Handle mid-workflow requirement changes |
-| `/sk:ci` | Set up GitHub Actions or GitLab CI |
+| `/sk:ci` | Set up GitHub Actions or GitLab CI. `--claude` fast-path scaffolds ShipKit-aware PR review |
 | `/sk:context` | Load context files + session brief |
 | `/sk:context-budget` | Audit context window token consumption |
 | `/sk:dashboard` | Workflow Kanban board (localhost) |
@@ -168,6 +188,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:gates` | All quality gates in parallel batches |
 | `/sk:health` | Harness self-audit scorecard |
 | `/sk:hotfix` | Emergency fix workflow |
+| `/sk:investigate` | Read-only feature-area exploration before brainstorm — maps entry points, data model, tests, config (Step 0.5) |
 | `/sk:laravel-deploy` | Deploy Laravel to Laravel Cloud |
 | `/sk:laravel-init` | Configure existing Laravel project |
 | `/sk:laravel-new` | Scaffold fresh Laravel app |
@@ -177,6 +198,7 @@ Create entries in: `.claude/docs/architectural_change_log/`
 | `/sk:perf` | Performance audit |
 | `/sk:plugin` | Package skills as distributable plugin |
 | `/sk:release` | Version bump + changelog + tag |
+| `/sk:respond-review` | Triage `/sk:review` findings into fix-now / defer / dispute. Auto-invoked by `/sk:gates` Batch 3 when findings > 0 |
 | `/sk:resume-session` | Resume previously saved session |
 | `/sk:retro` | Post-ship retrospective |
 | `/sk:reverse-doc` | Generate docs from existing code |
