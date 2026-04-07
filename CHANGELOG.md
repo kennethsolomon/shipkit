@@ -5,11 +5,18 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v3.28.1] - 2026-04-07
+
+### Removed
+- **`commands/sk/investigate.md` and `commands/sk/respond-review.md`** — auto-generated command stubs that were skipped at install time because matching skill directories existed. Removing them eliminates drift risk and aligns with the rest of the codebase (49 other skills have no command stub). No user-facing change — `/sk:investigate` and `/sk:respond-review` still work because slash invocation resolves to the skill.
+
+---
+
+## [v3.28.0] - 2026-04-07
 
 ### Added
-- **`/sk:investigate`** — new read-only feature-area exploration skill + command (Step 0.5). Dispatches 3 parallel Explore agents (entry points / data model / tests+config) and writes `tasks/investigation.md`. Wired into `/sk:start` and `/sk:autopilot` with auto-skip for concrete anchors, greenfield repos, and bug flows. Adapted from gstack's sprint-start review pattern.
-- **`/sk:respond-review`** — new triage skill + command that classifies `/sk:review` findings into fix-now / defer / dispute buckets. Auto-invoked by `/sk:gates` Batch 3 when findings > 0. Same-finding escalation routes to the architect agent on 2nd survival. Adapted from superpowers' review-loop pattern.
+- **`/sk:investigate`** — new read-only feature-area exploration skill (Step 0.5). Dispatches 3 parallel Explore agents (entry points / data model / tests+config) and writes `tasks/investigation.md`. Wired into `/sk:start` and `/sk:autopilot` with auto-skip for concrete anchors, greenfield repos, and bug flows. Adapted from gstack's sprint-start review pattern.
+- **`/sk:respond-review`** — new triage skill that classifies `/sk:review` findings into fix-now / defer / dispute buckets. Auto-invoked by `/sk:gates` Batch 3 when findings > 0. Same-finding escalation routes to the architect agent on 2nd survival. Adapted from superpowers' review-loop pattern.
 - **`/sk:ci --claude` fast-path** — scaffolds ShipKit-aware claude-code-action workflow with 8-dimension review prompt and `claude` label trigger. Drop-in CI config for on-demand PR review.
 - **`<private>...</private>` tag convention** — content wrapped in these tags is never written to persistent memory surfaces (auto-memory, `tasks/*.md`, commits, PRs, changelogs). Documented in `CLAUDE.md` Project Memory section. Adapted from claude-mem's exclusion mechanism.
 

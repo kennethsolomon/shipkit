@@ -89,9 +89,7 @@ Step 0.5 is optional like step 0 — does not change the required step count for
 | File | Change |
 |------|--------|
 | `skills/sk:investigate/SKILL.md` | **New** — read-only feature-area exploration skill |
-| `commands/sk/investigate.md` | **New** — thin command wrapper |
 | `skills/sk:respond-review/SKILL.md` | **New** — review finding triage skill |
-| `commands/sk/respond-review.md` | **New** — thin command wrapper |
 | `skills/sk:ci/SKILL.md` | Added `--claude` fast-path section + `[2b]` ShipKit auto-review template |
 | `skills/sk:gates/SKILL.md` | Batch 3 now auto-invokes `Skill("sk:respond-review")`; references 8-dimension review |
 | `skills/sk:start/SKILL.md` | Added unfamiliar-area detection + `--investigate`/`--skip-investigate` flags + routing branch for investigate pre-phase |
@@ -113,3 +111,16 @@ Step 0.5 is optional like step 0 — does not change the required step count for
 - **Investigate as Step 0.5, not Step 1.5:** It must run before brainstorm reads context files, so brainstorm can consume `tasks/investigation.md` as input.
 - **`<private>` as a CLAUDE.md policy, not a hook:** A hook would have false positives (what about log files? diffs?). A policy rule tells the assistant to apply it at write time, with the user's trust model clear.
 - **No `/sk:investigate` in `/sk:fast-track`:** Fast-track is for small known changes where exploration is overhead. Investigate only triggers in full flow when signals match.
+
+---
+
+## Post-Release Cleanup (v3.28.1)
+
+`/sk:setup-claude`'s template auto-generated `commands/sk/investigate.md` and `commands/sk/respond-review.md` alongside the new skills. The install logic in `bin/shipkit.js:113-131` already skips command files when a matching skill directory exists, so both stubs were dead on arrival — they shipped but never installed.
+
+Removed in v3.28.1 to:
+- Eliminate drift risk (one source of truth per skill)
+- Match the existing pattern (49 other skills have no command stub)
+- Stop the install message from advertising "(2 skipped — covered by skills)"
+
+The two paths (`commands/sk/investigate.md`, `commands/sk/respond-review.md`) are gone. Skill files remain unchanged. Users still invoke via `/sk:investigate` and `/sk:respond-review` — slash invocation resolves to the skill.
