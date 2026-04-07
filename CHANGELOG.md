@@ -8,13 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- _Upcoming features and improvements will be listed here_
+- **`/sk:investigate`** — new read-only feature-area exploration skill + command (Step 0.5). Dispatches 3 parallel Explore agents (entry points / data model / tests+config) and writes `tasks/investigation.md`. Wired into `/sk:start` and `/sk:autopilot` with auto-skip for concrete anchors, greenfield repos, and bug flows. Adapted from gstack's sprint-start review pattern.
+- **`/sk:respond-review`** — new triage skill + command that classifies `/sk:review` findings into fix-now / defer / dispute buckets. Auto-invoked by `/sk:gates` Batch 3 when findings > 0. Same-finding escalation routes to the architect agent on 2nd survival. Adapted from superpowers' review-loop pattern.
+- **`/sk:ci --claude` fast-path** — scaffolds ShipKit-aware claude-code-action workflow with 8-dimension review prompt and `claude` label trigger. Drop-in CI config for on-demand PR review.
+- **`<private>...</private>` tag convention** — content wrapped in these tags is never written to persistent memory surfaces (auto-memory, `tasks/*.md`, commits, PRs, changelogs). Documented in `CLAUDE.md` Project Memory section. Adapted from claude-mem's exclusion mechanism.
 
 ### Changed
-- _Behavioral changes will be listed here_
-
-### Fixed
-- _Bug fixes will be listed here_
+- **`/sk:gates` Batch 3** now auto-invokes `sk:respond-review` when review returns any Critical/Warning findings, keeping gates as the single source of re-run logic.
+- **`/sk:start`** classifier detects unfamiliar brownfield areas (subsystem references + exploration verbs) and routes to `/sk:investigate` before brainstorm. New `--investigate` / `--skip-investigate` override flags.
+- **`/sk:autopilot`** adds Step 0.5 (Investigate) with intensity auto-select = `lite`.
+- **`CLAUDE.md` + template** updated with Step 0.5, Fix & Retest row for review findings, Memory Privacy subsection, and new Commands table entries.
 
 ---
 
