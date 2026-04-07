@@ -2,6 +2,14 @@
 
 Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and maintaining projects.
 
+## What's New (April 2026)
+
+**v3.28.0** — Steal adaptations from superpowers, gstack, claude-mem, claude-code-action:
+- **`/sk:investigate`** (new Step 0.5) — read-only feature-area exploration before brainstorm. Dispatches 3 parallel Explore agents across entry points / data model / tests+config, reads ≤5 files, writes `tasks/investigation.md`. Auto-skip when task has concrete anchors, is greenfield, or is a bug flow. Wired into `/sk:start` and `/sk:autopilot`.
+- **`/sk:respond-review`** — triages `/sk:review` findings into fix-now / defer / dispute buckets. Auto-invoked by `/sk:gates` Batch 3 when findings > 0. Same-finding escalation to the `architect` agent on 2nd survival.
+- **`<private>...</private>` tag convention** — wrap anything you don't want written to `tasks/*.md`, auto-memory, commits, or changelogs. Case-sensitive, multi-line supported. See [Memory Privacy](#memory-privacy--private-tag).
+- **`/sk:ci --claude` fast-path** — scaffolds a ShipKit-aware `claude-code-action` GitHub workflow with label trigger + 8-dimension PR review.
+
 ## What's New (March 2026)
 
 **v3.16.0** — Formal agent definitions, path-scoped rules upgrade, and 2 new skills:
@@ -77,7 +85,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/sk:write-tests`](#write-tests) — TDD: write failing tests before implementation
   - [`/sk:debug`](#debug) — Structured debugging
   - [`/sk:perf`](#perf) — Performance audit (bundle, N+1, Core Web Vitals)
-  - [`/sk:review`](#review) — Self-review across 7 dimensions (report-only)
+  - [`/sk:review`](#review) — Self-review across 8 dimensions (report-only)
   - [`/sk:e2e`](#ske2e) — E2E behavioral verification using agent-browser — final quality gate
   - [`/sk:hotfix`](#hotfix) — Emergency fix workflow
   - [`/sk:finish-feature`](#finish-feature-per-project-command) — Pre-merge checklist (per-project)
@@ -90,6 +98,7 @@ Custom [Claude Code](https://claude.ai/code) skills for bootstrapping and mainta
   - [`/sk:safety-guard`](#sksafety-guard) — Protect against destructive ops (careful/freeze/guard modes)
   - [`/sk:eval`](#skeval) — Define, run, and report on evaluations for agent reliability
 - [What Gets Created by `/setup-claude`](#what-gets-created-by-setup-claude)
+- [Memory Privacy — `<private>` Tag](#memory-privacy--private-tag)
 - [Requirements](#requirements)
 
 ---
@@ -147,11 +156,25 @@ PHASE 0: CLASSIFY (OPTIONAL — auto-run by /sk:autopilot and /sk:start)
 │ • Check C: clear input → skip, proceed directly to Phase 1              │
 └──────────────────────────────────────────────────────────────────────────┘
                               ↓
+PHASE 0.5: INVESTIGATE (auto-skip — unfamiliar brownfield areas only)
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Step 0.5 — /sk:investigate  (read-only, no code changes)                │
+│ • Triggered when task references a subsystem + uses exploration verbs   │
+│   ("the billing module", "extend the webhook system")                   │
+│ • 3 parallel Explore agents: entry points / data model / tests+config   │
+│ • Reads 3-5 load-bearing files max (bounded token cost)                 │
+│ • Cross-references tasks/findings.md, tasks/lessons.md, docs/decisions  │
+│ • Writes: tasks/investigation.md (5 tables: Entry Points / Data Model / │
+│   Tests / Config / Prior Decisions)                                     │
+│ • Auto-skip: concrete anchors, greenfield, bug flow, <4h stale file    │
+└──────────────────────────────────────────────────────────────────────────┘
+                              ↓
 PHASE 1: EXPLORE (No Code)
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ Step 1 — /sk:brainstorm                                                  │
-│ • Reads: tasks/spec.md (if written by Step 0), tasks/findings.md,       │
-│   tasks/lessons.md, tasks/todo.md                                        │
+│ • Reads: tasks/spec.md (if written by Step 0),                           │
+│   tasks/investigation.md (if written by Step 0.5),                       │
+│   tasks/findings.md, tasks/lessons.md, tasks/todo.md                     │
 │ • Clarifies requirements, proposes approaches, gets approval             │
 │ • architect agent: reviews codebase, proposes 2-3 approaches            │
 │ • Writes: tasks/findings.md (design decision + rationale + checklist)  │
@@ -201,7 +224,9 @@ PHASE 6: QUALITY GATES (all are HARD GATES — cannot be skipped)
 │   test runner  ★ 100% coverage on new code                             │
 │                                                                          │
 │ Batch 3:                                                                 │
-│   code-reviewer agent  ★ 7-dimension review — 0 issues                 │
+│   code-reviewer agent  ★ 8-dimension review — 0 issues                 │
+│   /sk:respond-review    ★ auto-triages findings → fix-now/defer/dispute │
+│                          → squash commit → re-runs batch                │
 │                                                                          │
 │ Batch 4:                                                                 │
 │   e2e tester  ★ E2E behavioral verification — final gate               │
@@ -602,6 +627,7 @@ RESULT: Bug fixed + lesson learned. Next time you work on email validation,
 
 | Situation | Command | Why? |
 |-----------|---------|------|
+| **Unfamiliar brownfield area** | `/sk:investigate` | Read-only mapping of the subsystem (entry points / data model / tests) before brainstorm. Auto-runs in Step 0.5 when task references a subsystem. |
 | **Starting a new feature** | `/sk:brainstorm` | Lock in design before coding. Prevents "building the wrong thing." |
 | **Building UI** | `/sk:frontend-design` | Design mockups before code. Optional Pencil visual mockup. |
 | **Building a new API** | `/sk:api-design` | Design contracts before code. Endpoint, payloads, errors. |
@@ -615,7 +641,8 @@ RESULT: Bug fixed + lesson learned. Next time you work on email validation,
 | **Code complete — test gate** | `/sk:test` | 100% coverage on new code. Hard gate — cannot skip. |
 | **Code complete, pre-review** | `/sk:security-check` | OWASP Top 10, 0 issues required. Hard gate. |
 | **Performance concerns** | `/sk:perf` | Bundle, N+1, Core Web Vitals. Optional gate. |
-| **Ready for review** | `/sk:review` | 7-dimension self-review. 0 issues required. Hard gate. |
+| **Ready for review** | `/sk:review` | 8-dimension self-review. 0 issues required. Hard gate. |
+| **Review produced findings** | `/sk:respond-review` | Triage findings into fix-now / defer / dispute. Auto-invoked by `/sk:gates` Batch 3. |
 | **Production emergency** | `/sk:hotfix` | Skips design/TDD, quality gates still enforced. |
 | **Review clean, ready to ship** | `/sk:finish-feature` | Changelog + arch log + security gate + create PR. |
 | **Client needs a website** | `/sk:website` | Full website from brief/URL to client handoff. Real copy, WhatsApp CTA, Lighthouse 90+. |
@@ -1023,17 +1050,18 @@ Structured bug investigation with hypothesis tracking and documentation.
 
 ### `/review`
 
-Rigorous multi-dimensional code review across 7 dimensions — the quality bar of a senior engineer at a top-tier tech company. Report-only — PR creation is handled by `/sk:finish-feature`.
+Rigorous multi-dimensional code review across 8 dimensions — the quality bar of a senior engineer at a top-tier tech company. Report-only — PR creation is handled by `/sk:finish-feature`.
 
 **What it does:**
-- Reviews all changes on the current branch against main across **7 dimensions:**
+- Reviews all changes on the current branch against main across **8 dimensions:**
   1. **Correctness** — logic errors, null safety, async bugs, race conditions, edge cases, data integrity
   2. **Security** — OWASP Top 10, injection, XSS, auth/authz, data exposure, hardcoded secrets
   3. **Performance** — N+1 queries, O(n²) in hot paths, memory leaks, unnecessary re-renders, missing pagination
   4. **Reliability** — error handling quality, graceful degradation, timeouts, retry logic, validation at boundaries
   5. **Design** — separation of concerns, API contract changes, code clarity, dependency management
   6. **Best Practices** — framework-specific (React, Python, Go, Node.js), conventions, testing quality
-  7. **Testing** — coverage gaps, edge cases, assertion quality, test isolation, flakiness risks
+  7. **Documentation** — accuracy, completeness, staleness vs actual code, clarity of docs changed in the diff
+  8. **Testing** — coverage gaps, edge cases, assertion quality, test isolation, flakiness risks
 - Uses a `<think>` reasoning scratchpad before each dimension — exhaustiveness required, partial analysis not accepted
 - Every finding tagged with dimension, `file:line:name:type` (symbol type: function, method, class, variable, hook, component), and **why** it matters
 - Generates severity-leveled report: Critical / Warning / Nitpick (max 20 items)
@@ -1464,7 +1492,7 @@ Abbreviated workflow for small, clear changes. Skips brainstorm, design, plan, a
 
 #### `code-reviewer`
 **When:** After implementation, before `/sk:gates` or as a standalone review.
-**What:** 7-dimension review: correctness, security, performance, reliability, design quality, best practices, testing. Reports only — does not modify code. Nothing to find? It looks harder.
+**What:** 8-dimension review: correctness, security, performance, reliability, design quality, best practices, testing. Reports only — does not modify code. Nothing to find? It looks harder.
 **Memory:** project — accumulates codebase-specific patterns.
 
 #### `security-reviewer`
@@ -1721,6 +1749,62 @@ Individual skills can be overridden via `model_overrides`:
 ```
 
 See [skill-profiles.md](../../skills/sk:setup-claude/references/skill-profiles.md) for the full skill/agent/rule mapping per stack.
+
+---
+
+## Memory Privacy — `<private>` Tag
+
+ShipKit writes a lot of persistent memory during a session: `tasks/findings.md`, `tasks/lessons.md`, `tasks/progress.md`, auto-memory files, commit messages, PR descriptions, changelogs, architectural change log entries. This makes Claude great at remembering — and sometimes too great, if you share a secret in a prompt.
+
+The `<private>...</private>` tag convention solves this. Wrap anything you don't want persisted:
+
+```
+<private>
+stripe_secret=sk_live_abc123
+admin@acme.com
+</private>
+
+debug this 401 response
+```
+
+Claude uses the content in-session to help you, then strips the block before writing to any persistent surface.
+
+### Protected surfaces
+
+- Auto-memory files (`~/.claude/projects/*/memory/`)
+- `tasks/findings.md`, `tasks/lessons.md`, `tasks/progress.md`, `tasks/tech-debt.md`
+- `tasks/review-disputes.md`, `tasks/cross-platform.md`, `tasks/investigation.md`, `tasks/spec.md`
+- Commit messages, PR descriptions, changelogs, `.claude/docs/architectural_change_log/`
+
+### Rules
+
+1. Case-sensitive — `<private>` / `</private>` exactly
+2. Single-line and multi-line blocks both work
+3. Missing closing tag → everything from the opening tag to end-of-message is private
+4. If you ask Claude to save private content, it will refuse and ask you to unmark it
+5. The tag applies only to writes — it doesn't restrict Claude from using the content to answer your question
+
+### Enabling in existing projects
+
+- **New projects:** Already enabled — `/sk:setup-claude` deploys the Memory Privacy subsection from the template.
+- **Existing projects without `## Project Memory`:** `/sk:setup-optimizer` inserts the full Project Memory section (including `<private>`) from the template.
+- **Existing projects that already have `## Project Memory`:** Setup-optimizer does NOT patch in the new subsection. Paste the "Memory Privacy — `<private>` Tag Convention" block from [`skills/sk:setup-claude/templates/CLAUDE.md.template`](../../skills/sk:setup-claude/templates/CLAUDE.md.template) into your CLAUDE.md manually.
+
+### Use cases
+
+| Example | Why use `<private>` |
+|---|---|
+| API keys you're debugging against | Don't leak into `tasks/findings.md` |
+| Internal staging URLs | Keep infrastructure details out of commit messages |
+| Stakeholder names in bug reports | PII shouldn't land in changelogs |
+| Session tokens from devtools | Should not persist past the conversation |
+| Customer data used as reproduction input | Compliance — never written to disk |
+
+### What `<private>` is NOT
+
+- **Not a secrets manager.** Use `.env` + env vars for application secrets.
+- **Not encryption.** Content is stored in the raw prompt, just not re-written anywhere.
+- **Not a hook.** It's a policy rule Claude applies at write time. The enforcement lives in CLAUDE.md, not in code.
 
 ---
 

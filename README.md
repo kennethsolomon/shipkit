@@ -149,7 +149,9 @@ Batch 2:
   test runner        → 97% coverage → adds missing test → 100%
 
 Batch 3:
-  code-reviewer      → 7-dimension review → flags: logout doesn't revoke all tokens
+  code-reviewer      → 8-dimension review → flags: logout doesn't revoke all tokens
+  /sk:respond-review → triages findings → fix-now (rate limit) vs defer (refactor) vs dispute
+                       → applies fix-now changes → squash commit → re-runs review
 
 Batch 4:
   E2E tester         → runs 14 Playwright scenarios → 14/14 pass
@@ -283,7 +285,7 @@ Agents are specialized sub-agents deployed to `.claude/agents/` by `/sk:setup-cl
 | Agent | Invoked by | What it does |
 |---|---|---|
 | `qa-engineer` | `sk:team` Step 2 | Writes E2E scenarios while others implement (background — doesn't block) |
-| `code-reviewer` | `sk:gates` Batch 3 | 7-dimension review: correctness, security, performance, reliability, design, best practices, testing (read-only) |
+| `code-reviewer` | `sk:gates` Batch 3 | 8-dimension review: correctness, security, performance, reliability, design, best practices, documentation, testing (read-only) |
 | `security-reviewer` | `sk:gates` Batch 1, `sk:security-check` | OWASP audit — memory: user (remembers security patterns across all your projects) (read-only) |
 | `performance-optimizer` | `sk:gates` Batch 1, `sk:perf` | Finds AND fixes Critical/High perf issues in a worktree |
 
@@ -315,10 +317,12 @@ Agents are specialized sub-agents deployed to `.claude/agents/` by `/sk:setup-cl
 |---|---|---|
 | **1** (parallel) | lint + `security-reviewer` + `performance-optimizer` + `deps-audit` | Independent — run simultaneously |
 | **2** | tests (100% coverage on new code) | Needs lint fixes first |
-| **3** | `code-reviewer` (7-dimension) | Needs test confirmation |
+| **3** | `code-reviewer` (8-dimension) + auto `/sk:respond-review` triage | Needs test confirmation |
 | **4** | E2E Tests (Playwright or agent-browser) | Uses scenarios from `qa-engineer` |
 
 Each gate auto-fixes and re-runs until clean. One squash commit per gate pass. If a gate fails 3 times it stops and asks for help. Pre-existing issues are logged to `tasks/tech-debt.md` — never fixed inline.
+
+**Batch 3 triage:** When `code-reviewer` returns any Critical or Warning finding, `/sk:respond-review` auto-invokes to classify each finding into `fix-now` (apply now, squash-commit), `defer` (log to `tasks/tech-debt.md`), or `dispute` (reviewer misread — log to `tasks/review-disputes.md`). Same finding surviving two Batch 3 runs escalates to the `architect` agent.
 
 ---
 
@@ -351,6 +355,42 @@ Installed by `/sk:setup-claude`. Fire automatically on Claude Code events.
 | `safety-guard` | Blocks destructive commands (rm -rf, DROP, DELETE without WHERE, curl\|sh, npm publish) |
 | `auto-progress` | Auto-logs `git commit`/`push`/`tag` events to `tasks/progress.md` |
 | `suggest-compact` | Suggests context compaction when file count is high |
+
+---
+
+## Memory Privacy — `<private>` Tag
+
+Sometimes you need to share secrets, internal URLs, or personal context in a prompt without those details leaking into `tasks/*.md`, auto-memory, commits, or PR descriptions. Wrap them in `<private>...</private>` tags and ShipKit will use the content in-session but strip it before writing to any persistent surface.
+
+**Usage — just paste it in your prompt:**
+
+```
+<private>
+stripe_secret=sk_live_abc123
+admin@acme.com
+staging.internal.acme.com
+</private>
+
+Help me debug the 401 from /v1/charges
+```
+
+Claude uses the credentials/URLs to reason about the problem, but never writes them to:
+
+- Auto-memory files (`~/.claude/projects/*/memory/`)
+- `tasks/findings.md`, `tasks/lessons.md`, `tasks/progress.md`, `tasks/tech-debt.md`, `tasks/review-disputes.md`, `tasks/cross-platform.md`, `tasks/investigation.md`, `tasks/spec.md`
+- Commit messages, PR descriptions, changelogs, architectural change log
+
+**Rules:**
+
+1. Tags are case-sensitive — `<private>` / `</private>` only
+2. Works for single-line (`<private>api_key=foo</private>`) and multi-line blocks
+3. Missing closing tag → everything from `<private>` to end-of-message is treated as private
+4. If you ask to save content that's inside `<private>`, Claude will refuse and ask you to unmark it first — this is intentional
+5. Use it for credentials, internal URLs, stakeholder names, PII, debugging payloads — anything that should help the current conversation without sticking around
+
+**Why not just `.env`?** The `.env` file is for build-time secrets. `<private>` is for conversation-time context — things you want Claude to see during one session but never record anywhere.
+
+Already enabled in new projects (`/sk:setup-claude`) and in any project whose `CLAUDE.md` has a Project Memory section inserted by `/sk:setup-optimizer`. For existing projects that already have a Project Memory section, paste the "Memory Privacy — `<private>` Tag Convention" block from [`skills/sk:setup-claude/templates/CLAUDE.md.template`](skills/sk:setup-claude/templates/CLAUDE.md.template) into your CLAUDE.md.
 
 ---
 
@@ -496,7 +536,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 > **Visual reference:** open [`docs/dashboard.html`](docs/dashboard.html) in any browser for a searchable, categorized view of every command, workflow, agent, MCP plugin, and model profile — no server needed.
 
 <details>
-<summary><strong>49 skills + 14 agents</strong> — click to expand</summary>
+<summary><strong>51 skills + 14 agents</strong> — click to expand</summary>
 
 | Command | Purpose |
 |---|---|
@@ -506,7 +546,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:brainstorm` | Explore requirements and design |
 | `/sk:branch` | Create feature branch from current task |
 | `/sk:change` | Handle mid-workflow requirement changes |
-| `/sk:ci` | Set up GitHub Actions / GitLab CI |
+| `/sk:ci` | Set up GitHub Actions / GitLab CI. `--claude` fast-path scaffolds ShipKit-aware PR review |
 | `/sk:config` | View/edit project config |
 | `/sk:context` | Load project context |
 | `/sk:context-budget` | Audit context window token consumption |
@@ -527,6 +567,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:health` | Harness self-audit scorecard |
 | `/sk:help` | Show all commands |
 | `/sk:hotfix` | Emergency fix workflow |
+| `/sk:investigate` | Read-only feature-area exploration before brainstorm (Step 0.5) |
 | `/sk:laravel-init` | Configure existing Laravel project |
 | `/sk:laravel-new` | Scaffold fresh Laravel app |
 | `/sk:learn` | Extract reusable patterns from sessions |
@@ -536,6 +577,7 @@ See [skill-profiles.md](skills/sk:setup-claude/references/skill-profiles.md) for
 | `/sk:plan` | Create/refresh planning files |
 | `/sk:plugin` | Package skills/agents/hooks as a plugin |
 | `/sk:release` | Version bump + tag (`--android` / `--ios` for store audit) |
+| `/sk:respond-review` | Triage `/sk:review` findings into fix-now / defer / dispute (auto by gates Batch 3) |
 | `/sk:resume-session` | Resume a previously saved session |
 | `/sk:retro` | Post-ship retrospective |
 | `/sk:reverse-doc` | Generate docs from existing code |

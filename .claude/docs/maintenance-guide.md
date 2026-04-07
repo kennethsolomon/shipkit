@@ -314,6 +314,110 @@ Intensity controls output verbosity per skill. Config lives in `.shipkit/config.
 
 ---
 
+## When You Change the `<private>` Tag Convention
+
+The `<private>...</private>` tag convention is a policy rule: content wrapped in these tags is never written to any persistent memory surface. It's enforced by the assistant at write time, not by a hook — so changing the rule means updating every doc that describes it.
+
+| File | What to change |
+|------|---------------|
+| `CLAUDE.md` | **Source of truth** — Project Memory → Memory Privacy subsection (5 rules) |
+| `skills/sk:setup-claude/templates/CLAUDE.md.template` | Mirror the CLAUDE.md block — new projects inherit from here |
+| `README.md` | Memory Privacy section (user-facing usage guide) |
+| `docs/FEATURES.md` | If a new skill or flow becomes aware of the tag, note it in the relevant spec |
+| `skills/sk:setup-optimizer/SKILL.md` | Add Memory Privacy to "Missing sections" check if it should be auto-inserted |
+
+**Protected surfaces** (must be listed in every copy of the rule):
+- Auto-memory files (`~/.claude/projects/*/memory/`)
+- `tasks/findings.md`, `tasks/lessons.md`, `tasks/progress.md`, `tasks/tech-debt.md`
+- `tasks/review-disputes.md`, `tasks/cross-platform.md`, `tasks/investigation.md`, `tasks/spec.md`
+- Commit messages, PR descriptions, changelogs, architectural change log entries
+
+**Rule invariants** (must stay consistent across all copies):
+1. Strip `<private>...</private>` blocks before any Write or Edit that touches the protected paths
+2. If the user asks to remember private content, refuse and instruct them to unmark it
+3. Apply to single-line AND multi-line blocks
+4. Case-sensitive — must match `<private>` / `</private>` exactly
+5. Missing closing tag → treat to end-of-message as private
+
+**Propagation to existing projects:** Setup-optimizer only inserts the whole Project Memory section when missing — it does NOT patch in the Memory Privacy subsection into existing Project Memory sections. If users need it retroactively, they paste it manually from the template. Follow-up work: add subsection-level diffing to setup-optimizer.
+
+---
+
+## When You Change `/sk:investigate` (Step 0.5)
+
+Investigate is a read-only pre-phase. Changes to its triggers, lanes, or output format touch several files.
+
+| File | What to change |
+|------|---------------|
+| `skills/sk:investigate/SKILL.md` | **Source of truth** — lanes, file read limits, output format, auto-skip rules |
+| `commands/sk/investigate.md` | Thin command wrapper — only change if argument hints change |
+| `CLAUDE.md` | Step 0.5 row + auto-skip rules (keep in sync with skill) |
+| `skills/sk:setup-claude/templates/CLAUDE.md.template` | Mirror CLAUDE.md Step 0.5 row |
+| `commands/sk/help.md` | Step 0.5 row in Feature Workflow table |
+| `skills/sk:start/SKILL.md` | Unfamiliar-area detection signals + routing branch (steps 2.3/3) |
+| `skills/sk:autopilot/SKILL.md` | Step 0.5 block + Intensity Routing table row (`investigate → lite`) |
+| `docs/sk:features/sk-investigate.md` | Feature spec |
+| `docs/FEATURES.md` | Version bump in Spec Status table |
+| `docs/dashboard.html` | `COMMANDS` array entry (planning category, autoskip flag) |
+
+**Auto-skip rules invariants** (must match across skill + CLAUDE.md + autopilot):
+- Skip if task has concrete anchors (file paths, function names, line numbers)
+- Skip if repo is greenfield (no `package.json`/`composer.json`/`go.mod`/`Cargo.toml`)
+- Skip if task is a bug flow (deep-dive owns its own investigation)
+- Skip if `--skip-investigate` flag passed
+- Skip if `tasks/investigation.md` exists and was written within the last 4 hours
+
+---
+
+## When You Change `/sk:respond-review`
+
+Respond-review is both a standalone skill and auto-invoked by `/sk:gates` Batch 3. Changes to triage buckets or escalation logic need to stay consistent.
+
+| File | What to change |
+|------|---------------|
+| `skills/sk:respond-review/SKILL.md` | **Source of truth** — bucket definitions, escalation logic, return status |
+| `commands/sk/respond-review.md` | Thin command wrapper |
+| `skills/sk:gates/SKILL.md` | Batch 3 auto-invoke protocol, return-status handling (`READY_TO_RERUN` / `BLOCKED`) |
+| `CLAUDE.md` | Fix & Retest Protocol row for "Review findings (Critical/Warning)" |
+| `skills/sk:setup-claude/templates/CLAUDE.md.template` | Mirror CLAUDE.md Fix & Retest row |
+| `commands/sk/help.md` | All Commands table entry |
+| `docs/FEATURES.md` | Quality Gates table entry + spec status |
+| `docs/dashboard.html` | `COMMANDS` array entry (quality category) |
+
+**Triage bucket invariants** (must stay consistent across skill + gates):
+- `fix-now`: Critical findings, Warnings in safety paths (auth/payments/PII), or localized (<10 line) changes
+- `defer`: Cross-file refactors or non-safety suggestions → logged to `tasks/tech-debt.md`
+- `dispute`: Reviewer misread or contradicts prior decisions → logged to `tasks/review-disputes.md`
+- Conservative default: `fix-now > defer > dispute`
+- Same-finding escalation: architect agent on 2nd survival, 3-strike on 3rd
+
+**Return status contract:** gates Batch 3 depends on this — don't change without updating gates handling.
+- `READY_TO_RERUN` → gates re-runs Batch 3 from scratch
+- `BLOCKED` → gates triggers 3-strike protocol
+
+---
+
+## When You Change `/sk:ci --claude` Fast-Path
+
+The `--claude` flag scaffolds ShipKit-aware `claude-code-action` GitHub workflows.
+
+| File | What to change |
+|------|---------------|
+| `skills/sk:ci/SKILL.md` | **Source of truth** — `--claude` fast-path section, `[1]` @claude trigger template, `[2b]` auto-review template |
+| `CLAUDE.md` | Commands table description — `/sk:ci` mentions `--claude` fast-path |
+| `skills/sk:setup-claude/templates/CLAUDE.md.template` | Mirror commands table |
+| `commands/sk/help.md` | All Commands table |
+| `docs/dashboard.html` | `COMMANDS` array `/sk:ci` entry description |
+| `README.md` | On-Demand Tools → Setup & Docs row (if user-visible flag docs exist) |
+
+**Template invariants:**
+- `[1] @claude Trigger` uses `pull_request.types: [labeled]` + `label_trigger: "claude"` — on-demand via label
+- `[2b] ShipKit Auto PR Review` runs on every PR open/sync with 8-dimension review prompt
+- Review output format: `=== ShipKit Review Summary ===` block (grep-able by downstream tooling)
+- 8 dimensions: correctness, security, performance, reliability, design, best practices, documentation, testing
+
+---
+
 ## When You Change Plugin Manifests
 
 Plugin manifests enable cross-tool distribution (Claude Code, Codex, Agents marketplace).
@@ -335,4 +439,4 @@ All three must stay version-synced with `package.json`. The `.github/workflows/s
 
 ---
 
-Last updated: 2026-04-06 (intensity routing, plugin manifests, benchmark harness added)
+Last updated: 2026-04-07 (sk:investigate Step 0.5, sk:respond-review, `<private>` tag convention, sk:ci --claude fast-path)

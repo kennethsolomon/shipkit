@@ -24,6 +24,7 @@ Run these commands in order for a complete, quality-gated feature build.
 | # | Command | Purpose |
 |---|---------|---------|
 | 0 | `/sk:deep-interview` | Clarify requirements via Socratic interview — **auto-run for vague tasks** |
+| 0.5 | `/sk:investigate` | Read-only feature-area exploration — **auto-run for unfamiliar brownfield areas** |
 | 1 | `/sk:brainstorm` | Explore requirements — **no code yet** |
 | 2 | `/sk:frontend-design` or `/sk:api-design` | Design UI or API contracts *(auto-skip if no frontend/API keywords)* |
 | 3 | `/sk:write-plan` | Write a decision-complete plan to `tasks/todo.md` |
@@ -77,6 +78,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:deep-dive` | Bug investigation for unknown root causes (trace → interview → fix) |
 | `/sk:deep-interview` | Socratic requirements-gathering with ambiguity scoring (auto-run by start/autopilot) |
 | `/sk:deps-audit` | CVE scan, license compliance, outdated packages — runs automatically in `/sk:gates` Batch 1 |
+| `/sk:ci` | Set up GitHub Actions or GitLab CI (`--claude` fast-path for ShipKit PR review) |
 | `/sk:e2e` | E2E behavioral verification |
 | `/sk:eval` | Define, run, report evals, and benchmark skill token/quality impact |
 | `/sk:execute-plan` | Implement plan in batches |
@@ -88,6 +90,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:gates` | All quality gates in parallel batches |
 | `/sk:health` | Harness self-audit scorecard (7 categories, 0-70) |
 | `/sk:hotfix` | Emergency fix workflow (skips design/TDD) |
+| `/sk:investigate` | Read-only feature-area exploration before brainstorm (maps entry points, data model, tests) |
 | `/sk:laravel-init` | Configure existing Laravel project |
 | `/sk:laravel-new` | Scaffold new Laravel project |
 | `/sk:learn` | Extract reusable patterns from sessions |
@@ -98,6 +101,7 @@ Requirements change mid-workflow? Run `/sk:change` — it classifies the scope a
 | `/sk:release` | Version bump + tag (`--android` / `--ios` for store audit) |
 | `/sk:resume-session` | Resume a previously saved session |
 | `/sk:retro` | Post-ship retrospective |
+| `/sk:respond-review` | Triage `/sk:review` findings (fix-now / defer / dispute); auto-invoked by gates Batch 3 |
 | `/sk:reverse-doc` | Generate docs from existing code |
 | `/sk:review` | 7-dimension self-review of branch changes |
 | `/sk:safety-guard` | Protect against destructive ops (careful/freeze/guard) |
