@@ -398,20 +398,25 @@ If the diff includes test files, review them with the same rigor as production c
 **Blast radius:** X changed files + Y dependents = Z total review scope
 **Review dimensions:** Correctness, Security, Performance, Reliability, Design, Best Practices, Documentation, Testing, Blast Radius
 
+### Verification Status
+- **verified:** N findings — directly confirmed in changed code (read in full)
+- **inferred:** N findings — derived from blast-radius analysis (callers not fully read)
+- **blocked:** N findings — could not be fully checked (noted below)
+
 ### Critical (must fix before merge)
-- **[Correctness]** [src/checkout/cart.ts:42:processOrder:function] Description of critical issue
+- **[Correctness]** `[verified]` [src/checkout/cart.ts:42:processOrder:function] Description of critical issue
   **Why:** Explanation of impact — what breaks, who is affected, how likely
-- **[Security]** [FILE:LINE:SYMBOL] Description
+- **[Security]** `[inferred]` [FILE:LINE:SYMBOL] Description
   **Why:** ...
 
 ### Warning (should fix)
-- **[Performance]** [FILE:LINE:SYMBOL] Description
+- **[Performance]** `[verified]` [FILE:LINE:SYMBOL] Description
   **Why:** Explanation of risk — what degrades, under what conditions
-- **[Reliability]** [FILE:LINE:SYMBOL] Description
+- **[Reliability]** `[inferred]` [FILE:LINE:SYMBOL] Description
   **Why:** ...
 
 ### Nitpick (consider for next time)
-- **[Design]** [FILE:LINE:SYMBOL] Description
+- **[Design]** `[verified]` [FILE:LINE:SYMBOL] Description
   **Why:** Explanation of improvement — readability, maintainability, conventions
 
 ### What Looks Good
@@ -419,6 +424,11 @@ If the diff includes test files, review them with the same rigor as production c
 ```
 
 **Symbol format:** `file:line:name:type` — use `:symbol` as placeholder in examples. Type is one of: `function`, `method`, `class`, `variable`, `hook`, `component`
+
+**Verification status per finding:**
+- `[verified]` — file was read in full; finding is directly confirmed
+- `[inferred]` — finding comes from blast-radius analysis; file was not fully read, impact is deduced
+- `[blocked]` — could not be checked (file inaccessible, symbol ambiguous, >100 blast-radius matches)
 
 **Severity guidelines:**
 - **Critical:** Will cause bugs in production, security vulnerability, data loss, or crash. Must fix.
@@ -428,10 +438,48 @@ If the diff includes test files, review them with the same rigor as production c
 **Rules:**
 - Maximum 20 items total (prioritize by severity, then by category)
 - Every item must tag its review dimension: `[Correctness]`, `[Security]`, `[Performance]`, `[Reliability]`, `[Design]`, `[Best Practices]`, `[Testing]`, `[Documentation]`, `[Blast Radius]`
+- Every item must include a verification status tag: `[verified]`, `[inferred]`, or `[blocked]`
 - Use `[Blast Radius]` for issues found in dependent files — callers broken by changed signatures, importers affected by removed exports, tests that no longer cover the changed behavior
 - Every item must reference a specific file, line, and symbol using `[FILE:LINE:SYMBOL]` format
 - Every item must explain **why** it matters — the impact, not just the symptom
 - Include "What Looks Good" (2-3 items) — acknowledge strong patterns to reinforce them
+- Never mark a finding `[verified]` unless the relevant file was read. If it couldn't be confirmed, it is `[inferred]` or `[blocked]`.
+
+### 11.5. Write Provenance Sidecar
+
+After generating the report, write `tasks/review-provenance.md`:
+
+```markdown
+# Review Provenance — [branch-name] — [YYYY-MM-DD]
+
+## Files Reviewed
+| File | How reviewed | Status |
+|------|-------------|--------|
+| src/path/to/file.ts | Read in full | verified |
+| src/path/to/caller.ts | Blast-radius grep only | inferred |
+
+## Blast-Radius Items
+| Symbol | Dependent file | Verification |
+|--------|---------------|-------------|
+| processOrder | src/checkout/cart.ts | verified — read call site |
+| validateInput | src/middleware/auth.ts | inferred — not fully read |
+
+## Dimensions Checked
+| Dimension | Status | Notes |
+|-----------|--------|-------|
+| Correctness | verified | |
+| Security | verified | |
+| Performance | inferred | No load profile available |
+| Reliability | verified | |
+| Design | verified | |
+| Testing | verified | |
+| Documentation | skipped | No doc files in diff |
+
+## Unresolved / Blocked
+- [anything that could not be confirmed — symbol matched >100 files, file unreadable, etc.]
+```
+
+This file is written once per review pass and overwritten on re-runs. It is never committed — add `tasks/review-provenance.md` to `.gitignore` if not already present.
 
 ### 12. Fix and Re-run
 

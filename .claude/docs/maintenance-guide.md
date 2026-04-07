@@ -439,4 +439,58 @@ All three must stay version-synced with `package.json`. The `.github/workflows/s
 
 ---
 
-Last updated: 2026-04-07 (sk:investigate Step 0.5, sk:respond-review, `<private>` tag convention, sk:ci --claude fast-path)
+---
+
+## When You Change the Honest Status Label Convention
+
+Status labels (`verified`, `unverified`, `inferred`, `blocked`) appear in three places: progress.md entries, review findings, and the review provenance sidecar. Changes to the label vocabulary must stay consistent across all three.
+
+| File | What to change |
+|------|---------------|
+| `CLAUDE.md` | Project Memory → "Honest status labels" line — source of truth for the label definitions |
+| `skills/sk:review/SKILL.md` | Step 11 report format (per-finding tag), Verification Status block, verification status rules, Step 11.5 provenance sidecar tables |
+| `skills/sk:setup-claude/templates/CLAUDE.md.template` | Mirror CLAUDE.md Project Memory section |
+
+**Label invariants** (must stay consistent across all files):
+- `verified` — file read in full; finding directly confirmed
+- `inferred` — derived from blast-radius analysis; file not fully read
+- `blocked` — could not be checked (>100 matches, file inaccessible, symbol ambiguous)
+- `unverified` — produced but not yet tested (progress.md only)
+
+**Provenance sidecar:** `tasks/review-provenance.md` is written by sk:review Step 11.5 and overwritten on each review pass. It is ephemeral — add it to `.gitignore` if not already present. It is never committed.
+
+---
+
+## When You Change the Progress.md Lab Notebook Protocol
+
+The progress.md lab notebook rule governs three behaviors: read-before-resume, continuous append with `Next:` lines, and honest status labeling. All three are enforced by the assistant at write time.
+
+| File | What to change |
+|------|---------------|
+| `CLAUDE.md` | Project Memory section — "Write continuously", "Read before resuming", and "Honest status labels" lines |
+| `skills/sk:setup-claude/templates/CLAUDE.md.template` | Mirror CLAUDE.md Project Memory section |
+
+**Protocol invariants:**
+- Read `tasks/progress.md` before resuming any substantial in-progress session
+- Every entry must include what was tried, what failed, and what to try next
+- Every entry must end with a `Next:` line stating what the next session should do first
+- Status labels (`verified`/`unverified`/`inferred`/`blocked`) must be used instead of vague language
+
+---
+
+## When You Change the Slug-Based Artifact Naming Convention
+
+Slug naming is currently used by sk:deep-dive for intermediate trace artifacts. If it's extended to other long-running skills, keep the derivation rules consistent.
+
+| File | What to change |
+|------|---------------|
+| `skills/sk:deep-dive/SKILL.md` | Stage 1 slug derivation block — slug format, output path pattern |
+
+**Slug invariants:**
+- Lowercase, hyphens only, ≤5 words, no filler words
+- Intermediate artifacts written to `tasks/.drafts/<slug>-<type>.md`
+- `tasks/spec.md` remains the canonical fixed-name output (referenced by autopilot/start)
+
+---
+
+Last updated: 2026-04-07 (sk:investigate Step 0.5, sk:respond-review, `<private>` tag convention, sk:ci --claude fast-path, Feynman steal: status labels, progress.md lab notebook, slug naming, orchestration principle, review provenance sidecar)

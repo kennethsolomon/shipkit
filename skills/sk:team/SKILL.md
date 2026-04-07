@@ -14,6 +14,10 @@ Splits implementation across specialized parallel agents when a task spans multi
 - Tasks where frontend and backend have clear boundaries (separate directories)
 - Changes large enough that parallel implementation saves meaningful time
 
+## Orchestration Principle
+
+Multi-agent decomposition is an internal tactic, not the primary UX. The user sees merged results and a team summary — not the internal agent coordination. Do not expose intermediate agent states, inter-agent handoffs, or worktree mechanics in user-facing output unless explicitly asked.
+
 ## When NOT to Use
 
 - Backend-only or frontend-only tasks — single agent is faster

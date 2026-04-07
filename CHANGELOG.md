@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.29.0] - 2026-04-07
+
+### Added
+- **`/sk:review` provenance sidecar (Step 11.5)** — after each review pass, writes `tasks/review-provenance.md` recording which files were read in full vs. grep-only, blast-radius verification per symbol, and which dimensions were checked vs. skipped. Adapted from Feynman's `.provenance.md` sidecar pattern.
+- **Honest status labels** — `verified` / `unverified` / `inferred` / `blocked` labels now required on every `/sk:review` finding and in `tasks/progress.md` entries. Review report gains a Verification Status summary block. Prevents vague language from masking unconfirmed findings. Adapted from Feynman's `inferred` / `blocked` output convention.
+- **Progress.md lab notebook protocol** — `tasks/progress.md` entries now require a `Next:` line stating what the next session should do first. Added explicit "read before resuming substantial work" rule to `CLAUDE.md`. Adapted from Feynman's `CHANGELOG.md` lab notebook pattern.
+- **Slug-based artifact naming in `/sk:deep-dive`** — Stage 1 now derives a short slug from the bug description and writes intermediate trace artifacts to `tasks/.drafts/<slug>-trace.md`, preventing collision when multiple bugs are investigated concurrently. Adapted from Feynman's run-scoped file naming convention.
+- **Agent orchestration principle in `/sk:autopilot` and `/sk:team`** — explicit design rule: multi-agent decomposition is an internal tactic, not primary UX. Users see synthesized results, not coordination internals. Adapted from Feynman's "Do not force chain-shaped orchestration onto the user" principle.
+
+### Changed
+- **`/sk:review` Step 11 report format** — every finding now includes a verification status tag (`[verified]`, `[inferred]`, `[blocked]`). New rule: never tag a finding `[verified]` unless the relevant file was read in full.
+- **`CLAUDE.md` Project Memory section** — strengthened with lab notebook protocol, `Next:` line requirement, and honest status labels convention.
+- **`.claude/docs/maintenance-guide.md`** — three new sections: "When You Change the Honest Status Label Convention", "When You Change the Progress.md Lab Notebook Protocol", "When You Change the Slug-Based Artifact Naming Convention".
+
+---
+
 ## [v3.28.1] - 2026-04-07
 
 ### Removed

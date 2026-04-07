@@ -1,6 +1,6 @@
 {
   "name": "@kennethsolomon/shipkit",
-  "version": "3.28.1",
+  "version": "3.29.0",
   "description": "A structured workflow toolkit for Claude Code.",
   "keywords": [
     "claude",

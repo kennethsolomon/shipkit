@@ -28,6 +28,8 @@ Do NOT write fix code before Stage 2 produces tasks/spec.md. Random fixes before
 
 ## Stage 1 — Parallel Trace
 
+**Slug derivation:** Before launching lanes, derive a short slug from the bug description (lowercase, hyphens, ≤5 words, no filler). Example: "payments failing intermittently" → `payment-failure`. All intermediate trace artifacts use this prefix under `tasks/.drafts/<slug>-trace.md`. This prevents collision when multiple bugs are investigated concurrently.
+
 Run 3 investigation lanes **simultaneously** via Agent tool:
 
 ### Lane 1 — Recent Changes (Bash)

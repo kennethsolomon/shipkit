@@ -20,6 +20,10 @@ Hands-free workflow that executes all 8 phases (including scope check, learn, an
 - Tasks requiring frequent design decisions mid-implementation
 - When you want to review intermediate outputs before proceeding
 
+## Agent Orchestration Principle
+
+Multi-agent decomposition is an internal tactic, not the primary UX. Prefer the simplest path that completes the task — spawn parallel agents only when breadth genuinely justifies the overhead. Do not expose chain-shaped orchestration steps to the user; synthesize and present results, not the internal process.
+
 ## Quality Guarantee
 
 Autopilot runs the EXACT same workflow as manual mode (8 phases + optional pre-phases: investigate, explore, design, plan, branch, implement + scope check, commit, gates, ship + learn + retro):
