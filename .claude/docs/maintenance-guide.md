@@ -173,9 +173,9 @@ Gates live in `skills/sk:gates/SKILL.md`. Batch order affects agent invocation.
 
 **npm publishing is manual — the user runs it, not `/sk:release`.**
 
-`/sk:release` handles: version bump → CHANGELOG update → git commit → annotated tag → push tag to GitHub.
+`/sk:release` handles: version bump → CHANGELOG update → git commit → annotated tag → push branch + tag to GitHub → **create GitHub Release** via `gh release create`.
 
-After the tag is pushed, the user publishes manually:
+After the GitHub Release is created, the user publishes manually:
 ```bash
 npm publish              # unscoped packages
 npm publish --access public  # scoped packages (@scope/pkg)

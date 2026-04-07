@@ -558,7 +558,7 @@ const COMMANDS = [
   { cmd: '/sk:update-task', desc: 'Mark current task done in tasks/todo.md and log completion to tasks/progress.md.', cat: 'complete', icon: '☑️', flag: 'required' },
   { cmd: '/sk:finish-feature', desc: 'Changelog + architectural change log entry + PR creation.', cat: 'complete', icon: '🚢', flag: 'required' },
   { cmd: '/sk:features', desc: 'Sync docs/sk:features/ specs with the current codebase. Auto-detects changed areas.', cat: 'complete', icon: '📋', flag: 'required' },
-  { cmd: '/sk:release', desc: 'Version bump + changelog + git tag + push to GitHub. --android / --ios for mobile store audit. npm publish is manual (user responsibility). Never auto-skipped.', cat: 'complete', icon: '🏷️', flag: null },
+  { cmd: '/sk:release', desc: 'Version bump + changelog + git tag + GitHub Release (via gh). --android / --ios for mobile store audit. npm publish is manual. Never auto-skipped.', cat: 'complete', icon: '🏷️', flag: null },
   { cmd: '/sk:learn', desc: 'Extract reusable patterns from the current session into ~/.claude/skills/learned/.', cat: 'complete', icon: '🧠', flag: 'required' },
   { cmd: '/sk:retro', desc: 'Post-ship retrospective: velocity, blockers, patterns, and next actions.', cat: 'complete', icon: '🔄', flag: 'required' },
 

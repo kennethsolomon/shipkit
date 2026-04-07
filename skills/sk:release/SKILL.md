@@ -13,7 +13,7 @@ Automate the release process with optional mobile store submission review.
 
 | Invocation | What happens |
 |---|---|
-| `/sk:release` | Git release only: version bump, CHANGELOG, tag, push to GitHub. npm publish is manual. |
+| `/sk:release` | Version bump, CHANGELOG, git tag, push to GitHub, GitHub Release created via `gh`. npm publish is manual. |
 | `/sk:release --android` | Git release + Play Store readiness audit |
 | `/sk:release --ios` | Git release + App Store readiness audit |
 | `/sk:release --android --ios` | Git release + both store audits |
@@ -31,12 +31,13 @@ Run the existing release script (`release.sh`) which handles:
 
 1. Auto-detect project info (name, version, GitHub URL)
 2. Prompt for new version number (semver)
-3. Update CHANGELOG.md ([Unreleased] -> [Version])
-4. Update version in CLAUDE.md
+3. Update CHANGELOG.md ([Unreleased] -> [Version], or insert new section at top)
+4. Update version in `package.json` (if present) and `CLAUDE.md`
 5. Create git commit + annotated tag
-6. Push tag to GitHub
+6. Push branch + tag to GitHub
+7. Create a GitHub Release via `gh release create <tag> --title "<tag>" --notes "<changelog section for this version>"`
 
-**Note:** npm publishing is the user's responsibility and is not done by this skill. After the tag is pushed, the user runs `npm publish` manually.
+**Note:** npm publishing is the user's responsibility and is not done by this skill. After the GitHub Release is created, the user runs `npm publish` manually.
 
 If no flags were passed, stop here.
 
