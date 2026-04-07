@@ -452,6 +452,7 @@
       <table id="table-autoskip">
         <thead><tr><th>Gate / Step</th><th>Skip condition</th></tr></thead>
         <tbody>
+          <tr><td><code>/sk:investigate</code> (step 0.5)</td><td>Task has concrete anchors (file paths, function names, line numbers), repo is greenfield (no package.json/composer.json/go.mod/Cargo.toml), task is a bug flow, or tasks/investigation.md written within the last 4 hours</td></tr>
           <tr><td><code>/sk:frontend-design</code> &amp; <code>/sk:api-design</code> (step 2)</td><td>No frontend keywords (component, view, page, CSS, template, blade, vue, react, svelte, UI, form, modal, button) AND no API keywords (endpoint, route, controller, API)</td></tr>
           <tr><td><code>/sk:schema-migrate</code> (step 5)</td><td>No DB keywords (migration, schema, table, column, model, database, foreign key, index, seed)</td></tr>
           <tr><td><code>/sk:perf</code> (in gates)</td><td>No frontend AND no DB keywords</td></tr>
@@ -557,7 +558,7 @@ const COMMANDS = [
   { cmd: '/sk:update-task', desc: 'Mark current task done in tasks/todo.md and log completion to tasks/progress.md.', cat: 'complete', icon: '☑️', flag: 'required' },
   { cmd: '/sk:finish-feature', desc: 'Changelog + architectural change log entry + PR creation.', cat: 'complete', icon: '🚢', flag: 'required' },
   { cmd: '/sk:features', desc: 'Sync docs/sk:features/ specs with the current codebase. Auto-detects changed areas.', cat: 'complete', icon: '📋', flag: 'required' },
-  { cmd: '/sk:release', desc: 'Version bump + changelog + git tag. --android / --ios for mobile store audit. Never auto-skipped.', cat: 'complete', icon: '🏷️', flag: null },
+  { cmd: '/sk:release', desc: 'Version bump + changelog + git tag + push to GitHub. --android / --ios for mobile store audit. npm publish is manual (user responsibility). Never auto-skipped.', cat: 'complete', icon: '🏷️', flag: null },
   { cmd: '/sk:learn', desc: 'Extract reusable patterns from the current session into ~/.claude/skills/learned/.', cat: 'complete', icon: '🧠', flag: 'required' },
   { cmd: '/sk:retro', desc: 'Post-ship retrospective: velocity, blockers, patterns, and next actions.', cat: 'complete', icon: '🔄', flag: 'required' },
 
@@ -583,6 +584,8 @@ const COMMANDS = [
   { cmd: '/sk:plan', desc: 'Create or refresh tasks planning files and start planning.', cat: 'devtool', icon: '🗺️', flag: null },
   { cmd: '/sk:ci', desc: 'Set up GitHub Actions or GitLab CI pipeline configuration. --claude fast-path scaffolds ShipKit-aware PR review with 8-dimension prompt.', cat: 'devtool', icon: '⚙️', flag: null },
 
+  { cmd: '/sk:plugin', desc: 'Package skills as a distributable Claude Code plugin for sharing via the marketplace.', cat: 'setup', icon: '📦', flag: null },
+
   // Setup & Configuration
   { cmd: '/sk:setup-claude', desc: 'Bootstrap or repair Claude Code project scaffolding — deploys .claude docs, commands, tasks files.', cat: 'setup', icon: '🏗️', flag: null },
   { cmd: '/sk:setup-optimizer', desc: 'Diagnose, update workflow, deploy hooks, enrich CLAUDE.md, and keep project infrastructure current.', cat: 'setup', icon: '🔧', flag: null },
@@ -600,6 +603,7 @@ const COMMANDS = [
 
 const FEATURE_STEPS = [
   { num: '0', cmd: '/sk:deep-interview', desc: 'Clarify requirements via Socratic interview. Auto-run for vague tasks. Outputs tasks/spec.md. Skip if task has concrete anchors (file paths, function names, specific scope).', flag: 'optional', flagClass: 'badge-optional' },
+  { num: '0.5', cmd: '/sk:investigate', desc: 'Read-only feature-area exploration. Maps entry points, data model, tests, config. Outputs tasks/investigation.md. Auto-skipped if task has concrete anchors, is greenfield, is a bug flow, or investigation.md was written within the last 4 hours.', flag: 'auto-skip', flagClass: 'badge-autoskip' },
   { num: '1', cmd: '/sk:brainstorm', desc: 'Explore requirements, design, and context. Reads todo.md, lessons.md, findings.md, spec.md. No code written.', flag: 'required', flagClass: 'badge-required' },
   { num: '2', cmd: '/sk:frontend-design or /sk:api-design', desc: 'Design UI mockups or API contracts before implementation. No code. Use --pencil for visual mockup.', flag: 'auto-skip', flagClass: 'badge-autoskip' },
   { num: '3', cmd: '/sk:write-plan', desc: 'Write a decision-complete plan into tasks/todo.md. Runs auto-skip detection for step 2. No code.', flag: 'required', flagClass: 'badge-required' },

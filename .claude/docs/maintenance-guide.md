@@ -169,6 +169,24 @@ Gates live in `skills/sk:gates/SKILL.md`. Batch order affects agent invocation.
 
 ---
 
+## npm Publish Policy
+
+**npm publishing is manual — the user runs it, not `/sk:release`.**
+
+`/sk:release` handles: version bump → CHANGELOG update → git commit → annotated tag → push tag to GitHub.
+
+After the tag is pushed, the user publishes manually:
+```bash
+npm publish              # unscoped packages
+npm publish --access public  # scoped packages (@scope/pkg)
+```
+
+This applies to all release types (patch, minor, major). The skill never runs `npm publish` automatically.
+
+**When documenting `/sk:release`:** describe it as "version bump + changelog + git tag + push to GitHub". Do not mention npm publish as an automated step.
+
+---
+
 ## How Updates Reach Existing Projects
 
 Understanding this propagation path is essential — different change types require different user actions.

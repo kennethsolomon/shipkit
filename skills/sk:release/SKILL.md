@@ -13,7 +13,7 @@ Automate the release process with optional mobile store submission review.
 
 | Invocation | What happens |
 |---|---|
-| `/sk:release` | Git release only: version bump, CHANGELOG, tag, push |
+| `/sk:release` | Git release only: version bump, CHANGELOG, tag, push to GitHub. npm publish is manual. |
 | `/sk:release --android` | Git release + Play Store readiness audit |
 | `/sk:release --ios` | Git release + App Store readiness audit |
 | `/sk:release --android --ios` | Git release + both store audits |
@@ -36,22 +36,7 @@ Run the existing release script (`release.sh`) which handles:
 5. Create git commit + annotated tag
 6. Push tag to GitHub
 
-7. **npm publish** — check if this is a publishable package:
-   - `package.json` exists
-   - Has a `name` field AND at least one of: `"main"`, `"bin"`, `"exports"` (publishable package, not an app)
-   - Does NOT have `"private": true`
-
-   If all conditions met, confirm before publishing:
-   > "Publish `[name]@[version]` to npm? [y/n]"
-   > "(If your account has 2FA enabled, have your OTP ready)"
-
-   On yes:
-   ```bash
-   npm publish                         # unscoped packages
-   npm publish --access public         # scoped packages (@scope/pkg) unless publishConfig.access is already set
-   ```
-
-   On no, or conditions not met: skip — user can publish manually with `npm publish`.
+**Note:** npm publishing is the user's responsibility and is not done by this skill. After the tag is pushed, the user runs `npm publish` manually.
 
 If no flags were passed, stop here.
 
