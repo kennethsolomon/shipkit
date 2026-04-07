@@ -511,4 +511,4 @@ Slug naming is currently used by sk:deep-dive for intermediate trace artifacts. 
 
 ---
 
-Last updated: 2026-04-07 (sk:investigate Step 0.5, sk:respond-review, `<private>` tag convention, sk:ci --claude fast-path, Feynman steal: status labels, progress.md lab notebook, slug naming, orchestration principle, review provenance sidecar)
+Last updated: 2026-04-07 (sk:investigate Step 0.5, sk:respond-review, `<private>` tag convention, sk:ci --claude fast-path, Feynman steal: status labels, progress.md lab notebook, slug naming, orchestration principle, review provenance sidecar, npm publish policy, dashboard sync v3.29.1)
