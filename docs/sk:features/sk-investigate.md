@@ -10,7 +10,7 @@
 
 ## Overview
 
-Read-only feature-area exploration that maps an unfamiliar brownfield subsystem before `/sk:brainstorm` runs. Dispatches 3 parallel Explore agents across three lanes (entry points, data model, tests + config), reads 3-5 load-bearing files max, and writes a structured `tasks/investigation.md` report.
+Read-only feature-area exploration that maps an unfamiliar brownfield subsystem before `/sk:brainstorm` runs. Dispatches 3 parallel Explore agents across three lanes (entry points, data model, tests + config), reads 3-5 load-bearing files max, and writes a structured `tasks/investigation.md` report. Output includes **god nodes** (top 3-5 most-referenced files in the area) and **suggested questions** (4-5 questions the terrain map is uniquely positioned to answer).
 
 **Hard gate:** no code changes. The only file investigate writes is `tasks/investigation.md`.
 
@@ -33,7 +33,7 @@ Adapted from [gstack](https://github.com/garrytan/gstack)'s sprint-start review 
 
 | Output | Destination | Notes |
 |--------|-------------|-------|
-| `tasks/investigation.md` | Project root | Structured report with 5 tables |
+| `tasks/investigation.md` | Project root | Structured report with 7 sections (entry points, data model, tests, config, god nodes, unknowns, suggested questions) |
 | Terminal summary | stdout | Lists files read, lanes completed, next action |
 
 ---

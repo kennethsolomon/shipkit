@@ -114,7 +114,8 @@ Update specs after shipping changes: `/sk:features` auto-detects what changed.
 | [sk-deep-interview.md](sk:features/sk-deep-interview.md) | 2026-04-01 | v3.23.0 |
 | [sk-deep-dive.md](sk:features/sk-deep-dive.md) | 2026-04-01 | v3.23.0 |
 | [sk-skill-creator.md](sk:features/sk-skill-creator.md) | 2026-04-06 | v3.27.0 |
-| [sk-eval.md](sk:features/sk-eval.md) | 2026-04-06 | v3.27.0 |
+| [sk-eval.md](sk:features/sk-eval.md) | 2026-04-08 | v3.29.1 |
 | [sk-steal.md](sk:features/sk-steal.md) | 2026-04-06 | v3.27.1 |
-| [sk-investigate.md](sk:features/sk-investigate.md) | 2026-04-07 | v3.28.0 |
+| [sk-investigate.md](sk:features/sk-investigate.md) | 2026-04-08 | v3.29.1 |
 | [sk-respond-review.md](sk:features/sk-respond-review.md) | 2026-04-07 | v3.28.0 |
+| [sk-explain.md](sk:features/sk-explain.md) | 2026-04-08 | v3.29.1 |

@@ -10,7 +10,7 @@
 
 ## Overview
 
-Explain any code — file, function, module, or concept — with a structured 5-section format: one-sentence summary, mental model, visual ASCII diagram, key details, and modification guide. Scales depth to complexity.
+Explain any code — file, function, module, or concept — with a structured 6-section format: one-sentence summary, mental model, visual ASCII diagram, key details, modification guide, and suggested questions. Scales depth to complexity.
 
 ---
 
@@ -27,7 +27,7 @@ Explain any code — file, function, module, or concept — with a structured 5-
 
 | Output | Destination | Notes |
 |--------|-------------|-------|
-| Explanation | Terminal output | 5-section structured format |
+| Explanation | Terminal output | 6-section structured format (adds suggested questions) |
 
 ---
 
@@ -35,7 +35,7 @@ Explain any code — file, function, module, or concept — with a structured 5-
 
 1. Parse argument: file path, function name, or concept
 2. Read the actual code (never guess from names)
-3. Produce 5 sections: summary, mental model, visual diagram, key details, how to modify
+3. Produce 6 sections: summary, mental model, visual diagram, key details, how to modify, suggested questions
 4. Scale depth to complexity — compact for utilities, thorough for core modules
 
 ---

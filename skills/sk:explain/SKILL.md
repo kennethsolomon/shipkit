@@ -62,15 +62,18 @@ What would someone need to know to safely change this code?
 - What would break if changed carelessly?
 - Are there tests covering this? Where?
 
+### 6. Suggested questions
+4-5 questions this analysis is uniquely positioned to answer — things the code surfaces that aren't obvious from reading it linearly. Frame each as a question worth investigating.
+
 ## Intensity
 
 Read `.shipkit/config.json` for intensity settings. Resolution: `intensity_overrides["sk:explain"]` → global `intensity` → `full`.
 
 | Level | Explain behavior |
 |-------|-----------------|
-| **lite** | Section 1 (one-sentence summary) + Section 4 (key details) only. Skip diagram and modification guide. |
-| **full** | All 5 sections. Scale depth to complexity. Default. |
-| **deep** | All 5 sections with expanded detail. Include alternative approaches, historical context, and cross-references to related code. |
+| **lite** | Section 1 (one-sentence summary) + Section 4 (key details) only. Skip diagram, modification guide, and suggested questions. |
+| **full** | All 6 sections. Scale depth to complexity. Default. |
+| **deep** | All 6 sections with expanded detail. Include alternative approaches, historical context, and cross-references to related code. |
 
 ## Rules
 

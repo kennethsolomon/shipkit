@@ -429,6 +429,7 @@ If the diff includes test files, review them with the same rigor as production c
 - `[verified]` — file was read in full; finding is directly confirmed
 - `[inferred]` — finding comes from blast-radius analysis; file was not fully read, impact is deduced
 - `[blocked]` — could not be checked (file inaccessible, symbol ambiguous, >100 blast-radius matches)
+- `[ambiguous]` — finding could mean multiple things; impact unclear without further disambiguation
 
 **Severity guidelines:**
 - **Critical:** Will cause bugs in production, security vulnerability, data loss, or crash. Must fix.
@@ -438,7 +439,7 @@ If the diff includes test files, review them with the same rigor as production c
 **Rules:**
 - Maximum 20 items total (prioritize by severity, then by category)
 - Every item must tag its review dimension: `[Correctness]`, `[Security]`, `[Performance]`, `[Reliability]`, `[Design]`, `[Best Practices]`, `[Testing]`, `[Documentation]`, `[Blast Radius]`
-- Every item must include a verification status tag: `[verified]`, `[inferred]`, or `[blocked]`
+- Every item must include a verification status tag: `[verified]`, `[inferred]`, `[blocked]`, or `[ambiguous]`
 - Use `[Blast Radius]` for issues found in dependent files — callers broken by changed signatures, importers affected by removed exports, tests that no longer cover the changed behavior
 - Every item must reference a specific file, line, and symbol using `[FILE:LINE:SYMBOL]` format
 - Every item must explain **why** it matters — the impact, not just the symptom

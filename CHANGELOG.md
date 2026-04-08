@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.29.2] - 2026-04-08
+
+### Changed
+- **`/sk:investigate`** — output now includes **God Nodes** (top 3-5 most-referenced files in the feature area) and **Suggested Questions** (4-5 questions the terrain map is uniquely positioned to answer). Adapted from graphify's god-node surfacing pattern.
+- **`/sk:explain`** — expanded from 5-section to 6-section format; new Section 6 surfaces 4-5 suggested questions the analysis uniquely raises. `lite` intensity skips Section 6.
+- **`/sk:eval benchmark`** — now writes a `worked/<skill>-YYYYMMDD/` folder after each benchmark run (prompts, raw outputs, honest `review.md` verdict). Adapted from graphify's `worked/{slug}/` convention.
+- **Honest status labels** — added `ambiguous` (could mean multiple things; needs disambiguation before acting) as a fifth label alongside `verified`, `unverified`, `inferred`, `blocked`. Propagated to `sk:review` verification status tags, CLAUDE.md, and maintenance-guide.
+
+---
+
 ## [v3.29.1] - 2026-04-07
 
 ### Changed

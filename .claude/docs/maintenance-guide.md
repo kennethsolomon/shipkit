@@ -474,6 +474,7 @@ Status labels (`verified`, `unverified`, `inferred`, `blocked`) appear in three 
 - `inferred` — derived from blast-radius analysis; file not fully read
 - `blocked` — could not be checked (>100 matches, file inaccessible, symbol ambiguous)
 - `unverified` — produced but not yet tested (progress.md only)
+- `ambiguous` — could mean multiple things; needs disambiguation before acting (progress.md and review)
 
 **Provenance sidecar:** `tasks/review-provenance.md` is written by sk:review Step 11.5 and overwritten on each review pass. It is ephemeral — add it to `.gitignore` if not already present. It is never committed.
 
@@ -511,4 +512,4 @@ Slug naming is currently used by sk:deep-dive for intermediate trace artifacts. 
 
 ---
 
-Last updated: 2026-04-07 (sk:investigate Step 0.5, sk:respond-review, `<private>` tag convention, sk:ci --claude fast-path, Feynman steal: status labels, progress.md lab notebook, slug naming, orchestration principle, review provenance sidecar, npm publish policy, dashboard sync v3.29.1)
+Last updated: 2026-04-08 (graphify steal: ambiguous status label, god nodes + suggested questions in sk:investigate, Section 6 in sk:explain, worked examples in sk:eval)

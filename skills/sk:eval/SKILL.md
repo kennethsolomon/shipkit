@@ -218,6 +218,19 @@ Quality: [average score delta if graded, or "not graded"]
 
 Save results JSON with metadata (model, date, trials, skill hash).
 
+Also write a `worked/{skill-name}-YYYYMMDD/` folder alongside the results:
+
+```
+worked/{skill-name}-YYYYMMDD/
+├── prompts.md        # the prompts used (human-readable)
+├── outputs/          # raw agent outputs, one file per prompt
+│   ├── {slug}-with-skill.md
+│   └── {slug}-baseline.md
+└── review.md         # honest verdict: what the skill got right, wrong, and missed
+```
+
+`review.md` must be honest — note failures, not just wins. This is the source of truth for whether the skill actually improved behavior.
+
 **Step 5 — Update README (optional):**
 
 If `--update-readme` flag is passed and README.md contains `<!-- BENCHMARK-TABLE-START -->` / `<!-- BENCHMARK-TABLE-END -->` markers, replace the content between them with the new table.

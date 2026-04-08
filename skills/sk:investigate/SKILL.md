@@ -129,10 +129,25 @@ Write a single findings report. Structure:
 - `docs/decisions.md` 2026-01-14: decided to use Stripe webhooks over polling
 - `tasks/lessons.md` 2026-02-03: never cache invoice amounts — always read from Stripe
 
+## God Nodes
+
+Top 3-5 files/modules with the most inbound references in this area (most imported, most depended on). These are the highest-leverage points — changes here have the widest blast radius.
+
+- `app/Services/BillingService.php` — imported by 6 controllers and 3 jobs
+- `app/Models/Invoice.php` — referenced in 12 files
+
 ## Unknowns / Open Questions
 
 - Is the refund flow covered by existing tests? *(no — gap found)*
 - How does the retry policy for failed charges work? *(not obvious from the handler — needs a brainstorm discussion)*
+
+## Suggested Questions
+
+4-5 questions this terrain map is uniquely positioned to answer:
+
+1. What happens if BillingService fails mid-charge — is there a rollback path?
+2. Why does InvoiceController bypass BillingService for status updates?
+3. Are there any callers of the legacy `charge_v1` method still active?
 
 ## Entry Points for the Brainstorm
 

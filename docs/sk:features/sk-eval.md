@@ -33,6 +33,7 @@ Formal evaluation framework for measuring agent reliability and code quality. De
 | Eval results | `.claude/evals/<feature>.log` | Timestamped pass/fail |
 | Benchmark results | `.claude/evals/<skill>/results/` | JSON with metadata, token stats |
 | Benchmark report | Terminal | Markdown table with savings % |
+| Worked example | `worked/<skill>-YYYYMMDD/` | Prompts, raw outputs, honest `review.md` verdict |
 
 ---
 
