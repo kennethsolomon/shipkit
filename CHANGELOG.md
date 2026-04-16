@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.30.0] - 2026-04-16
+
+### Changed
+- **`/sk:frontend-design`** — typography now requires a 3-word brand-voice exercise before selecting any font, preventing the "banned Inter → next monoculture" failure mode. Color guidance updated to OKLCH (not HSL) with chroma reduction rules near white/black, tinted-neutral guidance, and 60-30-10 by visual weight. Adapted from pbakaus/impeccable.
+- **`/sk:review` Step 7** — code-quality findings now use a named slop taxonomy: Dead code → Duplication → Needless abstraction → Boundary violations → Missing tests. Priority-ordered cleanup passes; each finding tagged with its smell type. Adapted from Yeachan-Heo/oh-my-claudecode ai-slop-cleaner.
+- **`/sk:gates` Batch 3** — review cycling now tracks explicit cycle count (`B3_CYCLE=1..3`), exits immediately on 0 findings (goal-met), and logs per-cycle progress lines. Adapted from oh-my-claudecode ultraqa pattern.
+- **`/sk:skill-creator`** — new "Agent Persona Skills" section with 5-component guide (personality, deliverables, success metrics, proven workflow, explicit failure modes) for skills that embody a specialist role. Adapted from msitarzewski/agency-agents design philosophy.
+
+---
+
 ## [v3.29.2] - 2026-04-08
 
 ### Changed
