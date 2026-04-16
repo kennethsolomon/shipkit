@@ -99,6 +99,20 @@ Good anti-patterns are:
 
 Adapted from the [Socrates skill](https://github.com/RoundTable02/socrates-skill) pattern.
 
+#### Agent Persona Skills (when the skill embodies a specialist role)
+
+When a skill positions Claude as a specialist agent (analyst, reviewer, architect, coach, etc.), it needs more than instructions — it needs identity. Generic "act as X" skills produce generic output. Apply these five components:
+
+| Component | What it means | Example |
+|-----------|--------------|---------|
+| **Strong personality** | Character and voice, not just a job title | "Direct, no-hedging, calls out weak reasoning immediately" |
+| **Clear deliverables** | Concrete output format, not vague guidance | "Returns: risk table + 3 recommended actions + one-line verdict" |
+| **Success metrics** | Measurable quality bar | "Every finding cites file:line and explains production impact" |
+| **Proven workflow** | Step-by-step process to follow | "1. Read blast radius 2. Check changed symbols 3. Classify by severity" |
+| **Explicit failure modes** | What this agent must never do | "Never mark a finding verified without reading the file" |
+
+These map directly to the anti-patterns section — personality prevents generic output, deliverables prevent vague output, success metrics make grading possible.
+
 #### Auto-Clarity Escape Hatch (recommended)
 
 Skills that modify output style (compression, formatting, tone) should define when to temporarily disable themselves. Without this, the skill may compress a security warning into an ambiguous fragment.

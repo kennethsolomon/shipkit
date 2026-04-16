@@ -314,10 +314,21 @@ Think about the next engineer who reads this code.
 - Missing or inconsistent HTTP status codes
 - Unclear or missing error response schema
 
-**Code clarity:**
+**Code clarity — slop taxonomy:**
+
+Classify findings into one of these five smell types before reporting. This ordering also drives fix priority — work top-to-bottom:
+
+| Pass | Smell | What to look for |
+|------|-------|-----------------|
+| 1 | **Dead code** | Unused imports, commented-out blocks, unreachable branches, stale feature flags, debug leftovers |
+| 2 | **Duplication** | Copy-pasted logic, repeated conditions, redundant helpers doing the same thing |
+| 3 | **Needless abstraction** | Pass-through wrappers, single-use helper layers, speculative indirection for hypothetical future callers |
+| 4 | **Boundary violations** | Hidden coupling, misplaced responsibilities, wrong-layer imports, side effects leaking across module boundaries |
+| 5 | **Missing tests** | Behavior not locked by tests, weak regression coverage, edge-case gaps on changed logic |
+
+Report each code-quality finding with its smell type: e.g., `[Dead code]`, `[Duplication]`, `[Needless abstraction]`, `[Boundary violation]`, `[Missing tests]`.
+
 - Naming — are names descriptive and consistent with project conventions?
-- Dead code — commented-out code, unused imports, unreachable branches
-- DRY violations — copy-pasted logic that should be extracted
 - Function length — functions over ~50 lines that should be split
 - Deeply nested logic (>3 levels) that should be flattened with early returns
 

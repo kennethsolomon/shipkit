@@ -45,13 +45,18 @@ After Batch 2 completes:
 5. **`code-reviewer` agent** — 8-dimension review (correctness, security, performance, reliability, design, best practices, documentation, testing). Read-only — reports findings.
 6. **`doc-reviewer` agent** (conditional) — if `git diff main..HEAD --name-only` includes any `.md`, `.mdx`, docstring-heavy, or README files, launch `doc-reviewer` in parallel with code-reviewer. It cross-references docs against actual code for accuracy, completeness, and staleness. Skip if no doc files changed.
 
-**Respond protocol:** If either reviewer returns ANY Critical or Warning finding:
-1. Invoke `Skill("sk:respond-review")` — it triages findings into fix-now / defer / dispute, applies fixes, logs deferrals to `tasks/tech-debt.md`, and returns a status (`READY_TO_RERUN` | `BLOCKED`).
-2. On `READY_TO_RERUN` → re-run Batch 3 from scratch (this counts as one gate attempt). Max 3 full Batch 3 attempts before 3-strike escalation.
-3. On `BLOCKED` → trigger 3-strike protocol below immediately (do not re-run).
-4. If the same file:line finding survives two consecutive Batch 3 attempts, `sk:respond-review` auto-escalates to the `architect` agent — no manual intervention needed.
+**Respond protocol — cycle until clean (max 3 cycles):**
 
-If review returns 0 findings, skip the respond protocol and advance to Batch 4.
+Track cycle count: `B3_CYCLE=1`. On each cycle:
+
+1. If review returns **0 findings** → exit immediately. Log: `[Batch 3] Cycle N: 0 findings — goal met.` Advance to Batch 4.
+2. If review returns findings → invoke `Skill("sk:respond-review")`. It triages findings into fix-now / defer / dispute, applies fixes, logs deferrals to `tasks/tech-debt.md`, and returns a status (`READY_TO_RERUN` | `BLOCKED`).
+3. On `READY_TO_RERUN` → increment `B3_CYCLE`, re-run Batch 3. Log: `[Batch 3] Cycle N/3: N findings → fixing → re-running.`
+4. On `BLOCKED` → trigger 3-strike protocol below immediately (do not re-run).
+5. If the **same file:line finding** appears in two consecutive cycles, `sk:respond-review` auto-escalates to the `architect` agent — do not wait for cycle 3.
+6. If `B3_CYCLE > 3` → trigger 3-strike protocol.
+
+Cycle counter resets if the batch is re-entered from a fresh gates run.
 
 Post checkpoint: `[Checkpoint] Batch 3 complete: review. Next: Batch 4 — e2e.`
 

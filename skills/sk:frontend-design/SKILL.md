@@ -29,7 +29,7 @@ Before designing, commit to a BOLD aesthetic direction:
 
 Then produce a **design artifact** — not code — that includes:
 - ASCII or text-based layout mockups for key screens/states
-- Color palette (hex values, CSS variable names)
+- Color palette (OKLCH values + hex fallbacks, CSS variable names)
 - Typography choices (font families, sizes, weights, tracking)
 - Component structure description (what elements exist, their hierarchy)
 - Interaction notes (hover states, transitions, animations to implement)
@@ -37,8 +37,8 @@ Then produce a **design artifact** — not code — that includes:
 
 ## Frontend Aesthetics Guidelines
 
-- **Typography**: Choose beautiful, unique, unexpected fonts. Avoid generic families (Arial, Inter, Roboto, Space Grotesk). Pair a distinctive display font with a refined body font.
-- **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
+- **Typography**: Before typing any font name, write 3 words for the brand voice (e.g., "clinical and mechanical and cold", "warm and handcrafted and nostalgic"). Then pick a font that expresses those words — not your second-favorite from the banned list. Pair a distinctive display font with a refined body font. Avoid generic families (Arial, Inter, Roboto, Space Grotesk, system fonts). Do not simply swap to the next-common alternative — that creates a new monoculture.
+- **Color & Theme**: Use OKLCH, not HSL — equal lightness steps look equal in OKLCH (HSL does not deliver this). As you move toward white or black, reduce chroma (high chroma at extreme lightness looks garish). Tint neutrals slightly toward the brand hue (chroma 0.005–0.01) for subconscious cohesion. Apply the 60-30-10 rule by visual weight: 60% surface/neutral, 30% secondary text/borders, 10% accent — accents work because they're rare. Use CSS variables for all values.
 - **Motion**: Animate for micro-interactions and effects. Prefer CSS-only for HTML; use Motion library for React. One well-orchestrated page load with staggered reveals creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
 - **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
 - **Backgrounds & Visual Details**: Create atmosphere and depth. Add gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, grain overlays — match the aesthetic.
