@@ -21,7 +21,8 @@
   "files": [
     "bin",
     "core",
-    "adapters"
+    "adapters",
+    "CLAUDE.md"
   ],
   "engines": {
     "node": ">=16.7.0"

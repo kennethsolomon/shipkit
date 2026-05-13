@@ -1,6 +1,33 @@
 # Progress Log
 
-### [2026-05-13] Codex target — Phase 1 (core+adapter refactor) — IN PROGRESS
+### [2026-05-13] Codex target — Phase 2 (Codex adapter MVP) — COMPLETED
+- Branch: `feat/codex-target`
+- Built real `adapters/codex/emit.js`:
+  - `parseFrontmatter` — regex-based YAML frontmatter parser (handles single-line strings, quoted/unquoted)
+  - `toCodexName` — `sk:foo` → `sk-foo` for filesystem safety
+  - `emitSkill` — reads Claude SKILL.md, strips Claude-only fields (`model`, `allowed-tools`), emits Codex SKILL.md with name+description only; copies asset tree verbatim
+  - `emitCommand` — promotes slash commands (without skill backing) to Codex skills, synthesizes name from filename
+  - `emitAgentsMd` — generates `<destDir>/AGENTS.md` from ShipKit's CLAUDE.md with Codex-specific header (tool naming map, cloud constraints, invocation guide)
+  - `emitConfigToml` — `.codex/config.toml` with `[features]`, `[profiles.autopilot/fast-track/read-only]`, MCP stubs, subagent stubs
+  - `emitHooksJson` — `.codex/hooks.json` mapping 11 ShipKit hook scripts to 5 Codex hook events (SessionStart, PreToolUse, PostToolUse, UserPromptSubmit, Stop); copies hook .sh files to `.codex/hooks/`
+- Wired `bin/shipkit.js` — passes `repoRoot` to adapter, formats codex install report
+- Added `CLAUDE.md` to package.json `files` so it ships with npm package (used as AGENTS.md source)
+- Verified sandbox install: `shipkit --target=codex` in fresh dir produces:
+  - 51 skills + 12 promoted-from-command skills = 63 entries in `.agents/skills/`
+  - `AGENTS.md` (16,819 bytes, under 32 KiB cap)
+  - `.codex/config.toml`, `.codex/hooks.json`, 11 hook scripts
+- Verified `--target=both` runs claude+codex sequentially, no interference
+- Verified uninstall removes AGENTS.md, .codex/, all 63 sk-prefixed dirs
+- Test suite unchanged: 361 pass / 1 pre-existing fail
+- Known limitations to address in later phases:
+  - AGENTS.md overwrites any user-existing file (no backup); P3 should detect + back up
+  - `.agents/` empty parent left after codex uninstall (cosmetic)
+  - Sub-agent translation (parallel batches in `/sk:gates`, `/sk:team`) — config.toml has placeholder stubs but real `.codex/agents/*.toml` not generated yet (Phase 4)
+  - Tool naming inside skill bodies still references Claude tools (Read/Edit/Write/Grep/Glob) — works because Codex aliases `Bash`/`apply_patch`, but skill bodies may want sed-replacements (Phase 3)
+- Next: Phase 3 — audit each skill body for Claude-specific tool references; sed-replace where unsafe; flag genuinely Claude-only skills (Pencil, context-mode) for cloud-mode env detection.
+
+### [2026-05-13] Codex target — Phase 1 (core+adapter refactor) — COMPLETED
+- Committed: `af85cde` on branch `feat/codex-target`
 - Branch: `feat/codex-target`
 - Goal: dual-target ShipKit (Claude Code primary, OpenAI Codex secondary). Same workflow quality on both.
 - Research (verified): two parallel agents produced `tasks/codex-migration-inventory.md` (82+ Claude-Code touchpoints, 5 critical risks) and `tasks/codex-migration-research.md` (Codex CLI + Cloud capability map, 17 sources). Plan in `tasks/codex-migration-plan.md`.
@@ -1689,3 +1716,4 @@
 ### [2026-05-13 01:10:26] Session ended
 - Branch: main
 - Commits this session: 0
+- [08:06] Auto: git commit — "$(cat <<"

@@ -103,7 +103,8 @@ function targetsFromFlag(flag) {
 // ── Install / Uninstall ──────────────────────────────────────────────────────
 function runInstall(targets) {
   process.stdout.write(banner);
-  const coreDir = path.join(__dirname, '..', 'core');
+  const pkgDir  = path.join(__dirname, '..');
+  const coreDir = path.join(pkgDir, 'core');
 
   for (const target of targets) {
     console.log(`  ${bold}Target:${reset} ${cyan}${target}${reset}`);
@@ -112,7 +113,7 @@ function runInstall(targets) {
 
     const adapter = loadAdapter(target);
     try {
-      const r = adapter.emit({ coreDir, destDir });
+      const r = adapter.emit({ coreDir, destDir, repoRoot: pkgDir });
       reportInstall(target, r);
     } catch (err) {
       console.log(`  ${red}✗${reset} ${target} adapter failed: ${err.message}`);
@@ -121,7 +122,7 @@ function runInstall(targets) {
     }
   }
 
-  console.log(`\n  ${green}Done!${reset} Run ${cyan}/sk:help${reset} to get started.\n`);
+  console.log(`\n  ${green}Done!${reset} Run ${cyan}/sk:help${reset} (Claude) or ask Codex to "use the sk-help skill" to get started.\n`);
 }
 
 function runUninstall(targets) {
@@ -156,9 +157,27 @@ function reportInstall(target, r) {
     if (r.cleanedStale > 0) {
       console.log(`  ${green}✓${reset} Cleaned ${r.cleanedStale} stale command(s) superseded by skills`);
     }
-  } else {
-    console.log(`  ${green}✓${reset} ${target} emit complete ${dim}(${JSON.stringify(r)})${reset}`);
+    return;
   }
+
+  if (target === 'codex') {
+    console.log(`  ${green}✓${reset} Emitted ${r.skills} skills ${dim}(.agents/skills/)${reset}`);
+    if (r.commandsAsSkills > 0) {
+      console.log(`  ${green}✓${reset} Promoted ${r.commandsAsSkills} command(s) to skills`);
+    }
+    if (r.skipped && r.skipped.length) {
+      console.log(`  ${yellow}!${reset} Skipped ${r.skipped.length} skill(s): ${dim}${r.skipped.map(s => `${s.name}(${s.reason})`).join(', ')}${reset}`);
+    }
+    if (r.failed && r.failed.length) {
+      console.log(`  ${red}✗${reset} ${r.failed.length} skill(s) failed: ${dim}${r.failed.map(f => `${f.name}(${f.error})`).join(', ')}${reset}`);
+    }
+    console.log(`  ${green}✓${reset} Wrote AGENTS.md ${dim}(${r.agentsMd.bytes} bytes${r.agentsMd.overLimit ? ', OVER 32 KiB limit — split into nested AGENTS.md recommended' : ''})${reset}`);
+    console.log(`  ${green}✓${reset} Wrote .codex/config.toml`);
+    console.log(`  ${green}✓${reset} Wrote .codex/hooks.json + ${r.hooks.copied} hook script(s) ${dim}(${r.hooks.events} event(s))${reset}`);
+    return;
+  }
+
+  console.log(`  ${green}✓${reset} ${target} emit complete ${dim}(${JSON.stringify(r)})${reset}`);
 }
 
 function reportUninstall(target, r) {
