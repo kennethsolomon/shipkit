@@ -1,5 +1,24 @@
 # Progress Log
 
+### [2026-05-13] Codex target — Phase 1 (core+adapter refactor) — IN PROGRESS
+- Branch: `feat/codex-target`
+- Goal: dual-target ShipKit (Claude Code primary, OpenAI Codex secondary). Same workflow quality on both.
+- Research (verified): two parallel agents produced `tasks/codex-migration-inventory.md` (82+ Claude-Code touchpoints, 5 critical risks) and `tasks/codex-migration-research.md` (Codex CLI + Cloud capability map, 17 sources). Plan in `tasks/codex-migration-plan.md`.
+- Decisions locked: v4.0.0, refactor in-place, npm-only for v1, skills are primary surface on Codex side.
+- Phase 1 done (verified):
+  - Created `core/skills/`, `core/commands/`, `adapters/claude/`, `adapters/codex/` directory structure
+  - `git mv skills core/skills` and `git mv commands core/commands` (history preserved)
+  - Built `adapters/claude/emit.js` — passthrough (Claude SKILL.md format remains canonical source)
+  - Built `adapters/codex/emit.js` — stub that errors with Phase 2 reference
+  - Rewrote `bin/shipkit.js` to dispatch to adapters via `--target=claude|codex|both` (default claude)
+  - Updated `install.sh`, `tests/verify-workflow.sh`, `.gitignore` for new paths
+  - Bumped `package.json` to `4.0.0-alpha.1`; updated `files` whitelist
+  - Updated `CLAUDE.md` with new directory layout
+- Verified byte-identical install: sandbox `HOME` test produces 52 skills + 12 commands; `diff -r core/ ~$SANDBOX/.claude/` reports zero differences
+- Test status: 361/362 pass (same as main — the 1 failure is pre-existing, references a `commands/sk/brainstorm.md` that was deleted when brainstorm became a skill; unrelated to refactor)
+- Known pre-existing issues unchanged: `core/skills/.claude/settings.local.json` stray file (covered by user-global gitignore); `--uninstall` only removes `sk:*` dirs (intentional, preserves user's other skills)
+- Next: commit Phase 1 chunk; then Phase 2 — Codex pilot for 3 commands E2E (`/sk:plan`, `/sk:gates`, `/sk:smart-commit`).
+
 ### [2026-03-29] Fix duplicate slash commands — COMPLETED
 - Root cause: 3 registration sources — `~/.claude/skills/sk:X/`, `~/.claude/commands/sk/X.md`, and project `commands/sk/X.md`
 - Fix 1: Removed 12 stale command files from `~/.claude/commands/sk/` that were superseded by skills
@@ -1658,3 +1677,15 @@
 ### [2026-04-16 14:00:04] Session ended
 - Branch: main
 - Commits this session: 2
+
+### [2026-05-04 07:47:05] Session ended
+- Branch: main
+- Commits this session: 0
+
+### [2026-05-04 07:51:33] Session ended
+- Branch: main
+- Commits this session: 0
+
+### [2026-05-13 01:10:26] Session ended
+- Branch: main
+- Commits this session: 0

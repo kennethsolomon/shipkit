@@ -74,7 +74,7 @@ assert_count_gte() {
 assert_api_field() {
   local desc="$1" port="$2" field="$3"
   local pid response attempt
-  node "$REPO/skills/sk:dashboard/server.js" --port "$port" > /dev/null 2>&1 &
+  node "$REPO/core/skills/sk:dashboard/server.js" --port "$port" > /dev/null 2>&1 &
   pid=$!
   response=""
   for attempt in 1 2 3 4 5; do
@@ -105,61 +105,61 @@ echo "── Milestone 1: Skill Files ──"
 
 assert_file_exists \
   "sk:e2e SKILL.md exists" \
-  "$REPO/skills/sk:e2e/SKILL.md"
+  "$REPO/core/skills/sk:e2e/SKILL.md"
 
 assert_contains \
   "sk:e2e references agent-browser" \
-  "$REPO/skills/sk:e2e/SKILL.md" \
+  "$REPO/core/skills/sk:e2e/SKILL.md" \
   "agent-browser"
 
 assert_contains \
   "sk:e2e has hard gate behavior" \
-  "$REPO/skills/sk:e2e/SKILL.md" \
+  "$REPO/core/skills/sk:e2e/SKILL.md" \
   "all scenarios must pass"
 
 assert_contains \
   "sk:e2e has Fix & Retest Protocol" \
-  "$REPO/skills/sk:e2e/SKILL.md" \
+  "$REPO/core/skills/sk:e2e/SKILL.md" \
   "Fix & Retest Protocol"
 
 assert_contains \
   "sk:lint has dep audit (composer audit)" \
-  "$REPO/skills/sk:lint/SKILL.md" \
+  "$REPO/core/skills/sk:lint/SKILL.md" \
   "composer audit"
 
 assert_contains \
   "sk:lint has dep audit (npm audit)" \
-  "$REPO/skills/sk:lint/SKILL.md" \
+  "$REPO/core/skills/sk:lint/SKILL.md" \
   "npm audit"
 
 assert_contains \
   "sk:lint has Fix & Retest Protocol" \
-  "$REPO/skills/sk:lint/SKILL.md" \
+  "$REPO/core/skills/sk:lint/SKILL.md" \
   "Fix & Retest Protocol"
 
 assert_contains \
   "sk:test has Fix & Retest Protocol" \
-  "$REPO/skills/sk:test/SKILL.md" \
+  "$REPO/core/skills/sk:test/SKILL.md" \
   "Fix & Retest Protocol"
 
 assert_contains \
   "sk:security-check has Fix & Retest Protocol" \
-  "$REPO/skills/sk:security-check/SKILL.md" \
+  "$REPO/core/skills/sk:security-check/SKILL.md" \
   "Fix & Retest Protocol"
 
 assert_contains \
   "sk:perf has Fix & Retest Protocol" \
-  "$REPO/skills/sk:perf/SKILL.md" \
+  "$REPO/core/skills/sk:perf/SKILL.md" \
   "Fix & Retest Protocol"
 
 assert_contains \
   "sk:review has Fix & Retest Protocol" \
-  "$REPO/skills/sk:review/SKILL.md" \
+  "$REPO/core/skills/sk:review/SKILL.md" \
   "Fix & Retest Protocol"
 
 assert_contains \
   "sk:review runs simplify as pre-step" \
-  "$REPO/skills/sk:review/SKILL.md" \
+  "$REPO/core/skills/sk:review/SKILL.md" \
   "simplify"
 
 echo ""
@@ -169,7 +169,7 @@ echo ""
 echo "── Milestone 2: Workflow Files ──"
 
 CLAUDE="$REPO/CLAUDE.md"
-TEMPLATE="$REPO/skills/sk:setup-claude/templates/CLAUDE.md.template"
+TEMPLATE="$REPO/core/skills/sk:setup-claude/templates/CLAUDE.md.template"
 # Step table references
 # (flow line was removed in workflow simplification — /sk:e2e and /sk:features tested below)
 assert_contains \
@@ -266,7 +266,7 @@ assert_not_contains \
   "run \`/brainstorm\`"
 
 # workflow-status.md.template should NOT exist (removed in workflow simplification)
-if [[ ! -f "$REPO/skills/sk:setup-claude/templates/tasks/workflow-status.md.template" ]]; then
+if [[ ! -f "$REPO/core/skills/sk:setup-claude/templates/tasks/workflow-status.md.template" ]]; then
   echo -e "${green}PASS${reset} workflow-status.md.template does not exist"
   PASS=$((PASS + 1))
 else
@@ -297,12 +297,12 @@ assert_contains \
 # sk:setup-optimizer
 assert_contains \
   "sk:setup-optimizer references 8 steps" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "8"
 
 assert_contains \
   "sk:setup-optimizer flow line has Gates" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "Gates"
 
 # install.sh
@@ -315,7 +315,7 @@ assert_contains \
 for tpl in brainstorm write-plan execute-plan security-check finish-feature; do
   assert_contains \
     "templates/commands/${tpl}.md.template breadcrumb has Gates" \
-    "$REPO/skills/sk:setup-claude/templates/commands/${tpl}.md.template" \
+    "$REPO/core/skills/sk:setup-claude/templates/commands/${tpl}.md.template" \
     "Gates"
 done
 
@@ -347,7 +347,7 @@ echo ""
 
 echo "── Milestone 3: sk:seo-audit Skill ──"
 
-SEO_SKILL="$REPO/skills/sk:seo-audit/SKILL.md"
+SEO_SKILL="$REPO/core/skills/sk:seo-audit/SKILL.md"
 
 assert_file_exists \
   "sk:seo-audit SKILL.md exists" \
@@ -436,41 +436,41 @@ echo "── Milestone 4: Checklist Format Rollout ──"
 
 assert_contains \
   "sk:perf report uses checkbox format" \
-  "$REPO/skills/sk:perf/SKILL.md" \
+  "$REPO/core/skills/sk:perf/SKILL.md" \
   "\- \[ \]"
 
 assert_contains \
   "sk:perf report has Passed Checks section" \
-  "$REPO/skills/sk:perf/SKILL.md" \
+  "$REPO/core/skills/sk:perf/SKILL.md" \
   "Passed Checks"
 
 assert_contains \
   "sk:accessibility report uses checkbox format" \
-  "$REPO/skills/sk:accessibility/SKILL.md" \
+  "$REPO/core/skills/sk:accessibility/SKILL.md" \
   "\- \[ \]"
 
 assert_contains \
   "sk:accessibility report has Passed Checks section" \
-  "$REPO/skills/sk:accessibility/SKILL.md" \
+  "$REPO/core/skills/sk:accessibility/SKILL.md" \
   "Passed Checks"
 
 assert_contains \
   "sk:security-check report uses checkbox format" \
-  "$REPO/skills/sk:security-check/SKILL.md" \
+  "$REPO/core/skills/sk:security-check/SKILL.md" \
   "\- \[ \]"
 
 assert_contains \
   "sk:security-check report has Passed Checks section" \
-  "$REPO/skills/sk:security-check/SKILL.md" \
+  "$REPO/core/skills/sk:security-check/SKILL.md" \
   "Passed Checks"
 
 # ── Milestone 5: sk:dashboard Skill ──────────────────────────────────────────
 
 echo "── Milestone 5: sk:dashboard Skill ──"
 
-DASH_SKILL="$REPO/skills/sk:dashboard/SKILL.md"
-DASH_SERVER="$REPO/skills/sk:dashboard/server.js"
-DASH_HTML="$REPO/skills/sk:dashboard/dashboard.html"
+DASH_SKILL="$REPO/core/skills/sk:dashboard/SKILL.md"
+DASH_SERVER="$REPO/core/skills/sk:dashboard/server.js"
+DASH_HTML="$REPO/core/skills/sk:dashboard/dashboard.html"
 
 assert_file_exists \
   "sk:dashboard SKILL.md exists" \
@@ -589,7 +589,7 @@ assert_api_field \
 
 echo "── Milestone 7: sk:mvp Project Context Docs ──"
 
-MVP_SKILL="$REPO/skills/sk:mvp/SKILL.md"
+MVP_SKILL="$REPO/core/skills/sk:mvp/SKILL.md"
 
 assert_contains \
   "sk:mvp generates docs/vision.md" \
@@ -617,7 +617,7 @@ echo ""
 
 echo "── Milestone 8: sk:context Session Initializer ──"
 
-CTX_SKILL="$REPO/skills/sk:context/SKILL.md"
+CTX_SKILL="$REPO/core/skills/sk:context/SKILL.md"
 
 assert_file_exists \
   "sk:context SKILL.md exists" \
@@ -694,7 +694,7 @@ echo ""
 
 echo "── Milestone 9: Persistent Decisions Log ──"
 
-BRAIN_SKILL="$REPO/skills/sk:brainstorm/SKILL.md"
+BRAIN_SKILL="$REPO/core/skills/sk:brainstorm/SKILL.md"
 
 assert_contains \
   "sk:brainstorm appends to docs/decisions.md" \
@@ -720,79 +720,79 @@ echo "── Milestone 10: Gate Auto-Commit + Tech Debt ──"
 # Gate skills must have auto-commit language in their fix loops
 assert_contains \
   "sk:lint fix loop includes auto-commit" \
-  "$REPO/skills/sk:lint/SKILL.md" \
+  "$REPO/core/skills/sk:lint/SKILL.md" \
   "auto-commit"
 
 assert_contains \
   "sk:test fix loop includes squash commit" \
-  "$REPO/skills/sk:test/SKILL.md" \
+  "$REPO/core/skills/sk:test/SKILL.md" \
   "squash commit"
 
 assert_contains \
   "sk:security-check fix loop includes squash commit" \
-  "$REPO/skills/sk:security-check/SKILL.md" \
+  "$REPO/core/skills/sk:security-check/SKILL.md" \
   "squash"
 
 assert_contains \
   "sk:perf fix loop includes auto-commit" \
-  "$REPO/skills/sk:perf/SKILL.md" \
+  "$REPO/core/skills/sk:perf/SKILL.md" \
   "auto-commit"
 
 assert_contains \
   "sk:review fix loop includes auto-commit" \
-  "$REPO/skills/sk:review/SKILL.md" \
+  "$REPO/core/skills/sk:review/SKILL.md" \
   "auto-commit"
 
 assert_contains \
   "sk:e2e fix loop includes auto-commit" \
-  "$REPO/skills/sk:e2e/SKILL.md" \
+  "$REPO/core/skills/sk:e2e/SKILL.md" \
   "auto-commit"
 
 # Gate skills must log pre-existing issues to tech-debt.md
 assert_contains \
   "sk:review references tasks/tech-debt.md" \
-  "$REPO/skills/sk:review/SKILL.md" \
+  "$REPO/core/skills/sk:review/SKILL.md" \
   "tech-debt.md"
 
 assert_contains \
   "sk:security-check references tasks/tech-debt.md" \
-  "$REPO/skills/sk:security-check/SKILL.md" \
+  "$REPO/core/skills/sk:security-check/SKILL.md" \
   "tech-debt.md"
 
 assert_contains \
   "sk:lint references tasks/tech-debt.md" \
-  "$REPO/skills/sk:lint/SKILL.md" \
+  "$REPO/core/skills/sk:lint/SKILL.md" \
   "tech-debt.md"
 
 assert_contains \
   "sk:perf references tasks/tech-debt.md" \
-  "$REPO/skills/sk:perf/SKILL.md" \
+  "$REPO/core/skills/sk:perf/SKILL.md" \
   "tech-debt.md"
 
 assert_contains \
   "sk:e2e references tasks/tech-debt.md" \
-  "$REPO/skills/sk:e2e/SKILL.md" \
+  "$REPO/core/skills/sk:e2e/SKILL.md" \
   "tech-debt.md"
 
 # Planning/utility skills integrate tech-debt.md
 assert_contains \
   "sk:context reads tasks/tech-debt.md" \
-  "$REPO/skills/sk:context/SKILL.md" \
+  "$REPO/core/skills/sk:context/SKILL.md" \
   "tech-debt.md"
 
 assert_contains \
   "sk:write-plan reads tasks/tech-debt.md" \
-  "$REPO/commands/sk/write-plan.md" \
+  "$REPO/core/commands/sk/write-plan.md" \
   "tech-debt.md"
 
 assert_contains \
   "sk:update-task references tasks/tech-debt.md" \
-  "$REPO/commands/sk/update-task.md" \
+  "$REPO/core/commands/sk/update-task.md" \
   "tech-debt.md"
 
 assert_contains \
   "sk:update-task marks entries Resolved:" \
-  "$REPO/commands/sk/update-task.md" \
+  "$REPO/core/commands/sk/update-task.md" \
   "Resolved:"
 
 # Squash gate commits — documented in CLAUDE.md
@@ -822,12 +822,12 @@ assert_not_contains \
 # sk:schema-migrate auto-detects and auto-skips when no migration changes
 assert_contains \
   "sk:schema-migrate auto-detects migration files" \
-  "$REPO/skills/sk:schema-migrate/SKILL.md" \
+  "$REPO/core/skills/sk:schema-migrate/SKILL.md" \
   "git diff"
 
 assert_contains \
   "sk:schema-migrate auto-skips when no migration changes" \
-  "$REPO/skills/sk:schema-migrate/SKILL.md" \
+  "$REPO/core/skills/sk:schema-migrate/SKILL.md" \
   "auto-skip"
 
 echo ""
@@ -836,7 +836,7 @@ echo ""
 
 echo "── Milestone 11: sk:frontend-design Pencil Disk Persistence ──"
 
-FD_SKILL="$REPO/skills/sk:frontend-design/SKILL.md"
+FD_SKILL="$REPO/core/skills/sk:frontend-design/SKILL.md"
 
 assert_contains \
   "sk:frontend-design Pencil phase reads tasks/todo.md for filename" \
@@ -854,7 +854,7 @@ echo ""
 
 echo "── Milestone 12: Lifecycle Hooks ──"
 
-HOOKS_DIR="$REPO/skills/sk:setup-claude/templates/hooks"
+HOOKS_DIR="$REPO/core/skills/sk:setup-claude/templates/hooks"
 
 assert_file_exists \
   "session-start.sh hook exists" \
@@ -906,7 +906,7 @@ echo ""
 
 echo "── Milestone 12b: settings.json Template ──"
 
-SETTINGS_TPL="$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template"
+SETTINGS_TPL="$REPO/core/skills/sk:setup-claude/templates/.claude/settings.json.template"
 
 assert_file_exists \
   "settings.json.template exists" \
@@ -948,7 +948,7 @@ echo ""
 
 echo "── Milestone 13: Path-Scoped Rules ──"
 
-RULES_DIR="$REPO/skills/sk:setup-claude/templates/.claude/rules"
+RULES_DIR="$REPO/core/skills/sk:setup-claude/templates/.claude/rules"
 
 assert_file_exists \
   "tests.md.template rule exists" \
@@ -961,7 +961,7 @@ assert_contains \
 
 assert_contains \
   "sk:setup-claude SKILL.md references rules/" \
-  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "$REPO/core/skills/sk:setup-claude/SKILL.md" \
   "rules/"
 
 echo ""
@@ -970,7 +970,7 @@ echo ""
 
 echo "── Milestone 14: Statusline ──"
 
-STATUSLINE="$REPO/skills/sk:setup-claude/templates/.claude/statusline.sh"
+STATUSLINE="$REPO/core/skills/sk:setup-claude/templates/.claude/statusline.sh"
 
 assert_file_exists \
   "statusline.sh exists" \
@@ -992,7 +992,7 @@ echo ""
 
 echo "── Milestone 15: Scope Check Skill ──"
 
-SCOPE_SKILL="$REPO/skills/sk:scope-check/SKILL.md"
+SCOPE_SKILL="$REPO/core/skills/sk:scope-check/SKILL.md"
 
 assert_file_exists \
   "sk:scope-check SKILL.md exists" \
@@ -1034,7 +1034,7 @@ echo ""
 
 echo "── Milestone 16: Retrospective Skill ──"
 
-RETRO_SKILL="$REPO/skills/sk:retro/SKILL.md"
+RETRO_SKILL="$REPO/core/skills/sk:retro/SKILL.md"
 
 assert_file_exists \
   "sk:retro SKILL.md exists" \
@@ -1066,7 +1066,7 @@ echo ""
 
 echo "── Milestone 17: Reverse Document Skill ──"
 
-REVDOC_SKILL="$REPO/skills/sk:reverse-doc/SKILL.md"
+REVDOC_SKILL="$REPO/core/skills/sk:reverse-doc/SKILL.md"
 
 assert_file_exists \
   "sk:reverse-doc SKILL.md exists" \
@@ -1093,7 +1093,7 @@ echo ""
 
 echo "── Milestone 18: Gate Agents ──"
 
-AGENTS_DIR="$REPO/skills/sk:setup-claude/templates/.claude/agents"
+AGENTS_DIR="$REPO/core/skills/sk:setup-claude/templates/.claude/agents"
 
 assert_file_exists \
   "linter agent exists" \
@@ -1136,7 +1136,7 @@ echo ""
 
 echo "── Milestone 19: Gates Orchestrator ──"
 
-GATES_SKILL="$REPO/skills/sk:gates/SKILL.md"
+GATES_SKILL="$REPO/core/skills/sk:gates/SKILL.md"
 
 assert_file_exists \
   "sk:gates SKILL.md exists" \
@@ -1163,7 +1163,7 @@ echo ""
 
 echo "── Milestone 20: Fast-Track Flow ──"
 
-FASTTRACK_SKILL="$REPO/skills/sk:fast-track/SKILL.md"
+FASTTRACK_SKILL="$REPO/core/skills/sk:fast-track/SKILL.md"
 
 assert_file_exists \
   "sk:fast-track SKILL.md exists" \
@@ -1190,7 +1190,7 @@ echo ""
 
 echo "── Milestone 21: Cached Detection ──"
 
-APPLY_SCRIPT="$REPO/skills/sk:setup-claude/scripts/apply_setup_claude.py"
+APPLY_SCRIPT="$REPO/core/skills/sk:setup-claude/scripts/apply_setup_claude.py"
 
 assert_contains \
   "apply_setup_claude.py has detected_at cache" \
@@ -1321,46 +1321,46 @@ echo "── Feature 12: /sk:autopilot ──"
 
 assert_file_exists \
   "sk:autopilot SKILL.md exists" \
-  "$REPO/skills/sk:autopilot/SKILL.md"
+  "$REPO/core/skills/sk:autopilot/SKILL.md"
 
 assert_contains \
   "sk:autopilot has auto-advance" \
-  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "$REPO/core/skills/sk:autopilot/SKILL.md" \
   "auto-advance"
 
 assert_contains \
   "sk:autopilot has auto-skip" \
-  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "$REPO/core/skills/sk:autopilot/SKILL.md" \
   "auto-skip"
 
 assert_contains \
   "sk:autopilot has auto-commit" \
-  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "$REPO/core/skills/sk:autopilot/SKILL.md" \
   "auto-commit"
 
 assert_contains \
   "sk:autopilot has direction approval stop" \
-  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "$REPO/core/skills/sk:autopilot/SKILL.md" \
   "Direction approval"
 
 assert_contains \
   "sk:autopilot has 3-strike protocol" \
-  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "$REPO/core/skills/sk:autopilot/SKILL.md" \
   "3-strike"
 
 assert_contains \
   "sk:autopilot has PR push stop" \
-  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "$REPO/core/skills/sk:autopilot/SKILL.md" \
   "PR push"
 
 assert_contains \
   "sk:autopilot has quality gate reference" \
-  "$REPO/skills/sk:autopilot/SKILL.md" \
+  "$REPO/core/skills/sk:autopilot/SKILL.md" \
   "quality gate"
 
 assert_file_exists \
   "sk:autopilot skill exists" \
-  "$REPO/skills/sk:autopilot/SKILL.md"
+  "$REPO/core/skills/sk:autopilot/SKILL.md"
 
 echo ""
 
@@ -1370,68 +1370,68 @@ echo "── Feature 13: /sk:team ──"
 
 assert_file_exists \
   "sk:team SKILL.md exists" \
-  "$REPO/skills/sk:team/SKILL.md"
+  "$REPO/core/skills/sk:team/SKILL.md"
 
 assert_contains \
   "sk:team has Backend Agent" \
-  "$REPO/skills/sk:team/SKILL.md" \
+  "$REPO/core/skills/sk:team/SKILL.md" \
   "Backend Agent"
 
 assert_contains \
   "sk:team has Frontend Agent" \
-  "$REPO/skills/sk:team/SKILL.md" \
+  "$REPO/core/skills/sk:team/SKILL.md" \
   "Frontend Agent"
 
 assert_contains \
   "sk:team has QA Agent" \
-  "$REPO/skills/sk:team/SKILL.md" \
+  "$REPO/core/skills/sk:team/SKILL.md" \
   "QA Agent"
 
 assert_contains \
   "sk:team has API contract requirement" \
-  "$REPO/skills/sk:team/SKILL.md" \
+  "$REPO/core/skills/sk:team/SKILL.md" \
   "API contract"
 
 assert_contains \
   "sk:team has worktree isolation" \
-  "$REPO/skills/sk:team/SKILL.md" \
+  "$REPO/core/skills/sk:team/SKILL.md" \
   "worktree"
 
 assert_contains \
   "sk:team has merge step" \
-  "$REPO/skills/sk:team/SKILL.md" \
+  "$REPO/core/skills/sk:team/SKILL.md" \
   "merge"
 
 assert_file_exists \
   "backend-dev agent template exists" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/agents/backend-dev.md"
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/agents/backend-dev.md"
 
 assert_file_exists \
   "frontend-dev agent template exists" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md"
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md"
 
 assert_file_exists \
   "qa-engineer agent template exists" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md"
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md"
 
 assert_contains \
   "backend-dev agent references backend" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/agents/backend-dev.md" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/agents/backend-dev.md" \
   "backend"
 
 assert_contains \
   "frontend-dev agent references frontend" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/agents/frontend-dev.md" \
   "frontend"
 
 assert_contains \
   "qa-engineer agent references E2E" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/agents/qa-engineer.md" \
   "E2E"
 
 assert_file_exists \
   "sk:team skill exists" \
-  "$REPO/skills/sk:team/SKILL.md"
+  "$REPO/core/skills/sk:team/SKILL.md"
 
 echo ""
 
@@ -1441,56 +1441,56 @@ echo "── Feature 14: /sk:start ──"
 
 assert_file_exists \
   "sk:start SKILL.md exists" \
-  "$REPO/skills/sk:start/SKILL.md"
+  "$REPO/core/skills/sk:start/SKILL.md"
 
 assert_contains \
   "sk:start has Classify step" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "Classify"
 
 assert_contains \
   "sk:start has Recommend step" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "Recommend"
 
 assert_contains \
   "sk:start has Route step" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "Route"
 
 assert_contains \
   "sk:start routes to debug flow" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "debug"
 
 assert_contains \
   "sk:start routes to hotfix flow" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "hotfix"
 
 assert_contains \
   "sk:start routes to fast-track flow" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "fast-track"
 
 assert_contains \
   "sk:start routes to autopilot mode" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "autopilot"
 
 assert_contains \
   "sk:start routes to team mode" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "team"
 
 assert_contains \
   "sk:start has --manual override" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "\-\-manual"
 
 assert_file_exists \
   "sk:start skill exists" \
-  "$REPO/skills/sk:start/SKILL.md"
+  "$REPO/core/skills/sk:start/SKILL.md"
 
 echo ""
 
@@ -1553,27 +1553,27 @@ echo "── Features 11-14: Profile + Optimizer ──"
 
 assert_contains \
   "set-profile has start skill" \
-  "$REPO/commands/sk/set-profile.md" \
+  "$REPO/core/commands/sk/set-profile.md" \
   "start"
 
 assert_contains \
   "set-profile has autopilot skill" \
-  "$REPO/commands/sk/set-profile.md" \
+  "$REPO/core/commands/sk/set-profile.md" \
   "autopilot"
 
 assert_contains \
   "set-profile has team skill" \
-  "$REPO/commands/sk/set-profile.md" \
+  "$REPO/core/commands/sk/set-profile.md" \
   "team"
 
 assert_contains \
   "setup-optimizer knows about sk:start" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "sk:start"
 
 assert_contains \
   "setup-optimizer knows about auto-skip" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "auto-skip"
 
 # ── ECC Intelligence Upgrade: Hook Templates ────────────────────────────────
@@ -1583,56 +1583,56 @@ echo "--- ECC Intelligence: Hook Templates ---"
 
 assert_file_exists \
   "config-protection hook exists" \
-  "$REPO/skills/sk:setup-claude/templates/hooks/config-protection.sh"
+  "$REPO/core/skills/sk:setup-claude/templates/hooks/config-protection.sh"
 
 assert_file_exists \
   "post-edit-format hook exists" \
-  "$REPO/skills/sk:setup-claude/templates/hooks/post-edit-format.sh"
+  "$REPO/core/skills/sk:setup-claude/templates/hooks/post-edit-format.sh"
 
 assert_file_exists \
   "console-log-warning hook exists" \
-  "$REPO/skills/sk:setup-claude/templates/hooks/console-log-warning.sh"
+  "$REPO/core/skills/sk:setup-claude/templates/hooks/console-log-warning.sh"
 
 assert_file_exists \
   "cost-tracker hook exists" \
-  "$REPO/skills/sk:setup-claude/templates/hooks/cost-tracker.sh"
+  "$REPO/core/skills/sk:setup-claude/templates/hooks/cost-tracker.sh"
 
 assert_file_exists \
   "suggest-compact hook exists" \
-  "$REPO/skills/sk:setup-claude/templates/hooks/suggest-compact.sh"
+  "$REPO/core/skills/sk:setup-claude/templates/hooks/suggest-compact.sh"
 
 assert_file_exists \
   "safety-guard hook exists" \
-  "$REPO/skills/sk:setup-claude/templates/hooks/safety-guard.sh"
+  "$REPO/core/skills/sk:setup-claude/templates/hooks/safety-guard.sh"
 
 assert_contains \
   "settings.json.template has config-protection hook" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/settings.json.template" \
   "config-protection"
 
 assert_contains \
   "settings.json.template has console-log hook" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/settings.json.template" \
   "console-log"
 
 assert_contains \
   "settings.json.template has post-edit-format hook" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/settings.json.template" \
   "post-edit-format"
 
 assert_contains \
   "settings.json.template has cost-tracker hook" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/settings.json.template" \
   "cost-tracker"
 
 assert_contains \
   "settings.json.template has suggest-compact hook" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/settings.json.template" \
   "suggest-compact"
 
 assert_contains \
   "settings.json.template has safety-guard hook" \
-  "$REPO/skills/sk:setup-claude/templates/.claude/settings.json.template" \
+  "$REPO/core/skills/sk:setup-claude/templates/.claude/settings.json.template" \
   "safety-guard"
 
 # ── ECC Intelligence: /sk:learn ──────────────────────────────────────────────
@@ -1642,20 +1642,20 @@ echo "--- ECC Intelligence: /sk:learn ---"
 
 assert_file_exists \
   "sk:learn skill exists" \
-  "$REPO/skills/sk:learn/SKILL.md"
+  "$REPO/core/skills/sk:learn/SKILL.md"
 
 assert_file_exists \
   "sk:learn skill exists" \
-  "$REPO/skills/sk:learn/SKILL.md"
+  "$REPO/core/skills/sk:learn/SKILL.md"
 
 assert_contains \
   "sk:learn mentions patterns" \
-  "$REPO/skills/sk:learn/SKILL.md" \
+  "$REPO/core/skills/sk:learn/SKILL.md" \
   "pattern"
 
 assert_contains \
   "sk:learn mentions confidence" \
-  "$REPO/skills/sk:learn/SKILL.md" \
+  "$REPO/core/skills/sk:learn/SKILL.md" \
   "confidence"
 
 # ── ECC Intelligence: /sk:context-budget ─────────────────────────────────────
@@ -1665,25 +1665,25 @@ echo "--- ECC Intelligence: /sk:context-budget ---"
 
 assert_file_exists \
   "sk:context-budget skill exists" \
-  "$REPO/skills/sk:context-budget/SKILL.md"
+  "$REPO/core/skills/sk:context-budget/SKILL.md"
 
 assert_file_exists \
   "sk:context-budget skill exists" \
-  "$REPO/skills/sk:context-budget/SKILL.md"
+  "$REPO/core/skills/sk:context-budget/SKILL.md"
 
 assert_contains \
   "sk:context-budget mentions tokens" \
-  "$REPO/skills/sk:context-budget/SKILL.md" \
+  "$REPO/core/skills/sk:context-budget/SKILL.md" \
   "token"
 
 assert_contains \
   "sk:context-budget mentions MCP" \
-  "$REPO/skills/sk:context-budget/SKILL.md" \
+  "$REPO/core/skills/sk:context-budget/SKILL.md" \
   "MCP"
 
 assert_contains \
   "sk:context-budget mentions overhead" \
-  "$REPO/skills/sk:context-budget/SKILL.md" \
+  "$REPO/core/skills/sk:context-budget/SKILL.md" \
   "overhead"
 
 # ── ECC Intelligence: /sk:health ─────────────────────────────────────────────
@@ -1693,25 +1693,25 @@ echo "--- ECC Intelligence: /sk:health ---"
 
 assert_file_exists \
   "sk:health skill exists" \
-  "$REPO/skills/sk:health/SKILL.md"
+  "$REPO/core/skills/sk:health/SKILL.md"
 
 assert_file_exists \
   "sk:health skill exists" \
-  "$REPO/skills/sk:health/SKILL.md"
+  "$REPO/core/skills/sk:health/SKILL.md"
 
 assert_contains \
   "sk:health mentions scorecard" \
-  "$REPO/skills/sk:health/SKILL.md" \
+  "$REPO/core/skills/sk:health/SKILL.md" \
   "scorecard"
 
 assert_contains \
   "sk:health mentions context" \
-  "$REPO/skills/sk:health/SKILL.md" \
+  "$REPO/core/skills/sk:health/SKILL.md" \
   "Context Efficiency"
 
 assert_contains \
   "sk:health mentions gates" \
-  "$REPO/skills/sk:health/SKILL.md" \
+  "$REPO/core/skills/sk:health/SKILL.md" \
   "Quality Gates"
 
 # ── ECC Intelligence: /sk:save-session + /sk:resume-session ──────────────────
@@ -1721,28 +1721,28 @@ echo "--- ECC Intelligence: Session Management ---"
 
 assert_file_exists \
   "sk:save-session skill exists" \
-  "$REPO/skills/sk:save-session/SKILL.md"
+  "$REPO/core/skills/sk:save-session/SKILL.md"
 
 assert_file_exists \
   "sk:resume-session skill exists" \
-  "$REPO/skills/sk:resume-session/SKILL.md"
+  "$REPO/core/skills/sk:resume-session/SKILL.md"
 
 assert_file_exists \
   "sk:save-session skill exists" \
-  "$REPO/skills/sk:save-session/SKILL.md"
+  "$REPO/core/skills/sk:save-session/SKILL.md"
 
 assert_file_exists \
   "sk:resume-session skill exists" \
-  "$REPO/skills/sk:resume-session/SKILL.md"
+  "$REPO/core/skills/sk:resume-session/SKILL.md"
 
 assert_contains \
   "sk:save-session references .claude/sessions/" \
-  "$REPO/skills/sk:save-session/SKILL.md" \
+  "$REPO/core/skills/sk:save-session/SKILL.md" \
   ".claude/sessions/"
 
 assert_contains \
   "sk:resume-session references .claude/sessions/" \
-  "$REPO/skills/sk:resume-session/SKILL.md" \
+  "$REPO/core/skills/sk:resume-session/SKILL.md" \
   ".claude/sessions/"
 
 # ── ECC Intelligence: /sk:safety-guard ───────────────────────────────────────
@@ -1752,25 +1752,25 @@ echo "--- ECC Intelligence: /sk:safety-guard ---"
 
 assert_file_exists \
   "sk:safety-guard skill exists" \
-  "$REPO/skills/sk:safety-guard/SKILL.md"
+  "$REPO/core/skills/sk:safety-guard/SKILL.md"
 
 assert_file_exists \
   "sk:safety-guard skill exists" \
-  "$REPO/skills/sk:safety-guard/SKILL.md"
+  "$REPO/core/skills/sk:safety-guard/SKILL.md"
 
 assert_contains \
   "sk:safety-guard mentions freeze" \
-  "$REPO/skills/sk:safety-guard/SKILL.md" \
+  "$REPO/core/skills/sk:safety-guard/SKILL.md" \
   "freeze"
 
 assert_contains \
   "sk:safety-guard mentions careful" \
-  "$REPO/skills/sk:safety-guard/SKILL.md" \
+  "$REPO/core/skills/sk:safety-guard/SKILL.md" \
   "careful"
 
 assert_contains \
   "sk:safety-guard mentions destructive" \
-  "$REPO/skills/sk:safety-guard/SKILL.md" \
+  "$REPO/core/skills/sk:safety-guard/SKILL.md" \
   "destructive"
 
 # ── ECC Intelligence: /sk:eval ───────────────────────────────────────────────
@@ -1780,30 +1780,30 @@ echo "--- ECC Intelligence: /sk:eval ---"
 
 assert_file_exists \
   "sk:eval skill exists" \
-  "$REPO/skills/sk:eval/SKILL.md"
+  "$REPO/core/skills/sk:eval/SKILL.md"
 
 assert_file_exists \
   "sk:eval skill exists" \
-  "$REPO/skills/sk:eval/SKILL.md"
+  "$REPO/core/skills/sk:eval/SKILL.md"
 
 assert_contains \
   "sk:eval mentions pass@k" \
-  "$REPO/skills/sk:eval/SKILL.md" \
+  "$REPO/core/skills/sk:eval/SKILL.md" \
   "pass@"
 
 assert_contains \
   "sk:eval mentions capability" \
-  "$REPO/skills/sk:eval/SKILL.md" \
+  "$REPO/core/skills/sk:eval/SKILL.md" \
   "capability"
 
 assert_contains \
   "sk:eval mentions regression" \
-  "$REPO/skills/sk:eval/SKILL.md" \
+  "$REPO/core/skills/sk:eval/SKILL.md" \
   "regression"
 
 assert_contains \
   "sk:eval mentions grader" \
-  "$REPO/skills/sk:eval/SKILL.md" \
+  "$REPO/core/skills/sk:eval/SKILL.md" \
   "grader"
 
 # ── ECC Intelligence: Enriched /sk:start ─────────────────────────────────────
@@ -1813,7 +1813,7 @@ echo "--- ECC Intelligence: Enriched /sk:start ---"
 
 assert_contains \
   "sk:start has missing context detection" \
-  "$REPO/skills/sk:start/SKILL.md" \
+  "$REPO/core/skills/sk:start/SKILL.md" \
   "Missing Context"
 
 # ── ECC Intelligence: Search-first in brainstorm ─────────────────────────────
@@ -1823,7 +1823,7 @@ echo "--- ECC Intelligence: Search-first in brainstorm ---"
 
 assert_contains \
   "brainstorm has search-first phase" \
-  "$REPO/skills/sk:brainstorm/SKILL.md" \
+  "$REPO/core/skills/sk:brainstorm/SKILL.md" \
   "search-first\|Search-First\|Search First\|search first"
 
 # ── ECC Intelligence: Codebase onboarding in setup-claude ────────────────────
@@ -1833,7 +1833,7 @@ echo "--- ECC Intelligence: Codebase onboarding ---"
 
 assert_contains \
   "setup-claude has reconnaissance phase" \
-  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "$REPO/core/skills/sk:setup-claude/SKILL.md" \
   "Reconnaissance\|reconnaissance"
 
 # ── ECC Intelligence: Documentation ──────────────────────────────────────────
@@ -1861,13 +1861,13 @@ echo "--- ECC Intelligence: Setup-optimizer awareness ---"
 for cmd in learn context-budget health save-session resume-session safety-guard eval; do
   assert_contains \
     "setup-optimizer knows about sk:${cmd}" \
-    "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+    "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
     "sk:${cmd}"
 done
 
 assert_contains \
   "setup-optimizer handles hooks" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "hooks"
 
 echo ""
@@ -1879,32 +1879,32 @@ echo "--- MCP Servers & Plugins ---"
 
 assert_contains \
   "setup-claude mentions Sequential Thinking MCP" \
-  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "$REPO/core/skills/sk:setup-claude/SKILL.md" \
   "Sequential Thinking"
 
 assert_contains \
   "setup-claude mentions context7" \
-  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "$REPO/core/skills/sk:setup-claude/SKILL.md" \
   "context7"
 
 assert_contains \
   "setup-claude mentions ccstatusline" \
-  "$REPO/skills/sk:setup-claude/SKILL.md" \
+  "$REPO/core/skills/sk:setup-claude/SKILL.md" \
   "ccstatusline"
 
 assert_contains \
   "setup-optimizer mentions Sequential Thinking MCP" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "Sequential Thinking"
 
 assert_contains \
   "setup-optimizer mentions context7" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "context7"
 
 assert_contains \
   "setup-optimizer mentions ccstatusline" \
-  "$REPO/skills/sk:setup-optimizer/SKILL.md" \
+  "$REPO/core/skills/sk:setup-optimizer/SKILL.md" \
   "ccstatusline"
 
 assert_contains \
@@ -1929,47 +1929,47 @@ echo "--- Prompt Engineering Upgrades ---"
 
 assert_contains \
   "sk:review has <think> reasoning blocks" \
-  "$REPO/skills/sk:review/SKILL.md" \
+  "$REPO/core/skills/sk:review/SKILL.md" \
   "<think>"
 
 assert_contains \
   "sk:review has exhaustiveness commitment" \
-  "$REPO/skills/sk:review/SKILL.md" \
+  "$REPO/core/skills/sk:review/SKILL.md" \
   "exhaustiveness"
 
 assert_contains \
   "sk:review uses rich file:line:symbol references" \
-  "$REPO/skills/sk:review/SKILL.md" \
+  "$REPO/core/skills/sk:review/SKILL.md" \
   ":symbol"
 
 assert_contains \
   "sk:security-check has content isolation rule" \
-  "$REPO/skills/sk:security-check/SKILL.md" \
+  "$REPO/core/skills/sk:security-check/SKILL.md" \
   "content isolation"
 
 assert_contains \
   "sk:security-check has CVSS scoring" \
-  "$REPO/skills/sk:security-check/SKILL.md" \
+  "$REPO/core/skills/sk:security-check/SKILL.md" \
   "CVSS"
 
 assert_contains \
   "sk:write-plan generates contracts.md" \
-  "$REPO/commands/sk/write-plan.md" \
+  "$REPO/core/commands/sk/write-plan.md" \
   "contracts.md"
 
 assert_contains \
   "sk:brainstorm extracts requirements checklist" \
-  "$REPO/commands/sk/brainstorm.md" \
+  "$REPO/core/commands/sk/brainstorm.md" \
   "requirements checklist"
 
 assert_contains \
   "sk:execute-plan has status checkpoints" \
-  "$REPO/commands/sk/execute-plan.md" \
+  "$REPO/core/commands/sk/execute-plan.md" \
   "Checkpoint"
 
 assert_contains \
   "sk:gates has batch checkpoints" \
-  "$REPO/skills/sk:gates/SKILL.md" \
+  "$REPO/core/skills/sk:gates/SKILL.md" \
   "Checkpoint"
 
 # ── Laravel Boost MCP — Template & Doc Sync ─────────────────────────────────
@@ -1980,11 +1980,11 @@ assert_contains \
 echo ""
 echo "--- Laravel Boost MCP: Template & Doc Sync ---"
 
-LARAVEL_RULE_TPL="$REPO/skills/sk:setup-claude/templates/.claude/rules/laravel.md.template"
-SKILL_PROFILES="$REPO/skills/sk:setup-claude/references/skill-profiles.md"
-SETUP_CLAUDE_SKILL="$REPO/skills/sk:setup-claude/SKILL.md"
-SETUP_OPT_SKILL="$REPO/skills/sk:setup-optimizer/SKILL.md"
-APPLY_SCRIPT="$REPO/skills/sk:setup-claude/scripts/apply_setup_claude.py"
+LARAVEL_RULE_TPL="$REPO/core/skills/sk:setup-claude/templates/.claude/rules/laravel.md.template"
+SKILL_PROFILES="$REPO/core/skills/sk:setup-claude/references/skill-profiles.md"
+SETUP_CLAUDE_SKILL="$REPO/core/skills/sk:setup-claude/SKILL.md"
+SETUP_OPT_SKILL="$REPO/core/skills/sk:setup-optimizer/SKILL.md"
+APPLY_SCRIPT="$REPO/core/skills/sk:setup-claude/scripts/apply_setup_claude.py"
 
 # SKILL.md documents Boost installation and MCP config
 assert_contains \

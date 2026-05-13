@@ -56,7 +56,7 @@ done
 skills_linked=0
 skills_skipped=0
 
-for skill_dir in "${REPO_DIR}"/skills/*/; do
+for skill_dir in "${REPO_DIR}"/core/skills/*/; do
   skill_name="$(basename "${skill_dir}")"
   target="${SKILLS_DIR}/${skill_name}"
 
@@ -78,7 +78,7 @@ done
 commands_linked=0
 commands_skipped=0
 
-for cmd_file in "${REPO_DIR}"/commands/sk/*.md; do
+for cmd_file in "${REPO_DIR}"/core/commands/sk/*.md; do
   [[ -f "${cmd_file}" ]] || continue
   cmd_name="$(basename "${cmd_file}")"
   target="${COMMANDS_DIR}/${cmd_name}"

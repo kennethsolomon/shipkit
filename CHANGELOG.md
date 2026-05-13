@@ -5,6 +5,28 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v4.0.0] - 2026-05-13
+
+### Changed (breaking — internal layout only; install output unchanged)
+
+Architectural refactor in preparation for multi-target support. **Claude Code users see byte-identical install output vs v3.30.0**; this release is zero-risk for existing users on the Claude Code workflow. Codex support arrives in v4.1.0 (additive).
+
+- **Repo layout** — `skills/` → `core/skills/`, `commands/` → `core/commands/`. Existing skill content is unchanged; only the directory location changed (preserved via `git mv` so history follows).
+- **Per-target adapter scaffolding** — `adapters/claude/emit.js` (passthrough — Claude's `SKILL.md` format is the canonical source) and `adapters/codex/emit.js` (stub; full implementation in v4.1.0).
+- **CLI** — `bin/shipkit.js` rewritten to dispatch via `--target=claude|codex|both` (default `claude`). Behavior under default target is unchanged.
+- **`package.json` `files`** — whitelist updated to `bin`, `core`, `adapters`, `CLAUDE.md`.
+- **`install.sh`**, **`tests/verify-workflow.sh`**, **`.gitignore`** — paths updated to `core/`.
+
+### Verified
+
+- `diff -r core/ ~/.claude/` after `shipkit --target=claude` → **zero differences** vs v3.30.0 output.
+- `tests/verify-workflow.sh` — 361/362 pass (1 pre-existing failure unchanged; references a deleted file unrelated to this refactor).
+
+### Migration notes
+
+- npm-installed users (`@kennethsolomon/shipkit`) — **no action needed**. Install output is byte-identical.
+- Anyone reading the *source* tree directly (rare; not the npm-installed copy) needs to update paths from `skills/sk:*` to `core/skills/sk:*` and from `commands/sk/*` to `core/commands/sk/*`.
+
 ## [v3.30.0] - 2026-04-16
 
 ### Changed

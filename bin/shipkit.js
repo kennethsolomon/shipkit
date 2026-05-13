@@ -11,6 +11,7 @@ const pkg = require('../package.json');
 const cyan   = '\x1b[36m';
 const green  = '\x1b[32m';
 const yellow = '\x1b[33m';
+const red    = '\x1b[31m';
 const bold   = '\x1b[1m';
 const dim    = '\x1b[2m';
 const reset  = '\x1b[0m';
@@ -32,10 +33,25 @@ ${cyan}   ▀██████████████▀${reset}
 ${cyan}     ≋  ≋  ≋  ≋  ≋${reset}
 
   ${bold}ShipKit${reset} ${dim}v${pkg.version}${reset}
-  Quality-gated workflow toolkit for Claude Code.
+  Quality-gated workflow toolkit for Claude Code + Codex.
   TDD · Lint · Security · Review · Ship.
   by Kenneth Solomon
 
+`;
+
+const USAGE = `
+Usage: shipkit [options]
+
+Options:
+  --target <name>   Install for target: claude (default), codex, both
+  -u, --uninstall   Remove installed ShipKit files for the selected target
+  -h, --help        Show this help
+
+Examples:
+  shipkit                       Install for Claude Code (default)
+  shipkit --target=codex        Install for Codex CLI / Cloud in current repo
+  shipkit --target=both         Install for both targets
+  shipkit --uninstall           Remove from Claude Code
 `;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -46,153 +62,126 @@ function getClaudeDir() {
   return path.join(os.homedir(), '.claude');
 }
 
-function copyDir(src, dest) {
-  fs.mkdirSync(dest, { recursive: true });
-  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
-    const srcPath  = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
-    if (entry.isDirectory()) {
-      copyDir(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
+function getCodexProjectDir() {
+  return process.cwd();
+}
+
+function getDestDir(target) {
+  if (target === 'claude') return getClaudeDir();
+  if (target === 'codex')  return getCodexProjectDir();
+  throw new Error(`Unknown target: ${target}`);
+}
+
+function loadAdapter(target) {
+  return require(path.join(__dirname, '..', 'adapters', target, 'emit.js'));
+}
+
+function parseArgs(argv) {
+  const args = { target: 'claude', uninstall: false, help: false };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '-h' || a === '--help')        { args.help = true; continue; }
+    if (a === '-u' || a === '--uninstall')   { args.uninstall = true; continue; }
+    if (a.startsWith('--target=')) {
+      args.target = a.slice('--target='.length);
+      continue;
     }
+    if (a === '--target') {
+      args.target = argv[++i];
+      continue;
+    }
+    console.error(`${yellow}Unknown argument: ${a}${reset}`);
   }
+  return args;
 }
 
-function countFiles(dir, ext) {
-  if (!fs.existsSync(dir)) return 0;
-  return fs.readdirSync(dir).filter(f => f.endsWith(ext)).length;
+function targetsFromFlag(flag) {
+  if (flag === 'both') return ['claude', 'codex'];
+  return [flag];
 }
 
-// ── Uninstall ────────────────────────────────────────────────────────────────
-function uninstall() {
+// ── Install / Uninstall ──────────────────────────────────────────────────────
+function runInstall(targets) {
   process.stdout.write(banner);
-  const claudeDir   = getClaudeDir();
-  const commandsDest = path.join(claudeDir, 'commands', 'sk');
-  const skillsDest   = path.join(claudeDir, 'skills');
+  const coreDir = path.join(__dirname, '..', 'core');
 
-  if (fs.existsSync(commandsDest)) {
-    fs.rmSync(commandsDest, { recursive: true, force: true });
-    console.log(`  ${green}✓${reset} Removed commands/sk`);
-  }
+  for (const target of targets) {
+    console.log(`  ${bold}Target:${reset} ${cyan}${target}${reset}`);
+    const destDir = getDestDir(target);
+    if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
 
-  // Remove only sk: prefixed skill dirs
-  if (fs.existsSync(skillsDest)) {
-    const removed = fs.readdirSync(skillsDest, { withFileTypes: true })
-      .filter(e => e.isDirectory() && e.name.startsWith('sk:'))
-      .map(e => {
-        fs.rmSync(path.join(skillsDest, e.name), { recursive: true, force: true });
-        return e.name;
-      });
-    console.log(`  ${green}✓${reset} Removed ${removed.length} skills`);
-  }
-
-  console.log(`\n  ${green}Done!${reset} ShipKit uninstalled.\n`);
-}
-
-// ── Install ──────────────────────────────────────────────────────────────────
-function install() {
-  process.stdout.write(banner);
-
-  const claudeDir  = getClaudeDir();
-  const pkgDir     = path.join(__dirname, '..');
-
-  // Check Claude dir exists
-  if (!fs.existsSync(claudeDir)) {
-    fs.mkdirSync(claudeDir, { recursive: true });
-  }
-
-  // Install commands/sk/
-  const commandsSrc  = path.join(pkgDir, 'commands', 'sk');
-  const commandsDest = path.join(claudeDir, 'commands', 'sk');
-  const skillsSrc    = path.join(pkgDir, 'skills');
-
-  if (fs.existsSync(commandsSrc)) {
-    fs.mkdirSync(commandsDest, { recursive: true });
-    let cmdCount = 0;
-    let skipped  = 0;
-    for (const entry of fs.readdirSync(commandsSrc, { withFileTypes: true })) {
-      const srcPath  = path.join(commandsSrc, entry.name);
-      const destPath = path.join(commandsDest, entry.name);
-      if (entry.isDirectory()) {
-        copyDir(srcPath, destPath);
-      } else if (entry.name.endsWith('.md')) {
-        // Skip command file if a corresponding skill directory already exists
-        const skillName = 'sk:' + entry.name.replace(/\.md$/, '');
-        if (fs.existsSync(path.join(skillsSrc, skillName))) {
-          skipped++;
-          continue;
-        }
-        fs.copyFileSync(srcPath, destPath);
-        cmdCount++;
-      } else {
-        fs.copyFileSync(srcPath, destPath);
-      }
-    }
-    const skipNote = skipped ? ` ${dim}(${skipped} skipped — covered by skills)${reset}` : '';
-    console.log(`  ${green}✓${reset} Installed commands/sk ${dim}(${cmdCount} commands)${reset}${skipNote}`);
-  } else {
-    console.log(`  ${yellow}!${reset} commands/sk not found — skipping`);
-  }
-
-  // Install skills/sk:*/
-  const skillsDest = path.join(claudeDir, 'skills');
-  let skillCount = 0;
-
-  if (fs.existsSync(skillsSrc)) {
-    const skillDirs = fs.readdirSync(skillsSrc, { withFileTypes: true })
-      .filter(e => e.isDirectory());
-
-    const failed = [];
-    for (const entry of skillDirs) {
-      const src  = path.join(skillsSrc, entry.name);
-      const dest = path.join(skillsDest, entry.name);
-      try {
-        // Remove broken symlinks that block mkdir
-        try {
-          const lstat = fs.lstatSync(dest);
-          if (lstat.isSymbolicLink()) {
-            fs.unlinkSync(dest);
-          }
-        } catch (_) { /* dest doesn't exist — fine */ }
-        copyDir(src, dest);
-        skillCount++;
-      } catch (err) {
-        failed.push(entry.name);
-      }
-    }
-    if (failed.length) {
-      console.log(`  ${yellow}!${reset} ${failed.length} skill(s) failed to install: ${dim}${failed.join(', ')}${reset}`);
-    }
-    console.log(`  ${green}✓${reset} Installed skills ${dim}(${skillCount} skills)${reset}`);
-  } else {
-    console.log(`  ${yellow}!${reset} skills/ not found — skipping`);
-  }
-
-  // Clean up stale command files superseded by skills (prevents duplicate slash commands)
-  if (fs.existsSync(commandsDest) && fs.existsSync(skillsDest)) {
-    let cleaned = 0;
-    for (const entry of fs.readdirSync(commandsDest, { withFileTypes: true })) {
-      if (!entry.isFile() || !entry.name.endsWith('.md')) continue;
-      const skillName = 'sk:' + entry.name.replace(/\.md$/, '');
-      if (fs.existsSync(path.join(skillsDest, skillName))) {
-        fs.rmSync(path.join(commandsDest, entry.name));
-        cleaned++;
-      }
-    }
-    if (cleaned > 0) {
-      console.log(`  ${green}✓${reset} Cleaned ${cleaned} stale command(s) superseded by skills`);
+    const adapter = loadAdapter(target);
+    try {
+      const r = adapter.emit({ coreDir, destDir });
+      reportInstall(target, r);
+    } catch (err) {
+      console.log(`  ${red}✗${reset} ${target} adapter failed: ${err.message}`);
+      process.exitCode = 1;
+      continue;
     }
   }
 
   console.log(`\n  ${green}Done!${reset} Run ${cyan}/sk:help${reset} to get started.\n`);
 }
 
-// ── Entry point ──────────────────────────────────────────────────────────────
-const args = process.argv.slice(2);
+function runUninstall(targets) {
+  process.stdout.write(banner);
 
-if (args.includes('--uninstall') || args.includes('-u')) {
-  uninstall();
+  for (const target of targets) {
+    console.log(`  ${bold}Target:${reset} ${cyan}${target}${reset}`);
+    const destDir = getDestDir(target);
+    const adapter = loadAdapter(target);
+    try {
+      const r = adapter.uninstall({ destDir });
+      reportUninstall(target, r);
+    } catch (err) {
+      console.log(`  ${red}✗${reset} ${target} adapter failed: ${err.message}`);
+      process.exitCode = 1;
+    }
+  }
+
+  console.log(`\n  ${green}Done!${reset} ShipKit uninstalled.\n`);
+}
+
+function reportInstall(target, r) {
+  if (target === 'claude') {
+    const skipNote = r.skippedCommands
+      ? ` ${dim}(${r.skippedCommands} skipped — covered by skills)${reset}`
+      : '';
+    console.log(`  ${green}✓${reset} Installed commands/sk ${dim}(${r.commands} commands)${reset}${skipNote}`);
+    if (r.failedSkills && r.failedSkills.length) {
+      console.log(`  ${yellow}!${reset} ${r.failedSkills.length} skill(s) failed: ${dim}${r.failedSkills.join(', ')}${reset}`);
+    }
+    console.log(`  ${green}✓${reset} Installed skills ${dim}(${r.skills} skills)${reset}`);
+    if (r.cleanedStale > 0) {
+      console.log(`  ${green}✓${reset} Cleaned ${r.cleanedStale} stale command(s) superseded by skills`);
+    }
+  } else {
+    console.log(`  ${green}✓${reset} ${target} emit complete ${dim}(${JSON.stringify(r)})${reset}`);
+  }
+}
+
+function reportUninstall(target, r) {
+  if (target === 'claude') {
+    if (r.commandsRemoved) console.log(`  ${green}✓${reset} Removed commands/sk`);
+    console.log(`  ${green}✓${reset} Removed ${r.skillsRemoved} skills`);
+  } else {
+    console.log(`  ${green}✓${reset} ${target} uninstall complete ${dim}(${JSON.stringify(r)})${reset}`);
+  }
+}
+
+// ── Entry point ──────────────────────────────────────────────────────────────
+const args = parseArgs(process.argv.slice(2));
+
+if (args.help) {
+  process.stdout.write(banner);
+  console.log(USAGE);
+  process.exit(0);
+}
+
+const targets = targetsFromFlag(args.target);
+if (args.uninstall) {
+  runUninstall(targets);
 } else {
-  install();
+  runInstall(targets);
 }
