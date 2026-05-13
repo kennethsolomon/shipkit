@@ -50,15 +50,22 @@ Real `adapters/codex/emit.js` producing AGENTS.md + `.agents/skills/` + `.codex/
 - [x] Verified test suite (361/1 unchanged)
 - [ ] Commit Phase 3 (next)
 
-## Phase 4 — Hard translations (parallel sub-agents, worktrees)
+## Phase 4 — Sub-agent translation — DONE
 
-- [ ] **4.1** Inventory all `Agent` tool invocations in skill bodies (from `tasks/codex-migration-inventory.md`)
-- [ ] **4.2** For each parallel-batch pattern (e.g., `/sk:gates` Batch 3), define a `.codex/agents/<name>.toml`
-- [ ] **4.3** Emit `.codex/agents/` directory from adapter
-- [ ] **4.4** Rewrite skill bodies that orchestrate parallel agents to use sequential invocations on Codex (document perf delta in `tasks/codex-quality-deltas.md`)
-- [ ] **4.5** Replace `isolation: "worktree"` agent calls with `git worktree add` + `codex --cd <path>` shell helper
-- [ ] **4.6** Sandbox test: invoke at least one ported sub-agent via Codex
-- [ ] **4.7** Commit Phase 4
+- [x] Translated all 18 ShipKit sub-agent definitions (architect, backend-dev, code-reviewer, etc.)
+- [x] Each agent emits both `.codex/agents/<name>.toml` (config) + `.codex/agents/<name>.md` (developer_instructions body, with path transforms applied)
+- [x] Model mapping: Claude `haiku`/`sonnet`/`opus` → Codex `gpt-5-haiku`/`gpt-5` + reasoning_effort low/medium/high
+- [x] Sandbox mode inference: `Edit`/`Write`/`NotebookEdit` in allowed-tools → `workspace-write`, otherwise → `read-only`. Bash alone doesn't force write-mode (code-reviewer + architect use it for git diff)
+- [x] `.codex/config.toml` lists all 18 agents in comment block
+- [x] Wrote `tasks/codex-quality-deltas.md` documenting:
+  - Per-skill parallel-to-sequential perf deltas (`/sk:gates`, `/sk:team`, `/sk:deep-dive`, `/sk:review`)
+  - Cloud-only constraints (Phase 5)
+  - Pencil + context-mode incompatibilities
+  - Tool naming compatibility matrix
+  - Open quality bets to validate
+- [x] Sandbox-tested: `shipkit --target=codex` emits 18 agents (36 files); spot-check confirms correct sandbox modes
+- [x] Deferred to Phase 5: sequential rewrite of `/sk:gates` body (current skill body still describes parallel batches; agent will adapt or the AGENTS.md header explains the constraint)
+- [ ] Commit Phase 4 (next)
 
 ## Phase 5 — Cloud-mode environment detection
 

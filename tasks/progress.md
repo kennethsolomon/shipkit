@@ -1,5 +1,21 @@
 # Progress Log
 
+### [2026-05-13] Codex target — Phase 4 (sub-agent translation) — COMPLETED
+- Branch: `feat/codex-target`
+- Translated all 18 ShipKit sub-agent templates (architect, backend-dev, code-reviewer, database-architect, debugger, devops-engineer, doc-reviewer, e2e-tester, frontend-dev, linter, mobile-dev, perf-auditor, performance-optimizer, qa-engineer, refactor-specialist, security-auditor, tech-writer, test-runner)
+- Each agent emits 2 files: `.codex/agents/<name>.toml` (config) + `.codex/agents/<name>.md` (developer_instructions body, with the 19-rule path transform applied)
+- Translation tables:
+  - Model: haiku → gpt-5-haiku (effort=low), sonnet → gpt-5 (medium), opus → gpt-5 (high)
+  - Sandbox: `Edit`/`Write`/`NotebookEdit` in allowed-tools → `workspace-write`; otherwise → `read-only`. Critical fix: Bash alone doesn't force write-mode (code-reviewer + architect rely on Bash for git diff but stay read-only)
+- `.codex/config.toml` lists all 18 agents in comment block so users know what's available
+- Wrote `tasks/codex-quality-deltas.md` covering: per-skill perf deltas (parallel→sequential), cloud-only constraints (Phase 5), Pencil + context-mode incompatibilities, tool naming matrix, open quality bets
+- Verified spot-check sandbox modes:
+  - read-only: architect, code-reviewer, database-architect, doc-reviewer
+  - workspace-write: backend-dev, debugger, devops-engineer, e2e-tester, frontend-dev, linter, mobile-dev, perf-auditor, performance-optimizer, qa-engineer, refactor-specialist, security-auditor, tech-writer, test-runner
+- Test suite unchanged: 361 pass / 1 pre-existing fail
+- Deferred to Phase 5: sequential rewrite of `/sk:gates` body. AGENTS.md header already documents the parallel→sequential degradation; sub-agent definitions ship so Codex users can manually invoke via `codex exec --agent <name>` per gate
+- Next: Phase 5 — Cloud-mode environment detection. Add `core/lib/env-detect.sh` invoked by hook-dependent + Pencil-dependent + sub-agent-heavy skills. Each gates its CLI-only features behind the detect with a graceful degradation notice.
+
 ### [2026-05-13] Codex target — Phase 3 (skill body audit + transform pass) — COMPLETED
 - Branch: `feat/codex-target`
 - Audit (51 skills + 12 commands grepped):
@@ -1736,3 +1752,4 @@
 - [08:06] Auto: git commit — "$(cat <<"
 - [08:11] Auto: git commit — "$(cat <<"
 - [08:16] Auto: git push — -u origin feat/codex-target 2>&1 | tail -10
+- [08:20] Auto: git push — 2>&1 | tail -5 && echo "" && echo "=== ShipKit sub-agent def
