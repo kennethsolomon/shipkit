@@ -2,8 +2,8 @@ node_modules/
 package-lock.json
 
 # Claude Code system-managed skills (auto-installed, not custom)
-skills/find-skills/
-skills/web-design-guidelines/
+core/skills/find-skills/
+core/skills/web-design-guidelines/
 
 # Python
 __pycache__/
