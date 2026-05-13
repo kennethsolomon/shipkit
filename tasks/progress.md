@@ -1,5 +1,22 @@
 # Progress Log
 
+### [2026-05-13] Codex target — Phase 3 (skill body audit + transform pass) — COMPLETED
+- Branch: `feat/codex-target`
+- Audit (51 skills + 12 commands grepped):
+  - Tool name refs (Read/Edit/Write/Bash/Grep/Glob): minimal — used as actions, not API calls. No source changes needed.
+  - Agent / sub-agent refs: 20+ files — deferred to Phase 4 as planned
+  - TaskCreate / TodoWrite / Plan mode / WebFetch / WebSearch: 0 hits
+  - `.claude/` path refs: 16 files — bulk of Phase 3
+- Built `BODY_TRANSFORMS` table (19 rules) in `adapters/codex/emit.js`:
+  - User-global: `~/.claude/skills/` → `~/.agents/skills/`, `~/.claude/agents/` → `~/.codex/agents/`, `~/.claude/settings.json` → `~/.codex/config.toml`, etc.
+  - Project-local: `.claude/agents/` → `.codex/agents/`, `.claude/hooks/` → `.codex/hooks/`, `.claude/skills/sk:` → `.agents/skills/sk-`, `.claude/docs/` → `docs/`, `.claude/evals/` → `.codex/evals/`, `.claude/rules/` → `.codex/rules/`, `.claude/safety-guard` → `.codex/safety-guard`, etc.
+  - Applied during `emitSkill` + `emitCommand`; transform count surfaced in install report.
+- Deliberately NOT transformed: tool names (action-style refs, no harm), "Claude Code"/"CLAUDE.md" prose (factual refs preserved), `/sk:foo` slash invocations (Codex auto-triggers from descriptions), `.claude/statusline.sh` (no Codex equivalent — 3 refs in sk-setup-claude left intact since that skill is target-specific by design)
+- Wrote `adapters/codex/README.md` documenting: output layout, naming convention, transform table, NOT-transformed rationale, known Codex-incompatible skills, Phase 4 plan
+- Verified: re-emit applies 121 transforms across 51 skills; only 3 residual `.claude/` refs (all intentional, in sk-setup-claude)
+- Test suite unchanged: 361 pass / 1 pre-existing fail
+- Next: Phase 4 — sub-agent translation. Inventory parallel-batch patterns, emit `.codex/agents/<name>.toml` per sub-agent, rewrite parallel-batch skill bodies to sequential `codex exec` or in-process iteration. Document perf delta in `tasks/codex-quality-deltas.md`.
+
 ### [2026-05-13] Codex target — Phase 2 (Codex adapter MVP) — COMPLETED
 - Branch: `feat/codex-target`
 - Built real `adapters/codex/emit.js`:
@@ -1717,3 +1734,5 @@
 - Branch: main
 - Commits this session: 0
 - [08:06] Auto: git commit — "$(cat <<"
+- [08:11] Auto: git commit — "$(cat <<"
+- [08:16] Auto: git push — -u origin feat/codex-target 2>&1 | tail -10

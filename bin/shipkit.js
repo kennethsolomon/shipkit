@@ -161,7 +161,8 @@ function reportInstall(target, r) {
   }
 
   if (target === 'codex') {
-    console.log(`  ${green}✓${reset} Emitted ${r.skills} skills ${dim}(.agents/skills/)${reset}`);
+    const xform = r.transforms ? ` ${dim}(${r.transforms} path transforms applied)${reset}` : '';
+    console.log(`  ${green}✓${reset} Emitted ${r.skills} skills ${dim}(.agents/skills/)${reset}${xform}`);
     if (r.commandsAsSkills > 0) {
       console.log(`  ${green}✓${reset} Promoted ${r.commandsAsSkills} command(s) to skills`);
     }

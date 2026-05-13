@@ -46,6 +46,52 @@ function toCodexName(claudeName) {
   return claudeName.replace(/:/g, '-');
 }
 
+// ── Body transforms ─────────────────────────────────────────────────────────
+// Path / config references that are safe to rewrite Claude → Codex without
+// changing the meaning of the surrounding text.
+//
+// Skipped on purpose:
+//   - Tool names (Read/Edit/Write/Bash/Grep/Glob) — Codex aliases these in its
+//     hook matchers; skill bodies generally use them as actions, not tool calls.
+//   - "Claude Code" / "CLAUDE.md" prose — agents read AGENTS.md and understand
+//     the mapping from the header we inject there. Blind replacement risks
+//     turning factual references ("Claude Code's plan mode") into nonsense.
+//   - /sk:foo slash-command references — Codex auto-triggers on description;
+//     the agent figures out the right skill name from context.
+const BODY_TRANSFORMS = [
+  // User-global paths (~/.claude/ → ~/.codex/ or ~/.agents/)
+  [/~\/\.claude\/skills\/sk:/g, '~/.agents/skills/sk-'],
+  [/~\/\.claude\/skills\//g,    '~/.agents/skills/'],
+  [/~\/\.claude\/agents\//g,    '~/.codex/agents/'],
+  [/~\/\.claude\/settings\.json/g, '~/.codex/config.toml'],
+  [/~\/\.claude\/sessions\//g,  '~/.codex/sessions/'],
+  [/~\/\.claude\//g,            '~/.codex/'],
+  // Project-local paths
+  [/\.claude\/agents\//g,       '.codex/agents/'],
+  [/\.claude\/hooks\//g,        '.codex/hooks/'],
+  [/\.claude\/skills\/sk:/g,    '.agents/skills/sk-'],
+  [/\.claude\/skills\//g,       '.agents/skills/'],
+  [/\.claude\/commands\/sk:/g,  '.agents/skills/sk-'],
+  [/\.claude\/commands\/sk\//g, '.agents/skills/'],
+  [/\.claude\/commands\//g,     '.agents/skills/'],
+  [/\.claude\/docs\//g,         'docs/'],
+  [/\.claude\/evals\//g,        '.codex/evals/'],
+  [/\.claude\/rules\//g,        '.codex/rules/'],
+  [/\.claude\/safety-guard/g,   '.codex/safety-guard'],
+  [/\.claude\/settings\.json/g, '.codex/config.toml'],
+  [/\.claude\/sessions\//g,     '~/.codex/sessions/'],
+  [/\.claude\/mcp\.json/g,      '~/.codex/config.toml'],
+];
+
+function transformBody(body) {
+  let out = body;
+  let count = 0;
+  for (const [pattern, replacement] of BODY_TRANSFORMS) {
+    out = out.replace(pattern, () => { count++; return replacement; });
+  }
+  return { body: out, count };
+}
+
 // ── File helpers ────────────────────────────────────────────────────────────
 function copyAsset(src, dest) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
@@ -84,14 +130,16 @@ function emitSkill({ srcDir, skillName, destSkillsDir }) {
   const destDir = path.join(destSkillsDir, codexName);
   fs.mkdirSync(destDir, { recursive: true });
 
+  const { body: transformedBody, count: transforms } = transformBody(body);
+
   const newContent = emitCodexFrontmatter({ name: codexName, description })
-    + '\n' + body.replace(/^\n+/, '');
+    + '\n' + transformedBody.replace(/^\n+/, '');
 
   fs.writeFileSync(path.join(destDir, 'SKILL.md'), newContent, 'utf8');
 
   copyAssetTree(srcDir, destDir, new Set(['SKILL.md']));
 
-  return { codexName, droppedFields: dropped(frontmatter) };
+  return { codexName, droppedFields: dropped(frontmatter), transforms };
 }
 
 function dropped(fm) {
@@ -110,8 +158,10 @@ function emitCommand({ srcFile, destSkillsDir }) {
   const destDir = path.join(destSkillsDir, codexName);
   fs.mkdirSync(destDir, { recursive: true });
 
+  const { body: transformedBody } = transformBody(body);
+
   const newContent = emitCodexFrontmatter({ name: codexName, description })
-    + '\n' + body.replace(/^\n+/, '');
+    + '\n' + transformedBody.replace(/^\n+/, '');
 
   fs.writeFileSync(path.join(destDir, 'SKILL.md'), newContent, 'utf8');
 
@@ -315,6 +365,7 @@ function emit({ coreDir, destDir, repoRoot }) {
   const result = {
     skills: 0,
     commandsAsSkills: 0,
+    transforms: 0,
     skipped: [],
     failed: [],
   };
@@ -331,8 +382,12 @@ function emit({ coreDir, destDir, repoRoot }) {
           skillName: entry.name,
           destSkillsDir,
         });
-        if (r.skipped) result.skipped.push({ name: entry.name, reason: r.reason });
-        else result.skills++;
+        if (r.skipped) {
+          result.skipped.push({ name: entry.name, reason: r.reason });
+        } else {
+          result.skills++;
+          result.transforms += r.transforms || 0;
+        }
       } catch (err) {
         result.failed.push({ name: entry.name, error: err.message });
       }
