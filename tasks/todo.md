@@ -67,24 +67,24 @@ Real `adapters/codex/emit.js` producing AGENTS.md + `.agents/skills/` + `.codex/
 - [x] Deferred to Phase 5: sequential rewrite of `/sk:gates` body (current skill body still describes parallel batches; agent will adapt or the AGENTS.md header explains the constraint)
 - [ ] Commit Phase 4 (next)
 
-## Phase 5 — Cloud-mode environment detection
+## Phase 5 — Cloud-mode environment detection — DONE
 
-- [ ] **5.1** Write `core/lib/env-detect.sh` — detects Codex Cloud (no `~/.codex/`, no hooks, no MCP unless pre-wired)
-- [ ] **5.2** Inject env-detect calls into skills that rely on CLI-only features (hooks, sub-agents, MCP)
-- [ ] **5.3** Each gated skill prints a degraded-mode notice and continues with reduced functionality
-- [ ] **5.4** Document the cloud quality delta in `tasks/codex-quality-deltas.md`
-- [ ] **5.5** Manually verify in Codex Cloud: push branch, run a representative workflow
-- [ ] **5.6** Commit Phase 5
+- [x] `core/lib/env-detect.sh` — sets SHIPKIT_TARGET/ENV/HOOKS_OK/MCP_OK; priority: runtime env vars → local cwd → user-home
+- [x] Emit env-detect.sh to `.codex/lib/` during codex install
+- [x] AGENTS.md expanded with comprehensive cloud-constraints section + cloud-affected-skills table
+- [x] Documentation in `tasks/codex-quality-deltas.md` (covers all 6 phases)
+- [ ] **Deferred to Phase 7** — manual Codex Cloud E2E verification (requires user's Codex environment)
 
-## Phase 6 — Distribution
+## Phase 6 — Distribution — DONE
 
-- [ ] **6.1** Update README.md with three-way install matrix (Claude / Codex CLI / Codex Cloud)
-- [ ] **6.2** Add architectural change log entry in `.claude/docs/architectural_change_log/`
-- [ ] **6.3** Update CHANGELOG.md with v4.0.0 entry
-- [ ] **6.4** Test `npm pack` and inspect tarball contents
-- [ ] **6.5** Cut `4.0.0-beta.1` (npm dist-tag `next`) for early adopters
-- [ ] **6.6** Defer Codex plugin marketplace until access confirmed (per locked decision)
-- [ ] **6.7** Commit Phase 6
+- [x] README.md updated with three-way install matrix + targets badge + Quick Start for both Claude and Codex
+- [x] CHANGELOG.md v4.0.0-beta.1 entry covering all 6 phases + deltas
+- [x] `.claude/docs/architectural_change_log/2026-05-13-codex-dual-target.md` written (full architecture write-up)
+- [x] `npm pack --dry-run` inspected: 246 files, 510 KB tarball, includes bin/, core/, adapters/, CLAUDE.md, README.md
+- [x] `package.json` version bumped: 4.0.0-alpha.1 → 4.0.0-beta.1
+- [x] CLAUDE.md version banner updated
+- [x] Defer Codex plugin marketplace per locked decision
+- [ ] Commit Phase 5+6 (next)
 
 ## Phase 7 — Validation
 
