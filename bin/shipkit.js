@@ -172,6 +172,9 @@ function reportInstall(target, r) {
     if (r.failed && r.failed.length) {
       console.log(`  ${red}✗${reset} ${r.failed.length} skill(s) failed: ${dim}${r.failed.map(f => `${f.name}(${f.error})`).join(', ')}${reset}`);
     }
+    if (r.subAgents && r.subAgents.count > 0) {
+      console.log(`  ${green}✓${reset} Emitted ${r.subAgents.count} sub-agent(s) ${dim}(.codex/agents/)${reset}`);
+    }
     console.log(`  ${green}✓${reset} Wrote AGENTS.md ${dim}(${r.agentsMd.bytes} bytes${r.agentsMd.overLimit ? ', OVER 32 KiB limit — split into nested AGENTS.md recommended' : ''})${reset}`);
     console.log(`  ${green}✓${reset} Wrote .codex/config.toml`);
     console.log(`  ${green}✓${reset} Wrote .codex/hooks.json + ${r.hooks.copied} hook script(s) ${dim}(${r.hooks.events} event(s))${reset}`);
