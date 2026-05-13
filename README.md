@@ -4,14 +4,15 @@
 
 # SHIPKIT
 
-**A structured, quality-gated workflow system for Claude Code.**
+**A structured, quality-gated workflow system for Claude Code and OpenAI Codex.**
 
 Ship features with TDD, security audits, and AI-powered code review —<br>
-all wired into a single repeatable workflow.
+all wired into a single repeatable workflow. Works in **Claude Code**, **Codex CLI**, and **Codex Cloud**.
 
 [![npm](https://img.shields.io/npm/v/@kennethsolomon%2Fshipkit)](https://www.npmjs.com/package/@kennethsolomon/shipkit)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![platform](https://img.shields.io/badge/platform-Mac%20%2F%20Linux%20%2F%20Windows-lightgrey)](#)
+[![targets](https://img.shields.io/badge/targets-Claude%20Code%20%7C%20Codex%20CLI%20%7C%20Codex%20Cloud-purple)](#install)
 
 ```bash
 npm install -g @kennethsolomon/shipkit && shipkit
@@ -23,7 +24,7 @@ npm install -g @kennethsolomon/shipkit && shipkit
 
 ## What is ShipKit?
 
-ShipKit turns Claude Code into a disciplined development partner. Instead of "write some code and hope," every task follows a structured path:
+ShipKit turns Claude Code (or OpenAI Codex) into a disciplined development partner. Instead of "write some code and hope," every task follows a structured path:
 
 **Plan → Build (TDD) → Quality Gates → Ship**
 
@@ -33,6 +34,23 @@ ShipKit auto-detects your stack — linters, test runners, frameworks, ORMs. No 
 
 ---
 
+## Install
+
+ShipKit installs the same `core/` content to one or both agent harnesses via per-target adapters. Pick the one that matches your editor.
+
+```bash
+npm install -g @kennethsolomon/shipkit
+```
+
+| Target | Command | Output | Quality |
+|---|---|---|---|
+| **Claude Code** (default) | `shipkit` | `~/.claude/skills/sk:*` + `~/.claude/commands/sk/*` | Primary target — all features |
+| **Codex CLI** | `cd your-repo && shipkit --target=codex` | `AGENTS.md` + `.agents/skills/sk-*` + `.codex/*` in repo | Full feature parity (sequential sub-agents) |
+| **Codex Cloud** (ChatGPT) | Push repo with `.agents/`, `.codex/`, `AGENTS.md` | Picked up automatically by hosted agent | Degraded — no hooks, no user-global config |
+| **Both** | `shipkit --target=both` | Both of the above | — |
+
+> See `tasks/codex-quality-deltas.md` for the per-skill comparison between Claude Code and Codex.
+
 ## Quick Start
 
 ```bash
@@ -40,10 +58,13 @@ ShipKit auto-detects your stack — linters, test runners, frameworks, ORMs. No 
 npm install -g @kennethsolomon/shipkit && shipkit
 
 # 2. Bootstrap your project (run once per project)
-/sk:setup-claude
+/sk:setup-claude     # Claude Code
+# or
+shipkit --target=codex   # in your repo, for Codex (no separate bootstrap step)
 
 # 3. Start any task
-/sk:start add user authentication
+/sk:start add user authentication        # Claude Code
+"use the sk-start skill: add user auth"  # Codex (skills auto-trigger by description)
 ```
 
 `/sk:setup-claude` creates everything your project needs: planning files, lifecycle hooks, 13 agent definitions, path-scoped rules, LSP config, and MCP servers.

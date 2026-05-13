@@ -198,12 +198,35 @@ ShipKit slash commands like \`/sk:foo\` are emitted as Codex skills named \`sk-f
 
 ## What is NOT available in Codex Cloud
 
-- Local hooks (CLI-only; defined in \`.codex/hooks.json\`)
-- \`~/.codex/\` user-global config
-- Background sub-agent execution
-- Pencil MCP server (visual design — covered by skill: sk-frontend-design)
+Codex Cloud (hosted, ChatGPT-side) installations skip:
 
-Skills that rely on these gracefully degrade with a notice.
+- **Hooks** — \`.codex/hooks.json\` is CLI-only. SessionStart context loading, pre-commit validation, post-edit formatting, safety-guard, secret-scan, and config-protection hooks do not fire.
+- **User-global config** — \`~/.codex/config.toml\` doesn't apply. MCP servers, profiles, and agent presets must ride along in the repo (\`.codex/config.toml\` in the repo root).
+- **Background sub-agent execution** — \`codex exec\` from inside a cloud task may not spawn sub-tasks. Sub-agent invocations in skill bodies degrade to sequential in-process iteration.
+- **Pencil MCP** (visual design editor) — Claude-native MCP. \`/sk-frontend-design --pencil\` and \`/sk-mvp\` Pencil step downgrade to pure-CSS mockups.
+- **context-mode plugin** — Claude-Code-specific harness optimization. Skills using \`ctx_*\` MCP tools fall back to direct shell/file access.
+
+### Detecting your environment
+
+Skills can source \`.codex/lib/env-detect.sh\` to branch on environment:
+
+\`\`\`bash
+source .codex/lib/env-detect.sh
+# Exports: SHIPKIT_TARGET, SHIPKIT_ENV (cli|cloud), SHIPKIT_HOOKS_OK, SHIPKIT_MCP_OK
+\`\`\`
+
+### Cloud-affected skills
+
+| Skill | Cloud delta | Workaround |
+|---|---|---|
+| \`sk-safety-guard\` | Hook-driven blocking → advisory-only | None needed; logs warnings instead of blocking |
+| \`sk-gates\` | Parallel batches → sequential | Slower but correct |
+| \`sk-team\` | Parallel domain agents → sequential | Slower but correct |
+| \`sk-frontend-design --pencil\` | Pencil unavailable → CSS-only mockups | Use CLI for design work |
+| \`sk-mvp\` (Pencil step) | Same as above | Same |
+| \`sk-setup-claude\` | Not applicable to Codex | Use \`sk-setup-codex\` (Phase 5 follow-up) |
+
+See \`tasks/codex-quality-deltas.md\` for the full per-skill delta inventory.
 
 ---
 
@@ -393,6 +416,19 @@ sandbox_mode           = "read-only"
   return { path: '.codex/config.toml' };
 }
 
+// ── env-detect.sh emit ──────────────────────────────────────────────────────
+function emitEnvDetect({ coreDir, destDir }) {
+  const src = path.join(coreDir, 'lib', 'env-detect.sh');
+  if (!fs.existsSync(src)) return { copied: false };
+
+  const libDir = path.join(destDir, '.codex', 'lib');
+  fs.mkdirSync(libDir, { recursive: true });
+  const dest = path.join(libDir, 'env-detect.sh');
+  fs.copyFileSync(src, dest);
+  fs.chmodSync(dest, 0o755);
+  return { copied: true, path: '.codex/lib/env-detect.sh' };
+}
+
 // ── hooks.json emit ─────────────────────────────────────────────────────────
 function emitHooksJson({ coreDir, destDir }) {
   // Map ShipKit's setup-claude hook templates to Codex hook events.
@@ -527,6 +563,7 @@ function emit({ coreDir, destDir, repoRoot }) {
   }
 
   // Side artifacts
+  result.envDetect = emitEnvDetect({ coreDir, destDir });
   result.config = emitConfigToml({ destDir, subAgentNames });
   result.hooks  = emitHooksJson({ coreDir, destDir });
   result.agentsMd = emitAgentsMd({ destDir, repoRoot });

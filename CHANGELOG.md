@@ -5,6 +5,54 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v4.1.0] - 2026-05-13
+
+### Added — OpenAI Codex target (CLI + Cloud)
+
+Building on v4.0.0's adapter scaffolding, this release ships a working `adapters/codex/` that produces a complete Codex installation. Claude Code installs are unaffected; this is purely additive.
+
+```bash
+shipkit                       # Claude Code (default — same as v4.0.0)
+shipkit --target=codex        # Codex CLI / Cloud, install into current repo
+shipkit --target=both         # Both at once
+```
+
+#### What ships per target
+
+| Target | Output | Location |
+|---|---|---|
+| `claude` | `commands/sk/*.md`, `skills/sk:*/SKILL.md` | `~/.claude/` (user-global) |
+| `codex` | `AGENTS.md`, `.agents/skills/sk-*/SKILL.md`, `.codex/{config.toml,hooks.json,agents/*,hooks/*,lib/env-detect.sh}` | Current project directory |
+
+#### Architecture
+
+- **`adapters/codex/emit.js`** — parses YAML frontmatter, strips Claude-only fields, emits Codex-spec `SKILL.md`; copies asset trees verbatim
+- **`core/lib/env-detect.sh`** — runtime detection of Claude vs Codex CLI vs Codex Cloud
+
+#### Phase deliverables (Phases 2-6; Phase 1 was v4.0.0)
+
+- **Phase 2** — Codex adapter MVP: 63 skills (51 + 12 promoted commands), AGENTS.md, `.codex/config.toml`, `.codex/hooks.json` + 11 hook scripts
+- **Phase 3** — Body-transform pass: 19 path rules apply 121 transforms across 51 skills at emit time
+- **Phase 4** — 18 ShipKit sub-agents translated to `.codex/agents/<name>.{toml,md}`
+- **Phase 5** — Cloud-mode `env-detect.sh` + comprehensive AGENTS.md cloud-constraints section
+- **Phase 6** — Distribution prep (this entry)
+
+#### Known dual-target deltas
+
+See `tasks/codex-quality-deltas.md` for the full inventory. Highlights:
+
+- **Performance** — Parallel sub-agent batches (`/sk:gates`, `/sk:team`, `/sk:deep-dive`) run sequentially on Codex; expect 2-3x wall-clock slowdown.
+- **Cloud constraints** — Codex Cloud installations lack hooks, `~/.codex/` user config, and background sub-agent execution. Skills detect via `env-detect.sh` and degrade gracefully.
+- **Pencil MCP** — `/sk-frontend-design --pencil` and `/sk-mvp` Pencil step degrade to CSS-only mockups on Codex.
+
+### Changed
+
+- **`package.json` `files`** — `README.md` + `LICENSE` added to whitelist (CLAUDE.md was already in from v4.0.0).
+
+### Tests
+
+- `tests/verify-workflow.sh` — 361/362 pass (1 pre-existing failure unchanged across all 6 phases of the v4.0.0 + v4.1.0 work).
+
 ## [v4.0.0] - 2026-05-13
 
 ### Changed (breaking — internal layout only; install output unchanged)
@@ -26,7 +74,6 @@ Architectural refactor in preparation for multi-target support. **Claude Code us
 
 - npm-installed users (`@kennethsolomon/shipkit`) — **no action needed**. Install output is byte-identical.
 - Anyone reading the *source* tree directly (rare; not the npm-installed copy) needs to update paths from `skills/sk:*` to `core/skills/sk:*` and from `commands/sk/*` to `core/commands/sk/*`.
-
 ## [v3.30.0] - 2026-04-16
 
 ### Changed

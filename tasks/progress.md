@@ -1,5 +1,24 @@
 # Progress Log
 
+### [2026-05-13] Codex target — Phase 5+6 (env-detect + distribution) — COMPLETED
+- Branch: `feat/codex-target`
+- Phase 5 (cloud env detection):
+  - Wrote `core/lib/env-detect.sh` — sources SHIPKIT_TARGET (claude/codex/unknown), SHIPKIT_ENV (cli/cloud/unknown), SHIPKIT_HOOKS_OK, SHIPKIT_MCP_OK. Detection priority: runtime env vars (CODEX_AGENT/CLAUDE_AGENT) → local cwd (AGENTS.md/CLAUDE.md/.codex/.claude) → user-home (~/.codex/~/.claude/)
+  - Codex adapter emits env-detect.sh to `.codex/lib/`
+  - AGENTS.md cloud section expanded: enumerates cloud limitations (hooks, MCP, sub-agents, Pencil, context-mode), shows env-detect source pattern, ships a cloud-affected-skills table
+  - Verified env-detect under 3 scenarios: repo root (claude), AGENTS.md cwd (codex CLI), CODEX_CLOUD=1 (codex cloud, hooks_ok=no)
+- Phase 6 (distribution):
+  - README.md: added Install section with three-way target matrix (Claude / Codex CLI / Codex Cloud), targets badge, dual Quick Start instructions
+  - CHANGELOG.md: v4.0.0-beta.1 entry covering all phases, architecture, deltas, breaking changes, tests
+  - `.claude/docs/architectural_change_log/2026-05-13-codex-dual-target.md`: full architecture write-up with before/after, trade-offs considered+rejected, target capability matrix, migration notes, phase-by-phase commit table
+  - package.json `files` whitelist: added README.md + LICENSE (CLAUDE.md was already in)
+  - Bumped version: 4.0.0-alpha.1 → 4.0.0-beta.1 in package.json + CLAUDE.md banner
+  - `npm pack --dry-run`: 246 files, 510 KB tarball, includes bin/core/adapters/CLAUDE.md/README.md/LICENSE
+  - Codex plugin marketplace deferred per locked decision
+- Test suite unchanged across all phases: 361 pass / 1 pre-existing fail
+- Final codex install: 51 skills + 12 promoted-from-command skills + 18 sub-agents + AGENTS.md (18.4 KiB) + .codex/{config.toml, hooks.json, hooks/*, agents/*, lib/env-detect.sh}
+- Next: Phase 7 — cross-target E2E validation. Requires actual Codex CLI on user side; checklist in tasks/todo.md and tasks/codex-quality-deltas.md. After Phase 7 validates parity → cut 4.0.0 final.
+
 ### [2026-05-13] Codex target — Phase 4 (sub-agent translation) — COMPLETED
 - Branch: `feat/codex-target`
 - Translated all 18 ShipKit sub-agent templates (architect, backend-dev, code-reviewer, database-architect, debugger, devops-engineer, doc-reviewer, e2e-tester, frontend-dev, linter, mobile-dev, perf-auditor, performance-optimizer, qa-engineer, refactor-specialist, security-auditor, tech-writer, test-runner)
@@ -1753,3 +1772,4 @@
 - [08:11] Auto: git commit — "$(cat <<"
 - [08:16] Auto: git push — -u origin feat/codex-target 2>&1 | tail -10
 - [08:20] Auto: git push — 2>&1 | tail -5 && echo "" && echo "=== ShipKit sub-agent def
+- [08:29] Auto: git push — 2>&1 | tail -3 && \

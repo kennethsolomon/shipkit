@@ -175,6 +175,9 @@ function reportInstall(target, r) {
     if (r.subAgents && r.subAgents.count > 0) {
       console.log(`  ${green}✓${reset} Emitted ${r.subAgents.count} sub-agent(s) ${dim}(.codex/agents/)${reset}`);
     }
+    if (r.envDetect && r.envDetect.copied) {
+      console.log(`  ${green}✓${reset} Wrote env-detect.sh ${dim}(.codex/lib/)${reset}`);
+    }
     console.log(`  ${green}✓${reset} Wrote AGENTS.md ${dim}(${r.agentsMd.bytes} bytes${r.agentsMd.overLimit ? ', OVER 32 KiB limit — split into nested AGENTS.md recommended' : ''})${reset}`);
     console.log(`  ${green}✓${reset} Wrote .codex/config.toml`);
     console.log(`  ${green}✓${reset} Wrote .codex/hooks.json + ${r.hooks.copied} hook script(s) ${dim}(${r.hooks.events} event(s))${reset}`);

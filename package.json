@@ -1,6 +1,6 @@
 {
   "name": "@kennethsolomon/shipkit",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "A structured workflow toolkit for Claude Code and OpenAI Codex.",
   "keywords": [
     "claude",
@@ -22,7 +22,9 @@
     "bin",
     "core",
     "adapters",
-    "CLAUDE.md"
+    "CLAUDE.md",
+    "README.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=16.7.0"
